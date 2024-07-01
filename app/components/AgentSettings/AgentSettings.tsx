@@ -41,7 +41,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     formData.append("id", agentID);
     formData.append("name", agentName);
     try {
-      const res = await updating(formData);
+      const response = await updating(formData);
       setLoading(false);
     } catch (error) {
       setLoading(false);
