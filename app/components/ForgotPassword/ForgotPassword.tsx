@@ -2,6 +2,7 @@
 import { FC, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserForgotMutation } from "../ReduxToolKit/aiAssistant";
+import Loader from "../Loader/Loader";
 
 type EmailPayload = {
   email: string;
@@ -13,8 +14,11 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
   const [userForgotPassword] = useUserForgotMutation();
   const router = useRouter();
   const [ForgotEmail, setForgotEmail] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [emailIndication, setEmailIndication] = useState<string>("");
 
   const emailValidation = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     let payload: EmailPayload;
     if (ForgotEmail) {
@@ -23,14 +27,18 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
       };
       try {
         const res = await userForgotPassword(payload).unwrap();
-        alert("reset password link has been sent to you email");
-        router.push(`/reset_password`);
+        setLoading(false);
+        setEmailIndication("check your mail to reset password");
       } catch (error: any) {
+        setLoading(false);
         console.error("Failed to forgot password:", error);
         if (error.status === 400) {
-          alert(error.data.email);
+          setEmailIndication(error.data.email);
         }
       }
+    } else {
+      setLoading(false);
+      setEmailIndication("email is required");
     }
   };
   return (
@@ -49,17 +57,21 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
                 type="email"
                 placeholder="email@gmail.com"
                 value={ForgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
+                onChange={(e) => {
+                  setForgotEmail(e.target.value);
+                  setEmailIndication("");
+                }}
                 className="border rounded-md px-3 py-2 focus:outline-none mt-2 w-full"
               />
             </label>
+            {emailIndication && <p className="text-sm">{emailIndication}</p>}
           </div>
           <div>
             <button
               type="submit"
               className="py-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md w-full"
             >
-              Submit
+              {loading ? <Loader /> : <>Submit</>}
             </button>
           </div>
         </form>

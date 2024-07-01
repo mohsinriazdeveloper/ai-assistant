@@ -10,6 +10,7 @@ import {
   useUserForgotMutation,
   useUserPasswordResetMutation,
 } from "../ReduxToolKit/aiAssistant";
+import Loader from "../Loader/Loader";
 
 type ResetPayload = {
   token?: string;
@@ -29,9 +30,11 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   const [ForgotPassword, setForgotPassword] = useState<string>("");
   const [ForgotConfirmPassword, setForgotConfirmPassword] =
     useState<string>("");
-  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false);
+  const [errorsIndication, setErrorIndications] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const redirectRoute = async (e: React.FormEvent) => {
+    setLoading(true);
     e.preventDefault();
     if (ForgotPassword === ForgotConfirmPassword) {
       const payLoad: ResetPayload = {
@@ -47,12 +50,16 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
         //   })
         // );
         // alert("login");
+        setLoading(false);
         return router.push("/");
-      } catch (err) {
+      } catch (err: any) {
+        setLoading(false);
+        setErrorIndications(err);
         console.error("Failed to reset:", err);
       }
     } else {
-      setIsPasswordMatch(true);
+      setLoading(false);
+      setErrorIndications("passwords not match");
     }
   };
   return (
@@ -131,8 +138,8 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
                 )}
               </div>
             </div>
-            {isPasswordMatch && (
-              <div className="text-xs text-red-700">Password not match</div>
+            {errorsIndication && (
+              <div className="text-xs text-red-700">{errorsIndication}</div>
             )}
           </div>
           <div>
@@ -140,7 +147,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
               type="submit"
               className="py-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md w-full"
             >
-              Submit
+              {loading ? <Loader /> : <>Submit</>}
             </button>
           </div>
         </form>

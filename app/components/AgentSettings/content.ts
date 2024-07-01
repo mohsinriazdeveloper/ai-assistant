@@ -6,7 +6,7 @@ export const content = {
     {
       icon: settingsIcon,
       title: "General",
-      url: "setting",
+      url: "settings",
     },
     {
       icon: TextLines,

@@ -6,6 +6,7 @@ import {
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import RangeBar from "../RangeBar/RangeBar";
 import Loader from "../Loader/Loader";
+import DownCarret from "@/app/assets/icons/DownCarret";
 
 interface AgentModelProps {
   agentId: any;
@@ -21,13 +22,15 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const [temp, setTemp] = useState<any>(0 || agent?.temperature);
   const [tempBoolean] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log("temp", temp);
+  const [agentModel, setAgentModel] = useState<any>("" || agent?.model);
+  const [openModels, setOpenModels] = useState<boolean>(false);
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
     const formData = new FormData();
     formData.append("id", agentId);
     formData.append("temperature", temp);
+    formData.append("model", agentModel);
     try {
       const res = await updating(formData);
       setLoading(false);
@@ -45,6 +48,37 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
           <p className="text-gray-300 font-medium text-sm">{agent?.model}</p>
         </div>
         <form onSubmit={handleUpdate}>
+          <div className="relative mb-10">
+            <div
+              onClick={() => setOpenModels(!openModels)}
+              className="cursor-pointer border border-gray-200 rounded-md text-sm p-4 flex justify-between items-center"
+            >
+              <p>{agentModel}</p>
+              <DownCarret />
+            </div>
+            {openModels && (
+              <div className="absolute mt-2 w-full border border-gray-200 rounded-md text-sm text-gray-300 bg-white p-1">
+                <p
+                  className="py-2 px-5 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => {
+                    setOpenModels(!openModels);
+                    setAgentModel("gpt-4");
+                  }}
+                >
+                  gpt-4
+                </p>
+                <p
+                  className="py-2 px-5 hover:bg-gray-200 cursor-pointer"
+                  onClick={() => {
+                    setOpenModels(!openModels);
+                    setAgentModel("gpt-3.5");
+                  }}
+                >
+                  gpt-3.5
+                </p>
+              </div>
+            )}
+          </div>
           <div>
             <p className="text-sm text-gray-300 font-medium">Temprature</p>
 

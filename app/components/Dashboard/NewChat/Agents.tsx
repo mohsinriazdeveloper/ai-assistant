@@ -12,8 +12,6 @@ interface AgentsProps {}
 
 const Agents: FC<AgentsProps> = () => {
   const [trigger, { data: allAgents }] = useLazyGetAllAgentsQuery();
-  // const { data: allAgents } = useGetAllAgentsQuery();
-  console.log(allAgents);
   useEffect(() => {
     trigger();
   }, []);

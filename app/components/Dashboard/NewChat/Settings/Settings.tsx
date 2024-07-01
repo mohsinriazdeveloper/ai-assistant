@@ -15,7 +15,6 @@ const Settings: FC<SettingsProps> = ({}) => {
   const { data: getOrg } = useGetOrganizationQuery();
   const [openDialogue, setOpenDialogue] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("setting");
-  console.log("getOrg", getOrg);
 
   return (
     <div>
