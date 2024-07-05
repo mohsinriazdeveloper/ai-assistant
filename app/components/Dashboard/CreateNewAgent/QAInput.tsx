@@ -10,8 +10,20 @@ interface QAInputProps {
 }
 
 const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
+  const maxCharLimit = 40000;
+
   const handleAddQA = useCallback(() => {
-    setQAList((prevQAList) => [...prevQAList, { question: "", answer: "" }]);
+    setQAList((prevQAList) => {
+      const totalChars = prevQAList.reduce(
+        (acc, qa) => acc + qa.question.length + qa.answer.length,
+        0
+      );
+      if (totalChars >= maxCharLimit) {
+        alert("You have reached the maximum character limit.");
+        return prevQAList;
+      }
+      return [...prevQAList, { question: "", answer: "" }];
+    });
   }, [setQAList]);
 
   const handleQAChange = useCallback(
@@ -23,6 +35,14 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
       setQAList((prevQAList) => {
         const updatedQAList = [...prevQAList];
         updatedQAList[index] = { ...updatedQAList[index], [key]: value };
+        const totalChars = updatedQAList.reduce(
+          (acc, qa) => acc + qa.question.length + qa.answer.length,
+          0
+        );
+        if (totalChars > maxCharLimit) {
+          alert("You have reached the maximum character limit.");
+          return prevQAList;
+        }
         return updatedQAList;
       });
     },

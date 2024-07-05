@@ -5,6 +5,7 @@ import RangeBar from "../../RangeBar/RangeBar";
 import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
 import { useGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 import Loader from "../../Loader/Loader";
+import AgentVoice from "../../VoiceAssistant/AgentVoice";
 
 interface QaItem {
   question: string;
@@ -13,9 +14,10 @@ interface QaItem {
 
 interface AgentOptionProps {
   agentId: number;
+  checkOption: string;
 }
 
-const AgentOption: FC<AgentOptionProps> = ({ agentId }) => {
+const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
   const { data: allAgents, isLoading } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
@@ -51,7 +53,15 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId }) => {
               <p className="text-gray-900 text-sm font-semibold">
                 {agent.ran_id}
               </p>
-              <Image src={CopyIcon} alt="" className="w-4" />
+              <Image
+                src={CopyIcon}
+                alt=""
+                className="w-4 cursor-pointer"
+                onClick={() => {
+                  //@ts-ignore
+                  navigator.clipboard.writeText(agent.ran_id);
+                }}
+              />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm font-semibold">
@@ -93,7 +103,9 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId }) => {
           </div>
         </div>
         <div className="col-span-7 border border-gray-200 rounded-lg">
-          <VoiceAssistant agentId={agent.id} />
+          {checkOption === "agent" && <VoiceAssistant agentId={agent.id} />}
+
+          {checkOption === "chatagent" && <AgentVoice agentId={agent.id} />}
         </div>
       </div>
     </div>

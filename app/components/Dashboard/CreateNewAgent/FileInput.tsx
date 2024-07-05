@@ -1,6 +1,6 @@
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
 import Image from "next/image";
-import { Dispatch, FC, SetStateAction, useCallback } from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 
 interface FileInputProps {
@@ -19,6 +19,7 @@ const FileInput: FC<FileInputProps> = ({
   handleDeleteFile,
 }) => {
   const maxFiles = 10;
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -41,6 +42,8 @@ const FileInput: FC<FileInputProps> = ({
         const reader = new FileReader();
         reader.onload = (e) => {
           const content = e.target?.result as string;
+          // const content = JSON.stringify(e.target?.result);
+          console.log(content);
           totalCharCount += content.length;
           setCharCount((prevCount) => prevCount + content.length); // Incrementally update char count
         };
@@ -50,10 +53,44 @@ const FileInput: FC<FileInputProps> = ({
     [setCharCount]
   );
 
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+
+    const selectedFiles = Array.from(event.dataTransfer.files);
+    if (files.length + selectedFiles.length > maxFiles) {
+      alert(`You can only upload up to ${maxFiles} files in total.`);
+      return;
+    }
+    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+    setFileCount(files.length + selectedFiles.length);
+    processFiles(selectedFiles);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+  };
+
   return (
     <div>
       <label htmlFor="file-upload">
-        <div className="flex flex-col items-center justify-center border border-gray-200 p-6 rounded h-[200px] cursor-pointer">
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          className={`flex flex-col items-center justify-center border ${
+            isDragging ? "border-blue-400" : "border-gray-200"
+          } p-6 rounded h-[200px] cursor-pointer`}
+        >
           <div>
             <Image src={UploadIcon} alt="" className="max-w-5" />
           </div>
@@ -74,21 +111,6 @@ const FileInput: FC<FileInputProps> = ({
           <p className="mt-2 text-xs text-gray-500">
             Supported File Types: .pdf, .doc, .docx, .txt
           </p>
-          {/* {files.length > 0 && (
-        <div className="w-full mt-5">
-          {files.map((file, index) => (
-            <div key={index} className="flex justify-between items-center mt-2">
-              <p className="text-sm text-gray-700">{file.name}</p>
-              <Image
-                src={DeleteIcon}
-                alt="Delete"
-                className="w-5 cursor-pointer"
-                onClick={() => handleDeleteFile(index)}
-              />
-            </div>
-          ))}
-        </div>
-      )} */}
         </div>
       </label>
     </div>

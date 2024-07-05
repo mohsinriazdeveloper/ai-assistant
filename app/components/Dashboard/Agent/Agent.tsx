@@ -26,7 +26,12 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
         setCheckOption={setCheckOption}
         checkOption={checkOption}
       />
-      {checkOption === "agent" && <AgentOption agentId={agentId} />}
+      {checkOption === "agent" && (
+        <AgentOption agentId={agentId} checkOption="agent" />
+      )}
+      {checkOption === "chatagent" && (
+        <AgentOption agentId={agentId} checkOption="chatagent" />
+      )}
       {checkOption === "sources" && <UpdateTraining agentId={agentId} />}
       {checkOption === "connect" && <Connect />}
       {checkOption === "settings" && <AgentSettings agentId={agentId} />}

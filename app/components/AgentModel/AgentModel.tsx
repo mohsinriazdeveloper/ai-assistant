@@ -7,6 +7,7 @@ import {
 import RangeBar from "../RangeBar/RangeBar";
 import Loader from "../Loader/Loader";
 import DownCarret from "@/app/assets/icons/DownCarret";
+import Instructions from "./Instructions";
 
 interface AgentModelProps {
   agentId: any;
@@ -24,6 +25,10 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [agentModel, setAgentModel] = useState<any>("" || agent?.model);
   const [openModels, setOpenModels] = useState<boolean>(false);
+  const [instructionContent, setInsturctionContent] = useState<string>(
+    //@ts-ignore
+    "" || agent?.text
+  );
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
@@ -31,6 +36,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
     formData.append("id", agentId);
     formData.append("temperature", temp);
     formData.append("model", agentModel);
+    formData.append("text", instructionContent);
     try {
       const res = await updating(formData);
       setLoading(false);
@@ -79,8 +85,15 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
               </div>
             )}
           </div>
+
+          <Instructions
+            agentId={agentId}
+            setInsturctionContent={setInsturctionContent}
+            instructionContent={instructionContent}
+          />
+
           <div>
-            <p className="text-sm text-gray-300 font-medium">Temprature</p>
+            <p className="text-sm text-gray-300 font-medium mt-5">Temprature</p>
 
             <RangeBar
               setTemp={setTemp}

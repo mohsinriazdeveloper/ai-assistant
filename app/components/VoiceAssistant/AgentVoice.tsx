@@ -1,30 +1,40 @@
 "use client";
 import React, { useState, useEffect, useCallback, useRef, FC } from "react";
 import { ClipLoader } from "react-spinners";
-import { FaMicrophone, FaStop, FaRedo, FaPlay, FaPause } from "react-icons/fa";
-import MicrophoneIcon from "@/app/assets/icons/microphone.png";
+import {
+  FaMicrophone,
+  FaRedo,
+  FaPlay,
+  FaPause,
+  FaRegStopCircle,
+} from "react-icons/fa";
+import { IoMdSend } from "react-icons/io";
+import RefreshIcon from "@/app/assets/icons/reload.png";
 import {
   useAgentVoiceMutation,
   useGetAllAgentsQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import Image from "next/image";
 
-interface VoiceAssistantProps {
+interface AgentVoiceProps {
   agentId: number;
 }
 
-const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
+const AgentVoice: FC<AgentVoiceProps> = ({ agentId }) => {
   const [response, setResponse] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>("");
+  const [toggleRecording, setToggleRecording] = useState<boolean>(true);
   const [mediaBlobUrl, setMediaBlobUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const mediaChunksRef = useRef<Blob[]>([]);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [agentVoice] = useAgentVoiceMutation();
   const { data: allAgents } = useGetAllAgentsQuery();
 
@@ -98,6 +108,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
       mediaRecorder.onstop = () => {
         const blob = new Blob(mediaChunksRef.current, { type: "audio/webm" });
         const blobUrl = URL.createObjectURL(blob);
+        console.log("audio", blobUrl);
         setMediaBlobUrl(blobUrl);
         setIsRecording(false);
       };
@@ -157,81 +168,84 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     speechSynthesis.cancel(); // Cancel any ongoing speech synthesis
   };
 
+  //converting text message to audio
+  const convertTextToAudio = () => {
+    const audioChunks: BlobPart[] = [];
+
+    const mediaRecorder = new MediaRecorder(new MediaStream());
+    mediaChunksRef.current = [];
+
+    mediaRecorder.ondataavailable = (event) => {
+      if (event.data.size > 0) {
+        mediaChunksRef.current.push(event.data);
+      }
+    };
+
+    const blob = new Blob(mediaChunksRef.current, { type: "audio/webm" });
+    const blobUrl = URL.createObjectURL(blob);
+    setMediaBlobUrl(blobUrl);
+    setIsRecording(false);
+
+    // mediaRecorderRef.current = mediaRecorder;
+    // mediaRecorder.start();
+    // mediaRecorder.ondataavailable = (event) => {
+    //   if (event.data.size > 0) {
+    //     audioChunks.push(event.data);
+    //   }
+    // };
+    // const blob = new Blob(mediaChunksRef.current, { type: "audio/webm" });
+    // handleStop(URL.createObjectURL(blob));
+  };
   return (
-    <div className="container mx-auto h-[500px] flex flex-col items-center py-10 gap-10">
-      <div className="mb-6 text-center">
-        <p className="font-bold text-gray-800">Voice Assistant</p>
-        <p className="text-sm font-semibold text-gray-500">
-          Record your voice and get the response
-        </p>
-      </div>
-      <div className="flex flex-col items-center">
-        <div className="flex items-center gap-6 mb-6">
-          <button
-            onClick={startRecording}
-            type="button"
-            className={`flex items-center justify-center bg-blue-500 text-white rounded-full p-4 transition-transform transform ${
-              isRecording || isPlaying
-                ? "scale-100 cursor-not-allowed"
-                : "scale-105 hover:scale-110"
-            } `}
-            disabled={isRecording || isPlaying}
-          >
-            <FaMicrophone size={24} />
-          </button>
-          <button
-            className={`flex items-center justify-center bg-red-500 text-white rounded-full p-4 transition-transform transform ${
-              !isRecording
-                ? "scale-100 cursor-not-allowed"
-                : "scale-105 hover:scale-110"
-            }`}
-            onClick={stopRecording}
-            type="button"
-            disabled={!isRecording}
-          >
-            <FaStop size={24} />
-          </button>
+    <div className="container mx-auto h-[500px] flex flex-col justify-between overflow-auto">
+      <div className="p-3">
+        <div className="flex justify-end">
+          <Image
+            src={RefreshIcon}
+            alt=""
+            className="w-6 cursor-pointer hover:rotate-180 transition-all duration-500"
+          />
         </div>
-        {isProcessing && <ClipLoader color="#000" size={50} />}
-        {error && (
-          <div className="mt-4 text-center text-red-500">
-            <p>{error}</p>
+        <div className="border-b border-gray-200 w-full my-3"></div>
+        {/* {audioBlob && (
+          <audio controls>
+            <source src={URL.createObjectURL(audioBlob)} type="audio/wav" />
+          </audio>
+        )} */}
+      </div>
+      <div className="flex items-center gap-2 border-t border-gray-200 p-3">
+        <input
+          type="text"
+          placeholder="Message..."
+          className="w-full focus:outline-none text-gray-900"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+        />
+        {/* {toggleRecording ? (
+          <div
+            onClick={() => {
+              startRecording();
+              setToggleRecording(false);
+            }}
+          >
+            <FaMicrophone color="#71717A" width={24} />
           </div>
-        )}
-        {response && (
-          <div className="mt-6 text-center bg-white p-4 rounded shadow-md w-3/4">
-            <p className="text-lg font-semibold text-gray-700">Response:</p>
-            <p className="text-md text-gray-600">{response}</p>
-            {isPlaying && (
-              <div className="flex items-center justify-center mt-4">
-                {!isPaused ? (
-                  <button
-                    onClick={pauseAudio}
-                    className="flex items-center justify-center bg-yellow-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
-                  >
-                    <FaPause size={20} />
-                  </button>
-                ) : (
-                  <button
-                    onClick={resumeAudio}
-                    className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
-                  >
-                    <FaPlay size={20} />
-                  </button>
-                )}
-              </div>
-            )}
-            <button
-              onClick={resetResponse}
-              className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 mt-4 transition-transform transform hover:scale-110"
-            >
-              <FaRedo size={20} />
-            </button>
+        ) : (
+          <div
+            onClick={() => {
+              stopRecording();
+              setToggleRecording(true);
+            }}
+          >
+            <FaRegStopCircle color="#71717A" width={24} />
           </div>
-        )}
+        )} */}
+        <div onClick={convertTextToAudio}>
+          <IoMdSend color="#71717A" width={90} />
+        </div>
       </div>
     </div>
   );
 };
 
-export default VoiceAssistant;
+export default AgentVoice;

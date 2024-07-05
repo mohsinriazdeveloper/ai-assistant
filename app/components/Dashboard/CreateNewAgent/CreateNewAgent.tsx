@@ -3,13 +3,13 @@ import { FC, useState, useCallback } from "react";
 import LeftBar from "../../LeftBar/LeftBar";
 import FileInput from "./FileInput";
 import RightBar from "../../RightBar/RightBar";
-import PreviousPage from "../../PreviousPage/PreviousPage";
 import { content } from "./content";
 import { useCreateAgentMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
 import QAInput from "./QAInput";
 import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
+import PreviousPage from "../../PreviousPage/PreviousPage";
 
 type FileUrl = {
   file_url: string;
@@ -94,6 +94,13 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       };
       reader.readAsText(file);
     });
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newText = e.target.value;
+    if (newText.length <= 40000) {
+      setText(newText);
+    }
   };
 
   return (
@@ -199,7 +206,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                       className="focus:outline-none border border-gray-200 rounded w-full text-sm text-gray-700 px-3 py-2"
                       rows={20}
                       value={text}
-                      onChange={(e) => setText(e.target.value)}
+                      onChange={handleTextChange}
                     />
                   </div>
                   <p className="text-center text-sm text-gray-500">

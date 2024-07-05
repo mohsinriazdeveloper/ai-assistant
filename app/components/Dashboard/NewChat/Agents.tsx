@@ -3,18 +3,22 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import AiImg from "@/app/assets/Images/aiImg.webp";
 import Link from "next/link";
-import {
-  useGetAllAgentsQuery,
-  useLazyGetAllAgentsQuery,
-} from "../../ReduxToolKit/aiAssistantOtherApis";
+import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 
 interface AgentsProps {}
 
 const Agents: FC<AgentsProps> = () => {
   const [trigger, { data: allAgents }] = useLazyGetAllAgentsQuery();
+
   useEffect(() => {
     trigger();
   }, []);
+
+  const sortedAgents = allAgents
+    ?.slice()
+    //@ts-ignore
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="w-[795px] mx-auto mt-16">
       <div className="flex justify-between items-center">
@@ -26,7 +30,7 @@ const Agents: FC<AgentsProps> = () => {
         </Link>
       </div>
       <div className="grid grid-cols-5 mt-10 gap-5">
-        {allAgents?.map((agent, index) => (
+        {sortedAgents?.map((agent, index) => (
           <div key={index} className="col-span-1 cursor-pointer">
             <Link href={`/dashboard/agent/${agent.id}`}>
               <div
