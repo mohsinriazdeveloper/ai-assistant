@@ -18,17 +18,17 @@ const Settings: FC<SettingsProps> = ({}) => {
 
   return (
     <div>
-      <div className="container mx-auto my-10">
+      <div className="md:container md:mx-auto mx-5 my-10">
         <p className="text-3xl font-bold">Settings</p>
         <div className="grid grid-cols-12 gap-8 mt-10">
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-12">
             <LeftBar
               setCheckOption={setCheckOption}
               checkOption={checkOption}
               content={content.sideBarOptions}
             />
           </div>
-          <div className="col-span-10 flex flex-col gap-10">
+          <div className="md:col-span-10 col-span-12 flex flex-col gap-10">
             {checkOption === "setting" && (
               <form>
                 <div className="w-full border border-gray-200 py-7 px-6 rounded-lg flex flex-col gap-6">
@@ -36,7 +36,7 @@ const Settings: FC<SettingsProps> = ({}) => {
                   <div>
                     <p className="text-sm font-medium">Organization ID</p>
                     <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
-                      {getOrg ? <p>{getOrg.id}</p> : <p>NA</p>}
+                      {getOrg ? <p>{getOrg.ran_id}</p> : <p>NA</p>}
                     </div>
                   </div>
                   <div>

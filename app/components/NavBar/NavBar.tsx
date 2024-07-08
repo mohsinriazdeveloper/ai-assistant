@@ -32,7 +32,7 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
 
   return (
     <div className="pt-5 mb-[57px]">
-      <div className="container mx-auto flex justify-between items-center pb-5">
+      <div className="md:container md:mx-auto mx-5 flex justify-between items-center pb-5">
         <PreviousPage />
         <button
           onClick={handleSignOut}
@@ -41,25 +41,29 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
           Sign Out
         </button>
       </div>
-      <div className="border-b flex justify-center gap-7">
-        {content.map((item, index) => (
-          <div
-            key={index}
-            className={`${
-              checkOption === item.url
-                ? "border-b-2 border-[#8B5CF6] text-black"
-                : "mb-0.5 text-[#71717a]"
-            } pb-1 hover:text-black text-sm font-medium cursor-pointer`}
-          >
-            <p
-              onClick={() => {
-                setCheckOption(item.url);
-              }}
-            >
-              {item.title}
-            </p>
+      <div className="sm:overflow-hidden overflow-scroll w-full sm:border-b-0 border-b">
+        <div className="sm:w-full w-[500px]">
+          <div className="sm:border-b flex justify-center gap-7 ">
+            {content.map((item, index) => (
+              <div
+                key={index}
+                className={`${
+                  checkOption === item.url
+                    ? "border-b-2 border-[#8B5CF6] text-black"
+                    : "mb-0.5 text-[#71717a]"
+                } pb-1 hover:text-black text-sm font-medium cursor-pointer`}
+              >
+                <p
+                  onClick={() => {
+                    setCheckOption(item.url);
+                  }}
+                >
+                  {item.title}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

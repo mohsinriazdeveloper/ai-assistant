@@ -20,7 +20,7 @@ const Agents: FC<AgentsProps> = () => {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="w-[795px] mx-auto mt-16">
+    <div className="md:w-[795px] md:mx-auto mx-5 mt-16">
       <div className="flex justify-between items-center">
         <p className="text-3xl font-bold">Agents</p>
         <Link href="/dashboard/create-new-agent">
@@ -29,7 +29,7 @@ const Agents: FC<AgentsProps> = () => {
           </button>
         </Link>
       </div>
-      <div className="grid grid-cols-5 mt-10 gap-5">
+      <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-10 gap-5">
         {sortedAgents?.map((agent, index) => (
           <div key={index} className="col-span-1 cursor-pointer">
             <Link href={`/dashboard/agent/${agent.id}`}>

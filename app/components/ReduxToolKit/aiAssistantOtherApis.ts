@@ -51,6 +51,14 @@ export const userApi = createApi({
         body: credentials,
       }),
     }),
+    //chat with agent
+    agentChat: builder.mutation({
+      query: (credentials) => ({
+        url: "/voice/process_text/",
+        method: "POST",
+        body: credentials,
+      }),
+    }),
     // delete agent endpoint
     deleteAgent: builder.mutation({
       query: (id) => ({
@@ -78,5 +86,6 @@ export const {
   useGetOrganizationQuery,
   useDeleteAgentMutation,
   useAgentVoiceMutation,
+  useAgentChatMutation,
   useUpdateAgentMutation,
 } = userApi;

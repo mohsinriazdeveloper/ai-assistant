@@ -61,17 +61,17 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   };
   return (
     <div>
-      <div className="container mx-auto my-10">
+      <div className="md:container md:mx-auto mx-5 my-10">
         <p className="text-3xl font-bold">Settings</p>
         <div className="grid grid-cols-12 gap-8 mt-10">
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-12">
             <LeftBar
               setCheckOption={setCheckOption}
               checkOption={checkOption}
               content={content.sideBarOptions}
             />
           </div>
-          <div className="col-span-10">
+          <div className="md:col-span-10 col-span-12">
             {checkOption === "settings" ? (
               <div>
                 <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-10 mb-10">

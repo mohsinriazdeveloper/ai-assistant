@@ -21,11 +21,13 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   const [checkOption, setCheckOption] = useState<string>("agent");
   return (
     <div className="mb-10">
-      <NavBar
-        content={navBarContent}
-        setCheckOption={setCheckOption}
-        checkOption={checkOption}
-      />
+      <div className="">
+        <NavBar
+          content={navBarContent}
+          setCheckOption={setCheckOption}
+          checkOption={checkOption}
+        />
+      </div>
       {checkOption === "agent" && (
         <AgentOption agentId={agentId} checkOption="agent" />
       )}

@@ -5,7 +5,7 @@ import RangeBar from "../../RangeBar/RangeBar";
 import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
 import { useGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 import Loader from "../../Loader/Loader";
-import AgentVoice from "../../VoiceAssistant/AgentVoice";
+import AgentChat from "../../VoiceAssistant/AgentChat";
 
 interface QaItem {
   question: string;
@@ -41,10 +41,10 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
   }
 
   return (
-    <div className="w-[63%] mx-auto border border-gray-200 py-8 px-7 rounded-lg">
+    <div className="md:w-[63%] md:mx-auto mx-5 border border-gray-200 py-8 px-7 rounded-lg">
       <p className="text-xl font-bold mb-9">{agent.name}</p>
       <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-5 flex flex-col gap-7">
+        <div className="sm:col-span-5 col-span-12 flex flex-col gap-7">
           <div>
             <div className="flex justify-between items-center mb-2">
               <p className="text-gray-300 text-sm font-semibold">Agent ID</p>
@@ -102,10 +102,10 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
             <p className="text-gray-900">June 28, 2024 at 08:44 AM</p>
           </div>
         </div>
-        <div className="col-span-7 border border-gray-200 rounded-lg">
+        <div className="sm:col-span-7 col-span-12 border border-gray-200 rounded-lg">
           {checkOption === "agent" && <VoiceAssistant agentId={agent.id} />}
 
-          {checkOption === "chatagent" && <AgentVoice agentId={agent.id} />}
+          {checkOption === "chatagent" && <AgentChat agentId={agent.id} />}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
-import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import pdfToText from "react-pdftotext";
 
 interface FileInputProps {
   files: File[];
@@ -31,23 +31,28 @@ const FileInput: FC<FileInputProps> = ({
       }
       setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
       setFileCount(files.length + selectedFiles.length);
-      processFiles(selectedFiles);
+      processFiles([...files, ...selectedFiles]);
     }
   };
 
   const processFiles = useCallback(
     (selectedFiles: File[]) => {
       let totalCharCount = 0;
-      selectedFiles.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const content = e.target?.result as string;
-          // const content = JSON.stringify(e.target?.result);
-          console.log(content);
-          totalCharCount += content.length;
-          setCharCount((prevCount) => prevCount + content.length); // Incrementally update char count
-        };
-        reader.readAsText(file);
+      const fileReaders = selectedFiles.map((file) => {
+        return new Promise<void>((resolve) => {
+          pdfToText(file)
+            .then((text) => {
+              totalCharCount += text.length;
+              resolve();
+            })
+            .catch((error) =>
+              console.error("Failed to extract text from pdf", error)
+            );
+        });
+      });
+
+      Promise.all(fileReaders).then(() => {
+        setCharCount(totalCharCount);
       });
     },
     [setCharCount]
@@ -65,7 +70,7 @@ const FileInput: FC<FileInputProps> = ({
     }
     setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
     setFileCount(files.length + selectedFiles.length);
-    processFiles(selectedFiles);
+    processFiles([...files, ...selectedFiles]);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {

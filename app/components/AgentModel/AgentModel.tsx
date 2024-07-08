@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
@@ -20,15 +20,15 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
     (agent) => agent.id.toString() === agentId.toString()
   );
   //@ts-ignore
-  const [temp, setTemp] = useState<any>(0 || agent?.temperature);
+  const [temp, setTemp] = useState<any>(agent?.temperature || 0);
   const [tempBoolean] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
-  const [agentModel, setAgentModel] = useState<any>("" || agent?.model);
+  const [agentModel, setAgentModel] = useState<any>(agent?.model || "");
   const [openModels, setOpenModels] = useState<boolean>(false);
   const [instructionContent, setInsturctionContent] = useState<string>(
-    //@ts-ignore
-    "" || agent?.text
+    agent?.instructions || ""
   );
+
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
@@ -36,7 +36,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
     formData.append("id", agentId);
     formData.append("temperature", temp);
     formData.append("model", agentModel);
-    formData.append("text", instructionContent);
+    formData.append("instructions", instructionContent); // Corrected key name
     try {
       const res = await updating(formData);
       setLoading(false);
@@ -87,7 +87,6 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
           </div>
 
           <Instructions
-            agentId={agentId}
             setInsturctionContent={setInsturctionContent}
             instructionContent={instructionContent}
           />

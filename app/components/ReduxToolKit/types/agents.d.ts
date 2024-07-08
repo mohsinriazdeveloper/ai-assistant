@@ -4,6 +4,7 @@ export type FileUrl = {
 };
 export type Organization = {
   id: number;
+  ran_id: string;
   name: string;
   email: string;
   created_at: string;
@@ -24,6 +25,7 @@ export interface AgentState {
   created_at?: string;
   updated_at?: string;
   customuser?: number;
+  instructions?: string;
 }
 export const agentState: AgentState = {
   id: 0,
@@ -40,6 +42,7 @@ export const agentState: AgentState = {
   created_at: "",
   updated_at: "",
   customuser: 0,
+  instructions: "",
 };
 
 // export const agentState: AgentState = {

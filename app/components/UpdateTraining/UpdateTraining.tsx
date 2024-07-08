@@ -91,22 +91,41 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     [setFiles, setCharCount, setFileCount]
   );
 
+  // const updateCharCount = (files: File[]) => {
+  //   let totalCharCount = 0;
+  //   files.forEach((file) => {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       const content = e.target?.result as string;
+  //       totalCharCount += content.length;
+  //       setCharCount(totalCharCount);
+  //     };
+  //     reader.readAsText(file);
+  //   });
+  // };
+
   const updateCharCount = (files: File[]) => {
     let totalCharCount = 0;
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        totalCharCount += content.length;
-        setCharCount(totalCharCount);
-      };
-      reader.readAsText(file);
+    const fileReaders = files.map((file) => {
+      return new Promise<void>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target?.result as string;
+          totalCharCount += content.length;
+          resolve();
+        };
+        reader.readAsText(file);
+      });
+    });
+
+    Promise.all(fileReaders).then(() => {
+      setCharCount(totalCharCount);
     });
   };
 
   return (
     <div>
-      <div className={`container mx-auto`}>
+      <div className="md:container md:mx-auto mx-5">
         <div className="mb-10">
           <p className="text-center font-bold text-3xl mb-2">Data Sources</p>
           <p className="text-gray-300 text-center">
@@ -114,7 +133,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
           </p>
         </div>
         <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-12">
             <div className="mb-2">
               <p className="text-sm font-semibold mb-1">
                 Agent Name <span className="text-red-500">*</span>
@@ -141,7 +160,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               checkOption={checkOption}
             />
           </div>
-          <div className="col-span-7">
+          <div className="md:col-span-7 col-span-12">
             <div className="w-full border border-gray-200 py-7 px-6 rounded-lg">
               {checkOption === "file" && (
                 <>
@@ -218,7 +237,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               )}
             </div>
           </div>
-          <div className="col-span-3">
+          <div className="md:col-span-3 col-span-12">
             <RightBar
               currentPage={currentPage}
               loading={loading}

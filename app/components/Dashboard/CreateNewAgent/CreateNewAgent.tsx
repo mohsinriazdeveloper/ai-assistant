@@ -85,14 +85,20 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   const updateCharCount = (files: File[]) => {
     let totalCharCount = 0;
-    files.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const content = e.target?.result as string;
-        totalCharCount += content.length;
-        setCharCount(totalCharCount); // Update state within the reader's onload callback
-      };
-      reader.readAsText(file);
+    const fileReaders = files.map((file) => {
+      return new Promise<void>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target?.result as string;
+          totalCharCount += content.length;
+          resolve();
+        };
+        reader.readAsText(file);
+      });
+    });
+
+    Promise.all(fileReaders).then(() => {
+      setCharCount(totalCharCount);
     });
   };
 
@@ -106,7 +112,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   return (
     <div>
       <div
-        className={`container mx-auto ${
+        className={`md:container md:mx-auto mx-5 ${
           currentPage != "/dashboard/agent" && "py-10"
         }`}
       >
@@ -122,7 +128,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
           </p>
         </div>
         <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-2">
+          <div className="md:col-span-2 col-span-12">
             <div className="mb-2">
               <p className="text-sm font-semibold mb-1">
                 Agent Name <span className="text-red-500">*</span>
@@ -149,7 +155,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               checkOption={checkOption}
             />
           </div>
-          <div className="col-span-7">
+          <div className="md:col-span-7 col-span-12">
             <div className="w-full border border-gray-200 py-7 px-6 rounded-lg">
               {checkOption === "file" && (
                 <>
@@ -226,7 +232,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               )}
             </div>
           </div>
-          <div className="col-span-3">
+          <div className="md:col-span-3 col-span-12">
             <RightBar
               currentPage={currentPage}
               loading={loading}

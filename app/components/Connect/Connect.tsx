@@ -8,10 +8,10 @@ interface ConnectProps {}
 const Connect: FC<ConnectProps> = ({}) => {
   const [checkOption, setCheckOption] = useState<string>("integration");
   return (
-    <div className="container mx-auto my-10">
+    <div className="md:container md:mx-auto mx-5 my-10">
       <p className="text-3xl font-bold">Connect</p>
       <div className="grid grid-cols-12 gap-8 mt-10">
-        <div className="col-span-2">
+        <div className="md:col-span-2 col-span-12">
           <LeftBar
             setCheckOption={setCheckOption}
             checkOption={checkOption}
@@ -19,7 +19,7 @@ const Connect: FC<ConnectProps> = ({}) => {
           />
         </div>
         {checkOption === "integration" && (
-          <div className="col-span-10 grid grid-cols-3 gap-4">
+          <div className="md:col-span-10 col-span-12 grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
             {content.integrationOptions.map((item, index) => (
               <div
                 key={index}

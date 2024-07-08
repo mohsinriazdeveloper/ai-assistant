@@ -2,30 +2,20 @@
 import DownCarret from "@/app/assets/icons/DownCarret";
 import { FC, useState, useEffect, Dispatch, SetStateAction } from "react";
 import { content } from "./content";
-import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 
 interface InstructionsProps {
-  agentId: any;
   setInsturctionContent: Dispatch<SetStateAction<string>>;
   instructionContent: string;
 }
 
 const Instructions: FC<InstructionsProps> = ({
-  agentId,
   setInsturctionContent,
   instructionContent,
 }) => {
   const [openOptions, setOpenOptions] = useState<boolean>(false);
   const [instructionValue, setInstructionValue] = useState<string>("Ai Agent");
   const [instructions, setInstructions] = useState<string>("");
-  // const { data: allAgents } = useGetAllAgentsQuery();
-  // const agent = allAgents?.find(
-  //   (agent) => agent.id.toString() === agentId.toString()
-  // );
-  // const [instructionContent, setInsturctionContent] = useState<string>(
-  //   //@ts-ignore
-  //   "" || agent?.text
-  // );
+
   // Function to find the description based on the selected option
   const findDescription = (option: string) => {
     const selected = content.instructionContent.find(
@@ -36,8 +26,17 @@ const Instructions: FC<InstructionsProps> = ({
 
   // Set the initial instruction description
   useEffect(() => {
-    setInstructions(findDescription(instructionValue));
-  }, [instructionValue]);
+    const initialInstructions = findDescription(instructionValue);
+    setInstructions(initialInstructions);
+    setInsturctionContent(initialInstructions);
+  }, [instructionValue, setInsturctionContent]);
+
+  const handleOptionChange = (option: string) => {
+    setInstructionValue(option);
+    const newInstructions = findDescription(option);
+    setInstructions(newInstructions);
+    setInsturctionContent(newInstructions);
+  };
 
   return (
     <div className="text-sm">
@@ -59,7 +58,7 @@ const Instructions: FC<InstructionsProps> = ({
                     key={index}
                     onClick={() => {
                       setOpenOptions(!openOptions);
-                      setInstructionValue(item);
+                      handleOptionChange(item);
                     }}
                     className="p-2 hover:bg-gray-200 cursor-pointer"
                   >
@@ -71,10 +70,11 @@ const Instructions: FC<InstructionsProps> = ({
           </div>
           <div>
             <button
-              type="submit"
+              type="button"
               onClick={() => {
                 setInstructionValue("Ai Agent");
                 setInstructions(findDescription("Ai Agent"));
+                setInsturctionContent(findDescription("Ai Agent"));
               }}
               className="py-2 px-5 hover:bg-[#3C3C3F] bg-gray-200 text-black hover:text-white font-medium rounded-md text-sm"
             >

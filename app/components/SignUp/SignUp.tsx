@@ -105,7 +105,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
   };
 
   return (
-    <div className="container mx-auto py-12">
+    <div className="md:container md:mx-auto mx-5 py-12">
       <PreviousPage />
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
@@ -113,7 +113,9 @@ const SignUp: FC<SignUpProps> = ({}) => {
             <div className="mx-auto w-[70px] h-[72px] border rounded-lg mb-4 flex justify-center items-center">
               <p>LOGO</p>
             </div>
-            <p>Create an AI assistant in minutes with no code</p>
+            <p className="text-center">
+              Create an AI assistant in minutes with no code
+            </p>
           </div>
         </div>
         <div className="mb-8">
