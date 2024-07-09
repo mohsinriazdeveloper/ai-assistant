@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
-import { AgentState, Organization } from "./types/agents";
+import { AgentChatType, AgentState, Organization } from "./types/agents";
 // Define your base query function
 const baseQuery = fetchBaseQuery({
   // baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -50,6 +50,7 @@ export const userApi = createApi({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["AllPosts"],
     }),
     //chat with agent
     agentChat: builder.mutation({
@@ -58,6 +59,11 @@ export const userApi = createApi({
         method: "POST",
         body: credentials,
       }),
+    }),
+    // get whole agent chat
+    getAgentChat: builder.query<AgentChatType, number>({
+      query: (id) => `/accounts/chats/${id}/`,
+      providesTags: ["AllPosts"],
     }),
     // delete agent endpoint
     deleteAgent: builder.mutation({
@@ -87,5 +93,6 @@ export const {
   useDeleteAgentMutation,
   useAgentVoiceMutation,
   useAgentChatMutation,
+  useGetAgentChatQuery,
   useUpdateAgentMutation,
 } = userApi;

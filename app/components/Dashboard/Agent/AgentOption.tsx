@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import CopyIcon from "@/app/assets/icons/copyIcon.png";
 import RangeBar from "../../RangeBar/RangeBar";
 import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
@@ -10,6 +10,10 @@ import AgentChat from "../../VoiceAssistant/AgentChat";
 interface QaItem {
   question: string;
   answer: string;
+}
+interface FileItem {
+  file_url: string;
+  text_content: string;
 }
 
 interface AgentOptionProps {
@@ -23,14 +27,53 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
     (agent) => agent.id.toString() === agentId.toString()
   );
 
-  // let qaChar = 0;
-  // if (agent?.qa) {
-  //   if (Array.isArray(agent.qa)) {
-  //     agent.qa.forEach((qa: QaItem) => {
-  //       qaChar += qa.question.length + qa.answer.length;
-  //     });
-  //   }
-  // }
+  const [qaData, setQaData] = useState<QaItem[]>([]);
+  const [qaCharacters, setqaCharacters] = useState<number>(0);
+
+  const [fileData, setFileData] = useState<FileItem[]>([]);
+  const [fileChar, setFileChar] = useState<number>(0);
+
+  //////////////////////////////
+  useEffect(() => {
+    if (agent?.file_urls) {
+      //@ts-ignore
+      setFileData(agent?.file_urls);
+    }
+  }, [agent]);
+
+  useEffect(() => {
+    if (fileData.length > 0) {
+      const total = fileData.reduce((acc, obj) => {
+        return acc + obj.text_content.length;
+      }, 0);
+      setFileChar(total);
+    }
+  }, [fileData]);
+
+  /////////////////////////////
+
+  useEffect(() => {
+    if (agent?.qa) {
+      try {
+        const parsedQa =
+          typeof agent.qa === "string" ? JSON.parse(agent.qa) : agent.qa;
+        if (Array.isArray(parsedQa)) {
+          setQaData(parsedQa);
+        }
+      } catch (error) {
+        console.error("Error parsing QA data:", error);
+      }
+    }
+  }, [agent]);
+
+  useEffect(() => {
+    if (qaData.length > 0) {
+      const total = qaData.reduce((acc, obj) => {
+        return acc + obj.question.length + obj.answer.length;
+      }, 0);
+      setqaCharacters(total);
+    }
+  }, [qaData]);
 
   if (isLoading || !agent) {
     return (
@@ -40,6 +83,8 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
     );
   }
 
+  //@ts-ignore
+  const totalChar = qaCharacters + agent.text?.length + fileChar;
   return (
     <div className="md:w-[63%] md:mx-auto mx-5 border border-gray-200 py-8 px-7 rounded-lg">
       <p className="text-xl font-bold mb-9">{agent.name}</p>
@@ -89,7 +134,7 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
           </div>
           <div className="text-sm font-semibold">
             <p className="text-gray-300">Number of Characters</p>
-            <p className="text-gray-900">{agent.text?.length}</p>
+            <p className="text-gray-900">{totalChar}</p>
           </div>
           <div className="text-sm font-semibold">
             <p className="text-gray-300">Temperature</p>
@@ -99,7 +144,7 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
           </div>
           <div className="text-sm font-semibold">
             <p className="text-gray-300">Last trained at</p>
-            <p className="text-gray-900">June 28, 2024 at 08:44 AM</p>
+            <p className="text-gray-900">{agent.updated_at}</p>
           </div>
         </div>
         <div className="sm:col-span-7 col-span-12 border border-gray-200 rounded-lg">

@@ -22,18 +22,24 @@ const RightBar: FC<RightBarProps> = ({
   textChar,
   checkOption,
 }) => {
+  const totalChar = charCount + textChar + qaChar;
+
   return (
     <div className="border border-gray-200 rounded-lg py-5 px-4">
       <p className="text-lg font-medium text-center">Sources</p>
       <div>
-        {checkOption === "file" && (
-          <p className="font-light mb-4 text-sm">{fileCount} Files</p>
-        )}
+        {/* {checkOption === "file" && ( */}
+        <p className="font-light text-sm">{fileCount} Files</p>
+        <p className="font-light text-sm">{charCount} Files Characters</p>
+        <p className="font-light text-sm">{textChar} Text Characters</p>
+        <p className="font-light mb-4 text-sm">{qaChar} QA Characters</p>
+        {/* )} */}
         <p className="font-medium text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
-          {checkOption === "file" && <>{charCount}</>}
+          {/* {checkOption === "file" && <>{charCount}</>}
           {checkOption === "text" && <>{textChar}</>}
-          {checkOption === "qa" && <>{qaChar}</>}
+          {checkOption === "qa" && <>{qaChar}</>} */}
+          {totalChar}
           <span className="text-gray-300 font-normal">/ 40000 limit</span>
         </p>
       </div>

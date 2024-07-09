@@ -1,34 +1,33 @@
 "use client";
-import React, { useState, FC } from "react";
+import React, { useState, useEffect, FC } from "react";
 import { IoMdSend } from "react-icons/io";
-import RefreshIcon from "@/app/assets/icons/reload.png";
 import Image from "next/image";
 import {
   useAgentChatMutation,
-  useGetAllAgentsQuery,
+  useGetAgentChatQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
+import RefreshIcon from "@/app/assets/icons/reload.png";
 import LoaderImg from "@/app/assets/icons/loading.png";
+import { AgentChatType } from "../ReduxToolKit/types/agents";
 
 interface AgentChatProps {
   agentId: number;
 }
 
-interface Message {
-  sender: "user" | "bot";
-  text: string;
-}
-
 const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
-  const { data: allAgents } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const id = Number(agentId);
+  const { data: wholeChat, isLoading, error } = useGetAgentChatQuery(id);
   const [agentChat] = useAgentChatMutation();
   const [textInput, setTextInput] = useState<string>("");
-  const [chat, setChat] = useState<Message[]>([
-    { sender: "bot", text: "Hi, How may I help You?" },
-  ]);
+  const [chat, setChat] = useState<AgentChatType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (wholeChat) {
+      //@ts-ignore
+      setChat(wholeChat);
+    }
+  }, [wholeChat]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +35,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
     const agent_id = Number(agentId);
     if (textInput.trim() === "") return;
 
-    const userMessage: Message = { sender: "user", text: textInput };
+    const userMessage: AgentChatType = { role: "user", message: textInput };
     setChat((prevChat) => [...prevChat, userMessage]);
     setTextInput("");
 
@@ -45,7 +44,10 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
         agent_id,
         text_input: textInput,
       }).unwrap();
-      const botMessage: Message = { sender: "bot", text: response.response };
+      const botMessage: AgentChatType = {
+        role: "agent",
+        message: response.response,
+      };
       setChat((prevChat) => [...prevChat, botMessage]);
     } catch (error) {
       console.error("Failed to send message: ", error);
@@ -53,6 +55,14 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
       setLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error loading chat.</p>;
+  }
 
   return (
     <div className="container mx-auto h-[500px] flex flex-col justify-between ">
@@ -65,18 +75,18 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
           />
         </div>
         <div className="border-b border-gray-200 w-full my-3"></div>
-        <div className=" overflow-y-scroll  scrollbar-hide">
+        <div className="overflow-y-scroll scrollbar-hide">
           <div className="flex flex-col gap-2 h-[370px]">
             {chat.map((msg, index) => (
               <div
                 key={index}
                 className={`w-fit py-4 px-[14px] rounded-lg ${
-                  msg.sender === "bot"
+                  msg.role === "agent"
                     ? "bg-gray-200"
                     : "bg-[#3B81F6] text-white self-end"
                 }`}
               >
-                <p>{msg.text}</p>
+                <p>{msg.message}</p>
               </div>
             ))}
             {loading && (

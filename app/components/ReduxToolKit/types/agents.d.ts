@@ -44,6 +44,14 @@ export const agentState: AgentState = {
   customuser: 0,
   instructions: "",
 };
+export type AgentChatType = {
+  id?: number;
+  message: string;
+  role: string;
+  timestamp?: string;
+  agent?: number;
+  user?: number;
+};
 
 // export const agentState: AgentState = {
 //   id: 0,

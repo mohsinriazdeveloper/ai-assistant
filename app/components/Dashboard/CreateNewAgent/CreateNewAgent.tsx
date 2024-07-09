@@ -46,16 +46,11 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       const formData = new FormData();
       formData.append("name", agentName);
 
-      if (checkOption === "file") {
-        files.forEach((file, index) => {
-          formData.append(`files`, file);
-        });
-      } else if (checkOption === "text") {
-        formData.append(`text`, text);
-      } else if (checkOption === "qa") {
-        formData.append(`qa`, JSON.stringify(qaList));
-      }
-
+      files.forEach((file, index) => {
+        formData.append(`files`, file);
+      });
+      formData.append(`text`, text);
+      formData.append(`qa`, JSON.stringify(qaList));
       try {
         const res = await creatingAgent(formData).unwrap();
         setLoading(false);

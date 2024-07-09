@@ -198,37 +198,41 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
             <p>{error}</p>
           </div>
         )}
-        {response && (
-          <div className="mt-6 text-center bg-white p-4 rounded shadow-md w-3/4">
-            <p className="text-lg font-semibold text-gray-700">Response:</p>
-            <p className="text-md text-gray-600">{response}</p>
-            {isPlaying && (
-              <div className="flex items-center justify-center mt-4">
-                {!isPaused ? (
-                  <button
-                    onClick={pauseAudio}
-                    className="flex items-center justify-center bg-yellow-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
-                  >
-                    <FaPause size={20} />
-                  </button>
-                ) : (
-                  <button
-                    onClick={resumeAudio}
-                    className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
-                  >
-                    <FaPlay size={20} />
-                  </button>
+        <div className="overflow-y-scroll scrollbar-hide">
+          <div className="h-[274px]">
+            {response && (
+              <div className="mt-6 text-center bg-white p-4 rounded shadow-md">
+                <p className="text-lg font-semibold text-gray-700">Response:</p>
+                <p className="text-md text-gray-600">{response}</p>
+                {isPlaying && (
+                  <div className="flex items-center justify-center mt-4">
+                    {!isPaused ? (
+                      <button
+                        onClick={pauseAudio}
+                        className="flex items-center justify-center bg-yellow-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
+                      >
+                        <FaPause size={20} />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={resumeAudio}
+                        className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
+                      >
+                        <FaPlay size={20} />
+                      </button>
+                    )}
+                  </div>
                 )}
+                <button
+                  onClick={resetResponse}
+                  className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 mt-4 transition-transform transform hover:scale-110"
+                >
+                  <FaRedo size={20} />
+                </button>
               </div>
             )}
-            <button
-              onClick={resetResponse}
-              className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 mt-4 transition-transform transform hover:scale-110"
-            >
-              <FaRedo size={20} />
-            </button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
