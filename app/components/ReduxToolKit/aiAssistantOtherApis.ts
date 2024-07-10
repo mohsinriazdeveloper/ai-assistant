@@ -59,6 +59,7 @@ export const userApi = createApi({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["AllPosts"],
     }),
     // get whole agent chat
     getAgentChat: builder.query<AgentChatType, number>({

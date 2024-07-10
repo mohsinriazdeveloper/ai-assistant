@@ -33,7 +33,6 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
   const [fileData, setFileData] = useState<FileItem[]>([]);
   const [fileChar, setFileChar] = useState<number>(0);
 
-  //////////////////////////////
   useEffect(() => {
     if (agent?.file_urls) {
       //@ts-ignore
@@ -49,8 +48,6 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
       setFileChar(total);
     }
   }, [fileData]);
-
-  /////////////////////////////
 
   useEffect(() => {
     if (agent?.qa) {

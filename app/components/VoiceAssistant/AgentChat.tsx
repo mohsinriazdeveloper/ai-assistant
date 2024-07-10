@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect, FC, useRef } from "react";
 import { IoMdSend } from "react-icons/io";
 import Image from "next/image";
 import {
@@ -21,6 +21,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   const [textInput, setTextInput] = useState<string>("");
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (wholeChat) {
@@ -28,6 +29,14 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
       setChat(wholeChat);
     }
   }, [wholeChat]);
+
+  useEffect(() => {
+    // Scroll to bottom when chat updates
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [chat, loading]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +84,10 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
           />
         </div>
         <div className="border-b border-gray-200 w-full my-3"></div>
-        <div className="overflow-y-scroll scrollbar-hide">
+        <div
+          className="overflow-y-scroll scrollbar-hide"
+          ref={chatContainerRef}
+        >
           <div className="flex flex-col gap-2 h-[370px]">
             {chat.map((msg, index) => (
               <div
