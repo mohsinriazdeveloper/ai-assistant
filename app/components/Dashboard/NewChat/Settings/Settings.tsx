@@ -16,6 +16,7 @@ const Settings: FC<SettingsProps> = ({}) => {
   const [openDialogue, setOpenDialogue] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("setting");
 
+  console.log(getOrg);
   return (
     <div>
       <div className="md:container md:mx-auto mx-5 my-10">

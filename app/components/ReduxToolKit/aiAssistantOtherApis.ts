@@ -30,7 +30,7 @@ export const userApi = createApi({
 
     //get organization
     getOrganization: builder.query<Organization, void>({
-      query: () => `/accounts/org/my`,
+      query: () => `/accounts/org/my/`,
       providesTags: ["AllPosts"],
     }),
 
