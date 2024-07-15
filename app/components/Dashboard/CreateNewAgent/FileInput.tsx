@@ -2,13 +2,14 @@ import UploadIcon from "@/app/assets/icons/uploadIcon.png";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import pdfToText from "react-pdftotext";
+import mammoth from "mammoth";
 
 interface FileInputProps {
   files: File[];
   setFiles: Dispatch<SetStateAction<File[]>>;
   setCharCount: Dispatch<SetStateAction<number>>;
   setFileCount: Dispatch<SetStateAction<number>>;
-  handleDeleteFile: (index: number) => void;
+  handleDeleteFile: (index: number, id: number, isExisting: boolean) => void;
 }
 
 const FileInput: FC<FileInputProps> = ({
@@ -40,14 +41,48 @@ const FileInput: FC<FileInputProps> = ({
       let totalCharCount = 0;
       const fileReaders = selectedFiles.map((file) => {
         return new Promise<void>((resolve) => {
-          pdfToText(file)
-            .then((text) => {
-              totalCharCount += text.length;
+          if (file.type === "application/pdf") {
+            pdfToText(file)
+              .then((text) => {
+                totalCharCount += text.length;
+                resolve();
+              })
+              .catch((error) =>
+                console.error("Failed to extract text from PDF", error)
+              );
+          } else if (file.type === "text/plain") {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const content = e.target?.result as string;
+              totalCharCount += content.length;
               resolve();
-            })
-            .catch((error) =>
-              console.error("Failed to extract text from pdf", error)
-            );
+            };
+            reader.readAsText(file);
+          } else if (
+            file.type === "application/msword" ||
+            file.type ===
+              "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              const arrayBuffer = e.target?.result as ArrayBuffer;
+              mammoth
+                .extractRawText({ arrayBuffer })
+                .then((result) => {
+                  totalCharCount += result.value.length;
+                  resolve();
+                })
+                .catch((error) =>
+                  console.error(
+                    "Failed to extract text from Word document",
+                    error
+                  )
+                );
+            };
+            reader.readAsArrayBuffer(file);
+          } else {
+            resolve();
+          }
         });
       });
 

@@ -1,6 +1,8 @@
 export type FileUrl = {
   file_url?: string;
   text_content?: string;
+  id: number;
+  file_name: string;
 };
 export type Organization = {
   id: number;
@@ -13,7 +15,7 @@ export type Organization = {
 export interface AgentState {
   id: number;
   organization?: Organization | null;
-  file_urls?: FileUrl[] | null;
+  file_urls?: FileUrl[];
   name?: string;
   text?: string;
   qa?: string;

@@ -83,6 +83,14 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["AllPosts"],
     }),
+    // delete agent file endpoint /accounts/agents/files/delete/29/
+    deleteFile: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/files/delete/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
   }),
 });
 // Export the API endpoints
@@ -96,4 +104,5 @@ export const {
   useAgentChatMutation,
   useGetAgentChatQuery,
   useUpdateAgentMutation,
+  useDeleteFileMutation,
 } = userApi;

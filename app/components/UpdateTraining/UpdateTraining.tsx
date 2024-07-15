@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
 import {
+  useDeleteFileMutation,
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
@@ -13,6 +14,7 @@ import LeftBar from "../LeftBar/LeftBar";
 import FileInput from "../Dashboard/CreateNewAgent/FileInput";
 import QAInput from "../Dashboard/CreateNewAgent/QAInput";
 import RightBar from "../RightBar/RightBar";
+import { FileUrl } from "../ReduxToolKit/types/agents.d";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -29,7 +31,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     (agent) => agent.id.toString() === agentId.toString()
   );
   const currentPage = usePathname();
-  const [files, setFiles] = useState<File[]>([] || agent?.file_urls);
+  const [delExistingFile] = useDeleteFileMutation();
+  const [files, setFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<FileUrl[]>(
+    //@ts-ignore
+    agent?.file_urls.map((file) => file) || []
+  );
   const [checkOption, setCheckOption] = useState<string>("file");
   const [charCount, setCharCount] = useState<number>(0);
   const [fileCount, setFileCount] = useState<number>(files.length);
@@ -53,7 +60,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       formData.append("id", agentID);
 
       if (checkOption === "file") {
-        files.forEach((file, index) => {
+        files.forEach((file) => {
           formData.append("files", file);
         });
       } else if (checkOption === "text") {
@@ -80,29 +87,26 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   };
 
   const handleDeleteFile = useCallback(
-    (index: number) => {
-      setFiles((prevFiles) => {
-        const updatedFiles = prevFiles.filter((_, i) => i !== index);
-        updateCharCount(updatedFiles);
-        return updatedFiles;
-      });
+    async (index: number, id: number, isExisting: boolean) => {
+      if (isExisting) {
+        try {
+          const fileToDelete = existingFiles[index];
+          console.log(index);
+          await delExistingFile(id).unwrap();
+          setExistingFiles((prevFiles) =>
+            prevFiles.filter((_, i) => i !== index)
+          );
+        } catch (error) {
+          console.error("Failed to delete file: ", error);
+        }
+      } else {
+        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+        updateCharCount(files.filter((_, i) => i !== index));
+      }
       setFileCount((prevCount) => prevCount - 1);
     },
-    [setFiles, setCharCount, setFileCount]
+    [existingFiles, files, setFiles, setFileCount]
   );
-
-  // const updateCharCount = (files: File[]) => {
-  //   let totalCharCount = 0;
-  //   files.forEach((file) => {
-  //     const reader = new FileReader();
-  //     reader.onload = (e) => {
-  //       const content = e.target?.result as string;
-  //       totalCharCount += content.length;
-  //       setCharCount(totalCharCount);
-  //     };
-  //     reader.readAsText(file);
-  //   });
-  // };
 
   const updateCharCount = (files: File[]) => {
     let totalCharCount = 0;
@@ -180,6 +184,35 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                       select/highlight the text.
                     </p>
                   </div>
+                  {existingFiles.length > 0 && (
+                    <div>
+                      <div className="flex justify-center items-center gap-2">
+                        <div className="border-b w-[40%]"></div>
+                        <div>
+                          <p className="text-gray-300">Existing Files</p>
+                        </div>
+                        <div className="border-b w-[40%]"></div>
+                      </div>
+                      {existingFiles.map((item, index) => (
+                        <div
+                          key={index}
+                          className="mt-5 grid grid-cols-12 items-center"
+                        >
+                          <p className="col-span-10">{item.file_name}</p>
+                          <div className="col-span-2 flex justify-end">
+                            <Image
+                              src={DeleteIcon}
+                              alt="Delete"
+                              className="w-5 cursor-pointer"
+                              onClick={() =>
+                                handleDeleteFile(index, item.id, true)
+                              }
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {files.length > 0 && (
                     <div>
                       <div className="flex justify-center items-center gap-2">
@@ -200,7 +233,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                               src={DeleteIcon}
                               alt="Delete"
                               className="w-5 cursor-pointer"
-                              onClick={() => handleDeleteFile(index)}
+                              onClick={() =>
+                                handleDeleteFile(index, index, false)
+                              }
                             />
                           </div>
                         </div>
