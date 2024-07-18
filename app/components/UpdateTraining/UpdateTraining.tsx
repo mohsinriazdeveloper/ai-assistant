@@ -37,11 +37,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     //@ts-ignore
     agent?.file_urls.map((file) => file) || []
   );
+
   const [checkOption, setCheckOption] = useState<string>("file");
   const [charCount, setCharCount] = useState<number>(0);
   const [fileCount, setFileCount] = useState<number>(files.length);
   const [qaChar, setQaChar] = useState<number>(0);
-  const [text, setText] = useState<string | undefined>("" || agent?.text);
+  const [text, setText] = useState<string | undefined>(agent?.text || "");
   const textChar = text?.length || 0;
   const [agentName, setAgentName] = useState<string>(agent?.name || "");
   const [agentID, setAgentID] = useState<any>(agent?.id || "");
@@ -74,7 +75,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       try {
         const res = await updateAgent(formData).unwrap();
         setLoading(false);
-        router.push("/dashboard/new-chat");
+        // router.push("/dashboard/new-chat");
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to create agent: ", error);
@@ -105,7 +106,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       }
       setFileCount((prevCount) => prevCount - 1);
     },
-    [existingFiles, files, setFiles, setFileCount]
+    [existingFiles, files, setFiles, setFileCount, delExistingFile]
   );
 
   const updateCharCount = (files: File[]) => {
@@ -280,6 +281,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               agentCreateFunc={handleUpdateAgent}
               charCount={charCount}
               fileCount={fileCount}
+              existingFiles={existingFiles}
               textChar={textChar}
               checkOption={checkOption}
             />

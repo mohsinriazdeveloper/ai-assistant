@@ -1,11 +1,14 @@
-import { FC } from "react";
+"use client";
+import { FC, useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
+import { FileUrl } from "../ReduxToolKit/types/agents.d";
 
 interface RightBarProps {
   currentPage: string;
   agentCreateFunc: () => Promise<void>;
   charCount: number;
   fileCount: number;
+  existingFiles?: FileUrl[];
   textChar: any;
   checkOption: string;
   qaChar: number;
@@ -19,28 +22,49 @@ const RightBar: FC<RightBarProps> = ({
   agentCreateFunc,
   charCount,
   fileCount,
+  existingFiles,
   textChar,
   checkOption,
 }) => {
-  const totalChar = charCount + textChar + qaChar;
+  const [totalFileLength, setTotalFileLength] = useState<number>(0);
+  useEffect(() => {
+    if (existingFiles) {
+      const totalLength = existingFiles.reduce(
+        (sum, file) => sum + (file.text_content?.length || 0),
+        0
+      );
+      setTotalFileLength(totalLength);
+    }
+  }, [existingFiles]);
+
+  console.log("Total file length:", totalFileLength);
+  const totalChar = totalFileLength + charCount + textChar + qaChar;
 
   return (
     <div className="border border-gray-200 rounded-lg py-5 px-4">
       <p className="text-lg font-medium text-center">Sources</p>
       <div>
-        {/* {checkOption === "file" && ( */}
-        <p className="font-light text-sm">{fileCount} Files</p>
-        <p className="font-light text-sm">{charCount} Files Characters</p>
+        {existingFiles ? (
+          <p className="font-light text-sm">
+            {fileCount + existingFiles.length} Files
+          </p>
+        ) : (
+          <p className="font-light text-sm">{fileCount} Files</p>
+        )}
+        {totalFileLength ? (
+          <p className="font-light text-sm">
+            {charCount + totalFileLength} Files Characters
+          </p>
+        ) : (
+          <p className="font-light text-sm">{charCount} Files Characters</p>
+        )}
         <p className="font-light text-sm">{textChar} Text Characters</p>
         <p className="font-light mb-4 text-sm">{qaChar} QA Characters</p>
-        {/* )} */}
+
         <p className="font-medium text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
-          {/* {checkOption === "file" && <>{charCount}</>}
-          {checkOption === "text" && <>{textChar}</>}
-          {checkOption === "qa" && <>{qaChar}</>} */}
           {totalChar}
-          <span className="text-gray-300 font-normal">/ 40000 limit</span>
+          <span className="text-gray-300 font-normal">/ 100000 limit</span>
         </p>
       </div>
       <div className="mt-2">
@@ -64,7 +88,7 @@ const RightBar: FC<RightBarProps> = ({
       </div>
       {checkOption === "file" && (
         <>
-          {charCount > 40000 && (
+          {charCount > 100000 && (
             <p className="mt-2 text-xs text-red-500">
               Characters exceed the limit
             </p>
@@ -73,7 +97,7 @@ const RightBar: FC<RightBarProps> = ({
       )}
       {checkOption === "text" && (
         <>
-          {textChar > 40000 && (
+          {textChar > 100000 && (
             <p className="mt-2 text-xs text-red-500">
               Characters exceed the limit
             </p>
@@ -82,7 +106,7 @@ const RightBar: FC<RightBarProps> = ({
       )}
       {/* {checkOption === "qa" && (
         <>
-          {qaCount > 40000 && (
+          {qaCount > 100000 && (
             <p className="mt-2 text-xs text-red-500">
               Characters exceed the limit
             </p>

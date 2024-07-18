@@ -10,7 +10,7 @@ interface QAInputProps {
 }
 
 const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
-  const maxCharLimit = 40000;
+  const maxCharLimit = 100000;
 
   const handleAddQA = useCallback(() => {
     setQAList((prevQAList) => {

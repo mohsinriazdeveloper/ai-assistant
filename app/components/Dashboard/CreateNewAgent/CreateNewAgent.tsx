@@ -99,7 +99,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
-    if (newText.length <= 40000) {
+    if (newText.length <= 100000) {
       setText(newText);
     }
   };
