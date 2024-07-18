@@ -1,42 +1,44 @@
 "use client";
 import DownCarret from "@/app/assets/icons/DownCarret";
 import { FC, useState, useEffect, Dispatch, SetStateAction } from "react";
-import { content } from "./content";
+import { InstructionsType } from "../ReduxToolKit/types/agents.d";
+import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import { InstPayload } from "./AgentModel";
 
 interface InstructionsProps {
+  agentId: any;
   setInsturctionContent: Dispatch<SetStateAction<string>>;
   instructionContent: string;
+  setInstructionId: Dispatch<SetStateAction<number | undefined>>;
 }
 
 const Instructions: FC<InstructionsProps> = ({
+  agentId,
   setInsturctionContent,
   instructionContent,
+  setInstructionId,
 }) => {
+  const { data: allAgents } = useGetAllAgentsQuery();
+  const agent = allAgents?.find(
+    (agent) => agent.id.toString() === agentId.toString()
+  );
+
+  const [instructionArr, setInstructionArr] = useState<InstructionsType[]>([]);
   const [openOptions, setOpenOptions] = useState<boolean>(false);
-  const [instructionValue, setInstructionValue] = useState<string>("Ai Agent");
-  const [instructions, setInstructions] = useState<string>("");
+  const [option, setOption] = useState<string>("Ai Agent");
 
-  // Function to find the description based on the selected option
-  const findDescription = (option: string) => {
-    const selected = content.instructionContent.find(
-      (item) => item.title === option
-    );
-    return selected ? selected.description : "";
-  };
-
-  // Set the initial instruction description
   useEffect(() => {
-    const initialInstructions = findDescription(instructionValue);
-    setInstructions(initialInstructions);
-    setInsturctionContent(initialInstructions);
-  }, [instructionValue, setInsturctionContent]);
-
-  const handleOptionChange = (option: string) => {
-    setInstructionValue(option);
-    const newInstructions = findDescription(option);
-    setInstructions(newInstructions);
-    setInsturctionContent(newInstructions);
-  };
+    if (agent?.instructions) {
+      setInstructionArr(agent.instructions || []);
+      const defaultInstruction = agent.instructions.find(
+        (item) => item.title === "Ai Agent"
+      );
+      if (defaultInstruction) {
+        setInsturctionContent(defaultInstruction.instructions);
+        setInstructionId(defaultInstruction.id);
+      }
+    }
+  }, [agent]);
 
   return (
     <div className="text-sm">
@@ -48,21 +50,23 @@ const Instructions: FC<InstructionsProps> = ({
               onClick={() => setOpenOptions(!openOptions)}
               className="cursor-pointer border border-gray-200 rounded-md text-sm px-3 py-2 flex justify-between items-center gap-2 min-w-fit"
             >
-              <p>{instructionValue}</p>
+              <p>{option}</p>
               <DownCarret />
             </div>
             {openOptions && (
               <div className="absolute w-[210px] border border-gray-200 rounded-md text-sm bg-white z-10 p-1 mt-1">
-                {content.instructionOptions.map((item, index) => (
+                {instructionArr.map((item, index) => (
                   <p
                     key={index}
                     onClick={() => {
                       setOpenOptions(!openOptions);
-                      handleOptionChange(item);
+                      setOption(item.title);
+                      setInsturctionContent(item.instructions);
+                      setInstructionId(item.id);
                     }}
                     className="p-2 hover:bg-gray-200 cursor-pointer"
                   >
-                    {item}
+                    {item.title}
                   </p>
                 ))}
               </div>
@@ -72,9 +76,14 @@ const Instructions: FC<InstructionsProps> = ({
             <button
               type="button"
               onClick={() => {
-                setInstructionValue("Ai Agent");
-                setInstructions(findDescription("Ai Agent"));
-                setInsturctionContent(findDescription("Ai Agent"));
+                setOption("Ai Agent");
+                const defaultInstruction = instructionArr.find(
+                  (item) => item.title === "Ai Agent"
+                );
+                if (defaultInstruction) {
+                  setInsturctionContent(defaultInstruction.instructions);
+                  setInstructionId(defaultInstruction.id);
+                }
               }}
               className="py-2 px-5 hover:bg-[#3C3C3F] bg-gray-200 text-black hover:text-white font-medium rounded-md text-sm"
             >

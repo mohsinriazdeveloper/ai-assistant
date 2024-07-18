@@ -11,10 +11,16 @@ export type Organization = {
   email: string;
   created_at: string;
 };
+export type InstructionsType = {
+  id: number;
+  title: string;
+  instructions: string;
+};
 
 export interface AgentState {
   id: number;
   organization?: Organization | null;
+  instructions?: InstructionsType[];
   file_urls?: FileUrl[];
   name?: string;
   text?: string;

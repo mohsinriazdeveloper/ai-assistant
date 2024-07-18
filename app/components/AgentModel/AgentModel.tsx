@@ -3,18 +3,25 @@ import { FC, useState, useEffect } from "react";
 import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
+  useUpdateInstructionsMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import RangeBar from "../RangeBar/RangeBar";
 import Loader from "../Loader/Loader";
 import DownCarret from "@/app/assets/icons/DownCarret";
 import Instructions from "./Instructions";
+import { InstructionsType } from "../ReduxToolKit/types/agents.d";
 
 interface AgentModelProps {
   agentId: any;
 }
+export type InstPayload = {
+  id: number;
+  content: string;
+};
 
 const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const { data: allAgents } = useGetAllAgentsQuery();
+  const [updateInstructions] = useUpdateInstructionsMutation();
   const [updating] = useUpdateAgentMutation();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
@@ -25,26 +32,34 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [agentModel, setAgentModel] = useState<any>(agent?.model || "");
   const [openModels, setOpenModels] = useState<boolean>(false);
-  const [instructionContent, setInsturctionContent] = useState<string>(
-    agent?.instructions || ""
-  );
+  const [instructionContent, setInsturctionContent] = useState<string>("");
+  const [instructionId, setInstructionId] = useState<number>();
 
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
+    const instData = new FormData();
+    const id = instructionId;
+    instData.append("instructions", instructionContent);
     const formData = new FormData();
     formData.append("id", agentId);
-    formData.append("temperature", temp);
+    formData.append("temperature", temp.toString());
     formData.append("model", agentModel);
-    formData.append("instructions", instructionContent); // Corrected key name
     try {
-      const res = await updating(formData);
+      const inst = await updateInstructions({
+        //@ts-ignore
+        id,
+        data: instData,
+      }).unwrap();
+      const res = await updating(formData).unwrap();
       setLoading(false);
     } catch (error) {
       setLoading(false);
       console.error("Failed to update", error);
     }
   };
+
+  console.log(instructionContent);
 
   return (
     <div className="flex flex-col gap-10 mb-10">
@@ -87,8 +102,11 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
           </div>
 
           <Instructions
+            agentId={agentId}
             setInsturctionContent={setInsturctionContent}
             instructionContent={instructionContent}
+            setInstructionId={setInstructionId}
+            // setInstructionPayload={setInstructionPayload}
           />
 
           <div>

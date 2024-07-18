@@ -40,28 +40,30 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    const agent_id = Number(agentId);
-    if (textInput.trim() === "") return;
+    if (textInput !== "") {
+      setLoading(true);
+      const agent_id = Number(agentId);
+      if (textInput.trim() === "") return;
 
-    const userMessage: AgentChatType = { role: "user", message: textInput };
-    setChat((prevChat) => [...prevChat, userMessage]);
-    setTextInput("");
+      const userMessage: AgentChatType = { role: "user", message: textInput };
+      setChat((prevChat) => [...prevChat, userMessage]);
+      setTextInput("");
 
-    try {
-      const response = await agentChat({
-        agent_id,
-        text_input: textInput,
-      }).unwrap();
-      const botMessage: AgentChatType = {
-        role: "agent",
-        message: response.response,
-      };
-      setChat((prevChat) => [...prevChat, botMessage]);
-    } catch (error) {
-      console.error("Failed to send message: ", error);
-    } finally {
-      setLoading(false);
+      try {
+        const response = await agentChat({
+          agent_id,
+          text_input: textInput,
+        }).unwrap();
+        const botMessage: AgentChatType = {
+          role: "agent",
+          message: response.response,
+        };
+        setChat((prevChat) => [...prevChat, botMessage]);
+      } catch (error) {
+        console.error("Failed to send message: ", error);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -125,11 +127,17 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
             onChange={(e) => setTextInput(e.target.value)}
           />
 
-          <div className="cursor-pointer">
-            <button type="submit" className="bg-transparent">
-              <IoMdSend color="#71717A" width={90} />
-            </button>
-          </div>
+          {/* <div className=""> */}
+          <button
+            type="submit"
+            className={`bg-transparent ${
+              textInput === "" ? "cursor-not-allowed" : "cursor-pointer"
+            }`}
+            disabled={textInput === ""}
+          >
+            <IoMdSend color="#71717A" width={90} />
+          </button>
+          {/* </div> */}
         </div>
       </form>
     </div>

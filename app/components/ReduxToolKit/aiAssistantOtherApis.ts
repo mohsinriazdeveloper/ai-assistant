@@ -83,6 +83,15 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["AllPosts"],
     }),
+    // update Instructions endpoint
+    updateInstructions: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/instructions/update/${id}/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
     // delete agent file endpoint /accounts/agents/files/delete/29/
     deleteFile: builder.mutation({
       query: (id) => ({
@@ -105,4 +114,5 @@ export const {
   useGetAgentChatQuery,
   useUpdateAgentMutation,
   useDeleteFileMutation,
+  useUpdateInstructionsMutation,
 } = userApi;
