@@ -13,7 +13,7 @@ import PreviousPage from "../PreviousPage/PreviousPage";
 import Loader from "../Loader/Loader";
 // import { clearDataSucces } from "../ReduxToolKit/clearStateData";
 import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
-
+import toast, { Toaster } from "react-hot-toast";
 type LoginInputs = {
   email: string;
   password: string;
@@ -43,6 +43,7 @@ const Login: FC<LoginProps> = ({}) => {
     };
     try {
       const res = await UserLogin(payLoad).unwrap();
+      console.log(res);
       dispatch(
         userLoginSuccess({
           refresh: res.refresh,
@@ -52,6 +53,7 @@ const Login: FC<LoginProps> = ({}) => {
       // alert("login");
       // return router.push("/dashboard/join");
       setLoading(false);
+      toast.success("Successfully toasted!");
       return router.push("/dashboard/new-chat");
     } catch (err: any) {
       setLoading(false);
@@ -64,6 +66,7 @@ const Login: FC<LoginProps> = ({}) => {
 
   return (
     <div className="md:container md:mx-auto mx-5 py-12">
+      <Toaster position="top-right" reverseOrder={false} />
       <PreviousPage />
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">

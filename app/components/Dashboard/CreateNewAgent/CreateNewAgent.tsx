@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
 import PreviousPage from "../../PreviousPage/PreviousPage";
+import toast, { Toaster } from "react-hot-toast";
 
 type FileUrl = {
   file_url: string;
@@ -59,7 +60,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         setLoading(false);
         console.error("Failed to create agent: ", error);
         const errorMessage = error.data.message;
-        alert(errorMessage);
+        toast.error(errorMessage);
       }
     } else {
       setAgentNameError(true);
@@ -106,6 +107,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   return (
     <div>
+      <Toaster position="top-right" reverseOrder={false} />
       <div
         className={`md:container md:mx-auto mx-5 ${
           currentPage != "/dashboard/agent" && "py-10"

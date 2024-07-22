@@ -15,6 +15,7 @@ import FileInput from "../Dashboard/CreateNewAgent/FileInput";
 import QAInput from "../Dashboard/CreateNewAgent/QAInput";
 import RightBar from "../RightBar/RightBar";
 import { FileUrl } from "../ReduxToolKit/types/agents.d";
+import toast, { Toaster } from "react-hot-toast";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -75,12 +76,14 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       try {
         const res = await updateAgent(formData).unwrap();
         setLoading(false);
+        toast.success("Agent Updated");
         // router.push("/dashboard/new-chat");
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to create agent: ", error);
         const errorMessage = error.data.message;
-        alert(errorMessage);
+        toast.error(errorMessage);
+        // alert(errorMessage);
       }
     } else {
       setAgentNameError(true);
@@ -97,8 +100,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
           setExistingFiles((prevFiles) =>
             prevFiles.filter((_, i) => i !== index)
           );
+          toast.success("File deleted");
         } catch (error) {
           console.error("Failed to delete file: ", error);
+          toast.error("Unable to delete File");
         }
       } else {
         setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
@@ -130,6 +135,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
 
   return (
     <div>
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="md:container md:mx-auto mx-5">
         <div className="mb-10">
           <p className="text-center font-bold text-3xl mb-2">Data Sources</p>

@@ -10,6 +10,7 @@ import Loader from "../Loader/Loader";
 import DownCarret from "@/app/assets/icons/DownCarret";
 import Instructions from "./Instructions";
 import { InstructionsType } from "../ReduxToolKit/types/agents.d";
+import toast, { Toaster } from "react-hot-toast";
 
 interface AgentModelProps {
   agentId: any;
@@ -53,9 +54,10 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
       }).unwrap();
       const res = await updating(formData).unwrap();
       setLoading(false);
+      toast.success("Successfully Updated");
     } catch (error) {
       setLoading(false);
-      console.error("Failed to update", error);
+      toast.error("Failed to Updated");
     }
   };
 
@@ -63,6 +65,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
 
   return (
     <div className="flex flex-col gap-10 mb-10">
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5">
         <div>
           <p className="text-2xl font-medium">Model</p>
