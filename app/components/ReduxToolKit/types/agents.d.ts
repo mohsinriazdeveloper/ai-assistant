@@ -15,6 +15,7 @@ export type InstructionsType = {
   id: number;
   title: string;
   instructions: string;
+  is_active: boolean;
 };
 
 export interface AgentState {

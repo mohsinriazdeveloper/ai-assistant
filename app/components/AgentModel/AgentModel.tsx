@@ -35,13 +35,15 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const [openModels, setOpenModels] = useState<boolean>(false);
   const [instructionContent, setInsturctionContent] = useState<string>("");
   const [instructionId, setInstructionId] = useState<number>();
-
+  const [isActive, setIsActive] = useState<boolean>(true);
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
     const instData = new FormData();
     const id = instructionId;
     instData.append("instructions", instructionContent);
+    //@ts-ignore
+    instData.append("is_active", isActive);
     const formData = new FormData();
     formData.append("id", agentId);
     formData.append("temperature", temp.toString());
@@ -51,6 +53,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
         //@ts-ignore
         id,
         data: instData,
+        // is_active: true,
       }).unwrap();
       const res = await updating(formData).unwrap();
       setLoading(false);
@@ -109,6 +112,8 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
             setInsturctionContent={setInsturctionContent}
             instructionContent={instructionContent}
             setInstructionId={setInstructionId}
+            setIsActive={setIsActive}
+            isActive={isActive}
             // setInstructionPayload={setInstructionPayload}
           />
 

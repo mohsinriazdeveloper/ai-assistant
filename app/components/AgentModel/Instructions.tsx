@@ -3,13 +3,14 @@ import DownCarret from "@/app/assets/icons/DownCarret";
 import { FC, useState, useEffect, Dispatch, SetStateAction } from "react";
 import { InstructionsType } from "../ReduxToolKit/types/agents.d";
 import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
-import { InstPayload } from "./AgentModel";
 
 interface InstructionsProps {
   agentId: any;
   setInsturctionContent: Dispatch<SetStateAction<string>>;
   instructionContent: string;
   setInstructionId: Dispatch<SetStateAction<number | undefined>>;
+  setIsActive: Dispatch<SetStateAction<boolean>>;
+  isActive: boolean;
 }
 
 const Instructions: FC<InstructionsProps> = ({
@@ -17,6 +18,8 @@ const Instructions: FC<InstructionsProps> = ({
   setInsturctionContent,
   instructionContent,
   setInstructionId,
+  setIsActive,
+  isActive,
 }) => {
   const { data: allAgents } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
@@ -25,15 +28,21 @@ const Instructions: FC<InstructionsProps> = ({
 
   const [instructionArr, setInstructionArr] = useState<InstructionsType[]>([]);
   const [openOptions, setOpenOptions] = useState<boolean>(false);
-  const [option, setOption] = useState<string>("Ai Agent");
+  const [option, setOption] = useState<string>("");
 
   useEffect(() => {
     if (agent?.instructions) {
       setInstructionArr(agent.instructions || []);
-      const defaultInstruction = agent.instructions.find(
-        (item) => item.title === "Ai Agent"
+      const activeInstruction = agent.instructions.find(
+        (item) => item.is_active === true
       );
+
+      const defaultInstruction = activeInstruction
+        ? activeInstruction
+        : agent.instructions.find((item) => item.title === "Ai Agent");
+
       if (defaultInstruction) {
+        setOption(defaultInstruction.title);
         setInsturctionContent(defaultInstruction.instructions);
         setInstructionId(defaultInstruction.id);
       }
@@ -63,6 +72,7 @@ const Instructions: FC<InstructionsProps> = ({
                       setOption(item.title);
                       setInsturctionContent(item.instructions);
                       setInstructionId(item.id);
+                      setIsActive(true);
                     }}
                     className="p-2 hover:bg-gray-200 cursor-pointer"
                   >
