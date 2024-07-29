@@ -20,16 +20,32 @@ const FileInput: FC<FileInputProps> = ({
   handleDeleteFile,
 }) => {
   const maxFiles = 10;
+  const maxSizeMB = 1; // Maximum file size in MB
   const [isDragging, setIsDragging] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
+      const totalSizeMB = selectedFiles.reduce(
+        (acc, file) => acc + file.size / (1024 * 1024),
+        0
+      );
+
+      if (totalSizeMB > maxSizeMB) {
+        setErrorMessage("File size should not be larger than 5MB");
+        return;
+      }
+
       if (files.length + selectedFiles.length > maxFiles) {
         alert(`You can only upload up to ${maxFiles} files in total.`);
         return;
       }
+
+      setErrorMessage("");
+      setUploading(true);
       setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
       setFileCount(files.length + selectedFiles.length);
       processFiles([...files, ...selectedFiles]);
@@ -88,6 +104,7 @@ const FileInput: FC<FileInputProps> = ({
 
       Promise.all(fileReaders).then(() => {
         setCharCount(totalCharCount);
+        setUploading(false);
       });
     },
     [setCharCount]
@@ -99,10 +116,23 @@ const FileInput: FC<FileInputProps> = ({
     setIsDragging(false);
 
     const selectedFiles = Array.from(event.dataTransfer.files);
+    const totalSizeMB = selectedFiles.reduce(
+      (acc, file) => acc + file.size / (1024 * 1024),
+      0
+    );
+
+    if (totalSizeMB > maxSizeMB) {
+      setErrorMessage("File size should not be larger than 5MB");
+      return;
+    }
+
     if (files.length + selectedFiles.length > maxFiles) {
       alert(`You can only upload up to ${maxFiles} files in total.`);
       return;
     }
+
+    setErrorMessage("");
+    setUploading(true);
     setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
     setFileCount(files.length + selectedFiles.length);
     processFiles([...files, ...selectedFiles]);
@@ -151,6 +181,12 @@ const FileInput: FC<FileInputProps> = ({
           <p className="mt-2 text-xs text-gray-500">
             Supported File Types: .pdf, .doc, .docx, .txt
           </p>
+          {errorMessage && (
+            <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
+          )}
+          {uploading && (
+            <p className="mt-2 text-xs text-blue-500">File is uploading...</p>
+          )}
         </div>
       </label>
     </div>

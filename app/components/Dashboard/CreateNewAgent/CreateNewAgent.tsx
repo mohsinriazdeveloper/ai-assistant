@@ -186,7 +186,9 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                           key={index}
                           className="mt-5 grid grid-cols-12 items-center"
                         >
-                          <p className="col-span-10">{file.name}</p>
+                          <p className="col-span-10">
+                            {file.name.slice(0, 20) + " ..."}
+                          </p>
                           <div className="col-span-2 flex justify-end">
                             <Image
                               src={DeleteIcon}
