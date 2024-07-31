@@ -4,18 +4,20 @@ import { IoMdSend } from "react-icons/io";
 import Image from "next/image";
 import {
   useAgentChatMutation,
+  useDeleteChatMutation,
   useGetAgentChatQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import RefreshIcon from "@/app/assets/icons/reload.png";
 import LoaderImg from "@/app/assets/icons/loading.png";
 import { AgentChatType } from "../ReduxToolKit/types/agents";
-
+import toast, { Toaster } from "react-hot-toast";
 interface AgentChatProps {
   agentId: number;
 }
 
 const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   const id = Number(agentId);
+  const [deleteChat] = useDeleteChatMutation();
   const { data: wholeChat, isLoading, error } = useGetAgentChatQuery(id);
   const [agentChat] = useAgentChatMutation();
   const [textInput, setTextInput] = useState<string>("");
@@ -66,6 +68,14 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
       }
     }
   };
+  const restChat = async () => {
+    try {
+      const res = await deleteChat(agentId);
+      toast.success("Chat Reset Successfully");
+    } catch (error) {
+      toast.error("Failed to Reset Chat \n Try again later");
+    }
+  };
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -77,12 +87,14 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
 
   return (
     <div className="container mx-auto h-[500px] flex flex-col justify-between ">
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="p-3">
         <div className="flex justify-end">
           <Image
             src={RefreshIcon}
             alt=""
             className="w-6 cursor-pointer hover:rotate-180 transition-all duration-500"
+            onClick={restChat}
           />
         </div>
         <div className="border-b border-gray-200 w-full my-3"></div>
