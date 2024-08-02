@@ -11,19 +11,20 @@ import RefreshIcon from "@/app/assets/icons/reload.png";
 import LoaderImg from "@/app/assets/icons/loading.png";
 import { AgentChatType } from "../ReduxToolKit/types/agents";
 import toast, { Toaster } from "react-hot-toast";
+import DeleteChatModal from "../Dialogues/DeleteChatModal";
 interface AgentChatProps {
   agentId: number;
 }
 
 const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   const id = Number(agentId);
-  const [deleteChat] = useDeleteChatMutation();
   const { data: wholeChat, isLoading, error } = useGetAgentChatQuery(id);
   const [agentChat] = useAgentChatMutation();
   const [textInput, setTextInput] = useState<string>("");
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [openDialogue, setOpenDialogue] = useState<boolean>(false);
 
   useEffect(() => {
     if (wholeChat) {
@@ -68,14 +69,6 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
       }
     }
   };
-  const restChat = async () => {
-    try {
-      const res = await deleteChat(agentId);
-      toast.success("Chat Reset Successfully");
-    } catch (error) {
-      toast.error("Failed to Reset Chat \n Try again later");
-    }
-  };
 
   if (isLoading) {
     return <p>Loading...</p>;
@@ -86,72 +79,80 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   }
 
   return (
-    <div className="container mx-auto h-[500px] flex flex-col justify-between ">
-      <Toaster position="top-right" reverseOrder={false} />
-      <div className="p-3">
-        <div className="flex justify-end">
-          <Image
-            src={RefreshIcon}
-            alt=""
-            className="w-6 cursor-pointer hover:rotate-180 transition-all duration-500"
-            onClick={restChat}
-          />
-        </div>
-        <div className="border-b border-gray-200 w-full my-3"></div>
-        <div
-          className="overflow-y-scroll scrollbar-hide"
-          ref={chatContainerRef}
-        >
-          <div className="flex flex-col gap-2 h-[370px]">
-            {chat.map((msg, index) => (
-              <div
-                key={index}
-                className={`w-fit py-4 px-[14px] rounded-lg ${
-                  msg.role === "agent"
-                    ? "bg-gray-200"
-                    : "bg-[#3B81F6] text-white self-end"
-                }`}
-              >
-                <p>{msg.message}</p>
-              </div>
-            ))}
-            {loading && (
-              <div className="w-fit py-4 px-[14px] rounded-lg bg-gray-200">
-                <div className="flex justify-center">
-                  <Image
-                    src={LoaderImg}
-                    alt=""
-                    className="animate-spin w-5 h-5"
-                  />
+    <div>
+      <div className="container mx-auto h-[500px] flex flex-col justify-between ">
+        <Toaster position="top-right" reverseOrder={false} />
+        <div className="p-3">
+          <div className="flex justify-end">
+            <Image
+              src={RefreshIcon}
+              alt=""
+              className="w-6 cursor-pointer hover:rotate-180 transition-all duration-500"
+              // onClick={restChat}
+              onClick={() => setOpenDialogue(true)}
+            />
+          </div>
+          <div className="border-b border-gray-200 w-full my-3"></div>
+          <div
+            className="overflow-y-scroll scrollbar-hide"
+            ref={chatContainerRef}
+          >
+            <div className="flex flex-col gap-2 h-[370px]">
+              {chat.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`w-fit py-4 px-[14px] rounded-lg ${
+                    msg.role === "agent"
+                      ? "bg-gray-200"
+                      : "bg-[#3B81F6] text-white self-end"
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap">{msg.message}</p>
                 </div>
-              </div>
-            )}
+              ))}
+              {loading && (
+                <div className="w-fit py-4 px-[14px] rounded-lg bg-gray-200">
+                  <div className="flex justify-center">
+                    <Image
+                      src={LoaderImg}
+                      alt=""
+                      className="animate-spin w-5 h-5"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-      <form onSubmit={handleSendMessage}>
-        <div className="flex items-center gap-2 border-t border-gray-200 p-3">
-          <input
-            type="text"
-            placeholder="Message..."
-            className="w-full focus:outline-none text-gray-900"
-            value={textInput}
-            onChange={(e) => setTextInput(e.target.value)}
-          />
+        <form onSubmit={handleSendMessage}>
+          <div className="flex items-center gap-2 border-t border-gray-200 p-3">
+            <input
+              type="text"
+              placeholder="Message..."
+              className="w-full focus:outline-none text-gray-900"
+              value={textInput}
+              onChange={(e) => setTextInput(e.target.value)}
+            />
 
-          {/* <div className=""> */}
-          <button
-            type="submit"
-            className={`bg-transparent ${
-              textInput === "" ? "cursor-not-allowed" : "cursor-pointer"
-            }`}
-            disabled={textInput === ""}
-          >
-            <IoMdSend color="#71717A" width={90} />
-          </button>
-          {/* </div> */}
-        </div>
-      </form>
+            {/* <div className=""> */}
+            <button
+              type="submit"
+              className={`bg-transparent ${
+                textInput === "" ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+              disabled={textInput === ""}
+            >
+              <IoMdSend color="#71717A" width={90} />
+            </button>
+            {/* </div> */}
+          </div>
+        </form>
+      </div>
+      <DeleteChatModal
+        agentId={agentId}
+        openDialogue={openDialogue}
+        handleClose={() => setOpenDialogue(false)}
+      />
     </div>
   );
 };
