@@ -10,7 +10,7 @@ import DeleteModal from "../Dialogues/DeleteModal";
 import DeleteAgent from "../DeleteAgent/DeleteAgent";
 import AgentModel from "../AgentModel/AgentModel";
 import Loader from "../Loader/Loader";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { IoMdAdd } from "react-icons/io";
 type PayLoad = {
   id: number;
@@ -24,7 +24,7 @@ interface AgentSettings {
 const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   const [checkOption, setCheckOption] = useState<string>("settings");
   const [openDialogue, setOpenDialogue] = useState<boolean>(false);
-  const [addImage, setAddImage] = useState<any>(null);
+  const [addImage, setAddImage] = useState<any>();
   const [preview, setPreview] = useState<string>();
 
   const { data: allAgents, isLoading } = useGetAllAgentsQuery();
@@ -44,6 +44,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     const formData = new FormData();
     formData.append("id", agentID);
     formData.append("name", agentName);
+    formData.append("image", addImage);
     try {
       const res = await updating(formData);
       setLoading(false);

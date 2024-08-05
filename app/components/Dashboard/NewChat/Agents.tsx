@@ -33,10 +33,17 @@ const Agents: FC<AgentsProps> = () => {
         {sortedAgents?.map((agent, index) => (
           <div key={index} className="col-span-1 cursor-pointer">
             <Link href={`/dashboard/agent/${agent.id}`}>
-              <div
-                className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
-                style={{ backgroundImage: `url(${AiImg.src})` }}
-              ></div>
+              {agent.image_url ? (
+                <div
+                  className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
+                  style={{ backgroundImage: `url(${agent.image_url})` }}
+                ></div>
+              ) : (
+                <div
+                  className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
+                  style={{ backgroundImage: `url(${AiImg.src})` }}
+                ></div>
+              )}
               <p className="text-sm font-medium text-center">{agent?.name}</p>
             </Link>
           </div>

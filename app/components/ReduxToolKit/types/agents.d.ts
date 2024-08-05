@@ -20,6 +20,7 @@ export type InstructionsType = {
 
 export interface AgentState {
   id: number;
+  image_url: string;
   organization?: Organization | null;
   instructions?: InstructionsType[];
   file_urls?: FileUrl[];
@@ -38,6 +39,7 @@ export interface AgentState {
 }
 export const agentState: AgentState = {
   id: 0,
+  image_url: "",
   organization: null,
   file_urls: null,
   name: "",
