@@ -27,6 +27,9 @@ const DeleteChatModal: FC<DeleteChatModalProps> = ({
       const res = await deleteChat(agentId);
       toast.success("Chat Reset Successfully");
       setLoading(false);
+      if (loading === false) {
+        handleClose();
+      }
       return;
     } catch (error) {
       toast.error("Failed to Reset Chat \n Try again later");
