@@ -1,6 +1,5 @@
 "use client";
-import Image from "next/image";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import AiImg from "@/app/assets/Images/aiImg.webp";
 import Link from "next/link";
 import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";

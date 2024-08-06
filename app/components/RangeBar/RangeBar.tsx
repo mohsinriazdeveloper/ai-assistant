@@ -4,12 +4,17 @@ import "./index.css";
 
 interface RangeBarProps {
   tempBoolean?: boolean;
-  temperature?: any;
+  temperature?: number;
   setTemp?: (value: number) => void;
 }
 
-const RangeBar: FC<RangeBarProps> = ({ temperature, setTemp, tempBoolean }) => {
-  const [temp, setTempState] = useState(temperature);
+const RangeBar: FC<RangeBarProps> = ({
+  temperature = 0,
+  setTemp,
+  tempBoolean,
+}) => {
+  const [temp, setTempState] = useState<number>(temperature);
+
   useEffect(() => {
     if (tempBoolean) {
       setTempState(temperature);
@@ -17,19 +22,23 @@ const RangeBar: FC<RangeBarProps> = ({ temperature, setTemp, tempBoolean }) => {
   }, [tempBoolean, temperature]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newValue = parseInt(e.target.value, 10);
+    const newValue = parseFloat(e.target.value);
     setTempState(newValue);
     if (setTemp) {
       setTemp(newValue);
     }
   };
+
   return (
     <div>
-      <p className="text-sm font-medium text-gray-900">{temperature}</p>
+      <p className="text-sm font-medium text-gray-900">{temp.toFixed(1)}</p>
       <input
         type="range"
         className="range-input"
-        value={temperature}
+        min="0"
+        max="1"
+        step="0.1"
+        value={temp}
         onChange={handleChange}
       />
     </div>
