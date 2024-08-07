@@ -22,6 +22,7 @@ export type InstPayload = {
 
 const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const { data: allAgents } = useGetAllAgentsQuery();
+
   const [updateInstructions] = useUpdateInstructionsMutation();
   const [updating] = useUpdateAgentMutation();
   const agent = allAgents?.find(
