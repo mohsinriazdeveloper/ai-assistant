@@ -12,6 +12,8 @@ import AgentModel from "../AgentModel/AgentModel";
 import Loader from "../Loader/Loader";
 import Image, { StaticImageData } from "next/image";
 import { IoMdAdd } from "react-icons/io";
+import toast, { Toaster } from "react-hot-toast";
+
 type PayLoad = {
   id: number;
   name: string;
@@ -44,12 +46,21 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     const formData = new FormData();
     formData.append("id", agentID);
     formData.append("name", agentName);
-    formData.append("image", addImage);
+    if (addImage) {
+      formData.append("image", addImage);
+    }
     try {
       const res = await updating(formData);
+      //@ts-ignore
+      if (res.error?.status === "FETCH_ERROR") {
+        toast.error("Image size is too large");
+      } else {
+        toast.success("Successfully Updated");
+      }
       setLoading(false);
     } catch (error) {
       setLoading(false);
+      toast.error("Failed to update");
       console.error("Failed to update", error);
     }
   };
@@ -62,6 +73,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   };
   return (
     <div>
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="md:container md:mx-auto mx-5 my-10">
         <p className="text-3xl font-bold">Settings</p>
         <div className="grid grid-cols-12 gap-8 mt-10">
