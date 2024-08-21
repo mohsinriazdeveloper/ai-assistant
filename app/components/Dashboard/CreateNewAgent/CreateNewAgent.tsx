@@ -65,8 +65,13 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to create agent: ", error);
-        const errorMessage = error.data.message;
-        toast.error(errorMessage);
+        console.log("Failed to create agent: ", error);
+        if (error.status === 400) {
+          toast.error(error.data);
+        } else {
+          const errorMessage = error.data.message;
+          toast.error(errorMessage);
+        }
       }
     } else {
       setAgentNameError(true);

@@ -81,7 +81,11 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       // Handle successful response
       toast.success("Images uploaded successfully");
     } catch (error: any) {
-      toast.error(error.message || "An error occurred");
+      if (error.status === 400) {
+        toast.error(error.data);
+      } else {
+        toast.error(error.message || "An error occurred");
+      }
     } finally {
       setLoading(false);
     }
