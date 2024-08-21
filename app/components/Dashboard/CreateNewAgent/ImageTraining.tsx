@@ -15,18 +15,22 @@ import {
 import { AgentState } from "../../ReduxToolKit/types/agents";
 import Image from "next/image";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import { usePathname } from "next/navigation";
 
 interface ImageTrainingProps {
   setTotalImage: Dispatch<SetStateAction<number>>;
-  agentId: any;
-  agent: AgentState | undefined;
+  agentId?: any;
+  agent?: AgentState | undefined;
+  setImagesFile?: Dispatch<SetStateAction<File[]>>;
 }
 
 const ImageTraining: FC<ImageTrainingProps> = ({
   setTotalImage,
   agentId,
   agent,
+  setImagesFile,
 }) => {
+  const currentPage = usePathname();
   const [updateWithImg] = useTrainByImageMutation();
   const [delExistingFile] = useDeleteFileMutation();
   const [images, setImages] = useState<File[]>([]);
@@ -44,6 +48,10 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
 
+      if (currentPage === "/dashboard/create-new-agent") {
+        //@ts-ignore
+        setImagesFile((prevImages) => [...prevImages, file]);
+      }
       // Check if the file is already added
       if (images.some((img) => img.name === file.name)) {
         toast.error("Image Already Added");
@@ -112,12 +120,14 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             />
           </div>
         </label>
-        <button
-          onClick={submitImages}
-          className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
-        >
-          {loading ? <Loader /> : <>Train with Image</>}
-        </button>
+        {currentPage !== "/dashboard/create-new-agent" && (
+          <button
+            onClick={submitImages}
+            className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
+          >
+            {loading ? <Loader /> : <>Train with Image</>}
+          </button>
+        )}
       </div>
       <div className="grid grid-cols-4 gap-5">
         {images.map((image, index) => (
@@ -138,36 +148,38 @@ const ImageTraining: FC<ImageTrainingProps> = ({
           Supported File Types: .png, .PNG, .jpg, .JPG, .JPEG, .jpeg
         </p>
       </div>
-      <div>
-        <div className="flex justify-center items-center gap-2 mb-5">
-          <div className="border-b w-[40%]"></div>
-          <div>
-            <p className="text-gray-300">Existing Images</p>
-          </div>
-          <div className="border-b w-[40%]"></div>
-        </div>
-        <div className="grid grid-cols-4 gap-5">
-          {existingImgs.map((image, index) => (
-            <div
-              key={index}
-              className=" grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat flex justify-center items-center relative group"
-              style={{ backgroundImage: `url(${image.file_url})` }}
-            >
-              <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
-              {imgLoader[index] ? (
-                <Loader />
-              ) : (
-                <Image
-                  src={DeleteIcon}
-                  alt="Delete"
-                  className="w-5 cursor-pointer absolute opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => handleDeleteFile(index, image.id)}
-                />
-              )}
+      {currentPage !== "/dashboard/create-new-agent" && (
+        <div>
+          <div className="flex justify-center items-center gap-2 mb-5">
+            <div className="border-b w-[40%]"></div>
+            <div>
+              <p className="text-gray-300">Existing Images</p>
             </div>
-          ))}
+            <div className="border-b w-[40%]"></div>
+          </div>
+          <div className="grid grid-cols-4 gap-5">
+            {existingImgs.map((image, index) => (
+              <div
+                key={index}
+                className=" grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat flex justify-center items-center relative group"
+                style={{ backgroundImage: `url(${image.file_url})` }}
+              >
+                <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
+                {imgLoader[index] ? (
+                  <Loader />
+                ) : (
+                  <Image
+                    src={DeleteIcon}
+                    alt="Delete"
+                    className="w-5 cursor-pointer absolute opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleDeleteFile(index, image.id)}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

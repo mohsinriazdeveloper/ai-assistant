@@ -61,9 +61,7 @@ const RightBar: FC<RightBarProps> = ({
         )}
         <p className="font-light text-sm">{textChar} Text Characters</p>
         <p className="font-light text-sm">{qaChar} QA Characters</p>
-        {currentPage !== "/dashboard/create-new-agent" && (
-          <p className="font-light text-sm">{totalImages} Images</p>
-        )}
+        <p className="font-light text-sm">{totalImages} Images</p>
         <p className="font-medium mt-4 text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
           {totalChar}

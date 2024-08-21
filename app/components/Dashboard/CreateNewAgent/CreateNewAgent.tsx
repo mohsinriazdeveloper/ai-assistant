@@ -41,7 +41,8 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const [agentNameError, setAgentNameError] = useState<boolean>(false);
-  // const [totalImages, setTotalImage] = useState<number>(0);
+  const [totalImages, setTotalImage] = useState<number>(0);
+  const [images, setImages] = useState<File[]>([]);
 
   const handleCreateAgent = async () => {
     if (agentName) {
@@ -51,6 +52,9 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
       files.forEach((file, index) => {
         formData.append(`files`, file);
+      });
+      images.forEach((image, index) => {
+        formData.append(`images`, image);
       });
       formData.append(`text`, text);
       formData.append(`qa`, JSON.stringify(qaList));
@@ -235,12 +239,15 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                   />
                 </div>
               )}
-              {/* {checkOption === "image-train" && (
+              {checkOption === "image-train" && (
                 <div className="">
                   <p className="font-semibold text-2xl ">Train With Image</p>
-                  <ImageTraining setTotalImage={setTotalImage} />
+                  <ImageTraining
+                    setTotalImage={setTotalImage}
+                    setImagesFile={setImages}
+                  />
                 </div>
-              )} */}
+              )}
             </div>
           </div>
           <div className="md:col-span-3 col-span-12">
@@ -253,7 +260,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               fileCount={fileCount}
               textChar={textChar}
               checkOption={checkOption}
-              // totalImages={totalImages}
+              totalImages={totalImages}
             />
           </div>
         </div>

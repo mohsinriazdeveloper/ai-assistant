@@ -30,7 +30,7 @@ const LeftBar: FC<LeftBarProps> = ({
 
   return (
     <div>
-      {filteredContent.map((item, index) => (
+      {content.map((item, index) => (
         <div
           key={index}
           className={`cursor-pointer px-3 py-3 hover:bg-gray-50 rounded w-full mb-1 ${
