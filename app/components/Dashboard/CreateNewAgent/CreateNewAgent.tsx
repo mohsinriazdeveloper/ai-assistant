@@ -11,6 +11,7 @@ import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
 import PreviousPage from "../../PreviousPage/PreviousPage";
 import toast, { Toaster } from "react-hot-toast";
+import ImageTraining from "./ImageTraining";
 
 type FileUrl = {
   file_url: string;
@@ -40,6 +41,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const [agentNameError, setAgentNameError] = useState<boolean>(false);
+  // const [totalImages, setTotalImage] = useState<number>(0);
 
   const handleCreateAgent = async () => {
     if (agentName) {
@@ -187,7 +189,11 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                           className="mt-5 grid grid-cols-12 items-center"
                         >
                           <p className="col-span-10">
-                            {file.name.slice(0, 20) + " ..."}
+                            {file.name.length > 30 ? (
+                              <>{file.name.slice(0, 30) + " ..."}</>
+                            ) : (
+                              <>{file.name}</>
+                            )}
                           </p>
                           <div className="col-span-2 flex justify-end">
                             <Image
@@ -229,6 +235,12 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                   />
                 </div>
               )}
+              {/* {checkOption === "image-train" && (
+                <div className="">
+                  <p className="font-semibold text-2xl ">Train With Image</p>
+                  <ImageTraining setTotalImage={setTotalImage} />
+                </div>
+              )} */}
             </div>
           </div>
           <div className="md:col-span-3 col-span-12">
@@ -241,6 +253,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               fileCount={fileCount}
               textChar={textChar}
               checkOption={checkOption}
+              // totalImages={totalImages}
             />
           </div>
         </div>

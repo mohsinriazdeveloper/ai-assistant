@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import pdfToText from "react-pdftotext";
 import mammoth from "mammoth";
+import Loader from "../../Loader/Loader";
 
 interface FileInputProps {
   files: File[];
@@ -46,9 +47,14 @@ const FileInput: FC<FileInputProps> = ({
 
       setErrorMessage("");
       setUploading(true);
-      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-      setFileCount(files.length + selectedFiles.length);
-      processFiles([...files, ...selectedFiles]);
+
+      // Display the loader for 3 seconds, then store the files
+      setTimeout(() => {
+        setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+        setFileCount(files.length + selectedFiles.length);
+        setUploading(false);
+        processFiles([...files, ...selectedFiles]);
+      }, 3000);
     }
   };
 
@@ -104,7 +110,6 @@ const FileInput: FC<FileInputProps> = ({
 
       Promise.all(fileReaders).then(() => {
         setCharCount(totalCharCount);
-        setUploading(false);
       });
     },
     [setCharCount]
@@ -133,9 +138,14 @@ const FileInput: FC<FileInputProps> = ({
 
     setErrorMessage("");
     setUploading(true);
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-    setFileCount(files.length + selectedFiles.length);
-    processFiles([...files, ...selectedFiles]);
+
+    // Display the loader for 3 seconds, then store the files
+    setTimeout(() => {
+      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+      setFileCount(files.length + selectedFiles.length);
+      setUploading(false);
+      processFiles([...files, ...selectedFiles]);
+    }, 3000);
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
@@ -185,7 +195,9 @@ const FileInput: FC<FileInputProps> = ({
             <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
           )}
           {uploading && (
-            <p className="mt-2 text-xs text-blue-500">File is uploading...</p>
+            <div className="flex items-center mt-5 text-sm text-gray-500">
+              <p>Uploading </p> <Loader />
+            </div>
           )}
         </div>
       </label>

@@ -83,6 +83,15 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["AllPosts"],
     }),
+    // Train by image
+    trainByImage: builder.mutation({
+      query: (data) => ({
+        url: `/accounts/agents/image_training/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
     // update Instructions endpoint
     updateInstructions: builder.mutation({
       query: ({ id, data }: { id: number; data: any }) => ({
@@ -124,4 +133,5 @@ export const {
   useDeleteFileMutation,
   useDeleteChatMutation,
   useUpdateInstructionsMutation,
+  useTrainByImageMutation,
 } = userApi;

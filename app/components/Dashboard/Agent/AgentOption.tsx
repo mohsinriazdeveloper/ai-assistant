@@ -27,8 +27,6 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
     (agent) => agent.id.toString() === agentId.toString()
   );
 
-  console.log("allAgents", allAgents);
-
   const [qaData, setQaData] = useState<QaItem[]>([]);
   const [qaCharacters, setqaCharacters] = useState<number>(0);
 

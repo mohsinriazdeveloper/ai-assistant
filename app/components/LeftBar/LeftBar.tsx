@@ -1,6 +1,7 @@
 import { Dispatch, FC, SetStateAction } from "react";
 import Link from "next/link";
 import Image, { StaticImageData } from "next/image";
+import { usePathname } from "next/navigation";
 
 type Content = {
   url: string;
@@ -19,9 +20,17 @@ const LeftBar: FC<LeftBarProps> = ({
   setCheckOption,
   checkOption,
 }) => {
+  const currentPage = usePathname();
+
+  // Filter out "Image Training" when on the "/dashboard/create-new-agent" page
+  const filteredContent =
+    currentPage === "/dashboard/create-new-agent"
+      ? content.filter((item) => item.title !== "Image Training")
+      : content;
+
   return (
     <div>
-      {content.map((item, index) => (
+      {filteredContent.map((item, index) => (
         <div
           key={index}
           className={`cursor-pointer px-3 py-3 hover:bg-gray-50 rounded w-full mb-1 ${

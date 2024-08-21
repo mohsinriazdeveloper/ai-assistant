@@ -19,5 +19,10 @@ export const content = {
       title: "Q & A",
       url: "qa",
     },
+    {
+      icon: QA,
+      title: "Image Training",
+      url: "image-train",
+    },
   ],
 };

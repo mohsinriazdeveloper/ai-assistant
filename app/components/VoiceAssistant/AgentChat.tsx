@@ -1,4 +1,3 @@
-"use client";
 import React, { useState, useEffect, FC, useRef } from "react";
 import { IoMdSend } from "react-icons/io";
 import Image from "next/image";
@@ -12,6 +11,8 @@ import LoaderImg from "@/app/assets/icons/loading.png";
 import { AgentChatType } from "../ReduxToolKit/types/agents";
 import toast, { Toaster } from "react-hot-toast";
 import DeleteChatModal from "../Dialogues/DeleteChatModal";
+import TypingAnimation from "../MagicUi/TypingAnimation";
+
 interface AgentChatProps {
   agentId: number;
 }
@@ -34,12 +35,20 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   }, [wholeChat]);
 
   useEffect(() => {
+    // Add initial message when the component first loads
+    const initialMessage = "How can I help you?";
+    addMessageToChat({ role: "agent", message: initialMessage });
+  }, []);
+
+  useEffect(() => {
     // Scroll to bottom when chat updates
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
-  }, [chat, loading]);
+  }, [chat]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,9 +66,10 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
           agent_id,
           text_input: textInput,
         }).unwrap();
+
         const botMessage: AgentChatType = {
           role: "agent",
-          message: response.response,
+          message: response.response, // Set the entire message at once
         };
         setChat((prevChat) => [...prevChat, botMessage]);
       } catch (error) {
@@ -68,6 +78,10 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
         setLoading(false);
       }
     }
+  };
+
+  const addMessageToChat = (message: AgentChatType) => {
+    setChat((prevChat) => [...prevChat, message]);
   };
 
   if (isLoading) {
@@ -88,7 +102,6 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               src={RefreshIcon}
               alt=""
               className="w-6 cursor-pointer hover:rotate-180 transition-all duration-500"
-              // onClick={restChat}
               onClick={() => setOpenDialogue(true)}
             />
           </div>
@@ -98,18 +111,37 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
             ref={chatContainerRef}
           >
             <div className="flex flex-col gap-2 h-[370px]">
-              {chat.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`w-fit py-4 px-[14px] rounded-lg ${
-                    msg.role === "agent"
-                      ? "bg-gray-200"
-                      : "bg-[#3B81F6] text-white self-end"
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap">{msg.message}</p>
-                </div>
-              ))}
+              {chat.map((msg, index) => {
+                const isLastMessage = index === chat.length - 1;
+
+                return (
+                  <div
+                    key={index}
+                    className={`w-fit py-4 px-[14px] rounded-lg ${
+                      msg.role === "agent"
+                        ? "bg-gray-200"
+                        : "bg-[#3B81F6] text-white self-end"
+                    }`}
+                  >
+                    {msg.role === "agent" ? (
+                      <div className="whitespace-pre-wrap">
+                        {isLastMessage ? (
+                          <TypingAnimation
+                            className="text-base font-normal text-black"
+                            text={msg.message}
+                          />
+                        ) : (
+                          <p className="text-base font-normal text-black">
+                            {msg.message}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="whitespace-pre-wrap">{msg.message}</p>
+                    )}
+                  </div>
+                );
+              })}
               {loading && (
                 <div className="w-fit py-4 px-[14px] rounded-lg bg-gray-200">
                   <div className="flex justify-center">
@@ -134,7 +166,6 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               onChange={(e) => setTextInput(e.target.value)}
             />
 
-            {/* <div className=""> */}
             <button
               type="submit"
               className={`bg-transparent ${
@@ -144,7 +175,6 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
             >
               <IoMdSend color="#71717A" width={90} />
             </button>
-            {/* </div> */}
           </div>
         </form>
       </div>

@@ -13,6 +13,7 @@ interface RightBarProps {
   checkOption: string;
   qaChar: number;
   loading: boolean;
+  totalImages?: number;
 }
 
 const RightBar: FC<RightBarProps> = ({
@@ -25,6 +26,7 @@ const RightBar: FC<RightBarProps> = ({
   existingFiles,
   textChar,
   checkOption,
+  totalImages,
 }) => {
   const [totalFileLength, setTotalFileLength] = useState<number>(0);
   useEffect(() => {
@@ -37,7 +39,6 @@ const RightBar: FC<RightBarProps> = ({
     }
   }, [existingFiles]);
 
-  console.log("Total file length:", totalFileLength);
   const totalChar = totalFileLength + charCount + textChar + qaChar;
 
   return (
@@ -59,9 +60,11 @@ const RightBar: FC<RightBarProps> = ({
           <p className="font-light text-sm">{charCount} Files Characters</p>
         )}
         <p className="font-light text-sm">{textChar} Text Characters</p>
-        <p className="font-light mb-4 text-sm">{qaChar} QA Characters</p>
-
-        <p className="font-medium text-sm">Total detected characters</p>
+        <p className="font-light text-sm">{qaChar} QA Characters</p>
+        {currentPage !== "/dashboard/create-new-agent" && (
+          <p className="font-light text-sm">{totalImages} Images</p>
+        )}
+        <p className="font-medium mt-4 text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
           {totalChar}
           <span className="text-gray-300 font-normal">/ 100000 limit</span>

@@ -16,6 +16,7 @@ import QAInput from "../Dashboard/CreateNewAgent/QAInput";
 import RightBar from "../RightBar/RightBar";
 import { FileUrl } from "../ReduxToolKit/types/agents.d";
 import toast, { Toaster } from "react-hot-toast";
+import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -39,6 +40,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     agent?.file_urls.map((file) => file) || []
   );
 
+  const nonImageFiles = existingFiles.filter(
+    (file) => !/\.(png|PNG|jpg|JPG|JPEG|jpeg)$/i.test(file.file_name)
+  );
+
   const [checkOption, setCheckOption] = useState<string>("file");
   const [charCount, setCharCount] = useState<number>(0);
   const [fileCount, setFileCount] = useState<number>(files.length);
@@ -53,6 +58,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
   const [agentNameError, setAgentNameError] = useState<boolean>(false);
+  const [totalImages, setTotalImage] = useState<number>(0);
 
   const handleUpdateAgent = async () => {
     if (agentName) {
@@ -191,7 +197,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                       select/highlight the text.
                     </p>
                   </div>
-                  {existingFiles.length > 0 && (
+                  {nonImageFiles.length > 0 && (
                     <div>
                       <div className="flex justify-center items-center gap-2">
                         <div className="border-b w-[40%]"></div>
@@ -200,7 +206,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                         </div>
                         <div className="border-b w-[40%]"></div>
                       </div>
-                      {existingFiles.map((item, index) => (
+                      {nonImageFiles.map((item, index) => (
                         <div
                           key={index}
                           className="mt-5 grid grid-cols-12 items-center"
@@ -281,6 +287,16 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                   />
                 </div>
               )}
+              {checkOption === "image-train" && (
+                <div className="">
+                  <p className="font-semibold text-2xl ">Train With Image</p>
+                  <ImageTraining
+                    agentId={agentId}
+                    setTotalImage={setTotalImage}
+                    agent={agent}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className="md:col-span-3 col-span-12">
@@ -294,6 +310,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               existingFiles={existingFiles}
               textChar={textChar}
               checkOption={checkOption}
+              totalImages={totalImages}
             />
           </div>
         </div>
