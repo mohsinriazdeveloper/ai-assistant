@@ -86,6 +86,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         // router.push("/dashboard/new-chat");
       } catch (error: any) {
         setLoading(false);
+        if (error.status === 400) {
+          toast.error("File type not supported");
+          return;
+        }
         console.error("Failed to create agent: ", error);
         const errorMessage = error.data.message;
         toast.error(errorMessage);

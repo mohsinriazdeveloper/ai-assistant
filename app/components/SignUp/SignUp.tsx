@@ -30,11 +30,15 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const [showSignUpPassword, setShowSignUpPassword] = useState<boolean>(false);
   const [showSignUpConfirmPassword, setShowSignUpConfirmPassword] =
     useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<string>("");
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean>(false);
   const [usernameError, setUsernameError] = useState<string>("");
   const [usernameAlreadyExists, setUsernameAlreadyExists] =
     useState<boolean>(false);
   const [emailAlreadyExists, setEmailAlreadyExists] = useState<boolean>(false);
+  const [emailErrors, setEmailErrors] = useState<string>("");
+  const [orgError, setOrgError] = useState<string>("");
+
   const router = useRouter();
   const [UserSignUp] = useUserSignUpMutation();
   const [strength, setStrength] = useState("");
@@ -60,6 +64,18 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    if (!SignUpOrganizationName) {
+      setOrgError("Organization Name is required");
+    }
+    if (!SignUpEmail) {
+      setEmailErrors("Email is required");
+    }
+    if (!SignUpName) {
+      setUsernameError("Name is required, Enter Name");
+    }
+    if (!SignUpPassword) {
+      setPasswordError("Please enter password");
+    }
     if (SignUpPassword !== SignUpConfirmPassword) {
       setIsPasswordMatch(true);
       setLoading(false);
@@ -82,7 +98,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
       setLoading(false);
       console.error("Failed to sign-up:", err);
       if (err.status === 400) {
-        setUsernameAlreadyExists(true);
+        setEmailErrors;
       } else if (err.originalStatus === 500) {
         setEmailAlreadyExists(true);
       } else {
@@ -94,19 +110,32 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setUsernameAlreadyExists(false);
-    if (/\s/.test(value)) {
-      setUsernameError(
-        "username may contain only letters, numbers, and @/./+/-/_ characters."
-      );
+    // if (/\s/.test(value)) {
+    if (!/^[A-Za-z ]{3,}$/.test(value)) {
+      setUsernameError("Please enter at least 3 characters.");
     } else {
       setUsernameError("");
     }
     setSignUpName(value);
   };
 
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmailAlreadyExists(false);
+    // Regular expression for validating an email address
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(value)) {
+      setEmailErrors("Please enter a valid email address.");
+    } else {
+      setEmailErrors("");
+    }
+    setSignUpEmail(value);
+  };
+
   return (
     <div className="md:container md:mx-auto mx-5 py-12">
-      <PreviousPage />
+      {/* <PreviousPage /> */}
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>
@@ -124,68 +153,78 @@ const SignUp: FC<SignUpProps> = ({}) => {
           </p>
         </div>
         <div>
-          <form onSubmit={handleSignUp} className="text-sm font-medium">
+          <form onSubmit={handleSignUp} className="text-sm ">
             <div className="mb-4">
               <div>
-                <p>Organization Name</p>
+                <p className="font-medium">Organization Name</p>
               </div>
               <label htmlFor="">
                 <input
                   type="text"
                   placeholder="Organization Name"
                   value={SignUpOrganizationName}
-                  onChange={(e) => setSignUpOrganizationName(e.target.value)}
+                  onChange={(e) => {
+                    setSignUpOrganizationName(e.target.value);
+                    setOrgError("");
+                  }}
                   className="border rounded-md px-3 py-2 focus:outline-none mt-2 w-full"
                 />
               </label>
+              {orgError && (
+                <div className="text-xs text-[#ef4444]">{orgError}</div>
+              )}
             </div>
             <div className="mb-4">
               <div>
-                <p>Username</p>
+                <p className="font-medium">Name</p>
               </div>
               <label htmlFor="">
                 <input
                   type="text"
-                  placeholder="Username"
+                  placeholder="Name"
                   value={SignUpName}
                   onChange={handleUsernameChange}
                   className="border rounded-md px-3 py-2 focus:outline-none mt-2 w-full"
                 />
               </label>
               {usernameAlreadyExists && (
-                <div className="text-xs text-red-700">
+                <div className="text-xs text-[#ef4444]">
                   A user with this username already exists
                 </div>
               )}
               {usernameError && (
-                <div className="text-xs text-red-700">{usernameError}</div>
+                <div className="text-xs text-[#ef4444]">{usernameError}</div>
               )}
             </div>
             <div className="mb-4">
               <div>
-                <p>Email</p>
+                <p className="font-medium">Email</p>
               </div>
               <label htmlFor="">
                 <input
                   type="email"
                   placeholder="name@email.com"
                   value={SignUpEmail}
-                  onChange={(e) => {
-                    setSignUpEmail(e.target.value);
-                    setEmailAlreadyExists(false);
-                  }}
+                  // onChange={(e) => {
+                  //   handleEmailChange;
+                  //   // setSignUpEmail(e.target.value);
+                  // }}
+                  onChange={handleEmailChange}
                   className="border rounded-md px-3 py-2 focus:outline-none mt-2 w-full"
                 />
               </label>
+              {emailErrors && (
+                <div className="text-xs text-[#ef4444]">{emailErrors}</div>
+              )}
               {emailAlreadyExists && (
-                <div className="text-xs text-red-700">
+                <div className="text-xs text-[#ef4444]">
                   A user with this email already exists
                 </div>
               )}
             </div>
             <div className="mb-4">
               <div>
-                <p>Password</p>
+                <p className="font-medium">Password</p>
               </div>
               <div className="border rounded-md px-3 py-2 mt-2 flex items-center gap-1">
                 <div className="w-full">
@@ -197,6 +236,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
                       onChange={(e) => {
                         setSignUpPassword(e.target.value);
                         checkPasswordStrength(e.target.value);
+                        setPasswordError("");
                       }}
                       className="focus:outline-none w-full"
                     />
@@ -220,6 +260,9 @@ const SignUp: FC<SignUpProps> = ({}) => {
                   )}
                 </div>
               </div>
+              {passwordError && (
+                <div className="text-xs text-[#ef4444]">{passwordError}</div>
+              )}
               {SignUpPassword && (
                 <div
                   className={`${strength === "Weak" && "text-red-600"} ${
@@ -232,7 +275,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
             </div>
             <div className="mb-4">
               <div>
-                <p>Confirm Password</p>
+                <p className="font-medium">Confirm Password</p>
               </div>
               <div className="border rounded-md px-3 py-2 mt-2 flex items-center gap-1">
                 <div className="w-full">
@@ -267,7 +310,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
                 </div>
               </div>
               {isPasswordMatch && (
-                <div className="text-xs text-red-700">Password not match</div>
+                <div className="text-xs text-[#ef4444]">Password not match</div>
               )}
             </div>
             <div>
@@ -282,7 +325,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
             <div className="mt-4">
               <p className="text-center text-base">
                 Already have an account?{" "}
-                <span className="font-bold cursor-pointer">
+                <span className="font-bold cursor-pointer hover:text-[#9333ea]">
                   <Link href="/auth/signin">Sign In</Link>
                 </span>
               </p>

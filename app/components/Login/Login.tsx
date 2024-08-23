@@ -158,7 +158,7 @@ const Login: FC<LoginProps> = ({}) => {
             <div className="mt-4">
               <p className="text-center text-base">
                 Don&apos;t have an account?{" "}
-                <span className="font-bold cursor-pointer">
+                <span className="font-bold cursor-pointer hover:text-[#9333ea]">
                   <Link href="/signup">Sign Up</Link>
                 </span>
               </p>
