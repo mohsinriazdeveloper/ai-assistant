@@ -2,6 +2,7 @@ import { Dispatch, FC, SetStateAction, useCallback, useMemo } from "react";
 import PlusIcon from "@/app/assets/icons/plus.png";
 import Image from "next/image";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import toast from "react-hot-toast";
 
 interface QAInputProps {
   qaList: { question: string; answer: string }[];
@@ -13,18 +14,26 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
   const maxCharLimit = 100000;
 
   const handleAddQA = useCallback(() => {
+    if (qaList.length > 0) {
+      const lastQA = qaList[qaList.length - 1];
+      if (lastQA.question.trim() === "" || lastQA.answer.trim() === "") {
+        toast.error("Please fill the fields before adding a new one.");
+        return;
+      }
+    }
+
     setQAList((prevQAList) => {
       const totalChars = prevQAList.reduce(
         (acc, qa) => acc + qa.question.length + qa.answer.length,
         0
       );
       if (totalChars >= maxCharLimit) {
-        alert("You have reached the maximum character limit.");
+        toast.error("You have reached the maximum character limit.");
         return prevQAList;
       }
       return [...prevQAList, { question: "", answer: "" }];
     });
-  }, [setQAList]);
+  }, [qaList, setQAList]);
 
   const handleQAChange = useCallback(
     (
@@ -40,7 +49,7 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
           0
         );
         if (totalChars > maxCharLimit) {
-          alert("You have reached the maximum character limit.");
+          toast.error("You have reached the maximum character limit.");
           return prevQAList;
         }
         return updatedQAList;

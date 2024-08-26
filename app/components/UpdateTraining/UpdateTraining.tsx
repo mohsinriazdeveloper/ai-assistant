@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState, useCallback, useEffect } from "react";
+import { FC, useState, useCallback } from "react";
 import { content } from "./content";
 import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
@@ -17,6 +17,8 @@ import RightBar from "../RightBar/RightBar";
 import { FileUrl } from "../ReduxToolKit/types/agents.d";
 import toast, { Toaster } from "react-hot-toast";
 import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
+import pdfToText from "react-pdftotext";
+import mammoth from "mammoth";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -28,7 +30,7 @@ interface QA {
 }
 
 const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
-  const { data: allAgents, isLoading } = useGetAllAgentsQuery();
+  const { data: allAgents } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
   );
@@ -51,13 +53,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const [text, setText] = useState<string | undefined>(agent?.text || "");
   const textChar = text?.length || 0;
   const [agentName, setAgentName] = useState<string>(agent?.name || "");
-  const [agentID, setAgentID] = useState<any>(agent?.id || "");
+  const [agentID] = useState<any>(agent?.id || "");
   //@ts-ignore
   const [qaList, setQAList] = useState<QA[]>(JSON.parse(agent?.qa) || []);
   const [updateAgent] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const [agentNameError, setAgentNameError] = useState<boolean>(false);
+  const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
 
   const handleUpdateAgent = async () => {
@@ -93,35 +95,89 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         console.error("Failed to create agent: ", error);
         const errorMessage = error.data.message;
         toast.error(errorMessage);
-        // alert(errorMessage);
       }
     } else {
-      setAgentNameError(true);
+      setAgentNameError("Agent Name is required");
     }
   };
 
   const handleDeleteFile = useCallback(
-    async (index: number, id: number, isExisting: boolean) => {
+    (index: number, isExisting: boolean = false) => {
       if (isExisting) {
-        try {
-          const fileToDelete = existingFiles[index];
-          console.log(index);
-          await delExistingFile(id).unwrap();
-          setExistingFiles((prevFiles) =>
-            prevFiles.filter((_, i) => i !== index)
-          );
-          toast.success("File deleted");
-        } catch (error) {
-          console.error("Failed to delete file: ", error);
-          toast.error("Unable to delete File");
-        }
+        // Handle deletion of existing files
+        const fileToRemove = existingFiles[index];
+
+        delExistingFile(fileToRemove.id)
+          .then(() => {
+            setExistingFiles((prevFiles) =>
+              prevFiles.filter((_, i) => i !== index)
+            );
+            toast.success("File deleted successfully from the server.");
+          })
+          .catch((error) => {
+            console.error("Failed to delete file from server:", error);
+            toast.error("Failed to delete file from the server.");
+          });
       } else {
-        setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-        updateCharCount(files.filter((_, i) => i !== index));
+        // Handle deletion of new files
+        const fileToRemove = files[index];
+
+        const updateStateAfterDeletion = (charCountToRemove: number) => {
+          setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+          setCharCount((prevCharCount) => prevCharCount - charCountToRemove);
+          setFileCount((prevCount) => prevCount - 1);
+        };
+
+        if (fileToRemove.type === "application/pdf") {
+          pdfToText(fileToRemove)
+            .then((text) => {
+              updateStateAfterDeletion(text.length);
+            })
+            .catch((error) =>
+              console.error("Failed to extract text from PDF", error)
+            );
+        } else if (fileToRemove.type === "text/plain") {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const content = e.target?.result as string;
+            updateStateAfterDeletion(content.length);
+          };
+          reader.readAsText(fileToRemove);
+        } else if (
+          fileToRemove.type === "application/msword" ||
+          fileToRemove.type ===
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const arrayBuffer = e.target?.result as ArrayBuffer;
+            mammoth
+              .extractRawText({ arrayBuffer })
+              .then((result) => {
+                updateStateAfterDeletion(result.value.length);
+              })
+              .catch((error) =>
+                console.error(
+                  "Failed to extract text from Word document",
+                  error
+                )
+              );
+          };
+          reader.readAsArrayBuffer(fileToRemove);
+        } else {
+          updateStateAfterDeletion(0);
+        }
       }
-      setFileCount((prevCount) => prevCount - 1);
     },
-    [existingFiles, files, setFiles, setFileCount, delExistingFile]
+    [
+      existingFiles,
+      files,
+      delExistingFile,
+      setFiles,
+      setExistingFiles,
+      setCharCount,
+      setFileCount,
+    ]
   );
 
   const updateCharCount = (files: File[]) => {
@@ -141,6 +197,16 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     Promise.all(fileReaders).then(() => {
       setCharCount(totalCharCount);
     });
+  };
+
+  const handleAgentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    if (newName.length <= 100) {
+      setAgentName(newName);
+      setAgentNameError("");
+    } else {
+      setAgentNameError("Name cannot exceed 100 characters.");
+    }
   };
 
   return (
@@ -164,15 +230,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                 type="text"
                 className="w-full focus:outline-none border rounded text-sm py-2 px-3"
                 value={agentName}
-                onChange={(e) => {
-                  setAgentName(e.target.value);
-                  setAgentNameError(false);
-                }}
+                onChange={handleAgentNameChange}
               />
               {agentNameError && (
-                <p className="text-xs text-red-500 italic">
-                  Agent name is required
-                </p>
+                <p className="text-xs text-red-500 italic">{agentNameError}</p>
               )}
             </div>
             <LeftBar
@@ -223,9 +284,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                               src={DeleteIcon}
                               alt="Delete"
                               className="w-5 cursor-pointer"
-                              onClick={() =>
-                                handleDeleteFile(index, item.id, true)
-                              }
+                              onClick={() => handleDeleteFile(index, true)}
                             />
                           </div>
                         </div>
@@ -254,9 +313,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                               src={DeleteIcon}
                               alt="Delete"
                               className="w-5 cursor-pointer"
-                              onClick={() =>
-                                handleDeleteFile(index, index, false)
-                              }
+                              onClick={() => handleDeleteFile(index, false)}
                             />
                           </div>
                         </div>

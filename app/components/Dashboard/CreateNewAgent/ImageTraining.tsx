@@ -108,6 +108,11 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     [delExistingFile]
   );
 
+  const handleDeleteNewImage = (index: number) => {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    toast.success("Image removed");
+  };
+
   return (
     <div className="w-full flex flex-col gap-10 mt-10">
       <Toaster position="top-right" reverseOrder={false} />
@@ -137,12 +142,20 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         {images.map((image, index) => (
           <div
             key={index}
-            className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden"
+            className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden relative group"
           >
+            <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
+
             <img
               src={URL.createObjectURL(image)}
               alt={`Uploaded ${index}`}
               className="object-cover w-full h-full"
+            />
+            <Image
+              src={DeleteIcon}
+              alt="Delete"
+              className="w-5 cursor-pointer absolute top-[40%] right-[45%] opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => handleDeleteNewImage(index)}
             />
           </div>
         ))}
@@ -165,7 +178,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             {existingImgs.map((image, index) => (
               <div
                 key={index}
-                className=" grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat flex justify-center items-center relative group"
+                className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat flex justify-center items-center relative group"
                 style={{ backgroundImage: `url(${image.file_url})` }}
               >
                 <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>

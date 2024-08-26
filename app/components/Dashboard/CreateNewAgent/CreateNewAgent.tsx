@@ -1,4 +1,5 @@
 "use client";
+
 import { FC, useState, useCallback } from "react";
 import LeftBar from "../../LeftBar/LeftBar";
 import FileInput from "./FileInput";
@@ -12,7 +13,8 @@ import Image from "next/image";
 import PreviousPage from "../../PreviousPage/PreviousPage";
 import toast, { Toaster } from "react-hot-toast";
 import ImageTraining from "./ImageTraining";
-
+import pdfToText from "react-pdftotext";
+import mammoth from "mammoth";
 type FileUrl = {
   file_url: string;
 };
@@ -40,7 +42,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [creatingAgent] = useCreateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
-  const [agentNameError, setAgentNameError] = useState<boolean>(false);
+  const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
 
@@ -65,7 +67,6 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to create agent: ", error);
-        console.log("Failed to create agent: ", error);
         if (error.status === 400) {
           toast.error(error.data);
         } else {
@@ -74,45 +75,79 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         }
       }
     } else {
-      setAgentNameError(true);
+      setAgentNameError("Agent Name is required");
     }
   };
 
   const handleDeleteFile = useCallback(
     (index: number) => {
-      setFiles((prevFiles) => {
-        const updatedFiles = prevFiles.filter((_, i) => i !== index);
-        updateCharCount(updatedFiles);
-        return updatedFiles;
-      });
-      setFileCount((prevCount) => prevCount - 1);
-    },
-    [setFiles, setCharCount, setFileCount]
-  );
+      const fileToRemove = files[index];
 
-  const updateCharCount = (files: File[]) => {
-    let totalCharCount = 0;
-    const fileReaders = files.map((file) => {
-      return new Promise<void>((resolve) => {
+      const updateStateAfterDeletion = (charCountToRemove: number) => {
+        // Remove the file from the list and update the character count
+        setFiles((prevFiles) => {
+          const updatedFiles = prevFiles.filter((_, i) => i !== index);
+          return updatedFiles;
+        });
+        setCharCount((prevCharCount) => prevCharCount - charCountToRemove);
+        setFileCount((prevCount) => prevCount - 1);
+      };
+
+      if (fileToRemove.type === "application/pdf") {
+        pdfToText(fileToRemove)
+          .then((text) => {
+            updateStateAfterDeletion(text.length);
+          })
+          .catch((error) =>
+            console.error("Failed to extract text from PDF", error)
+          );
+      } else if (fileToRemove.type === "text/plain") {
         const reader = new FileReader();
         reader.onload = (e) => {
           const content = e.target?.result as string;
-          totalCharCount += content.length;
-          resolve();
+          updateStateAfterDeletion(content.length);
         };
-        reader.readAsText(file);
-      });
-    });
-
-    Promise.all(fileReaders).then(() => {
-      setCharCount(totalCharCount);
-    });
-  };
+        reader.readAsText(fileToRemove);
+      } else if (
+        fileToRemove.type === "application/msword" ||
+        fileToRemove.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      ) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const arrayBuffer = e.target?.result as ArrayBuffer;
+          mammoth
+            .extractRawText({ arrayBuffer })
+            .then((result) => {
+              updateStateAfterDeletion(result.value.length);
+            })
+            .catch((error) =>
+              console.error("Failed to extract text from Word document", error)
+            );
+        };
+        reader.readAsArrayBuffer(fileToRemove);
+      } else {
+        // If the file type is not supported, just remove it without adjusting the character count
+        updateStateAfterDeletion(0);
+      }
+    },
+    [files, setFiles, setCharCount, setFileCount]
+  );
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     if (newText.length <= 100000) {
       setText(newText);
+    }
+  };
+
+  const handleAgentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    if (newName.length <= 100) {
+      setAgentName(newName);
+      setAgentNameError("");
+    } else {
+      setAgentNameError("Name cannot exceed 100 characters.");
     }
   };
 
@@ -146,15 +181,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                 type="text"
                 className="w-full focus:outline-none border rounded text-sm py-2 px-3 "
                 value={agentName}
-                onChange={(e) => {
-                  setAgentName(e.target.value);
-                  setAgentNameError(false);
-                }}
+                onChange={handleAgentNameChange}
               />
               {agentNameError && (
-                <p className="text-xs text-red-500 italic ">
-                  agent name is required
-                </p>
+                <p className="text-xs text-red-500 italic ">{agentNameError}</p>
               )}
             </div>
             <LeftBar

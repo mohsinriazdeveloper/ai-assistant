@@ -10,7 +10,7 @@ interface FileInputProps {
   setFiles: Dispatch<SetStateAction<File[]>>;
   setCharCount: Dispatch<SetStateAction<number>>;
   setFileCount: Dispatch<SetStateAction<number>>;
-  handleDeleteFile: (index: number, id: number, isExisting: boolean) => void;
+  handleDeleteFile: (index: number) => void;
 }
 
 const FileInput: FC<FileInputProps> = ({
@@ -21,22 +21,48 @@ const FileInput: FC<FileInputProps> = ({
   handleDeleteFile,
 }) => {
   const maxFiles = 10;
-  const maxSizeMB = 1; // Maximum file size in MB
+  const maxSizeMB = 5; // Maximum file size in MB
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+
+  const allowedFileTypes = [
+    "application/pdf",
+    "text/plain",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  ];
+
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 2000); // Clear the error message after 2 seconds
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
+
+      // Check file types
+      const invalidFiles = selectedFiles.filter(
+        (file) => !allowedFileTypes.includes(file.type)
+      );
+      if (invalidFiles.length > 0) {
+        showError(
+          "Invalid file type. Only PDF, DOC, DOCX, and TXT files are allowed."
+        );
+        return;
+      }
+
       const totalSizeMB = selectedFiles.reduce(
         (acc, file) => acc + file.size / (1024 * 1024),
         0
       );
 
       if (totalSizeMB > maxSizeMB) {
-        setErrorMessage("File size should not be larger than 5MB");
+        showError("File size should not be larger than 5MB");
         return;
       }
 
@@ -121,13 +147,25 @@ const FileInput: FC<FileInputProps> = ({
     setIsDragging(false);
 
     const selectedFiles = Array.from(event.dataTransfer.files);
+
+    // Check file types
+    const invalidFiles = selectedFiles.filter(
+      (file) => !allowedFileTypes.includes(file.type)
+    );
+    if (invalidFiles.length > 0) {
+      showError(
+        "Invalid file type. Only PDF, DOC, DOCX, and TXT files are allowed."
+      );
+      return;
+    }
+
     const totalSizeMB = selectedFiles.reduce(
       (acc, file) => acc + file.size / (1024 * 1024),
       0
     );
 
     if (totalSizeMB > maxSizeMB) {
-      setErrorMessage("File size should not be larger than 5MB");
+      showError("File size should not be larger than 5MB");
       return;
     }
 

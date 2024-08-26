@@ -135,7 +135,6 @@ const SignUp: FC<SignUpProps> = ({}) => {
 
   return (
     <div className="md:container md:mx-auto mx-5 py-12">
-      {/* <PreviousPage /> */}
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>

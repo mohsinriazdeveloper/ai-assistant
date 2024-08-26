@@ -11,7 +11,6 @@ import LoaderImg from "@/app/assets/icons/loading.png";
 import { AgentChatType } from "../ReduxToolKit/types/agents";
 import toast, { Toaster } from "react-hot-toast";
 import DeleteChatModal from "../Dialogues/DeleteChatModal";
-import TypingAnimation from "../MagicUi/TypingAnimation";
 
 interface AgentChatProps {
   agentId: number;
@@ -52,7 +51,8 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (textInput !== "") {
+    if (textInput !== "" && !loading) {
+      // Prevent sending when loading is true
       setLoading(true);
       const agent_id = Number(agentId);
       if (textInput.trim() === "") return;
@@ -75,7 +75,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
       } catch (error) {
         console.error("Failed to send message: ", error);
       } finally {
-        setLoading(false);
+        setLoading(false); // Enable sending new messages after the response is received
       }
     }
   };
@@ -85,7 +85,11 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   };
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   if (error) {
@@ -111,37 +115,18 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
             ref={chatContainerRef}
           >
             <div className="flex flex-col gap-2 h-[370px]">
-              {chat.map((msg, index) => {
-                const isLastMessage = index === chat.length - 1;
-
-                return (
-                  <div
-                    key={index}
-                    className={`w-fit py-4 px-[14px] rounded-lg ${
-                      msg.role === "agent"
-                        ? "bg-gray-200"
-                        : "bg-[#3B81F6] text-white self-end"
-                    }`}
-                  >
-                    {msg.role === "agent" ? (
-                      <div className="whitespace-pre-wrap">
-                        {isLastMessage ? (
-                          <TypingAnimation
-                            className="text-base font-normal text-black"
-                            text={msg.message}
-                          />
-                        ) : (
-                          <p className="text-base font-normal text-black">
-                            {msg.message}
-                          </p>
-                        )}
-                      </div>
-                    ) : (
-                      <p className="whitespace-pre-wrap">{msg.message}</p>
-                    )}
-                  </div>
-                );
-              })}
+              {chat.map((msg, index) => (
+                <div
+                  key={index}
+                  className={`w-fit py-4 px-[14px] rounded-lg ${
+                    msg.role === "agent"
+                      ? "bg-gray-200"
+                      : "bg-[#3B81F6] text-white self-end"
+                  }`}
+                >
+                  <p className="whitespace-pre-wrap">{msg.message}</p>
+                </div>
+              ))}
               {loading && (
                 <div className="w-fit py-4 px-[14px] rounded-lg bg-gray-200">
                   <div className="flex justify-center">
@@ -164,14 +149,17 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               className="w-full focus:outline-none text-gray-900"
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
+              disabled={loading} // Disable input when loading is true
             />
 
             <button
               type="submit"
               className={`bg-transparent ${
-                textInput === "" ? "cursor-not-allowed" : "cursor-pointer"
+                textInput === "" || loading
+                  ? "cursor-not-allowed"
+                  : "cursor-pointer"
               }`}
-              disabled={textInput === ""}
+              disabled={textInput === "" || loading} // Disable button when loading is true
             >
               <IoMdSend color="#71717A" width={90} />
             </button>

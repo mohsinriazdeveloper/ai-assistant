@@ -32,6 +32,7 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
 
   const [fileData, setFileData] = useState<FileItem[]>([]);
   const [fileChar, setFileChar] = useState<number>(0);
+  const [isCopied, setIsCopied] = useState<boolean>(false); // State to manage the tooltip
 
   useEffect(() => {
     if (agent?.file_urls) {
@@ -72,6 +73,15 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
     }
   }, [qaData]);
 
+  const handleCopy = () => {
+    //@ts-ignore
+    navigator.clipboard.writeText(agent.ran_id);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000); // Tooltip will disappear after 2 seconds
+  };
+
   if (isLoading || !agent) {
     return (
       <div className="w-full mt-20 flex justify-center items-center">
@@ -91,7 +101,7 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
             <div className="flex justify-between items-center mb-2">
               <p className="text-gray-300 text-sm font-semibold">Agent ID</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 relative">
               <p className="text-gray-900 text-sm font-semibold">
                 {agent.ran_id}
               </p>
@@ -99,11 +109,13 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
                 src={CopyIcon}
                 alt=""
                 className="w-4 cursor-pointer"
-                onClick={() => {
-                  //@ts-ignore
-                  navigator.clipboard.writeText(agent.ran_id);
-                }}
+                onClick={handleCopy}
               />
+              {isCopied && (
+                <span className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 mt-2">
+                  Copied!
+                </span>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 text-sm font-semibold">
@@ -136,7 +148,8 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
           <div className="text-sm font-semibold">
             <p className="text-gray-300">Temperature</p>
             <div className="max-w-[184px]">
-              <RangeBar temperature={agent.temperature} />
+              <RangeBar temperature={agent.temperature} readOnly />{" "}
+              {/* Pass the readOnly prop */}
             </div>
           </div>
           <div className="text-sm font-semibold">

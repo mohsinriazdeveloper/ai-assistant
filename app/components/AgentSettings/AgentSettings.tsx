@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
@@ -35,14 +35,28 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   );
   //@ts-ignore
   const [agentName, setAgentName] = useState<string>("" || agent?.name);
-
+  console.log("agent", agent?.image_url);
   const [agentID] = useState<any>(agent?.id);
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
+  const [agentNameError, setAgentNameError] = useState<string>("");
+  useEffect(() => {
+    if (agent?.image_url) {
+      setAddImage(agent.image_url);
+      setPreview(agent.image_url);
+    }
+  }, [agent?.image_url]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
+    const emptyOrSpaces = /^\s*$/;
+
+    if (emptyOrSpaces.test(agentName)) {
+      setAgentNameError("The agent name should not be empty");
+      setLoading(false);
+      return;
+    }
     const formData = new FormData();
     formData.append("id", agentID);
     formData.append("name", agentName);
@@ -71,6 +85,17 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
       setPreview(URL.createObjectURL(selectedFile));
     }
   };
+
+  const handleAgentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newName = e.target.value;
+    if (newName.length <= 100) {
+      setAgentName(newName);
+      setAgentNameError("");
+    } else {
+      setAgentNameError("Name cannot exceed 100 characters.");
+    }
+  };
+
   return (
     <div>
       <Toaster position="top-right" reverseOrder={false} />
@@ -130,12 +155,15 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
                       </p>
                       <input
                         value={agentName}
-                        onChange={(e) => setAgentName(e.target.value)}
+                        onChange={handleAgentNameChange}
                         placeholder="Your Agent Name"
                         type="text"
                         className="focus:outline-none w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md"
                       />
                     </div>
+                    {agentNameError && (
+                      <p className="text-sm text-red-500">{agentNameError}</p>
+                    )}
                     <div className="flex justify-end mt-5">
                       <button
                         type="submit"

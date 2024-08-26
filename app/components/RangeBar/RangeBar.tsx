@@ -6,12 +6,14 @@ interface RangeBarProps {
   tempBoolean?: boolean;
   temperature?: number;
   setTemp?: (value: number) => void;
+  readOnly?: boolean; // New prop to control read-only behavior
 }
 
 const RangeBar: FC<RangeBarProps> = ({
   temperature = 0,
   setTemp,
   tempBoolean,
+  readOnly = false, // Default value is false
 }) => {
   const [temp, setTempState] = useState<number>(temperature);
 
@@ -24,7 +26,7 @@ const RangeBar: FC<RangeBarProps> = ({
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(e.target.value);
     setTempState(newValue);
-    if (setTemp) {
+    if (setTemp && !readOnly) {
       setTemp(newValue);
     }
   };
@@ -40,6 +42,7 @@ const RangeBar: FC<RangeBarProps> = ({
         step="0.1"
         value={temp}
         onChange={handleChange}
+        disabled={readOnly} // Disable the range input when readOnly is true
       />
     </div>
   );

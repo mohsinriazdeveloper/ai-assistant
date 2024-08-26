@@ -65,9 +65,8 @@ const Login: FC<LoginProps> = ({}) => {
   };
 
   return (
-    <div className="md:container md:mx-auto mx-5 py-12">
+    <div className="md:container md:mx-auto mx-5 py-12 h-screen flex flex-col justify-center">
       <Toaster position="top-right" reverseOrder={false} />
-      <PreviousPage />
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>

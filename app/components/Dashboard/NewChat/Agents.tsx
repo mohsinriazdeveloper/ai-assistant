@@ -3,6 +3,7 @@ import { FC, useEffect } from "react";
 import AiImg from "@/app/assets/Images/aiImg.webp";
 import Link from "next/link";
 import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
+import Loader from "../../Loader/Loader";
 
 interface AgentsProps {}
 
@@ -28,26 +29,44 @@ const Agents: FC<AgentsProps> = () => {
           </button>
         </Link>
       </div>
-      <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-10 gap-5">
-        {sortedAgents?.map((agent, index) => (
-          <div key={index} className="col-span-1 cursor-pointer">
-            <Link href={`/dashboard/agent/${agent.id}`}>
-              {agent.image_url ? (
-                <div
-                  className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
-                  style={{ backgroundImage: `url(${agent.image_url})` }}
-                ></div>
-              ) : (
-                <div
-                  className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
-                  style={{ backgroundImage: `url(${AiImg.src})` }}
-                ></div>
-              )}
-              <p className="text-sm font-medium text-center">{agent?.name}</p>
-            </Link>
-          </div>
-        ))}
-      </div>
+      {sortedAgents ? (
+        <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-10 gap-5">
+          {sortedAgents?.map((agent, index) => (
+            <div key={index} className="col-span-1 cursor-pointer">
+              <Link href={`/dashboard/agent/${agent.id}`}>
+                {agent.image_url ? (
+                  <div
+                    className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
+                    style={{ backgroundImage: `url(${agent.image_url})` }}
+                  ></div>
+                ) : (
+                  <div
+                    className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"
+                    style={{ backgroundImage: `url(${AiImg.src})` }}
+                  ></div>
+                )}
+                {agent?.name && (
+                  <>
+                    {agent?.name.length > 15 ? (
+                      <p className="text-sm font-medium text-center">
+                        {agent.name.slice(0, 15) + " ..."}
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-center">
+                        {agent?.name}
+                      </p>
+                    )}
+                  </>
+                )}
+              </Link>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="w-full flex justify-center items-center mt-40">
+          <Loader height="14" />
+        </div>
+      )}
     </div>
   );
 };

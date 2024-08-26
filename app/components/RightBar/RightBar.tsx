@@ -72,6 +72,7 @@ const RightBar: FC<RightBarProps> = ({
         <button
           className="py-2 px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm w-full"
           onClick={agentCreateFunc}
+          disabled={loading}
         >
           {loading ? (
             <Loader />
