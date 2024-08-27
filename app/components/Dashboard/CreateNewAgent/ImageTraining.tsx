@@ -44,9 +44,31 @@ const ImageTraining: FC<ImageTrainingProps> = ({
 
   setTotalImage(images.length);
 
+  // const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files[0]) {
+  //     const file = event.target.files[0];
+
+  //     if (currentPage === "/dashboard/create-new-agent") {
+  //       //@ts-ignore
+  //       setImagesFile((prevImages) => [...prevImages, file]);
+  //     }
+  //     // Check if the file is already added
+  //     if (images.some((img) => img.name === file.name)) {
+  //       toast.error("Image Already Added");
+  //     } else {
+  //       setImages((prevImages) => [...prevImages, file]);
+  //     }
+  //   }
+  // };
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
+
+      // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
+      if (file.size > 1048576) {
+        toast.error("Image size should not exceed 1 MB");
+        return;
+      }
 
       if (currentPage === "/dashboard/create-new-agent") {
         //@ts-ignore
@@ -60,7 +82,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       }
     }
   };
-
   const submitImages = async () => {
     if (images.length === 0) {
       toast.error("First add Image");

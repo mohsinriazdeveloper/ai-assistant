@@ -46,10 +46,9 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
       setPreview(agent.image_url);
     }
   }, [agent?.image_url]);
-
   const handleUpdate = async (e: React.FormEvent) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
     const emptyOrSpaces = /^\s*$/;
 
     if (emptyOrSpaces.test(agentName)) {
@@ -57,12 +56,16 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
       setLoading(false);
       return;
     }
+
     const formData = new FormData();
     formData.append("id", agentID);
     formData.append("name", agentName);
-    if (addImage) {
+
+    // Only append the image to the formData if a new image has been selected
+    if (addImage && typeof addImage !== "string") {
       formData.append("image", addImage);
     }
+
     try {
       const res = await updating(formData);
       //@ts-ignore
@@ -78,6 +81,38 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
       console.error("Failed to update", error);
     }
   };
+  // const handleUpdate = async (e: React.FormEvent) => {
+  //   setLoading(true);
+  //   e.preventDefault();
+  //   const emptyOrSpaces = /^\s*$/;
+
+  //   if (emptyOrSpaces.test(agentName)) {
+  //     setAgentNameError("The agent name should not be empty");
+  //     setLoading(false);
+  //     return;
+  //   }
+  //   const formData = new FormData();
+  //   formData.append("id", agentID);
+  //   formData.append("name", agentName);
+  //   if (addImage) {
+  //     formData.append("image", addImage);
+  //   }
+  //   console.log("agentName", agentName);
+  //   try {
+  //     const res = await updating(formData);
+  //     //@ts-ignore
+  //     if (res.error?.status === "FETCH_ERROR") {
+  //       toast.error("Image size is too large");
+  //     } else {
+  //       toast.success("Successfully Updated");
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     toast.error("Failed to update");
+  //     console.error("Failed to update", error);
+  //   }
+  // };
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {

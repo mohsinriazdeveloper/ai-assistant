@@ -94,7 +94,17 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
   const totalChar = qaCharacters + agent.text?.length + fileChar;
   return (
     <div className="md:w-[63%] md:mx-auto mx-5 border border-gray-200 py-8 px-7 rounded-lg">
-      <p className="text-xl font-bold mb-9">{agent.name}</p>
+      <p className="text-xl font-bold mb-9">
+        {agent.name && (
+          <>
+            {agent.name?.length > 30 ? (
+              <>{agent.name.slice(0, 30) + " ..."}</>
+            ) : (
+              <>{agent.name}</>
+            )}
+          </>
+        )}
+      </p>
       <div className="grid grid-cols-12 gap-6">
         <div className="sm:col-span-5 col-span-12 flex flex-col gap-7">
           <div>
