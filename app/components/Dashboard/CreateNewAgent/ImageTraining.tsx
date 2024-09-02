@@ -15,7 +15,10 @@ import {
 import { AgentState } from "../../ReduxToolKit/types/agents";
 import Image from "next/image";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import ResizeIcon from "@/app/assets/icons/resize.png";
 import { usePathname } from "next/navigation";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 interface ImageTrainingProps {
   setTotalImage: Dispatch<SetStateAction<number>>;
@@ -41,25 +44,10 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       /\.(png|PNG|jpg|JPG|JPEG|jpeg)$/i.test(file.file_name)
     ) || []
   );
+  const [enlargedIndex, setEnlargedIndex] = useState<number | null>(null); // State to track which image is enlarged
 
   setTotalImage(images.length);
 
-  // const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files[0]) {
-  //     const file = event.target.files[0];
-
-  //     if (currentPage === "/dashboard/create-new-agent") {
-  //       //@ts-ignore
-  //       setImagesFile((prevImages) => [...prevImages, file]);
-  //     }
-  //     // Check if the file is already added
-  //     if (images.some((img) => img.name === file.name)) {
-  //       toast.error("Image Already Added");
-  //     } else {
-  //       setImages((prevImages) => [...prevImages, file]);
-  //     }
-  //   }
-  // };
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -70,10 +58,10 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         return;
       }
 
-      if (currentPage === "/dashboard/create-new-agent") {
-        //@ts-ignore
+      if (setImagesFile) {
         setImagesFile((prevImages) => [...prevImages, file]);
       }
+
       // Check if the file is already added
       if (images.some((img) => img.name === file.name)) {
         toast.error("Image Already Added");
@@ -82,6 +70,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       }
     }
   };
+
   const submitImages = async () => {
     if (images.length === 0) {
       toast.error("First add Image");
@@ -97,7 +86,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
 
     try {
       setLoading(true);
-      const res = await updateWithImg(fd).unwrap();
+      await updateWithImg(fd).unwrap();
 
       // Handle successful response
       toast.success("Images uploaded successfully");
@@ -134,6 +123,14 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     toast.success("Image removed");
   };
 
+  const handleResizeImage = (index: number) => {
+    setEnlargedIndex(index); // Set the enlarged index to the clicked image
+  };
+
+  const handleCloseEnlarged = () => {
+    setEnlargedIndex(null); // Reset the enlarged index to close the enlarged view
+  };
+
   return (
     <div className="w-full flex flex-col gap-10 mt-10">
       <Toaster position="top-right" reverseOrder={false} />
@@ -150,14 +147,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             />
           </div>
         </label>
-        {currentPage !== "/dashboard/create-new-agent" && (
-          <button
-            onClick={submitImages}
-            className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
-          >
-            {loading ? <Loader /> : <>Train with Image</>}
-          </button>
-        )}
       </div>
       <div className="grid grid-cols-4 gap-5">
         {images.map((image, index) => (
@@ -199,22 +188,52 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             {existingImgs.map((image, index) => (
               <div
                 key={index}
-                className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat flex justify-center items-center relative group"
+                className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat relative group"
                 style={{ backgroundImage: `url(${image.file_url})` }}
               >
                 <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
                 {imgLoader[index] ? (
-                  <Loader />
+                  <div className="w-full h-full flex justify-center items-center ">
+                    <Loader />
+                  </div>
                 ) : (
-                  <Image
-                    src={DeleteIcon}
-                    alt="Delete"
-                    className="w-5 cursor-pointer absolute opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => handleDeleteFile(index, image.id)}
-                  />
+                  <div className="w-full flex justify-between items-center relative z-50 p-3">
+                    <Image
+                      src={DeleteIcon}
+                      alt="Delete"
+                      className="w-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleDeleteFile(index, image.id)}
+                    />
+                    <Image
+                      src={ResizeIcon}
+                      alt="Resize"
+                      className="w-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleResizeImage(index)}
+                    />
+                  </div>
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {enlargedIndex !== null && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
+          <div className="relative">
+            <img
+              src={existingImgs[enlargedIndex].file_url}
+              alt={`Enlarged ${enlargedIndex}`}
+              className="max-w-full max-h-full"
+            />
+            <div className="bg-gray-700 rounded-full w-5 h-5 flex justify-center items-center absolute top-2 right-2">
+              <button
+                onClick={handleCloseEnlarged}
+                className="text-white text-xl mb-1"
+              >
+                &times;
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -61,6 +61,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const router = useRouter();
   const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
+  const [imagesFile, setImagesFile] = useState<File[]>([]);
 
   const handleUpdateAgent = async () => {
     if (agentName) {
@@ -79,6 +80,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         }
       } else if (checkOption === "qa") {
         formData.append("qa", JSON.stringify(qaList));
+      } else if (checkOption === "image-train") {
+        if (imagesFile) {
+          imagesFile.forEach((image) => {
+            formData.append("images", image);
+          });
+        }
       }
 
       try {
@@ -355,6 +362,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                     agentId={agentId}
                     setTotalImage={setTotalImage}
                     agent={agent}
+                    setImagesFile={setImagesFile}
                   />
                 </div>
               )}
