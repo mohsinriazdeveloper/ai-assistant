@@ -11,7 +11,9 @@ import LoaderImg from "@/app/assets/icons/loading.png";
 import { AgentChatType } from "../ReduxToolKit/types/agents";
 import toast, { Toaster } from "react-hot-toast";
 import DeleteChatModal from "../Dialogues/DeleteChatModal";
-
+import "katex/dist/katex.min.css";
+import katex from "katex";
+import MathFormat from "./MathFormat";
 interface AgentChatProps {
   agentId: number;
 }
@@ -124,7 +126,8 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
                       : "bg-[#3B81F6] text-white self-end"
                   }`}
                 >
-                  <p className="whitespace-pre-wrap">{msg.message}</p>
+                  <MathFormat content={msg.message} />
+                  {/* <p className="whitespace-pre-wrap">{msg.message}</p> */}
                 </div>
               ))}
               {loading && (

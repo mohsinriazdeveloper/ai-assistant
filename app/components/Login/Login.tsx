@@ -53,7 +53,7 @@ const Login: FC<LoginProps> = ({}) => {
       // alert("login");
       // return router.push("/dashboard/join");
       setLoading(false);
-      toast.success("Successfully toasted!");
+      toast.success("Welcome back! You have successfully signed in");
       return router.push("/dashboard/new-chat");
     } catch (err: any) {
       setLoading(false);
