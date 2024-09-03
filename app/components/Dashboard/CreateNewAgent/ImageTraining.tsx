@@ -4,6 +4,7 @@ import React, {
   SetStateAction,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 import { IoMdAdd } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
@@ -17,14 +18,13 @@ import Image from "next/image";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import ResizeIcon from "@/app/assets/icons/resize.png";
 import { usePathname } from "next/navigation";
-import Zoom from "react-medium-image-zoom";
-import "react-medium-image-zoom/dist/styles.css";
 
 interface ImageTrainingProps {
   setTotalImage: Dispatch<SetStateAction<number>>;
   agentId?: any;
   agent?: AgentState | undefined;
-  setImagesFile?: Dispatch<SetStateAction<File[]>>;
+  setImagesFile: Dispatch<SetStateAction<File[]>>;
+  imageFiles: File[];
 }
 
 const ImageTraining: FC<ImageTrainingProps> = ({
@@ -32,11 +32,11 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   agentId,
   agent,
   setImagesFile,
+  imageFiles,
 }) => {
   const currentPage = usePathname();
   const [updateWithImg] = useTrainByImageMutation();
   const [delExistingFile] = useDeleteFileMutation();
-  const [images, setImages] = useState<File[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [imgLoader, setImgLoader] = useState<{ [key: number]: boolean }>({});
   const [existingImgs, setExistingImgs] = useState(
@@ -44,9 +44,12 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       /\.(png|PNG|jpg|JPG|JPEG|jpeg)$/i.test(file.file_name)
     ) || []
   );
-  const [enlargedIndex, setEnlargedIndex] = useState<number | null>(null); // State to track which image is enlarged
+  const [enlargedIndex, setEnlargedIndex] = useState<number | null>(null);
+  const [isExistingImage, setIsExistingImage] = useState<boolean>(false);
 
-  setTotalImage(images.length);
+  useEffect(() => {
+    setTotalImage(imageFiles.length);
+  }, [imageFiles, setTotalImage]);
 
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -58,21 +61,17 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         return;
       }
 
-      if (setImagesFile) {
-        setImagesFile((prevImages) => [...prevImages, file]);
-      }
-
       // Check if the file is already added
-      if (images.some((img) => img.name === file.name)) {
+      if (imageFiles.some((img) => img.name === file.name)) {
         toast.error("Image Already Added");
       } else {
-        setImages((prevImages) => [...prevImages, file]);
+        setImagesFile((prevImages) => [...prevImages, file]);
       }
     }
   };
 
   const submitImages = async () => {
-    if (images.length === 0) {
+    if (imageFiles.length === 0) {
       toast.error("First add Image");
       return;
     }
@@ -80,7 +79,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     const fd = new FormData();
     fd.append("id", agentId);
 
-    images.forEach((imageFile) => {
+    imageFiles.forEach((imageFile) => {
       fd.append("images", imageFile); // Appending each image file to the 'images' key
     });
 
@@ -88,7 +87,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       setLoading(true);
       await updateWithImg(fd).unwrap();
 
-      // Handle successful response
       toast.success("Images uploaded successfully");
     } catch (error: any) {
       if (error.status === 400) {
@@ -119,16 +117,17 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   );
 
   const handleDeleteNewImage = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagesFile((prevImages) => prevImages.filter((_, i) => i !== index));
     toast.success("Image removed");
   };
 
-  const handleResizeImage = (index: number) => {
-    setEnlargedIndex(index); // Set the enlarged index to the clicked image
+  const handleResizeImage = (index: number, isExisting: boolean) => {
+    setEnlargedIndex(index);
+    setIsExistingImage(isExisting);
   };
 
   const handleCloseEnlarged = () => {
-    setEnlargedIndex(null); // Reset the enlarged index to close the enlarged view
+    setEnlargedIndex(null);
   };
 
   return (
@@ -148,8 +147,10 @@ const ImageTraining: FC<ImageTrainingProps> = ({
           </div>
         </label>
       </div>
+
+      {/* New Images Grid */}
       <div className="grid grid-cols-4 gap-5">
-        {images.map((image, index) => (
+        {imageFiles.map((image, index) => (
           <div
             key={index}
             className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden relative group"
@@ -161,20 +162,30 @@ const ImageTraining: FC<ImageTrainingProps> = ({
               alt={`Uploaded ${index}`}
               className="object-cover w-full h-full"
             />
-            <Image
-              src={DeleteIcon}
-              alt="Delete"
-              className="w-5 cursor-pointer absolute top-[40%] right-[45%] opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={() => handleDeleteNewImage(index)}
-            />
+            <div className="w-full flex justify-between items-center absolute top-1 z-50 p-3">
+              <Image
+                src={DeleteIcon}
+                alt="Delete"
+                className="w-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleDeleteNewImage(index)}
+              />
+              <Image
+                src={ResizeIcon}
+                alt="Resize"
+                className="w-4 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleResizeImage(index, false)}
+              />
+            </div>
           </div>
         ))}
       </div>
+
       <div className="w-full">
         <p className="text-sm text-gray-500 text-center">
           Supported File Types: .png, .PNG, .jpg, .JPG, .JPEG, .jpeg
         </p>
       </div>
+
       {currentPage !== "/dashboard/create-new-agent" && (
         <div>
           <div className="flex justify-center items-center gap-2 mb-5">
@@ -184,6 +195,8 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             </div>
             <div className="border-b w-[40%]"></div>
           </div>
+
+          {/* Existing Images Grid */}
           <div className="grid grid-cols-4 gap-5">
             {existingImgs.map((image, index) => (
               <div
@@ -193,7 +206,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
               >
                 <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
                 {imgLoader[index] ? (
-                  <div className="w-full h-full flex justify-center items-center ">
+                  <div className="w-full h-full flex justify-center items-center">
                     <Loader />
                   </div>
                 ) : (
@@ -207,8 +220,8 @@ const ImageTraining: FC<ImageTrainingProps> = ({
                     <Image
                       src={ResizeIcon}
                       alt="Resize"
-                      className="w-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleResizeImage(index)}
+                      className="w-4 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleResizeImage(index, true)}
                     />
                   </div>
                 )}
@@ -218,13 +231,18 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         </div>
       )}
 
+      {/* Enlarged Image View */}
       {enlargedIndex !== null && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
           <div className="relative">
             <img
-              src={existingImgs[enlargedIndex].file_url}
+              src={
+                isExistingImage
+                  ? existingImgs[enlargedIndex].file_url
+                  : URL.createObjectURL(imageFiles[enlargedIndex])
+              }
               alt={`Enlarged ${enlargedIndex}`}
-              className="max-w-full max-h-full"
+              className="max-w-full max-h-screen"
             />
             <div className="bg-gray-700 rounded-full w-5 h-5 flex justify-center items-center absolute top-2 right-2">
               <button

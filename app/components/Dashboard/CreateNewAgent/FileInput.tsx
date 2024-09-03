@@ -11,6 +11,7 @@ interface FileInputProps {
   setCharCount: Dispatch<SetStateAction<number>>;
   setFileCount: Dispatch<SetStateAction<number>>;
   handleDeleteFile: (index: number) => void;
+  setFileUrls: Dispatch<SetStateAction<string[]>>; // To store the URLs of uploaded files
 }
 
 const FileInput: FC<FileInputProps> = ({
@@ -19,6 +20,7 @@ const FileInput: FC<FileInputProps> = ({
   setCharCount,
   setFileCount,
   handleDeleteFile,
+  setFileUrls,
 }) => {
   const maxFiles = 10;
   const maxSizeMB = 5; // Maximum file size in MB
@@ -76,10 +78,16 @@ const FileInput: FC<FileInputProps> = ({
 
       // Display the loader for 3 seconds, then store the files
       setTimeout(() => {
-        setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-        setFileCount(files.length + selectedFiles.length);
+        const newFiles = [...files, ...selectedFiles];
+        setFiles(newFiles);
+        setFileCount(newFiles.length);
+
+        // Create URLs for the new files
+        const newUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+        setFileUrls((prevUrls) => [...prevUrls, ...newUrls]);
+
         setUploading(false);
-        processFiles([...files, ...selectedFiles]);
+        processFiles(newFiles);
       }, 3000);
     }
   };
@@ -179,10 +187,16 @@ const FileInput: FC<FileInputProps> = ({
 
     // Display the loader for 3 seconds, then store the files
     setTimeout(() => {
-      setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
-      setFileCount(files.length + selectedFiles.length);
+      const newFiles = [...files, ...selectedFiles];
+      setFiles(newFiles);
+      setFileCount(newFiles.length);
+
+      // Create URLs for the new files
+      const newUrls = selectedFiles.map((file) => URL.createObjectURL(file));
+      setFileUrls((prevUrls) => [...prevUrls, ...newUrls]);
+
       setUploading(false);
-      processFiles([...files, ...selectedFiles]);
+      processFiles(newFiles);
     }, 3000);
   };
 

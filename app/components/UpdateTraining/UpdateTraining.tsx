@@ -62,6 +62,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
   const [imagesFile, setImagesFile] = useState<File[]>([]);
+  const [fileUrls, setFileUrls] = useState<string[]>([]); // State to store file URLs
 
   const handleUpdateAgent = async () => {
     if (agentName) {
@@ -92,14 +93,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         const res = await updateAgent(formData).unwrap();
         setLoading(false);
         toast.success("Agent Updated");
-        // router.push("/dashboard/new-chat");
       } catch (error: any) {
         setLoading(false);
         if (error.status === 400) {
           toast.error("File type not supported");
           return;
         }
-        console.error("Failed to create agent: ", error);
+        console.error("Failed to update agent: ", error);
         const errorMessage = error.data.message;
         toast.error(errorMessage);
       }
@@ -216,6 +216,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     }
   };
 
+  const handleOpenFile = (url: string) => {
+    window.open(url, "_blank");
+  };
+
   return (
     <div>
       <Toaster position="top-right" reverseOrder={false} />
@@ -262,6 +266,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                         setCharCount={setCharCount}
                         setFileCount={setFileCount}
                         handleDeleteFile={handleDeleteFile}
+                        setFileUrls={setFileUrls} // Pass setFileUrls to FileInput
                       />
                     </div>
                     <p className="text-sm text-gray-500 text-center">
@@ -283,7 +288,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                           key={index}
                           className="mt-5 grid grid-cols-12 items-center"
                         >
-                          <p className="col-span-10">
+                          <p
+                            className="col-span-10 cursor-pointer text-blue-500"
+                            onClick={
+                              // @ts-ignore
+                              () => handleOpenFile(item.file_url)
+                            }
+                          >
                             {item.file_name.slice(0, 20) + " ..."}
                           </p>
                           <div className="col-span-2 flex justify-end">
@@ -312,7 +323,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                           key={index}
                           className="mt-5 grid grid-cols-12 items-center"
                         >
-                          <p className="col-span-10">
+                          <p
+                            className="col-span-10 cursor-pointer text-blue-500"
+                            onClick={() => handleOpenFile(fileUrls[index])}
+                          >
                             {file.name.slice(0, 20) + " ..."}
                           </p>
                           <div className="col-span-2 flex justify-end">
@@ -363,6 +377,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                     setTotalImage={setTotalImage}
                     agent={agent}
                     setImagesFile={setImagesFile}
+                    imageFiles={imagesFile}
                   />
                 </div>
               )}

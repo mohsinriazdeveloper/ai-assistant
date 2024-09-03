@@ -15,6 +15,7 @@ import toast, { Toaster } from "react-hot-toast";
 import ImageTraining from "./ImageTraining";
 import pdfToText from "react-pdftotext";
 import mammoth from "mammoth";
+
 type FileUrl = {
   file_url: string;
 };
@@ -45,6 +46,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
+  const [fileUrls, setFileUrls] = useState<string[]>([]); // State to store file URLs
 
   const handleCreateAgent = async () => {
     if (agentName) {
@@ -91,6 +93,9 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         });
         setCharCount((prevCharCount) => prevCharCount - charCountToRemove);
         setFileCount((prevCount) => prevCount - 1);
+
+        // Update the file URLs
+        setFileUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
       };
 
       if (fileToRemove.type === "application/pdf") {
@@ -131,7 +136,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         updateStateAfterDeletion(0);
       }
     },
-    [files, setFiles, setCharCount, setFileCount]
+    [files, setFiles, setCharCount, setFileCount, setFileUrls]
   );
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -149,6 +154,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
     } else {
       setAgentNameError("Name cannot exceed 100 characters.");
     }
+  };
+
+  const handleOpenFile = (url: string) => {
+    window.open(url, "_blank");
   };
 
   return (
@@ -201,6 +210,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                     <p className="font-semibold text-2xl ">Files</p>
                     <div className="w-full mt-7 mb-2">
                       <FileInput
+                        setFileUrls={setFileUrls}
                         files={files}
                         setFiles={setFiles}
                         setCharCount={setCharCount}
@@ -227,7 +237,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                           key={index}
                           className="mt-5 grid grid-cols-12 items-center"
                         >
-                          <p className="col-span-10">
+                          <p
+                            className="col-span-10 cursor-pointer text-blue-500"
+                            onClick={() => handleOpenFile(fileUrls[index])}
+                          >
                             {file.name.length > 30 ? (
                               <>{file.name.slice(0, 30) + " ..."}</>
                             ) : (
@@ -280,6 +293,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                   <ImageTraining
                     setTotalImage={setTotalImage}
                     setImagesFile={setImages}
+                    imageFiles={images}
                   />
                 </div>
               )}
