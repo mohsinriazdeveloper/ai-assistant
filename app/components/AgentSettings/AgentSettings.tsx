@@ -35,7 +35,6 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   );
   //@ts-ignore
   const [agentName, setAgentName] = useState<string>("" || agent?.name);
-  console.log("agent", agent?.image_url);
   const [agentID] = useState<any>(agent?.id);
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);

@@ -3,9 +3,9 @@ import { InlineMath, BlockMath } from "react-katex";
 
 // Utility function to split text and math parts
 const parseMathInText = (text: string) => {
-  // Updated regex to handle inline/block math expressions, Markdown, and custom patterns
+  // Updated regex to handle inline/block math expressions, Markdown, custom patterns, and spaced asterisks
   const parts = text.split(
-    /(\$\$[^$]*\$\$|\$[^$]*\$|\\\[.*?\\\]|\\\(.*?\\\)|\*\*[^*]*\*\*|###.*|\/\[.*?\/\])/gs
+    /(\$\$[^$]*\$\$|\$[^$]*\$|\\\[.*?\\\]|\\\(.*?\\\)|\*\*[^*]*\*\*|\*\s\*[^*]*\*\s\*|###.*|\/\[.*?\/\])/gs
   );
 
   return parts.map((part, index) => {
@@ -24,9 +24,12 @@ const parseMathInText = (text: string) => {
     } else if (part.startsWith("$") && part.endsWith("$")) {
       // Render inline math (remove the enclosing $ $)
       return <InlineMath key={index} math={part.slice(1, -1).trim()} />;
-    } else if (part.match(/^\*\*.*\*\*$/)) {
+    } else if (part.startsWith("**") && part.endsWith("**")) {
       // Render bold text (remove the enclosing **)
       return <strong key={index}>{part.slice(2, -2).trim()}</strong>;
+    } else if (part.startsWith("* *") && part.endsWith("* *")) {
+      // Render bold text for spaced asterisks (remove the enclosing * * and * *)
+      return <strong key={index}>{part.slice(3, -3).trim()}</strong>;
     } else if (part.startsWith("/[") && part.endsWith("/]")) {
       // Handle preformatted text block (remove the enclosing /[ /])
       const trimmedContent = part

@@ -231,7 +231,7 @@ const FileInput: FC<FileInputProps> = ({
             className="hidden"
             id="file-upload"
             multiple
-            accept=".pdf, .doc, .docx, .txt"
+            accept=".pdf, .docx, .txt"
             onChange={handleFileChange}
           />
           <label
@@ -241,7 +241,7 @@ const FileInput: FC<FileInputProps> = ({
             Drag & drop files here, or click to select files
           </label>
           <p className="mt-2 text-xs text-gray-500">
-            Supported File Types: .pdf, .doc, .docx, .txt
+            Supported File Types: .pdf, .docx, .txt
           </p>
           {errorMessage && (
             <p className="mt-2 text-xs text-red-500">{errorMessage}</p>

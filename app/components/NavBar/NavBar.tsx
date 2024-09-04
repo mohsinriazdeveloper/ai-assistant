@@ -14,6 +14,7 @@ interface NavBarProps {
   content: Content[];
   setCheckOption: Dispatch<SetStateAction<string>>;
   checkOption: string;
+  setStopPlayingAudio?: Dispatch<SetStateAction<boolean>>;
 }
 
 const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {

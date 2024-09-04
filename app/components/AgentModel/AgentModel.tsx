@@ -65,8 +65,6 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
     }
   };
 
-  console.log(instructionContent);
-
   return (
     <div className="flex flex-col gap-10 mb-10">
       <Toaster position="top-right" reverseOrder={false} />

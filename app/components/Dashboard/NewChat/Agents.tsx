@@ -4,12 +4,14 @@ import AiImg from "@/app/assets/Images/aiImg.webp";
 import Link from "next/link";
 import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 import Loader from "../../Loader/Loader";
+import { useAppDispatch } from "../../ReduxToolKit/hook";
+import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
 
 interface AgentsProps {}
 
 const Agents: FC<AgentsProps> = () => {
-  const [trigger, { data: allAgents }] = useLazyGetAllAgentsQuery();
-
+  const [trigger, { data: allAgents, isLoading }] = useLazyGetAllAgentsQuery();
+  const dispatch = useAppDispatch();
   useEffect(() => {
     trigger();
   }, []);
@@ -19,6 +21,9 @@ const Agents: FC<AgentsProps> = () => {
     //@ts-ignore
     .sort((a, b) => a.name.localeCompare(b.name));
 
+  if (isLoading) {
+    dispatch(voiceResponce({ inText: "", stopAudioPlaying: true }));
+  }
   return (
     <div className="md:w-[795px] md:mx-auto mx-5 mt-16">
       <div className="flex justify-between items-center">
@@ -29,7 +34,16 @@ const Agents: FC<AgentsProps> = () => {
           </button>
         </Link>
       </div>
-      {sortedAgents ? (
+      {!isLoading && (
+        <>
+          {(!sortedAgents || sortedAgents.length === 0) && (
+            <p className="my-10 text-center">
+              No Agent Available. Create Your Own Agent to Start!
+            </p>
+          )}
+        </>
+      )}
+      {!isLoading ? (
         <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-10 gap-5">
           {sortedAgents?.map((agent, index) => (
             <div key={index} className="col-span-1 cursor-pointer">

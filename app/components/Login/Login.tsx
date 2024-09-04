@@ -43,7 +43,6 @@ const Login: FC<LoginProps> = ({}) => {
     };
     try {
       const res = await UserLogin(payLoad).unwrap();
-      console.log(res);
       dispatch(
         userLoginSuccess({
           refresh: res.refresh,
