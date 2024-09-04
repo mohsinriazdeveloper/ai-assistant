@@ -2,12 +2,15 @@
 import React, { useState, useEffect, useCallback, useRef, FC } from "react";
 import { ClipLoader } from "react-spinners";
 import { FaMicrophone, FaStop, FaRedo, FaPlay, FaPause } from "react-icons/fa";
-import MicrophoneIcon from "@/app/assets/icons/microphone.png";
 import {
   useAgentVoiceMutation,
   useGetAllAgentsQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import Image from "next/image";
+import { useAppDispatch, useAppSelector } from "../ReduxToolKit/hook";
+import {
+  selectVoiceResponse,
+  voiceResponce,
+} from "../ReduxToolKit/voiceResSlice";
 
 interface VoiceAssistantProps {
   agentId: number;
@@ -23,8 +26,12 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
   const [mediaBlobUrl, setMediaBlobUrl] = useState<string | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const mediaChunksRef = useRef<Blob[]>([]);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const dispatch = useAppDispatch();
+  const inText = useAppSelector(selectVoiceResponse);
   const [agentVoice] = useAgentVoiceMutation();
   const { data: allAgents } = useGetAllAgentsQuery();
 
@@ -35,28 +42,24 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
         return;
       }
 
-      // if (!allAgents || !allAgents.id) {
       if (!agentId) {
         setError("Agent information is not available. Please try again.");
         return;
       }
 
       setIsProcessing(true);
-      setError(null); // Clear any existing errors
+      setError(null);
       try {
-        // Fetch the original blob
         const originalBlob = await fetch(blobUrl).then((r) => r.blob());
 
-        // Create a FormData object and append the new Blob
         const formData = new FormData();
         formData.append("audio", originalBlob, "audio.wav");
         formData.append("agent_id", agentId.toString());
 
-        // Send the FormData object to the server using Redux Toolkit mutation
         const result = await agentVoice(formData).unwrap();
 
         const responseText = result.response;
-
+        dispatch(voiceResponce({ inText: responseText }));
         setResponse(responseText);
       } catch (error) {
         console.error("Error processing audio:", error);
@@ -65,13 +68,13 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
         setIsProcessing(false);
       }
     },
-    [allAgents, agentVoice]
+    [allAgents, agentVoice, agentId, dispatch]
   );
 
   useEffect(() => {
     if (mediaBlobUrl) {
       handleStop(mediaBlobUrl);
-      setMediaBlobUrl(null); // Clear the blob URL after processing
+      setMediaBlobUrl(null);
     }
   }, [mediaBlobUrl, handleStop]);
 
@@ -88,6 +91,45 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
       const mediaRecorder = new MediaRecorder(stream);
       mediaChunksRef.current = [];
+
+      // Create audio context to analyze input
+      audioContextRef.current = new AudioContext();
+      const source = audioContextRef.current.createMediaStreamSource(stream);
+      analyserRef.current = audioContextRef.current.createAnalyser();
+      analyserRef.current.fftSize = 2048;
+      const bufferLength = analyserRef.current.fftSize;
+      const dataArray = new Uint8Array(bufferLength);
+
+      source.connect(analyserRef.current);
+
+      // Function to check for silence
+      const checkForSilence = () => {
+        analyserRef.current?.getByteTimeDomainData(dataArray);
+        const maxAmplitude = Math.max(...dataArray);
+
+        // If the amplitude is low, consider it silence
+        if (Math.abs(maxAmplitude - 128) < 5) {
+          // Tolerance around 128 for silence
+          if (!silenceTimeoutRef.current) {
+            silenceTimeoutRef.current = setTimeout(() => {
+              stopRecording(); // Stop recording if silent for 4 seconds
+            }, 7000); // 4 seconds timeout
+          }
+        } else {
+          // Clear the silence timeout if there is sound
+          if (silenceTimeoutRef.current) {
+            clearTimeout(silenceTimeoutRef.current);
+            silenceTimeoutRef.current = null;
+          }
+        }
+
+        // Keep checking for silence while recording
+        if (isRecording) {
+          requestAnimationFrame(checkForSilence);
+        }
+      };
+
+      checkForSilence(); // Start checking for silence
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -111,6 +153,18 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     if (mediaRecorderRef.current) {
       mediaRecorderRef.current.stop();
     }
+
+    // Clear any existing silence detection timeout
+    if (silenceTimeoutRef.current) {
+      clearTimeout(silenceTimeoutRef.current);
+      silenceTimeoutRef.current = null;
+    }
+
+    // Stop audio context and reset for future recordings
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
   };
 
   const playTextAsSpeech = (text: string) => {
@@ -128,7 +182,6 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
         setIsPlaying(false);
         setIsPaused(false);
       };
-      utteranceRef.current = utterance;
       speechSynthesis.speak(utterance);
     } else {
       console.error("Text-to-Speech not supported in this browser.");
@@ -150,11 +203,12 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
   };
 
   const resetResponse = () => {
+    dispatch(voiceResponce({ inText: "" }));
     setResponse("");
     setIsPlaying(false);
     setIsPaused(false);
-    setError(null); // Clear any existing errors
-    speechSynthesis.cancel(); // Cancel any ongoing speech synthesis
+    setError(null);
+    speechSynthesis.cancel();
   };
 
   return (
@@ -200,10 +254,10 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
         )}
         <div className="overflow-y-scroll scrollbar-hide">
           <div className="h-[274px]">
-            {response && (
+            {inText && (
               <div className="mt-6 text-center bg-white p-4 rounded shadow-md">
                 <p className="text-lg font-semibold text-gray-700">Response:</p>
-                <p className="text-md text-gray-600">{response}</p>
+                <p className="text-md text-gray-600">{inText}</p>
                 {isPlaying && (
                   <div className="flex items-center justify-center mt-4">
                     {!isPaused ? (

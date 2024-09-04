@@ -64,10 +64,10 @@ export type AgentChatType = {
   user?: number;
 };
 
-// export const agentState: AgentState = {
-//   id: 0,
-//   name: "Agent",
-//   organization: null,
-//   customuser: 0,
-//   file_urls: [],
-// };
+export type VoiceRes = {
+  inText: string;
+};
+
+export const voiceRes: VoiceRes = {
+  inText: "",
+};

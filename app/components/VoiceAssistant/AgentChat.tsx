@@ -100,9 +100,9 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
 
   return (
     <div>
-      <div className="container mx-auto h-[500px] flex flex-col justify-between ">
+      <div className="container mx-auto flex flex-col justify-between">
         <Toaster position="top-right" reverseOrder={false} />
-        <div className="p-3">
+        <div className="p-3 ">
           <div className="flex justify-end">
             <Image
               src={RefreshIcon}
@@ -113,7 +113,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
           </div>
           <div className="border-b border-gray-200 w-full my-3"></div>
           <div
-            className="overflow-y-scroll scrollbar-hide"
+            className="overflow-y-scroll scrollbar-hide "
             ref={chatContainerRef}
           >
             <div className="flex flex-col gap-2 h-[370px]">

@@ -11,7 +11,7 @@ import Loader from "../Loader/Loader";
 
 type SignUpInputs = {
   organization_name: string;
-  username: string;
+  first_name: string;
   email: string;
   password: string;
 };
@@ -85,7 +85,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
     setIsPasswordMatch(false);
     const payLoad: SignUpInputs = {
       organization_name: SignUpOrganizationName,
-      username: SignUpName,
+      first_name: SignUpName,
       email: SignUpEmail,
       password: SignUpPassword,
     };

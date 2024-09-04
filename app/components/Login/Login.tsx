@@ -60,6 +60,8 @@ const Login: FC<LoginProps> = ({}) => {
       console.error("Failed to login:", err);
       if (err.status === 400) {
         setWrongPassword(true);
+      } else if (err.originalStatus === 500) {
+        toast.error("Server Error!!! Failed to Sign-in");
       }
     }
   };
