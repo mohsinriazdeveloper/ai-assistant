@@ -27,6 +27,9 @@ const Login: FC<LoginProps> = ({}) => {
   const [loginPassword, setLoginPassword] = useState<string>("");
   const [showLoginPassword, setShowLoginPassword] = useState<boolean>(false);
   const [wrongPassword, setWrongPassword] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<string>("");
+  const [passError, setPassError] = useState<string>("");
+
   const [UserLogin] = useUserLoginMutation();
   const { data: allAgents } = useGetAllAgentsQuery();
   const dispatch = useAppDispatch();
@@ -36,6 +39,16 @@ const Login: FC<LoginProps> = ({}) => {
     // if (allAgents) {
     sessionStorage.clear();
     // }
+    if (!loginEmail) {
+      setEmailError("Email is required");
+      setLoading(false);
+      return;
+    }
+    if (!loginPassword) {
+      setPassError("Password is required");
+      setLoading(false);
+      return;
+    }
     e.preventDefault();
     const payLoad: LoginInputs = {
       email: loginEmail,
@@ -97,10 +110,16 @@ const Login: FC<LoginProps> = ({}) => {
                   type="email"
                   placeholder="email@gmail.com"
                   value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
+                  onChange={(e) => {
+                    setLoginEmail(e.target.value), setEmailError("");
+                    setWrongPassword(false);
+                  }}
                   className="border rounded-md px-3 py-2 focus:outline-none mt-2 w-full"
                 />
               </label>
+              {emailError && (
+                <p className="text-sm text-red-500">{emailError}</p>
+              )}
             </div>
             <div className="mb-4">
               <div>
@@ -114,8 +133,8 @@ const Login: FC<LoginProps> = ({}) => {
                       placeholder="Password"
                       value={loginPassword}
                       onChange={(e) => {
-                        setLoginPassword(e.target.value),
-                          setWrongPassword(false);
+                        setLoginPassword(e.target.value), setPassError("");
+                        setWrongPassword(false);
                       }}
                       className="focus:outline-none w-full"
                     />
@@ -139,7 +158,10 @@ const Login: FC<LoginProps> = ({}) => {
                   )}
                 </div>
               </div>
-              {wrongPassword && <p className="text-red-600">Wrong Password</p>}
+              {passError && <p className="text-red-600">{passError}</p>}
+              {wrongPassword && (
+                <p className="text-red-600">Crediantials are not correct</p>
+              )}
             </div>
             <div className="mb-4">
               <p className="text-base font-semibold text-end cursor-pointer">
