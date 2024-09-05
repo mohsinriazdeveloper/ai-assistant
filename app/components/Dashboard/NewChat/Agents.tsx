@@ -22,7 +22,7 @@ const Agents: FC<AgentsProps> = () => {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   if (isLoading) {
-    dispatch(voiceResponce({ inText: "", stopAudioPlaying: true }));
+    dispatch(voiceResponce({ inText: "" }));
   }
   return (
     <div className="md:w-[795px] md:mx-auto mx-5 mt-16">

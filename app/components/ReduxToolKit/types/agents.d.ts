@@ -66,10 +66,8 @@ export type AgentChatType = {
 
 export type VoiceRes = {
   inText: string;
-  stopAudioPlaying: boolean;
 };
 
 export const voiceRes: VoiceRes = {
   inText: "",
-  stopAudioPlaying: false,
 };

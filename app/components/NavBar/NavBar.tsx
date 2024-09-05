@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch } from "../ReduxToolKit/hook";
 import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
 import PreviousPage from "../PreviousPage/PreviousPage";
+import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
 
 type Content = {
   title: string;
@@ -22,15 +23,20 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
   const dispatch = useAppDispatch();
 
   const handleSignOut = () => {
-    dispatch(
-      userLogoutSuccess({
-        refresh: "",
-        access: "",
-      })
-    );
-    router.push("/");
-  };
+    const intext = dispatch(voiceResponce({ inText: "" }));
 
+    setTimeout(() => {
+      dispatch(
+        userLogoutSuccess({
+          refresh: "",
+          access: "",
+        })
+      );
+      // router.push("/");
+    }, 1000);
+
+    console.log(intext);
+  };
   return (
     <div className="pt-5 mb-[57px]">
       <div className="md:container md:mx-auto mx-5 flex justify-between items-center pb-5">

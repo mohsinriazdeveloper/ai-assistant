@@ -16,7 +16,7 @@ const PreviousPage: FC<PreviousPageProps> = ({}) => {
 
   const router = useRouter();
   const handlePrevious = () => {
-    dispatch(voiceResponce({ inText: "", stopAudioPlaying: true }));
+    dispatch(voiceResponce({ inText: "" }));
     router.back();
   };
 

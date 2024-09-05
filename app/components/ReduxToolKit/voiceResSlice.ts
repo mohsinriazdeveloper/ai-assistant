@@ -11,11 +11,9 @@ export const voiceResSlice = createSlice({
       state: VoiceRes,
       action: PayloadAction<{
         inText: string;
-        stopAudioPlaying: boolean;
       }>
     ) => {
       state.inText = action.payload.inText;
-      state.stopAudioPlaying = action.payload.stopAudioPlaying;
     },
   },
 });

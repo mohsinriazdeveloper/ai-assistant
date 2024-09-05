@@ -60,9 +60,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
         const result = await agentVoice(formData).unwrap();
 
         const responseText = result.response;
-        dispatch(
-          voiceResponce({ inText: responseText, stopAudioPlaying: false })
-        );
+        dispatch(voiceResponce({ inText: responseText }));
         setResponse(responseText);
       } catch (error) {
         console.error("Error processing audio:", error);
@@ -206,7 +204,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
   };
 
   const resetResponse = () => {
-    dispatch(voiceResponce({ inText: "", stopAudioPlaying: true }));
+    dispatch(voiceResponce({ inText: "" }));
     setResponse("");
     setIsPlaying(false);
     setIsPaused(false);
