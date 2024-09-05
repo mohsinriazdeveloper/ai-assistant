@@ -83,7 +83,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
               <DownCarret />
             </div>
             {openModels && (
-              <div className="absolute mt-2 w-full border border-gray-200 rounded-md text-sm text-gray-300 bg-white p-1">
+              <div className="absolute mt-2 w-full border border-gray-200 rounded-md text-sm text-gray-300 bg-white p-1 z-20">
                 <p
                   className="py-2 px-5 hover:bg-gray-200 cursor-pointer"
                   onClick={() => {
@@ -94,10 +94,10 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
                   gpt-4
                 </p>
                 <p
-                  className="py-2 px-5 hover:bg-gray-200 cursor-pointer"
+                  className="py-2 px-5 hover:bg-gray-200 cursor-not-allowed"
                   onClick={() => {
                     setOpenModels(!openModels);
-                    setAgentModel("gpt-3.5");
+                    // setAgentModel("gpt-3.5");
                   }}
                 >
                   gpt-3.5

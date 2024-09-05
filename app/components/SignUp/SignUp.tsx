@@ -6,7 +6,6 @@ import { FC, useState } from "react";
 import Link from "next/link";
 import { useUserSignUpMutation } from "../ReduxToolKit/aiAssistant";
 import { useRouter } from "next/navigation";
-import PreviousPage from "../PreviousPage/PreviousPage";
 import Loader from "../Loader/Loader";
 
 type SignUpInputs = {
@@ -42,6 +41,9 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const router = useRouter();
   const [UserSignUp] = useUserSignUpMutation();
   const [strength, setStrength] = useState("");
+  const [showPassStrenghtList, setShowPassStrengthList] =
+    useState<boolean>(false);
+
   const checkPasswordStrength = (password: string) => {
     let strength = "Weak";
     if (
@@ -51,31 +53,52 @@ const SignUp: FC<SignUpProps> = ({}) => {
       /[!@#$%^&*]/.test(password)
     ) {
       strength = "Strong";
+      setShowPassStrengthList(false);
     } else if (
       password.length >= 8 &&
       /[A-Z]/.test(password) &&
       /[0-9]/.test(password)
     ) {
       strength = "Medium";
+      setShowPassStrengthList(true);
     }
     setStrength(strength);
+    setShowPassStrengthList(true);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    // Validate Organization Name
     if (!SignUpOrganizationName) {
       setOrgError("Organization Name is required");
+      setLoading(false);
+      return;
     }
+
+    // Validate Email
     if (!SignUpEmail) {
       setEmailErrors("Email is required");
+      setLoading(false);
+      return;
     }
-    if (!SignUpName) {
-      setUsernameError("Name is required, Enter Name");
+
+    // Validate Name (Username) length
+    if (SignUpName.length < 3) {
+      setUsernameError("Name must be at least 3 characters long");
+      setLoading(false);
+      return;
     }
-    if (!SignUpPassword) {
-      setPasswordError("Please enter password");
+
+    // Validate Password Strength
+    if (strength !== "Strong") {
+      setPasswordError("Password must be strong");
+      setLoading(false);
+      return;
     }
+
+    // Check if Password and Confirm Password match
     if (SignUpPassword !== SignUpConfirmPassword) {
       setIsPasswordMatch(true);
       setLoading(false);
@@ -83,6 +106,8 @@ const SignUp: FC<SignUpProps> = ({}) => {
     }
 
     setIsPasswordMatch(false);
+
+    // Prepare Payload
     const payLoad: SignUpInputs = {
       organization_name: SignUpOrganizationName,
       first_name: SignUpName,
@@ -93,12 +118,12 @@ const SignUp: FC<SignUpProps> = ({}) => {
     try {
       const res = await UserSignUp(payLoad).unwrap();
       setLoading(false);
-      return router.push("/");
+      router.push("/");
     } catch (err: any) {
       setLoading(false);
       console.error("Failed to sign-up:", err);
       if (err.status === 400) {
-        setEmailErrors;
+        setEmailErrors("Email is invalid or already in use");
       } else if (err.originalStatus === 500) {
         setEmailAlreadyExists(true);
       } else {
@@ -110,7 +135,6 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setUsernameAlreadyExists(false);
-    // if (/\s/.test(value)) {
     if (!/^[A-Za-z ]{3,}$/.test(value)) {
       setUsernameError("Please enter at least 3 characters.");
     } else {
@@ -122,6 +146,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setEmailAlreadyExists(false);
+
     // Regular expression for validating an email address
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -131,6 +156,12 @@ const SignUp: FC<SignUpProps> = ({}) => {
       setEmailErrors("");
     }
     setSignUpEmail(value);
+  };
+
+  const handleSignupPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSignUpPassword(e.target.value);
+    checkPasswordStrength(e.target.value);
+    setPasswordError("");
   };
 
   return (
@@ -204,10 +235,6 @@ const SignUp: FC<SignUpProps> = ({}) => {
                   type="email"
                   placeholder="name@email.com"
                   value={SignUpEmail}
-                  // onChange={(e) => {
-                  //   handleEmailChange;
-                  //   // setSignUpEmail(e.target.value);
-                  // }}
                   onChange={handleEmailChange}
                   className="border rounded-md px-3 py-2 focus:outline-none mt-2 w-full"
                 />
@@ -232,11 +259,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
                       type={`${showSignUpPassword ? "text" : "password"}`}
                       placeholder="Password"
                       value={SignUpPassword}
-                      onChange={(e) => {
-                        setSignUpPassword(e.target.value);
-                        checkPasswordStrength(e.target.value);
-                        setPasswordError("");
-                      }}
+                      onChange={handleSignupPassword}
                       className="focus:outline-none w-full"
                     />
                   </label>
@@ -269,6 +292,21 @@ const SignUp: FC<SignUpProps> = ({}) => {
                   } ${strength === "Strong" && "text-green-600"}`}
                 >
                   {strength}
+                </div>
+              )}
+              {showPassStrenghtList && (
+                <div className="my-2 ml-4">
+                  <ul className="list-disc">
+                    <li>Password must be at least 8 characters long</li>
+                    <li>
+                      Password must contain at least 1 uppercase letter (A-Z)
+                    </li>
+                    <li>Password must contain at least 1 number (0-9)</li>
+                    <li>
+                      Password must contain at least 1 special character (e.g.,
+                      !@#$%^&*)
+                    </li>
+                  </ul>
                 </div>
               )}
             </div>
@@ -309,7 +347,9 @@ const SignUp: FC<SignUpProps> = ({}) => {
                 </div>
               </div>
               {isPasswordMatch && (
-                <div className="text-xs text-[#ef4444]">Password not match</div>
+                <div className="text-xs text-[#ef4444]">
+                  Passwords do not match
+                </div>
               )}
             </div>
             <div>

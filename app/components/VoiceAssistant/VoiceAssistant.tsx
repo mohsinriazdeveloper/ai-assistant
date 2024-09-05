@@ -29,6 +29,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  let mediaStream: MediaStream | null = null; // Store media stream
 
   const dispatch = useAppDispatch();
   const inText = useAppSelector(selectVoiceResponse);
@@ -90,6 +91,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     resetResponse();
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+      mediaStream = stream; // Store the media stream
       const mediaRecorder = new MediaRecorder(stream);
       mediaChunksRef.current = [];
 
@@ -155,6 +157,23 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
       mediaRecorderRef.current.stop();
     }
 
+    // Stop the media stream to turn off the microphone
+    //@ts-ignore
+    mediaStream.getTracks().forEach((track) => {
+      if (track.readyState === "live" && track.kind === "audio") {
+        track.stop(); // Stop each audio track
+      }
+    });
+    mediaStream = null; // Clear the media stream reference
+    // if (mediaStream) {
+    //   mediaStream.getTracks().forEach((track) => {
+    //     if (track.readyState === "live" && track.kind === "audio") {
+    //       track.stop(); // Stop each audio track
+    //     }
+    //   });
+    //   mediaStream = null; // Clear the media stream reference
+    // }
+
     // Clear any existing silence detection timeout
     if (silenceTimeoutRef.current) {
       clearTimeout(silenceTimeoutRef.current);
@@ -166,6 +185,8 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
+
+    setIsRecording(false); // Ensure the state is updated to not recording
   };
 
   const playTextAsSpeech = (text: string) => {
@@ -211,11 +232,13 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     setError(null);
     speechSynthesis.cancel();
   };
+
   useEffect(() => {
     if (inText === "") {
       speechSynthesis.cancel();
     }
   }, [inText]);
+
   return (
     <div className="container mx-auto h-[500px] flex flex-col items-center py-10 gap-10">
       <div className="mb-6 text-center">

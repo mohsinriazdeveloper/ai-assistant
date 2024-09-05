@@ -69,7 +69,14 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to create agent: ", error);
-        if (error.status === 400) {
+        if (error.status === 401) {
+          toast.error("Access token expire, need to login in again");
+          router.push("/");
+          return;
+        } else if (error.status === "FETCH_ERROR") {
+          toast.error("Request Entity is too large");
+          return;
+        } else if (error.status === 400) {
           toast.error(error.data);
         } else {
           const errorMessage = error.data.message;
@@ -96,6 +103,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
         // Update the file URLs
         setFileUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
+        toast.success("File Successfully deleted");
       };
 
       if (fileToRemove.type === "application/pdf") {

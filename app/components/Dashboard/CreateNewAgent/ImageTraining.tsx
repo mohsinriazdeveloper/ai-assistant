@@ -118,7 +118,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
 
   const handleDeleteNewImage = (index: number) => {
     setImagesFile((prevImages) => prevImages.filter((_, i) => i !== index));
-    toast.success("Image removed");
+    toast.success("Image successfully deleted");
   };
 
   const handleResizeImage = (index: number, isExisting: boolean) => {

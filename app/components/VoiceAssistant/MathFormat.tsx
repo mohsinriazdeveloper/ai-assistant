@@ -3,9 +3,9 @@ import { InlineMath, BlockMath } from "react-katex";
 
 // Utility function to split text and math parts
 const parseMathInText = (text: string) => {
-  // Updated regex to handle inline/block math expressions, Markdown, custom patterns, and spaced asterisks
+  // Updated regex to handle inline/block math expressions, Markdown headings, and custom patterns
   const parts = text.split(
-    /(\$\$[^$]*\$\$|\$[^$]*\$|\\\[.*?\\\]|\\\(.*?\\\)|\*\*[^*]*\*\*|\*\s\*[^*]*\*\s\*|###.*|\/\[.*?\/\])/gs
+    /(\$\$[^$]*\$\$|\$[^$]*\$|\\\[.*?\\\]|\\\(.*?\\\)|\*\*[^*]*\*\*|\*\s\*[^*]*\*\s\*|###.*?|\/*\[.*?\]\/\*)/gs
   );
 
   return parts.map((part, index) => {
@@ -25,44 +25,20 @@ const parseMathInText = (text: string) => {
       // Render inline math (remove the enclosing $ $)
       return <InlineMath key={index} math={part.slice(1, -1).trim()} />;
     } else if (part.startsWith("**") && part.endsWith("**")) {
-      // Render bold text (remove the enclosing **)
+      // Render bold text (remove the enclosing ** **)
       return <strong key={index}>{part.slice(2, -2).trim()}</strong>;
-    } else if (part.startsWith("* *") && part.endsWith("* *")) {
-      // Render bold text for spaced asterisks (remove the enclosing * * and * *)
-      return <strong key={index}>{part.slice(3, -3).trim()}</strong>;
-    } else if (part.startsWith("/[") && part.endsWith("/]")) {
-      // Handle preformatted text block (remove the enclosing /[ /])
-      const trimmedContent = part
-        .slice(2, -2) // Remove the /[ and /]
-        .replace(/^\s*\n|\n\s*$/g, ""); // Remove newlines immediately after /[ and before /]
-
-      return (
-        <pre key={index} style={{ whiteSpace: "pre-wrap" }}>
-          {trimmedContent}
-        </pre>
-      );
+    } else if (part.startsWith("*") && part.endsWith("*")) {
+      // Render italic text (remove the enclosing * *)
+      return <em key={index}>{part.slice(1, -1).trim()}</em>;
     } else {
-      // Render normal text
+      // Render regular text
       return <span key={index}>{part}</span>;
     }
   });
 };
 
-// Example Component
-const ContentWithMath: FC<{ content: string }> = ({ content }) => {
-  return <div>{parseMathInText(content)}</div>;
+const MathTextParser: FC<{ content: string }> = ({ content }) => {
+  return <>{parseMathInText(content)}</>;
 };
 
-interface MathFormatProps {
-  content: string;
-}
-
-const MathFormat: FC<MathFormatProps> = ({ content }) => {
-  return (
-    <div className="whitespace-pre-wrap">
-      <ContentWithMath content={content} />
-    </div>
-  );
-};
-
-export default MathFormat;
+export default MathTextParser;

@@ -28,11 +28,16 @@ const FileInput: FC<FileInputProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  // const allowedFileTypes = [
+  //   "application/pdf",
+  //   "text/plain",
+  //   "application/msword",
+  //   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  // ];
   const allowedFileTypes = [
     "application/pdf",
     "text/plain",
-    "application/msword",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Only allow .docx
   ];
 
   const showError = (message: string) => {
@@ -53,7 +58,7 @@ const FileInput: FC<FileInputProps> = ({
       );
       if (invalidFiles.length > 0) {
         showError(
-          "Invalid file type. Only PDF, DOC, DOCX, and TXT files are allowed."
+          "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
         );
         return;
       }
@@ -162,7 +167,7 @@ const FileInput: FC<FileInputProps> = ({
     );
     if (invalidFiles.length > 0) {
       showError(
-        "Invalid file type. Only PDF, DOC, DOCX, and TXT files are allowed."
+        "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
       );
       return;
     }

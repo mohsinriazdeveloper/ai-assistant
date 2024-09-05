@@ -32,10 +32,8 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
           access: "",
         })
       );
-      // router.push("/");
+      router.push("/");
     }, 1000);
-
-    console.log(intext);
   };
   return (
     <div className="pt-5 mb-[57px]">

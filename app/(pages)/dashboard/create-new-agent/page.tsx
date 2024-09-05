@@ -10,15 +10,15 @@ interface PageProps {}
 
 const Page: FC<PageProps> = () => {
   const router = useRouter();
-  const { refresh } = useAppSelector(selectAuth);
+  const { access } = useAppSelector(selectAuth);
 
   useEffect(() => {
-    if (!refresh) {
-      router.push("/"); // Redirect to login if refresh token is missing
+    if (!access) {
+      router.push("/"); // Redirect to login if access token is missing
     }
-  }, [refresh, router]);
+  }, [access, router]);
 
-  if (!refresh) {
+  if (!access) {
     return null; // Return null or a loading indicator while redirecting
   }
   return <CreateNewAgent />;

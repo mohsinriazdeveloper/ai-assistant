@@ -10,14 +10,8 @@ import DeleteModal from "../Dialogues/DeleteModal";
 import DeleteAgent from "../DeleteAgent/DeleteAgent";
 import AgentModel from "../AgentModel/AgentModel";
 import Loader from "../Loader/Loader";
-import Image, { StaticImageData } from "next/image";
 import { IoMdAdd } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
-
-type PayLoad = {
-  id: number;
-  name: string;
-};
 
 interface AgentSettings {
   agentId: any;
@@ -28,23 +22,27 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   const [openDialogue, setOpenDialogue] = useState<boolean>(false);
   const [addImage, setAddImage] = useState<any>();
   const [preview, setPreview] = useState<string>();
+  const [imgError, setImgError] = useState<string>("");
 
   const { data: allAgents, isLoading } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
   );
+
   //@ts-ignore
   const [agentName, setAgentName] = useState<string>("" || agent?.name);
   const [agentID] = useState<any>(agent?.id);
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
   const [agentNameError, setAgentNameError] = useState<string>("");
+
   useEffect(() => {
     if (agent?.image_url) {
       setAddImage(agent.image_url);
       setPreview(agent.image_url);
     }
   }, [agent?.image_url]);
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -80,43 +78,20 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
       console.error("Failed to update", error);
     }
   };
-  // const handleUpdate = async (e: React.FormEvent) => {
-  //   setLoading(true);
-  //   e.preventDefault();
-  //   const emptyOrSpaces = /^\s*$/;
 
-  //   if (emptyOrSpaces.test(agentName)) {
-  //     setAgentNameError("The agent name should not be empty");
-  //     setLoading(false);
-  //     return;
-  //   }
-  //   const formData = new FormData();
-  //   formData.append("id", agentID);
-  //   formData.append("name", agentName);
-  //   if (addImage) {
-  //     formData.append("image", addImage);
-  //   }
-  //   console.log("agentName", agentName);
-  //   try {
-  //     const res = await updating(formData);
-  //     //@ts-ignore
-  //     if (res.error?.status === "FETCH_ERROR") {
-  //       toast.error("Image size is too large");
-  //     } else {
-  //       toast.success("Successfully Updated");
-  //     }
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setLoading(false);
-  //     toast.error("Failed to update");
-  //     console.error("Failed to update", error);
-  //   }
-  // };
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
+    const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
+
+    // Check if the selected file is in allowed formats
+    if (selectedFile && allowedFormats.includes(selectedFile.type)) {
       setAddImage(selectedFile);
       setPreview(URL.createObjectURL(selectedFile));
+      setImgError("");
+    } else {
+      setImgError("Allowed formats are .png, .jpeg, .jpg");
+      setAddImage(null);
+      setPreview(""); // Clear the preview
     }
   };
 
@@ -152,29 +127,32 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
                     <p className="text-sm font-medium text-gray-300 mb-2">
                       Add Agent Image
                     </p>
-                    <label htmlFor="addImage">
-                      <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-                        {preview ? (
-                          <div
-                            className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
-                            style={{ backgroundImage: `url(${preview})` }}
-                          >
-                            <div className="rounded-full bg-gray-100 p-2">
-                              <IoMdAdd color="#3F3F46" />
+                    <div>
+                      <label htmlFor="addImage">
+                        <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+                          {preview ? (
+                            <div
+                              className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
+                              style={{ backgroundImage: `url(${preview})` }}
+                            >
+                              <div className="rounded-full bg-gray-100 p-2">
+                                <IoMdAdd color="#3F3F46" />
+                              </div>
                             </div>
-                          </div>
-                        ) : (
-                          <IoMdAdd color="#3F3F46" />
-                        )}
-                        <input
-                          id="addImage"
-                          type="file"
-                          onChange={handleAddImage}
-                          className="hidden"
-                          accept="image/*"
-                        />
-                      </div>
-                    </label>
+                          ) : (
+                            <IoMdAdd color="#3F3F46" />
+                          )}
+                          <input
+                            id="addImage"
+                            type="file"
+                            onChange={handleAddImage}
+                            className="hidden"
+                            accept=".png, .jpeg, .jpg"
+                          />
+                        </div>
+                      </label>
+                    </div>
+                    <p className="text-sm text-red-600">{imgError}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-300 mb-2">
@@ -228,4 +206,5 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     </div>
   );
 };
+
 export default AgentSettings;

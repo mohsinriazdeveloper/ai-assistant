@@ -1,7 +1,6 @@
 "use client";
 import { FC, useState } from "react";
 import Link from "next/link";
-// import { useRouter } from "next/router";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import ShowIcon from "@/app/assets/icons/viewPassword.png";
@@ -11,6 +10,7 @@ import {
   useUserPasswordResetMutation,
 } from "../ReduxToolKit/aiAssistant";
 import Loader from "../Loader/Loader";
+import toast, { Toaster } from "react-hot-toast";
 
 type ResetPayload = {
   token?: string;
@@ -32,10 +32,42 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
     useState<string>("");
   const [errorsIndication, setErrorIndications] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [passwordErr, setPasswordErr] = useState<string>("");
+  const [strength, setStrength] = useState<string>("");
+  const [showPassStrenghtList, setShowPassStrengthList] =
+    useState<boolean>(false);
+  // Password Strength Logic
+  const checkPasswordStrength = (password: string) => {
+    let strength = "Weak";
+    if (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password) &&
+      /[!@#$%^&*]/.test(password)
+    ) {
+      strength = "Strong";
+    } else if (
+      password.length >= 8 &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password)
+    ) {
+      strength = "Medium";
+    }
+    setStrength(strength);
+  };
 
   const redirectRoute = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
+    if (ForgotPassword === "") {
+      setPasswordErr("Please enter the password first");
+      setLoading(false);
+      return;
+    }
+    if (strength !== "Strong") {
+      setLoading(false);
+      return;
+    }
     if (ForgotPassword === ForgotConfirmPassword) {
       const payLoad: ResetPayload = {
         token: token,
@@ -43,27 +75,30 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
       };
       try {
         const res = await passwordReset(payLoad).unwrap();
-        // dispatch(
-        //   userLoginSuccess({
-        //     refresh: res.refresh,
-        //     access: res.access,
-        //   })
-        // );
-        // alert("login");
         setLoading(false);
-        return router.push("/");
+        router.push("/");
+        return;
       } catch (err: any) {
+        if (err.status === 400) {
+          setLoading(false);
+          toast.error("Link expired");
+          router.push("/forgot-password");
+          return;
+        }
         setLoading(false);
         setErrorIndications(err);
-        console.error("Failed to reset:", err);
+        console.error("here: ", err);
       }
     } else {
       setLoading(false);
-      setErrorIndications("passwords not match");
+      setErrorIndications("Passwords do not match");
     }
   };
+
   return (
     <div className="max-w-[360px] mx-auto py-12">
+      <Toaster position="top-right" reverseOrder={false} />
+
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>
       </div>
@@ -80,7 +115,13 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
                     type={`${showForgotPassword ? "text" : "password"}`}
                     placeholder="Password"
                     value={ForgotPassword}
-                    onChange={(e) => setForgotPassword(e.target.value)}
+                    onChange={(e) => {
+                      setForgotPassword(e.target.value);
+                      checkPasswordStrength(e.target.value);
+                      setShowPassStrengthList(true);
+                      setPasswordErr("");
+                      setErrorIndications("");
+                    }}
                     className="focus:outline-none w-full"
                   />
                 </label>
@@ -103,6 +144,33 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
                 )}
               </div>
             </div>
+            {passwordErr && (
+              <p className="text-sm text-red-500">{passwordErr}</p>
+            )}
+            {ForgotPassword && (
+              <div
+                className={`${strength === "Weak" ? "text-red-600" : ""} ${
+                  strength === "Medium" ? "text-orange-600" : ""
+                } ${strength === "Strong" ? "text-green-600" : ""}`}
+              >
+                {strength} Password
+              </div>
+            )}
+            {showPassStrenghtList && (
+              <div className="my-2 ml-4">
+                <ul className="list-disc">
+                  <li>Password must be at least 8 characters long</li>
+                  <li>
+                    Password must contain at least 1 uppercase letter (A-Z)
+                  </li>
+                  <li>Password must contain at least 1 number (0-9)</li>
+                  <li>
+                    Password must contain at least 1 special character (e.g.,
+                    !@#$%^&*)
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
           <div className="mb-4">
             <div>
@@ -115,7 +183,10 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
                     type={`${showForgotConfirmPassword ? "text" : "password"}`}
                     placeholder="Confirm Password"
                     value={ForgotConfirmPassword}
-                    onChange={(e) => setForgotConfirmPassword(e.target.value)}
+                    onChange={(e) => {
+                      setForgotConfirmPassword(e.target.value),
+                        setErrorIndications("");
+                    }}
                     className="focus:outline-none w-full"
                   />
                 </label>
@@ -139,7 +210,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
               </div>
             </div>
             {errorsIndication && (
-              <div className="text-xs text-red-700">{errorsIndication}</div>
+              <div className="text-xs text-red-500">{errorsIndication}</div>
             )}
           </div>
           <div>
@@ -155,4 +226,5 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
     </div>
   );
 };
+
 export default ResetPassword;

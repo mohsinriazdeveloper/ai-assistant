@@ -119,11 +119,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
             setExistingFiles((prevFiles) =>
               prevFiles.filter((_, i) => i !== index)
             );
-            toast.success("File deleted successfully from the server.");
+            toast.success("File successfully deleted.");
           })
           .catch((error) => {
-            console.error("Failed to delete file from server:", error);
-            toast.error("Failed to delete file from the server.");
+            console.error("Failed to delete file ", error);
+            toast.error("Failed to delete file");
           });
       } else {
         // Handle deletion of new files
@@ -133,6 +133,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
           setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
           setCharCount((prevCharCount) => prevCharCount - charCountToRemove);
           setFileCount((prevCount) => prevCount - 1);
+          toast.success("File successfully deleted.");
         };
 
         if (fileToRemove.type === "application/pdf") {
