@@ -36,7 +36,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
       await deleteAgent(agent?.id).unwrap();
       setLoading(false);
       handleClose();
-      return router.push("/dashboard/new-chat");
+      return router.push("/dashboard/agents");
       // handle successful deletion, e.g., refresh the agent list
     } catch (error) {
       setLoading(false);

@@ -13,7 +13,7 @@ const Join: FC<JoinProps> = () => {
   const submitData = (e: React.FormEvent) => {
     e.preventDefault();
     if (orgName && orgUrl) {
-      return router.push("/dashboard/new-chat");
+      return router.push("/dashboard/agents");
     }
   };
   return (

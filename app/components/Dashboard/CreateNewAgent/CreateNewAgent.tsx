@@ -65,7 +65,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       try {
         const res = await creatingAgent(formData).unwrap();
         setLoading(false);
-        router.push("/dashboard/new-chat");
+        router.push("/dashboard/agents");
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to create agent: ", error);

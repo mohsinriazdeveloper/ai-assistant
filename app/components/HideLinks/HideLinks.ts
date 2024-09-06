@@ -1,1 +1,1 @@
-export const hideBackBtn = ["/signup", "/", "/dashboard/new-chat"];
+export const hideBackBtn = ["/signup", "/", "/dashboard/agents"];

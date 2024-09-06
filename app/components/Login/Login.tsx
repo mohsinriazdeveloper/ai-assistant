@@ -66,7 +66,7 @@ const Login: FC<LoginProps> = ({}) => {
       // return router.push("/dashboard/join");
       setLoading(false);
       toast.success("Welcome back! You have successfully signed in");
-      return router.push("/dashboard/new-chat");
+      return router.push("/dashboard/agents");
     } catch (err: any) {
       setLoading(false);
       console.error("Failed to login:", err);
@@ -160,7 +160,7 @@ const Login: FC<LoginProps> = ({}) => {
               </div>
               {passError && <p className="text-red-600">{passError}</p>}
               {wrongPassword && (
-                <p className="text-red-600">Crediantials are not correct</p>
+                <p className="text-red-600">Credentials are not correct</p>
               )}
             </div>
             <div className="mb-4">

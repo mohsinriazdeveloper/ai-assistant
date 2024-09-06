@@ -123,7 +123,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               {chat.map((msg, index) => (
                 <div
                   key={index}
-                  className={`w-fit py-4 px-[14px] rounded-lg ${
+                  className={`w-fit py-4 px-[14px] rounded-lg whitespace-pre-line break-words  ${
                     msg.role === "agent"
                       ? "bg-gray-200"
                       : "bg-[#3B81F6] text-white self-end"
