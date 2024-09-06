@@ -98,6 +98,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         if (error.status === 400) {
           toast.error("File type not supported");
           return;
+        } else if (error.status === "FETCH_ERROR") {
+          toast.error(
+            "The uploaded files/data exceed the allowed size limit. Please reduce the file size or upload fewer files."
+          );
+          return;
         }
         console.error("Failed to update agent: ", error);
         const errorMessage = error.data.message;

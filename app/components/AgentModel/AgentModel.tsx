@@ -64,6 +64,19 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
       toast.error("Failed to Updated");
     }
   };
+  //@ts-ignore
+  const formattedDate = new Date(agent.updated_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  //@ts-ignore
+  const formattedTime = new Date(agent.updated_at).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
   return (
     <div className="flex flex-col gap-10 mb-10">
@@ -139,7 +152,9 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
         <p className="text-2xl font-medium">Training</p>
         <div className="font-semibold text-sm">
           <p className="text-gray-300">Last Trained at</p>
-          <p className="text-gray-900">{agent?.updated_at}</p>
+          <p className="text-gray-900">
+            {formattedDate} at {formattedTime}
+          </p>
         </div>
       </div>
     </div>

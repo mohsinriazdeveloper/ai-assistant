@@ -14,6 +14,8 @@ import DeleteChatModal from "../Dialogues/DeleteChatModal";
 import "katex/dist/katex.min.css";
 import katex from "katex";
 import MathFormat from "./MathFormat";
+import MarkDown from "@/app/components/MarkDown/MarkDown";
+
 interface AgentChatProps {
   agentId: number;
 }
@@ -113,6 +115,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
           </div>
           <div className="border-b border-gray-200 w-full my-3"></div>
           <div
+            // className="overflow-y-scroll scrollbar-hide "
             className="overflow-y-scroll scrollbar-hide "
             ref={chatContainerRef}
           >
@@ -126,7 +129,8 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
                       : "bg-[#3B81F6] text-white self-end"
                   }`}
                 >
-                  <MathFormat content={msg.message} />
+                  <MarkDown content={msg.message} />
+                  {/* <MathFormat content={msg.message} /> */}
                   {/* <p className="whitespace-pre-wrap">{msg.message}</p> */}
                 </div>
               ))}

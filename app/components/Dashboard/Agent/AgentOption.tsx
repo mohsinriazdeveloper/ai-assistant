@@ -34,6 +34,8 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
   const [fileChar, setFileChar] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false); // State to manage the tooltip
 
+  const date = new Date();
+
   useEffect(() => {
     if (agent?.file_urls) {
       //@ts-ignore
@@ -92,6 +94,21 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
 
   //@ts-ignore
   const totalChar = qaCharacters + agent.text?.length + fileChar;
+
+  //@ts-ignore
+  const formattedDate = new Date(agent.updated_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  //@ts-ignore
+  const formattedTime = new Date(agent.updated_at).toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+
   return (
     <div className="md:w-[63%] md:mx-auto mx-5 border border-gray-200 py-8 px-7 rounded-lg">
       <p className="text-xl font-bold mb-9">
@@ -164,7 +181,9 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
           </div>
           <div className="text-sm font-semibold">
             <p className="text-gray-300">Last trained at</p>
-            <p className="text-gray-900">{agent.updated_at}</p>
+            <p className="text-gray-900">
+              {formattedDate} at {formattedTime}
+            </p>
           </div>
         </div>
         <div className="sm:col-span-7 col-span-12 border border-gray-200 rounded-lg">

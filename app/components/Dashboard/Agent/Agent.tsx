@@ -1,12 +1,14 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import NavBar from "../../NavBar/NavBar";
 import AgentOption from "./AgentOption";
 import CreateNewAgent from "../CreateNewAgent/CreateNewAgent";
 import Connect from "../../Connect/Connect";
 import AgentSettings from "../../AgentSettings/AgentSettings";
 import UpdateTraining from "../../UpdateTraining/UpdateTraining";
+import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
+import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
 
 type NavContent = {
   title: string;
@@ -19,6 +21,21 @@ interface AgentProps {
 
 const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   const [checkOption, setCheckOption] = useState<string>("agent");
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(
+      voiceResponce({
+        inText: "",
+      })
+    );
+    if (checkOption !== "agent") {
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  }, [checkOption]);
+
   return (
     <div className="mb-10">
       <div className="">

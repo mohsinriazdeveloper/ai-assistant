@@ -5,6 +5,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  useRef,
 } from "react";
 import { IoMdAdd } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
@@ -46,28 +47,44 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   );
   const [enlargedIndex, setEnlargedIndex] = useState<number | null>(null);
   const [isExistingImage, setIsExistingImage] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setTotalImage(imageFiles.length);
   }, [imageFiles, setTotalImage]);
 
+  const processImage = (file: File) => {
+    // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
+    if (file.size > 1048576) {
+      toast.error("Image size should not exceed 1 MB");
+      return;
+    }
+
+    // Check if the file is already added
+    if (imageFiles.some((img) => img.name === file.name)) {
+      toast.error("Image Already Added");
+    } else {
+      setImagesFile((prevImages) => [...prevImages, file]);
+    }
+  };
+
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
-
-      // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
-      if (file.size > 1048576) {
-        toast.error("Image size should not exceed 1 MB");
-        return;
-      }
-
-      // Check if the file is already added
-      if (imageFiles.some((img) => img.name === file.name)) {
-        toast.error("Image Already Added");
-      } else {
-        setImagesFile((prevImages) => [...prevImages, file]);
-      }
+      processImage(file);
     }
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+      const file = event.dataTransfer.files[0];
+      processImage(file);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
   };
 
   const submitImages = async () => {
@@ -130,22 +147,32 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     setEnlargedIndex(null);
   };
 
+  const triggerFileInput = () => {
+    fileInputRef.current?.click(); // Programmatically trigger the file input click
+  };
+
   return (
     <div className="w-full flex flex-col gap-10 mt-10">
       <Toaster position="top-right" reverseOrder={false} />
-      <div className="flex justify-between items-start">
-        <label htmlFor="addImage">
-          <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-            <IoMdAdd color="#3F3F46" />
-            <input
-              id="addImage"
-              type="file"
-              onChange={handleAddImage}
-              className="hidden"
-              accept=".png, .PNG, .jpg, .JPG, .JPEG, .jpeg"
-            />
-          </div>
-        </label>
+      <div
+        className="flex justify-between items-start"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
+        <div
+          className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden"
+          onClick={triggerFileInput} // Use onClick to trigger the file input
+        >
+          <IoMdAdd color="#3F3F46" />
+          <input
+            ref={fileInputRef}
+            id="addImage"
+            type="file"
+            className="hidden"
+            accept=".png, .PNG, .jpg, .JPG, .JPEG, .jpeg"
+            onChange={handleAddImage}
+          />
+        </div>
       </div>
 
       {/* New Images Grid */}

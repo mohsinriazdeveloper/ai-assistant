@@ -33,10 +33,14 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
 
   const dispatch = useAppDispatch();
   const inText = useAppSelector(selectVoiceResponse);
-  const stopAudioPlaying = useAppSelector(selectVoiceResponse);
+  // const stopAudioPlaying = useAppSelector(selectVoiceResponse);
   const [agentVoice] = useAgentVoiceMutation();
   const { data: allAgents } = useGetAllAgentsQuery();
-
+  useEffect(() => {
+    if (inText === "") {
+      speechSynthesis.cancel();
+    }
+  }, [inText]);
   const handleStop = useCallback(
     async (blobUrl: string | null) => {
       if (!blobUrl) {
@@ -61,7 +65,11 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
         const result = await agentVoice(formData).unwrap();
 
         const responseText = result.response;
-        dispatch(voiceResponce({ inText: responseText }));
+        dispatch(
+          voiceResponce({
+            inText: responseText,
+          })
+        );
         setResponse(responseText);
       } catch (error) {
         console.error("Error processing audio:", error);
@@ -72,6 +80,10 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     },
     [allAgents, agentVoice, agentId, dispatch]
   );
+
+  useEffect(() => {
+    return () => {};
+  });
 
   useEffect(() => {
     if (mediaBlobUrl) {
@@ -232,12 +244,6 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({ agentId }) => {
     setError(null);
     speechSynthesis.cancel();
   };
-
-  useEffect(() => {
-    if (inText === "") {
-      speechSynthesis.cancel();
-    }
-  }, [inText]);
 
   return (
     <div className="container mx-auto h-[500px] flex flex-col items-center py-10 gap-10">

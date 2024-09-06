@@ -74,7 +74,9 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
           router.push("/");
           return;
         } else if (error.status === "FETCH_ERROR") {
-          toast.error("Request Entity is too large");
+          toast.error(
+            "The uploaded files/data exceed the allowed size limit. Please reduce the file size or upload fewer files."
+          );
           return;
         } else if (error.status === 400) {
           toast.error(error.data);

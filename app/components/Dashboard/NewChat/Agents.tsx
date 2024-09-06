@@ -24,6 +24,7 @@ const Agents: FC<AgentsProps> = () => {
   if (isLoading) {
     dispatch(voiceResponce({ inText: "" }));
   }
+
   return (
     <div className="md:w-[795px] md:mx-auto mx-5 mt-16">
       <div className="flex justify-between items-center">

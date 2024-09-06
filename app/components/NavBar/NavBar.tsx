@@ -23,8 +23,7 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
   const dispatch = useAppDispatch();
 
   const handleSignOut = () => {
-    const intext = dispatch(voiceResponce({ inText: "" }));
-
+    // const intext = dispatch(voiceResponce({ inText: "" }));
     setTimeout(() => {
       dispatch(
         userLogoutSuccess({
@@ -34,6 +33,9 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
       );
       router.push("/");
     }, 1000);
+  };
+  const handleChangeTab = (item: string) => {
+    setCheckOption(item);
   };
   return (
     <div className="pt-5 mb-[57px]">
@@ -58,13 +60,7 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
                     : "mb-0.5 text-[#71717a]"
                 } pb-1 hover:text-black text-sm font-medium cursor-pointer`}
               >
-                <p
-                  onClick={() => {
-                    setCheckOption(item.url);
-                  }}
-                >
-                  {item.title}
-                </p>
+                <p onClick={() => handleChangeTab(item.url)}>{item.title}</p>
               </div>
             ))}
           </div>
