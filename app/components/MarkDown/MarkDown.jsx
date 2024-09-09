@@ -13,7 +13,6 @@ const MarkDown = ({ content }) => {
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
-        // children={content}
         className="whitespace-normal"
         components={{
           code({ inline, className, children, ...props }) {
@@ -55,7 +54,6 @@ const MarkDown = ({ content }) => {
               </table>
             );
           },
-          // Add CSS styles to the table row
           tr({ children, ...props }) {
             return (
               <tr style={{ backgroundColor: "#f8f8f8" }} {...props}>
@@ -63,7 +61,6 @@ const MarkDown = ({ content }) => {
               </tr>
             );
           },
-          // Add CSS styles to the table cell
           td({ children, ...props }) {
             return (
               <td
@@ -123,6 +120,48 @@ const MarkDown = ({ content }) => {
               </p>
             );
           },
+          // Adding styles to math block elements
+          span({ className, children, ...props }) {
+            if (className === "math-inline") {
+              return (
+                <span
+                  className={className}
+                  style={{
+                    margin: "0 4px",
+                  }}
+                  {...props}
+                >
+                  {children}
+                </span>
+              );
+            }
+            return (
+              <span className={className} {...props}>
+                {children}
+              </span>
+            );
+          },
+          div({ className, children, ...props }) {
+            if (className === "math-display") {
+              return (
+                <div
+                  className={className}
+                  style={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                  }}
+                  {...props}
+                >
+                  {children}
+                </div>
+              );
+            }
+            return (
+              <div className={className} {...props}>
+                {children}
+              </div>
+            );
+          },
         }}
       >
         {content}
@@ -132,4 +171,3 @@ const MarkDown = ({ content }) => {
 };
 
 export default memo(MarkDown);
-// export default ReactMarkDownComponent;

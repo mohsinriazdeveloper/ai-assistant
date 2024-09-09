@@ -37,11 +37,11 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
     }
   }, [wholeChat]);
 
-  useEffect(() => {
-    // Add initial message when the component first loads
-    const initialMessage = "How can I help you?";
-    addMessageToChat({ role: "agent", message: initialMessage });
-  }, []);
+  // useEffect(() => {
+  //   // Add initial message when the component first loads
+  //   const initialMessage = "How can I help you?";
+  //   addMessageToChat({ role: "agent", message: initialMessage });
+  // }, []);
 
   useEffect(() => {
     // Scroll to bottom when chat updates
@@ -123,7 +123,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               {chat.map((msg, index) => (
                 <div
                   key={index}
-                  className={`w-fit py-4 px-[14px] rounded-lg whitespace-pre-line break-words  ${
+                  className={` w-fit py-4 px-[14px] rounded-lg ${
                     msg.role === "agent"
                       ? "bg-gray-200"
                       : "bg-[#3B81F6] text-white self-end"

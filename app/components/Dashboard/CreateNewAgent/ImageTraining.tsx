@@ -19,6 +19,8 @@ import Image from "next/image";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import ResizeIcon from "@/app/assets/icons/resize.png";
 import { usePathname } from "next/navigation";
+import UploadIcon from "@/app/assets/icons/uploadIcon.png";
+import TestingImg from "@/app/assets/Images/Discipline.png";
 
 interface ImageTrainingProps {
   setTotalImage: Dispatch<SetStateAction<number>>;
@@ -152,67 +154,78 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col gap-10 mt-10">
+    <div>
       <Toaster position="top-right" reverseOrder={false} />
+
       <div
-        className="flex justify-between items-start"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
+        onClick={triggerFileInput}
+        className="border border-gray-200 mt-10 p-6 rounded h-[200px] cursor-pointer flex flex-col items-center justify-center"
       >
-        <div
-          className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden"
-          onClick={triggerFileInput} // Use onClick to trigger the file input
-        >
-          <IoMdAdd color="#3F3F46" />
-          <input
-            ref={fileInputRef}
-            id="addImage"
-            type="file"
-            className="hidden"
-            accept=".png, .PNG, .jpg, .JPG, .JPEG, .jpeg"
-            onChange={handleAddImage}
-          />
+        <div>
+          <Image src={UploadIcon} alt="" className="max-w-5" />
         </div>
+        <input
+          ref={fileInputRef}
+          id="addImage"
+          type="file"
+          className="hidden"
+          accept=".png, .PNG, .jpg, .JPG, .JPEG, .jpeg"
+          onChange={handleAddImage}
+          onClick={(event) => event.stopPropagation()}
+        />
+        <label
+          htmlFor="addImage"
+          className="mt-4 text-sm text-gray-600 cursor-pointer"
+        >
+          Drag & drop files here, or click to select files
+        </label>
+        <p className="mt-2 text-xs text-gray-500">
+          Supported File Types: .png, .jpg, .jpeg
+        </p>
       </div>
 
-      {/* New Images Grid */}
-      <div className="grid grid-cols-4 gap-5">
+      <div className=" mt-10 pb-5">
+        {imageFiles.length > 0 && (
+          <div className="flex justify-center items-center gap-2 mb-5">
+            <div className="border-b w-[40%]"></div>
+            <div>
+              <p className="text-gray-300">Attached Files</p>
+            </div>
+            <div className="border-b w-[40%]"></div>
+          </div>
+        )}
         {imageFiles.map((image, index) => (
-          <div
-            key={index}
-            className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden relative group"
-          >
-            <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
-
-            <img
-              src={URL.createObjectURL(image)}
-              alt={`Uploaded ${index}`}
-              className="object-cover w-full h-full"
-            />
-            <div className="w-full flex justify-between items-center absolute top-1 z-50 p-3">
+          <div key={index} className="grid grid-cols-12 gap-3 mb-2">
+            <div className="col-span-1 h-10">
+              <img
+                src={URL.createObjectURL(image)}
+                alt={`Uploaded ${index}`}
+                className="h-full w-auto mx-auto cursor-pointer"
+                onClick={() => handleResizeImage(index, false)}
+              />
+            </div>
+            <div className="col-span-10 my-auto text-sm text-gray-600">
+              <p>
+                {image.name.length > 30 ? (
+                  <>{image.name.slice(0, 30) + " ..."}</>
+                ) : (
+                  <>{image.name}</>
+                )}
+              </p>
+            </div>
+            <div className="col-span-1 flex justify-center items-center">
               <Image
                 src={DeleteIcon}
                 alt="Delete"
-                className="w-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
+                className="w-5 cursor-pointer"
                 onClick={() => handleDeleteNewImage(index)}
-              />
-              <Image
-                src={ResizeIcon}
-                alt="Resize"
-                className="w-4 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                onClick={() => handleResizeImage(index, false)}
               />
             </div>
           </div>
         ))}
       </div>
-
-      <div className="w-full">
-        <p className="text-sm text-gray-500 text-center">
-          Supported File Types: .png, .PNG, .jpg, .JPG, .JPEG, .jpeg
-        </p>
-      </div>
-
       {currentPage !== "/dashboard/create-new-agent" && (
         <div>
           <div className="flex justify-center items-center gap-2 mb-5">
@@ -222,66 +235,65 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             </div>
             <div className="border-b w-[40%]"></div>
           </div>
-
-          {/* Existing Images Grid */}
-          <div className="grid grid-cols-4 gap-5">
-            {existingImgs.map((image, index) => (
-              <div
-                key={index}
-                className="grid-cols-1 w-full h-[121px] border rounded-md overflow-hidden bg-cover bg-center bg-no-repeat relative group"
-                style={{ backgroundImage: `url(${image.file_url})` }}
-              >
-                <div className="group-hover:opacity-50 group-hover:bg-white w-full h-full absolute"></div>
-                {imgLoader[index] ? (
-                  <div className="w-full h-full flex justify-center items-center">
-                    <Loader />
-                  </div>
-                ) : (
-                  <div className="w-full flex justify-between items-center relative z-50 p-3">
-                    <Image
-                      src={DeleteIcon}
-                      alt="Delete"
-                      className="w-5 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleDeleteFile(index, image.id)}
-                    />
-                    <Image
-                      src={ResizeIcon}
-                      alt="Resize"
-                      className="w-4 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
-                      onClick={() => handleResizeImage(index, true)}
-                    />
-                  </div>
-                )}
+          {existingImgs.map((image, index) => (
+            <div key={index} className="grid grid-cols-12 gap-3 mb-2">
+              <div className="col-span-1 h-10">
+                <img
+                  src={image.file_url}
+                  alt={`Uploaded ${index}`}
+                  className="h-full w-auto mx-auto cursor-pointer"
+                  onClick={() => handleResizeImage(index, true)}
+                />
               </div>
-            ))}
-          </div>
+              <div className="col-span-10 my-auto text-sm text-gray-600">
+                <p>
+                  {image.file_name.length > 30 ? (
+                    <>{image.file_name.slice(0, 30) + " ..."}</>
+                  ) : (
+                    <>{image.file_name}</>
+                  )}
+                </p>
+              </div>
+
+              <div className="col-span-1 flex justify-center items-center">
+                <Image
+                  src={DeleteIcon}
+                  alt="Delete"
+                  className="w-5 cursor-pointer"
+                  onClick={() => handleDeleteFile(index, image.id)}
+                />
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Enlarged Image View */}
-      {enlargedIndex !== null && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
-          <div className="relative">
-            <img
-              src={
-                isExistingImage
-                  ? existingImgs[enlargedIndex].file_url
-                  : URL.createObjectURL(imageFiles[enlargedIndex])
-              }
-              alt={`Enlarged ${enlargedIndex}`}
-              className="max-w-full max-h-screen"
-            />
-            <div className="bg-gray-700 rounded-full w-5 h-5 flex justify-center items-center absolute top-2 right-2">
-              <button
-                onClick={handleCloseEnlarged}
-                className="text-white text-xl mb-1"
-              >
-                &times;
-              </button>
+      <div className="w-full flex flex-col gap-10 mt-10">
+        {/* Enlarged Image View */}
+        {enlargedIndex !== null && (
+          <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
+            <div className="relative">
+              <img
+                src={
+                  isExistingImage
+                    ? existingImgs[enlargedIndex].file_url
+                    : URL.createObjectURL(imageFiles[enlargedIndex])
+                }
+                alt={`Enlarged ${enlargedIndex}`}
+                className="max-w-full max-h-screen"
+              />
+              <div className="bg-gray-700 rounded-full w-5 h-5 flex justify-center items-center absolute top-2 right-2">
+                <button
+                  onClick={handleCloseEnlarged}
+                  className="text-white text-xl mb-1"
+                >
+                  &times;
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
