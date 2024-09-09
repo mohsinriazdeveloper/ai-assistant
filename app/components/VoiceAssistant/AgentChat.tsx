@@ -29,6 +29,16 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [openDialogue, setOpenDialogue] = useState<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (textareaRef.current) {
+        console.log("timeout");
+        textareaRef.current.focus();
+      }
+    }, 4000);
+  }, []);
 
   useEffect(() => {
     if (wholeChat) {
@@ -99,7 +109,12 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   if (error) {
     return <p>Error loading chat.</p>;
   }
-
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevent newline
+      handleSendMessage(e); // Call submit function
+    }
+  };
   return (
     <div>
       <div className="container mx-auto flex flex-col justify-between">
@@ -150,13 +165,15 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
         </div>
         <form onSubmit={handleSendMessage}>
           <div className="flex items-center gap-2 border-t border-gray-200 p-3">
-            <input
-              type="text"
+            <textarea
+              ref={textareaRef}
+              rows={1}
               placeholder="Message..."
               className="w-full focus:outline-none text-gray-900"
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               disabled={loading} // Disable input when loading is true
+              onKeyDown={handleKeyDown}
             />
 
             <button
