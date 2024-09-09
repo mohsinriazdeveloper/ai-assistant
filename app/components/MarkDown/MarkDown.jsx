@@ -101,10 +101,16 @@ const MarkDown = ({ content }) => {
             );
           },
           ul({ children }) {
-            return <ul>{children}</ul>;
+            return (
+              <ul className="list-disc whitespace-normal pl-5">{children}</ul>
+            );
           },
           ol({ children, props }) {
-            return <ol {...props}>{children}</ol>;
+            return (
+              <ol className="list-decimal whitespace-normal pl-5" {...props}>
+                {children}
+              </ol>
+            );
           },
           li({ children, ...props }) {
             // If children is a string, apply the transformation
