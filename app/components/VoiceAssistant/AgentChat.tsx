@@ -164,7 +164,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
           </div>
         </div>
         <form onSubmit={handleSendMessage}>
-          <div className="flex items-center gap-2 border-t border-gray-200 p-3">
+          <div className="flex items-end gap-2 border-t border-gray-200 p-3">
             <textarea
               ref={textareaRef}
               rows={1}
