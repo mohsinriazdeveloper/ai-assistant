@@ -179,10 +179,10 @@ const ImageTraining: FC<ImageTrainingProps> = ({
           htmlFor="addImage"
           className="mt-4 text-sm text-gray-600 cursor-pointer"
         >
-          Drag & drop files here, or click to select files
+          Drag & drop image here, or click to select files
         </label>
         <p className="mt-2 text-xs text-gray-500">
-          Supported File Types: .png, .jpg, .jpeg
+          Supported Image Types: .png, .jpg, .jpeg
         </p>
       </div>
 
@@ -191,7 +191,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
           <div className="flex justify-center items-center gap-2 mb-5">
             <div className="border-b w-[40%]"></div>
             <div>
-              <p className="text-gray-300">Attached Files</p>
+              <p className="text-gray-300">Attached Images</p>
             </div>
             <div className="border-b w-[40%]"></div>
           </div>
@@ -228,13 +228,15 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       </div>
       {currentPage !== "/dashboard/create-new-agent" && (
         <div>
-          <div className="flex justify-center items-center gap-2 mb-5">
-            <div className="border-b w-[40%]"></div>
-            <div>
-              <p className="text-gray-300">Existing Images</p>
+          {existingImgs.length > 0 && (
+            <div className="flex justify-center items-center gap-2 mb-5">
+              <div className="border-b w-[40%]"></div>
+              <div>
+                <p className="text-gray-300">Existing Images</p>
+              </div>
+              <div className="border-b w-[40%]"></div>
             </div>
-            <div className="border-b w-[40%]"></div>
-          </div>
+          )}
           {existingImgs.map((image, index) => (
             <div key={index} className="grid grid-cols-12 gap-3 mb-2">
               <div className="col-span-1 h-10">
