@@ -48,11 +48,11 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>
       </div>
-      <div className="text-sm font-medium">
+      <div className="text-sm">
         <form onSubmit={emailValidation}>
           <div className="mb-4">
             <div>
-              <p>Email</p>
+              <p className="font-medium">Email</p>
             </div>
             <label htmlFor="">
               <input

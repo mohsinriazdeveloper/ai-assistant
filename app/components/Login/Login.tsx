@@ -161,9 +161,7 @@ const Login: FC<LoginProps> = ({}) => {
               </div>
               {passError && <p className="text-red-600">{passError}</p>}
               {wrongPassword && (
-                <p className="text-red-600">
-                  Credentials Credentials are not correct
-                </p>
+                <p className="text-red-600">Credentials are not correct</p>
               )}
             </div>
             <div className="mb-4">
