@@ -237,14 +237,14 @@ const ImageTraining: FC<ImageTrainingProps> = ({
               <p>
                 {image.name.length > 30 ? (
                   <p
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:text-blue-400"
                     onClick={() => handleResizeImage(index, false)}
                   >
                     {image.name.slice(0, 30) + " ..."}
                   </p>
                 ) : (
                   <p
-                    className="cursor-pointer"
+                    className="cursor-pointer hover:text-blue-400"
                     onClick={() => handleResizeImage(index, false)}
                   >
                     {image.name}
@@ -288,14 +288,14 @@ const ImageTraining: FC<ImageTrainingProps> = ({
                 <p>
                   {image.file_name.length > 30 ? (
                     <p
-                      className="cursor-pointer"
+                      className="cursor-pointer hover:text-blue-400"
                       onClick={() => handleResizeImage(index, true)}
                     >
                       {image.file_name.slice(0, 30) + " ..."}
                     </p>
                   ) : (
                     <p
-                      className="cursor-pointer"
+                      className="cursor-pointer hover:text-blue-400"
                       onClick={() => handleResizeImage(index, true)}
                     >
                       {image.file_name}

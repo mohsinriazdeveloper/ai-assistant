@@ -60,7 +60,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
     setLoading(true);
     e.preventDefault();
     if (ForgotPassword === "") {
-      setPasswordErr("Please enter the password first");
+      setPasswordErr("Please enter the new password");
       setLoading(false);
       return;
     }
@@ -91,7 +91,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
       }
     } else {
       setLoading(false);
-      setErrorIndications("Passwords do not match");
+      setErrorIndications("Password do not match");
     }
   };
 
@@ -102,11 +102,11 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>
       </div>
-      <div className="text-sm font-medium">
+      <div className="text-sm">
         <form onSubmit={redirectRoute}>
           <div className="mb-4">
             <div>
-              <p>New Password</p>
+              <p className=" font-medium">New Password</p>
             </div>
             <div className="border rounded-md px-3 py-2 mt-2 flex items-center gap-1">
               <div className="w-full">
@@ -174,7 +174,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
           </div>
           <div className="mb-4">
             <div>
-              <p>Confirm New Password</p>
+              <p className=" font-medium">Confirm New Password</p>
             </div>
             <div className="border rounded-md px-3 py-2 mt-2 flex items-center gap-1">
               <div className="w-full">
