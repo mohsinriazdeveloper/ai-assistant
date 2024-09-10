@@ -92,7 +92,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       try {
         const res = await updateAgent(formData).unwrap();
         setLoading(false);
-        toast.success("Agent Updated");
+        toast.success("Agent successfully updated");
       } catch (error: any) {
         setLoading(false);
         if (error.status === 400) {
@@ -228,7 +228,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
 
   return (
     <div>
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="md:container md:mx-auto mx-5">
         <div className="mb-10">
           <p className="text-center font-bold text-3xl mb-2">Data Sources</p>

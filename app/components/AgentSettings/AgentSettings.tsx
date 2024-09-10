@@ -107,7 +107,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
 
   return (
     <div>
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="md:container md:mx-auto mx-5 my-10">
         <p className="text-3xl font-bold">Settings</p>
         <div className="grid grid-cols-12 gap-8 mt-10">

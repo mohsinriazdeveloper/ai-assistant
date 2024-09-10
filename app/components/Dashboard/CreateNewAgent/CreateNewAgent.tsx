@@ -65,6 +65,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       try {
         const res = await creatingAgent(formData).unwrap();
         setLoading(false);
+        toast.success("Agent successfully created");
         router.push("/dashboard/agents");
       } catch (error: any) {
         setLoading(false);
@@ -172,7 +173,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   return (
     <div>
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div
         className={`md:container md:mx-auto mx-5 ${
           currentPage != "/dashboard/agent" && "py-10"

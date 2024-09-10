@@ -29,7 +29,7 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
       try {
         const res = await userForgotPassword(payload).unwrap();
         setLoading(false);
-        toast.success("Check your email for the reset link.");
+        toast.success("Check your email to reset your password.");
       } catch (error: any) {
         setLoading(false);
         console.error("Failed to forgot password:", error);
@@ -39,12 +39,12 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
       }
     } else {
       setLoading(false);
-      setEmailIndication("email is required");
+      setEmailIndication("Email is required");
     }
   };
   return (
     <div className="max-w-[360px] mx-auto py-12">
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>
       </div>

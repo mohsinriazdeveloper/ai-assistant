@@ -32,13 +32,11 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (textareaRef.current) {
-        console.log("timeout");
-        textareaRef.current.focus();
-      }
-    }, 4000);
-  }, []);
+    if (textareaRef.current && isLoading === false) {
+      console.log("timeout");
+      textareaRef.current.focus();
+    }
+  }, [isLoading]);
 
   useEffect(() => {
     if (wholeChat) {
@@ -115,10 +113,19 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
       handleSendMessage(e); // Call submit function
     }
   };
+  const handleTextareaInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+
+    // Reset the height so that it can shrink on content removal
+    textarea.style.height = "auto";
+
+    // Set the height to the scrollHeight but not more than maxHeight (5 rows)
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`; // 128px equals around 5 rows
+  };
   return (
     <div>
       <div className="container mx-auto flex flex-col justify-between">
-        <Toaster position="top-right" reverseOrder={false} />
+        {/* <Toaster position="top-right" reverseOrder={false} /> */}
         <div className="p-3 ">
           <div className="flex justify-end">
             <Image
@@ -138,7 +145,7 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               {chat.map((msg, index) => (
                 <div
                   key={index}
-                  className={` w-fit py-4 px-[14px] rounded-lg ${
+                  className={` w-fit py-4 px-[14px] rounded-lg whitespace-break-spaces ${
                     msg.role === "agent"
                       ? "bg-gray-200"
                       : "bg-[#3B81F6] text-white self-end"
@@ -169,11 +176,12 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
               ref={textareaRef}
               rows={1}
               placeholder="Message..."
-              className="w-full focus:outline-none text-gray-900"
+              className="w-full focus:outline-none text-gray-900 resize-none"
               value={textInput}
               onChange={(e) => setTextInput(e.target.value)}
               disabled={loading} // Disable input when loading is true
               onKeyDown={handleKeyDown}
+              onInput={handleTextareaInput}
             />
 
             <button

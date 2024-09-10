@@ -77,17 +77,17 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
         const res = await passwordReset(payLoad).unwrap();
         setLoading(false);
         router.push("/");
+        toast.success("Your password has been updated successfully");
         return;
       } catch (err: any) {
         if (err.status === 400) {
           setLoading(false);
-          toast.error("Link expired");
+          toast.error("Invalid or expired token. Please request a new one");
           router.push("/forgot-password");
           return;
         }
         setLoading(false);
         setErrorIndications(err);
-        console.error("here: ", err);
       }
     } else {
       setLoading(false);
@@ -97,7 +97,7 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
 
   return (
     <div className="max-w-[360px] mx-auto py-12">
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
 
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>

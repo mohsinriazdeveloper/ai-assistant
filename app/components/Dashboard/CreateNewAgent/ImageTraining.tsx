@@ -56,6 +56,12 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   }, [imageFiles, setTotalImage]);
 
   const processImage = (file: File) => {
+    // Check if the file is an image
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files are allowed");
+      return;
+    }
+
     // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
     if (file.size > 1048576) {
       toast.error("Image size should not exceed 1 MB");
@@ -124,7 +130,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       try {
         await delExistingFile(id).unwrap();
         setExistingImgs((prevFiles) => prevFiles.filter((_, i) => i !== index));
-        toast.success("File deleted");
+        toast.success("Image successfully deleted");
       } catch (error) {
         console.error("Failed to delete file: ", error);
         toast.error("Unable to delete File");
@@ -155,7 +161,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
 
   return (
     <div>
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
 
       <div
         onDrop={handleDrop}
@@ -179,7 +185,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
           htmlFor="addImage"
           className="mt-4 text-sm text-gray-600 cursor-pointer"
         >
-          Drag & drop image here, or click to select files
+          Drag & drop image here, or click to select images
         </label>
         <p className="mt-2 text-xs text-gray-500">
           Supported Image Types: .png, .jpg, .jpeg
@@ -209,9 +215,19 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             <div className="col-span-10 my-auto text-sm text-gray-600">
               <p>
                 {image.name.length > 30 ? (
-                  <>{image.name.slice(0, 30) + " ..."}</>
+                  <p
+                    className="cursor-pointer"
+                    onClick={() => handleResizeImage(index, false)}
+                  >
+                    {image.name.slice(0, 30) + " ..."}
+                  </p>
                 ) : (
-                  <>{image.name}</>
+                  <p
+                    className="cursor-pointer"
+                    onClick={() => handleResizeImage(index, false)}
+                  >
+                    {image.name}
+                  </p>
                 )}
               </p>
             </div>
@@ -250,9 +266,19 @@ const ImageTraining: FC<ImageTrainingProps> = ({
               <div className="col-span-10 my-auto text-sm text-gray-600">
                 <p>
                   {image.file_name.length > 30 ? (
-                    <>{image.file_name.slice(0, 30) + " ..."}</>
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => handleResizeImage(index, true)}
+                    >
+                      {image.file_name.slice(0, 30) + " ..."}
+                    </p>
                   ) : (
-                    <>{image.file_name}</>
+                    <p
+                      className="cursor-pointer"
+                      onClick={() => handleResizeImage(index, true)}
+                    >
+                      {image.file_name}
+                    </p>
                   )}
                 </p>
               </div>

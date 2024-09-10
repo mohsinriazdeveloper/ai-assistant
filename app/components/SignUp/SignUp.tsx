@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useUserSignUpMutation } from "../ReduxToolKit/aiAssistant";
 import { useRouter } from "next/navigation";
 import Loader from "../Loader/Loader";
+import toast from "react-hot-toast";
 
 type SignUpInputs = {
   organization_name: string;
@@ -93,7 +94,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
 
     // Validate Password Strength
     if (strength !== "Strong") {
-      setPasswordError("Password must be strong");
+      // setPasswordError("Password must be strong");
       setLoading(false);
       return;
     }
@@ -119,6 +120,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
       const res = await UserSignUp(payLoad).unwrap();
       setLoading(false);
       router.push("/");
+      toast.success("You’ve successfully registered!");
     } catch (err: any) {
       setLoading(false);
       console.error("Failed to sign-up:", err);

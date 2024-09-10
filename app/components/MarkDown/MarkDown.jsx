@@ -15,10 +15,47 @@ const MarkDown = ({ content }) => {
         rehypePlugins={[rehypeRaw, rehypeKatex]}
         className="whitespace-normal"
         components={{
+          h1({ children, ...props }) {
+            return (
+              <h1
+                style={{ fontSize: "2em", fontWeight: "bold", margin: "1em 0" }}
+                {...props}
+              >
+                {children}
+              </h1>
+            );
+          },
+          h2({ children, ...props }) {
+            return (
+              <h2
+                style={{
+                  fontSize: "1.5em",
+                  fontWeight: "bold",
+                  margin: "1em 0",
+                }}
+                {...props}
+              >
+                {children}
+              </h2>
+            );
+          },
+          h3({ children, ...props }) {
+            return (
+              <h3
+                style={{
+                  fontSize: "1.25em",
+                  fontWeight: "bold",
+                  margin: "1em 0",
+                }}
+                {...props}
+              >
+                {children}
+              </h3>
+            );
+          },
           code({ inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             if (!inline && match) {
-              // remove the newline character at the end of children, if it exists
               const codeString = String(children).replace(/\n$/, "");
 
               return (
@@ -93,11 +130,14 @@ const MarkDown = ({ content }) => {
           },
           a({ href, children, ...props }) {
             return (
-              <>
-                <a href={href} {...props} target="_blank">
-                  {children}
-                </a>
-              </>
+              <a
+                href={href}
+                {...props}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {children}
+              </a>
             );
           },
           ul({ children }) {
@@ -113,7 +153,6 @@ const MarkDown = ({ content }) => {
             );
           },
           li({ children, ...props }) {
-            // If children is a string, apply the transformation
             if (typeof children === "string") {
               children = children.replace(/(\d+\.)\s*\n\s*/g, "$1 ").trim();
             }
@@ -126,7 +165,6 @@ const MarkDown = ({ content }) => {
               </p>
             );
           },
-          // Adding styles to math block elements
           span({ className, children, ...props }) {
             if (className === "math-inline") {
               return (

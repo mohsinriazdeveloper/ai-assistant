@@ -5,6 +5,7 @@ import { useAppDispatch } from "../ReduxToolKit/hook";
 import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
 import PreviousPage from "../PreviousPage/PreviousPage";
 import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
+import toast, { Toaster } from "react-hot-toast";
 
 type Content = {
   title: string;
@@ -33,6 +34,7 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
       );
       router.push("/");
     }, 1000);
+    toast.success("You have been logged out successfully");
   };
   const handleChangeTab = (item: string) => {
     setCheckOption(item);

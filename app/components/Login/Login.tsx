@@ -40,6 +40,12 @@ const Login: FC<LoginProps> = ({}) => {
     // if (allAgents) {
     sessionStorage.clear();
     // }
+    if (!loginEmail && !loginPassword) {
+      setEmailError("Email is required");
+      setPassError("Password is required");
+      setLoading(false);
+      return;
+    }
     if (!loginEmail) {
       setEmailError("Email is required");
       setLoading(false);
@@ -81,7 +87,7 @@ const Login: FC<LoginProps> = ({}) => {
 
   return (
     <div className="md:container md:mx-auto mx-5 py-12 h-screen flex flex-col justify-center">
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>
@@ -165,8 +171,13 @@ const Login: FC<LoginProps> = ({}) => {
               )}
             </div>
             <div className="mb-4">
-              <p className="text-base font-semibold text-end cursor-pointer">
-                <Link href="/forgot-password">Forgot password?</Link>
+              <p className="text-base font-semibold text-end">
+                <Link
+                  href="/forgot-password"
+                  className=" cursor-pointer hover:text-[#9333ea]"
+                >
+                  Forgot password?
+                </Link>
               </p>
             </div>
             <div>

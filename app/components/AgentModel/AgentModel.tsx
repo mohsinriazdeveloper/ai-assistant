@@ -80,7 +80,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
 
   return (
     <div className="flex flex-col gap-10 mb-10">
-      <Toaster position="top-right" reverseOrder={false} />
+      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5">
         <div>
           <p className="text-2xl font-medium">Model</p>
