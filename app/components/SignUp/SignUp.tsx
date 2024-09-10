@@ -70,7 +70,19 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+    if (
+      !SignUpOrganizationName &&
+      !SignUpEmail &&
+      !SignUpName &&
+      !SignUpPassword
+    ) {
+      setOrgError("Organization Name is required");
+      setEmailErrors("Email is required");
+      setUsernameError("Name is required");
+      setPasswordError("Password is required");
+      setLoading(false);
+      return;
+    }
     // Validate Organization Name
     if (!SignUpOrganizationName) {
       setOrgError("Organization Name is required");

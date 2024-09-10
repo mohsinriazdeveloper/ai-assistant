@@ -55,10 +55,32 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     setTotalImage(imageFiles.length);
   }, [imageFiles, setTotalImage]);
 
+  // const processImage = (file: File) => {
+  //   // Check if the file is an image
+  //   if (!file.type.startsWith("image/")) {
+  //     toast.error("Only images are allowed");
+  //     return;
+  //   }
+
+  //   // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
+  //   if (file.size > 1048576) {
+  //     toast.error("Image size should not exceed 1 MB");
+  //     return;
+  //   }
+
+  //   // Check if the file is already added
+  //   if (imageFiles.some((img) => img.name === file.name)) {
+  //     toast.error("Image Already Added");
+  //   } else {
+  //     setImagesFile((prevImages) => [...prevImages, file]);
+  //   }
+  // };
   const processImage = (file: File) => {
-    // Check if the file is an image
-    if (!file.type.startsWith("image/")) {
-      toast.error("Only image files are allowed");
+    const allowedExtensions = /(\.png|\.jpg|\.jpeg)$/i;
+
+    // Check if the file is an image and has an allowed extension
+    if (!allowedExtensions.test(file.name)) {
+      toast.error("Only .png, .jpg, .jpeg images are allowed");
       return;
     }
 
@@ -75,7 +97,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       setImagesFile((prevImages) => [...prevImages, file]);
     }
   };
-
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
