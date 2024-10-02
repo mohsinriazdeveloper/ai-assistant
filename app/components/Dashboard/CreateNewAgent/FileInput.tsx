@@ -12,6 +12,7 @@ interface FileInputProps {
   setFileCount: Dispatch<SetStateAction<number>>;
   handleDeleteFile: (index: number) => void;
   setFileUrls: Dispatch<SetStateAction<string[]>>; // To store the URLs of uploaded files
+  cantAddMore: boolean;
 }
 
 const FileInput: FC<FileInputProps> = ({
@@ -21,6 +22,7 @@ const FileInput: FC<FileInputProps> = ({
   setFileCount,
   handleDeleteFile,
   setFileUrls,
+  cantAddMore,
 }) => {
   const maxFiles = 10;
   const maxSizeMB = 5; // Maximum file size in MB
@@ -28,12 +30,6 @@ const FileInput: FC<FileInputProps> = ({
   const [errorMessage, setErrorMessage] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  // const allowedFileTypes = [
-  //   "application/pdf",
-  //   "text/plain",
-  //   "application/msword",
-  //   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  // ];
   const allowedFileTypes = [
     "application/pdf",
     "text/plain",
@@ -48,7 +44,9 @@ const FileInput: FC<FileInputProps> = ({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (cantAddMore) return; // Prevent file upload if cantAddMore is true
     event.preventDefault();
+
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
 
@@ -155,6 +153,7 @@ const FileInput: FC<FileInputProps> = ({
   );
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    if (cantAddMore) return; // Prevent drag and drop if cantAddMore is true
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(false);
@@ -206,6 +205,7 @@ const FileInput: FC<FileInputProps> = ({
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    if (cantAddMore) return; // Prevent drag over if cantAddMore is true
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(true);
@@ -226,7 +226,9 @@ const FileInput: FC<FileInputProps> = ({
           onDragLeave={handleDragLeave}
           className={`flex flex-col items-center justify-center border ${
             isDragging ? "border-blue-400" : "border-gray-200"
-          } p-6 rounded h-[200px] cursor-pointer`}
+          } p-6 rounded h-[200px] cursor-pointer ${
+            cantAddMore ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           <div>
             <Image src={UploadIcon} alt="" className="max-w-5" />
@@ -238,6 +240,7 @@ const FileInput: FC<FileInputProps> = ({
             multiple
             accept=".pdf, .docx, .txt"
             onChange={handleFileChange}
+            disabled={cantAddMore} // Disable the input when cantAddMore is true
           />
           <label
             htmlFor="file-upload"

@@ -14,6 +14,8 @@ interface RightBarProps {
   qaChar: number;
   loading: boolean;
   totalImages?: number;
+  cantAddMore: boolean;
+  totalCharCount: number;
 }
 
 const RightBar: FC<RightBarProps> = ({
@@ -27,6 +29,8 @@ const RightBar: FC<RightBarProps> = ({
   textChar,
   checkOption,
   totalImages,
+  cantAddMore,
+  totalCharCount,
 }) => {
   const [totalFileLength, setTotalFileLength] = useState<number>(0);
   useEffect(() => {
@@ -39,7 +43,7 @@ const RightBar: FC<RightBarProps> = ({
     }
   }, [existingFiles]);
 
-  const totalChar = totalFileLength + charCount + textChar + qaChar;
+  // const totalChar = totalFileLength + charCount + textChar + qaChar;
 
   return (
     <div className="border border-gray-200 rounded-lg py-5 px-4">
@@ -64,15 +68,17 @@ const RightBar: FC<RightBarProps> = ({
         <p className="font-light text-sm">{totalImages} Images</p>
         <p className="font-medium mt-4 text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
-          {totalChar}
-          <span className="text-gray-300 font-normal">/ 100000 limit</span>
+          {totalCharCount}
+          <span className="text-gray-300 font-normal">/ 500000 limit</span>
         </p>
       </div>
       <div className="mt-2">
         <button
-          className="py-2 px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm w-full"
+          className={`py-2 px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm w-full ${
+            cantAddMore && "bg-[#3C3C3F]"
+          }`}
           onClick={agentCreateFunc}
-          disabled={loading}
+          disabled={loading || cantAddMore}
         >
           {loading ? (
             <Loader />
@@ -88,33 +94,9 @@ const RightBar: FC<RightBarProps> = ({
           )}
         </button>
       </div>
-      {checkOption === "file" && (
-        <>
-          {charCount > 100000 && (
-            <p className="mt-2 text-xs text-red-500">
-              Characters exceed the limit
-            </p>
-          )}
-        </>
+      {totalCharCount >= 500000 && (
+        <p className="mt-2 text-xs text-red-500">Characters exceed the limit</p>
       )}
-      {checkOption === "text" && (
-        <>
-          {textChar > 100000 && (
-            <p className="mt-2 text-xs text-red-500">
-              Characters exceed the limit
-            </p>
-          )}
-        </>
-      )}
-      {/* {checkOption === "qa" && (
-        <>
-          {qaCount > 100000 && (
-            <p className="mt-2 text-xs text-red-500">
-              Characters exceed the limit
-            </p>
-          )}
-        </>
-      )} */}
     </div>
   );
 };

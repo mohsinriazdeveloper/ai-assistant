@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, useEffect } from "react";
 import LeftBar from "../../LeftBar/LeftBar";
 import FileInput from "./FileInput";
 import RightBar from "../../RightBar/RightBar";
@@ -29,15 +29,14 @@ interface QA {
   answer: string;
 }
 
+const MAX_TOTAL_CHARS = 500000;
+
 const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const currentPage = usePathname();
   const [files, setFiles] = useState<File[]>([]);
   const [checkOption, setCheckOption] = useState<string>("file");
-  const [charCount, setCharCount] = useState<number>(0);
   const [fileCount, setFileCount] = useState<number>(files.length);
-  const [qaChar, setQaChar] = useState<number>(0);
   const [text, setText] = useState<string>("");
-  const textChar = text.length;
   const [agentName, setAgentName] = useState<string>("");
   const [qaList, setQAList] = useState<QA[]>([]);
   const [creatingAgent] = useCreateAgentMutation();
@@ -48,7 +47,29 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [images, setImages] = useState<File[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]); // State to store file URLs
 
+  const [qaChar, setQaChar] = useState<number>(0);
+  const [filecharCount, setfileCharCount] = useState<number>(0);
+  const textChar = text.length;
+
+  const [totalCharCount, settotalCharCount] = useState<number>(0);
+  const [cantAddMore, setCantAddMore] = useState<boolean>(false);
+
+  useEffect(() => {
+    const newTotalCharCount = qaChar + textChar + filecharCount;
+    settotalCharCount(newTotalCharCount);
+    if (newTotalCharCount <= MAX_TOTAL_CHARS) {
+      setCantAddMore(false);
+    } else {
+      toast.error("You have reached the maximum character limit");
+      setCantAddMore(true);
+    }
+  }, [text, qaChar, filecharCount]);
+
   const handleCreateAgent = async () => {
+    if (totalCharCount > MAX_TOTAL_CHARS) {
+      toast.error("Reduce the characters");
+      return;
+    }
     if (agentName) {
       setLoading(true);
       const formData = new FormData();
@@ -95,13 +116,15 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
     (index: number) => {
       const fileToRemove = files[index];
 
-      const updateStateAfterDeletion = (charCountToRemove: number) => {
+      const updateStateAfterDeletion = (filecharCountToRemove: number) => {
         // Remove the file from the list and update the character count
         setFiles((prevFiles) => {
           const updatedFiles = prevFiles.filter((_, i) => i !== index);
           return updatedFiles;
         });
-        setCharCount((prevCharCount) => prevCharCount - charCountToRemove);
+        setfileCharCount(
+          (prevfileCharCount) => prevfileCharCount - filecharCountToRemove
+        );
         setFileCount((prevCount) => prevCount - 1);
 
         // Update the file URLs
@@ -147,13 +170,14 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         updateStateAfterDeletion(0);
       }
     },
-    [files, setFiles, setCharCount, setFileCount, setFileUrls]
+    [files, setFiles, setfileCharCount, setFileCount, setFileUrls]
   );
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
-    if (newText.length <= 100000) {
-      setText(newText);
+    setText(newText);
+    if (cantAddMore) {
+      toast.error("You have reached the maximum character limit");
     }
   };
 
@@ -224,9 +248,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                         setFileUrls={setFileUrls}
                         files={files}
                         setFiles={setFiles}
-                        setCharCount={setCharCount}
+                        setCharCount={setfileCharCount}
                         setFileCount={setFileCount}
                         handleDeleteFile={handleDeleteFile}
+                        cantAddMore={cantAddMore}
                       />
                     </div>
                     <p className="text-sm text-gray-500 text-center">
@@ -295,6 +320,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                     setQaChar={setQaChar}
                     qaList={qaList}
                     setQAList={setQAList}
+                    cantAddMore={cantAddMore}
                   />
                 </div>
               )}
@@ -316,11 +342,13 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               loading={loading}
               qaChar={qaChar}
               agentCreateFunc={handleCreateAgent}
-              charCount={charCount}
+              charCount={filecharCount}
               fileCount={fileCount}
               textChar={textChar}
               checkOption={checkOption}
               totalImages={totalImages}
+              totalCharCount={totalCharCount}
+              cantAddMore={cantAddMore}
             />
           </div>
         </div>

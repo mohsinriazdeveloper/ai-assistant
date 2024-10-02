@@ -8,12 +8,21 @@ interface QAInputProps {
   qaList: { question: string; answer: string }[];
   setQAList: Dispatch<SetStateAction<{ question: string; answer: string }[]>>;
   setQaChar: Dispatch<SetStateAction<number>>;
+  cantAddMore: boolean;
 }
 
-const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
-  const maxCharLimit = 100000;
-
+const QAInput: FC<QAInputProps> = ({
+  qaList,
+  setQAList,
+  setQaChar,
+  cantAddMore,
+}) => {
   const handleAddQA = useCallback(() => {
+    if (cantAddMore) {
+      toast.error("You cannot add more questions or answers.");
+      return;
+    }
+
     if (qaList.length > 0) {
       const lastQA = qaList[qaList.length - 1];
       if (lastQA.question.trim() === "" || lastQA.answer.trim() === "") {
@@ -22,18 +31,8 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
       }
     }
 
-    setQAList((prevQAList) => {
-      const totalChars = prevQAList.reduce(
-        (acc, qa) => acc + qa.question.length + qa.answer.length,
-        0
-      );
-      if (totalChars >= maxCharLimit) {
-        toast.error("You have reached the maximum character limit.");
-        return prevQAList;
-      }
-      return [...prevQAList, { question: "", answer: "" }];
-    });
-  }, [qaList, setQAList]);
+    setQAList((prevQAList) => [...prevQAList, { question: "", answer: "" }]);
+  }, [qaList, setQAList, cantAddMore]);
 
   const handleQAChange = useCallback(
     (
@@ -41,17 +40,14 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
       key: keyof { question: string; answer: string },
       value: string
     ) => {
+      // if (cantAddMore) {
+      //   toast.error("You cannot edit questions or answers.");
+      //   return;
+      // }
+
       setQAList((prevQAList) => {
         const updatedQAList = [...prevQAList];
         updatedQAList[index] = { ...updatedQAList[index], [key]: value };
-        const totalChars = updatedQAList.reduce(
-          (acc, qa) => acc + qa.question.length + qa.answer.length,
-          0
-        );
-        if (totalChars > maxCharLimit) {
-          toast.error("You have reached the maximum character limit.");
-          return prevQAList;
-        }
         return updatedQAList;
       });
     },
@@ -64,9 +60,13 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
 
   const handleDeleteQA = useCallback(
     (index: number) => {
+      if (cantAddMore) {
+        toast.error("You cannot delete questions or answers.");
+        return;
+      }
       setQAList((prevQAList) => prevQAList.filter((_, i) => i !== index));
     },
-    [setQAList]
+    [setQAList, cantAddMore]
   );
 
   setQaChar(
@@ -96,21 +96,25 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
             />
           </div>
           <textarea
-            className="w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3 mb-4"
+            className={`w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3 mb-4 ${
+              cantAddMore ? "bg-gray-200" : ""
+            }`}
             rows={3}
             value={qa.question}
             onChange={(e) => handleQAChange(index, "question", e.target.value)}
           ></textarea>
           <p>Answer {index + 1}</p>
           <textarea
-            className="w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3"
+            className={`w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3 ${
+              cantAddMore ? "bg-gray-200" : ""
+            }`}
             rows={8}
             value={qa.answer}
             onChange={(e) => handleQAChange(index, "answer", e.target.value)}
           ></textarea>
         </div>
       )),
-    [qaList, handleQAChange, handleDeleteQA]
+    [qaList, handleQAChange, handleDeleteQA, cantAddMore]
   );
 
   return (

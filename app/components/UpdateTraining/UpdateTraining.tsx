@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState, useCallback } from "react";
+import { FC, useState, useCallback, useEffect } from "react";
 import { content } from "./content";
 import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
@@ -28,7 +28,7 @@ interface QA {
   question: string;
   answer: string;
 }
-
+const MAX_TOTAL_CHARS = 500000;
 const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const { data: allAgents } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
@@ -47,7 +47,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   );
 
   const [checkOption, setCheckOption] = useState<string>("file");
-  const [charCount, setCharCount] = useState<number>(0);
+  const [filecharCount, setfileCharCount] = useState<number>(0);
   const [fileCount, setFileCount] = useState<number>(files.length);
   const [qaChar, setQaChar] = useState<number>(0);
   const [text, setText] = useState<string | undefined>(agent?.text || "");
@@ -63,6 +63,20 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const [totalImages, setTotalImage] = useState<number>(0);
   const [imagesFile, setImagesFile] = useState<File[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]); // State to store file URLs
+
+  const [totalCharCount, settotalCharCount] = useState<number>(0);
+  const [cantAddMore, setCantAddMore] = useState<boolean>(false);
+
+  useEffect(() => {
+    const newTotalCharCount = qaChar + textChar + filecharCount;
+    settotalCharCount(newTotalCharCount);
+    if (newTotalCharCount <= MAX_TOTAL_CHARS) {
+      setCantAddMore(false);
+    } else {
+      toast.error("You have reached the maximum character limit");
+      setCantAddMore(true);
+    }
+  }, [text, qaChar, filecharCount]);
 
   const handleUpdateAgent = async () => {
     if (agentName) {
@@ -134,9 +148,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         // Handle deletion of new files
         const fileToRemove = files[index];
 
-        const updateStateAfterDeletion = (charCountToRemove: number) => {
+        const updateStateAfterDeletion = (filecharCountToRemove: number) => {
           setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-          setCharCount((prevCharCount) => prevCharCount - charCountToRemove);
+          setfileCharCount(
+            (prevfileCharCount) => prevfileCharCount - filecharCountToRemove
+          );
           setFileCount((prevCount) => prevCount - 1);
           toast.success("File successfully deleted.");
         };
@@ -188,19 +204,19 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       delExistingFile,
       setFiles,
       setExistingFiles,
-      setCharCount,
+      setfileCharCount,
       setFileCount,
     ]
   );
 
-  const updateCharCount = (files: File[]) => {
-    let totalCharCount = 0;
+  const updatefileCharCount = (files: File[]) => {
+    let totalfileCharCount = 0;
     const fileReaders = files.map((file) => {
       return new Promise<void>((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
           const content = e.target?.result as string;
-          totalCharCount += content.length;
+          totalfileCharCount += content.length;
           resolve();
         };
         reader.readAsText(file);
@@ -208,7 +224,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     });
 
     Promise.all(fileReaders).then(() => {
-      setCharCount(totalCharCount);
+      setfileCharCount(totalfileCharCount);
     });
   };
 
@@ -269,10 +285,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                       <FileInput
                         files={files}
                         setFiles={setFiles}
-                        setCharCount={setCharCount}
+                        setCharCount={setfileCharCount}
                         setFileCount={setFileCount}
                         handleDeleteFile={handleDeleteFile}
                         setFileUrls={setFileUrls} // Pass setFileUrls to FileInput
+                        cantAddMore={cantAddMore}
                       />
                     </div>
                     <p className="text-sm text-gray-500 text-center">
@@ -372,6 +389,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                     setQaChar={setQaChar}
                     qaList={qaList}
                     setQAList={setQAList}
+                    cantAddMore={cantAddMore}
                   />
                 </div>
               )}
@@ -395,12 +413,14 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               loading={loading}
               qaChar={qaChar}
               agentCreateFunc={handleUpdateAgent}
-              charCount={charCount}
+              charCount={filecharCount}
               fileCount={fileCount}
               existingFiles={existingFiles}
               textChar={textChar}
               checkOption={checkOption}
               totalImages={totalImages}
+              totalCharCount={totalCharCount}
+              cantAddMore={cantAddMore}
             />
           </div>
         </div>
