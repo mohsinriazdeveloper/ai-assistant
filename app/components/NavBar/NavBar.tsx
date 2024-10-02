@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppDispatch } from "../ReduxToolKit/hook";
 import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
@@ -22,6 +22,15 @@ interface NavBarProps {
 const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const [fixMargin, setFixMargin] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (checkOption === "agent" || checkOption === "chatagent") {
+      setFixMargin(true);
+    } else {
+      setFixMargin(false);
+    }
+  }, [checkOption]);
 
   const handleSignOut = () => {
     // const intext = dispatch(voiceResponce({ inText: "" }));
@@ -40,7 +49,7 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
     setCheckOption(item);
   };
   return (
-    <div className="pt-5 mb-[57px]">
+    <div className={`pt-5 ${fixMargin ? "mb-5" : "mb-[57px]"} `}>
       <div className="md:container md:mx-auto mx-5 flex justify-between items-center pb-5">
         <PreviousPage />
         <button

@@ -37,7 +37,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   }, [checkOption]);
 
   return (
-    <div className="mb-10">
+    <div className={`mb-10 ${checkOption === "chatagent" && "max-h-screen"}`}>
       <div className="">
         <NavBar
           content={navBarContent}

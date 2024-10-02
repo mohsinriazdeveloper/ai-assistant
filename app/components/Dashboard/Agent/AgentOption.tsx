@@ -111,20 +111,20 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
 
   return (
     <div className="md:w-[63%] md:mx-auto mx-5 border border-gray-200 py-8 px-7 rounded-lg">
-      <p className="text-xl font-bold mb-9">
-        {agent.name && (
-          <>
-            {agent.name?.length > 30 ? (
-              <>{agent.name.slice(0, 30) + " ..."}</>
-            ) : (
-              <>{agent.name}</>
-            )}
-          </>
-        )}
-      </p>
       <div className="grid grid-cols-12 gap-6">
         <div className="sm:col-span-5 col-span-12 flex flex-col gap-7">
           <div>
+            <p className="text-xl font-bold mb-5">
+              {agent.name && (
+                <>
+                  {agent.name?.length > 30 ? (
+                    <>{agent.name.slice(0, 30) + " ..."}</>
+                  ) : (
+                    <>{agent.name}</>
+                  )}
+                </>
+              )}
+            </p>
             <div className="flex justify-between items-center mb-2">
               <p className="text-gray-300 text-sm font-semibold">Agent ID</p>
             </div>
