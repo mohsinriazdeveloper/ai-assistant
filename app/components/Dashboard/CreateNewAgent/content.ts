@@ -1,6 +1,7 @@
 import filesIcon from "@/app/assets/icons/fileIcon.png";
 import TextLines from "@/app/assets/icons/textLines.png";
 import QA from "@/app/assets/icons/chatIcon.png";
+import GlobeIcon from "@/app/assets/icons/internetIcon.png";
 
 export const content = {
   sideBarOptions: [
@@ -23,6 +24,11 @@ export const content = {
       icon: QA,
       title: "Image Training",
       url: "image-train",
+    },
+    {
+      icon: GlobeIcon,
+      title: "Website",
+      url: "website",
     },
   ],
 };

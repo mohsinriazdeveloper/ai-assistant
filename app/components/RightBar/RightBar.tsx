@@ -16,6 +16,7 @@ interface RightBarProps {
   totalImages?: number;
   cantAddMore: boolean;
   totalCharCount: number;
+  totalFileLength?: number;
 }
 
 const RightBar: FC<RightBarProps> = ({
@@ -31,17 +32,18 @@ const RightBar: FC<RightBarProps> = ({
   totalImages,
   cantAddMore,
   totalCharCount,
+  totalFileLength,
 }) => {
-  const [totalFileLength, setTotalFileLength] = useState<number>(0);
-  useEffect(() => {
-    if (existingFiles) {
-      const totalLength = existingFiles.reduce(
-        (sum, file) => sum + (file.text_content?.length || 0),
-        0
-      );
-      setTotalFileLength(totalLength);
-    }
-  }, [existingFiles]);
+  // const [totalFileLength, setTotalFileLength] = useState<number>(0);
+  // useEffect(() => {
+  //   if (existingFiles) {
+  //     const totalLength = existingFiles.reduce(
+  //       (sum, file) => sum + (file.text_content?.length || 0),
+  //       0
+  //     );
+  //     setTotalFileLength(totalLength);
+  //   }
+  // }, [existingFiles]);
 
   // const totalChar = totalFileLength + charCount + textChar + qaChar;
 

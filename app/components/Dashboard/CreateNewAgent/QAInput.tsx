@@ -1,4 +1,11 @@
-import { Dispatch, FC, SetStateAction, useCallback, useMemo } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+} from "react";
 import PlusIcon from "@/app/assets/icons/plus.png";
 import Image from "next/image";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
@@ -78,7 +85,6 @@ const QAInput: FC<QAInputProps> = ({
       return total;
     }, [qaList])
   );
-
   const qaItems = useMemo(
     () =>
       qaList.map((qa, index) => (

@@ -1,5 +1,5 @@
 "use client";
-import { FC, useState, useCallback, useEffect } from "react";
+import { FC, useState, useCallback, useEffect, useMemo } from "react";
 import { content } from "./content";
 import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
@@ -19,6 +19,7 @@ import toast, { Toaster } from "react-hot-toast";
 import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
 import pdfToText from "react-pdftotext";
 import mammoth from "mammoth";
+import WebsiteTraining from "../Dashboard/CreateNewAgent/WebsiteTraining";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -66,9 +67,20 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
 
   const [totalCharCount, settotalCharCount] = useState<number>(0);
   const [cantAddMore, setCantAddMore] = useState<boolean>(false);
+  const [totalFileLength, setTotalFileLength] = useState<number>(0);
 
   useEffect(() => {
-    const newTotalCharCount = qaChar + textChar + filecharCount;
+    if (existingFiles) {
+      const totalLength = existingFiles.reduce(
+        (sum, file) => sum + (file.text_content?.length || 0),
+        0
+      );
+      setTotalFileLength(totalLength);
+    }
+  }, [existingFiles]);
+  useEffect(() => {
+    const newTotalCharCount =
+      qaChar + textChar + filecharCount + totalFileLength;
     settotalCharCount(newTotalCharCount);
     if (newTotalCharCount <= MAX_TOTAL_CHARS) {
       setCantAddMore(false);
@@ -76,7 +88,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       toast.error("You have reached the maximum character limit");
       setCantAddMore(true);
     }
-  }, [text, qaChar, filecharCount]);
+  }, [text, qaChar, filecharCount, totalFileLength]);
 
   const handleUpdateAgent = async () => {
     if (agentName) {
@@ -405,6 +417,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                   />
                 </div>
               )}
+              {checkOption === "website" && (
+                <div className="">
+                  <p className="font-semibold text-2xl ">Website</p>
+                  <WebsiteTraining />
+                </div>
+              )}
             </div>
           </div>
           <div className="md:col-span-3 col-span-12">
@@ -421,6 +439,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               totalImages={totalImages}
               totalCharCount={totalCharCount}
               cantAddMore={cantAddMore}
+              totalFileLength={totalFileLength}
             />
           </div>
         </div>

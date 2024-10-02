@@ -15,6 +15,7 @@ import toast, { Toaster } from "react-hot-toast";
 import ImageTraining from "./ImageTraining";
 import pdfToText from "react-pdftotext";
 import mammoth from "mammoth";
+import WebsiteTraining from "./WebsiteTraining";
 
 type FileUrl = {
   file_url: string;
@@ -332,6 +333,12 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                     setImagesFile={setImages}
                     imageFiles={images}
                   />
+                </div>
+              )}
+              {checkOption === "website" && (
+                <div className="">
+                  <p className="font-semibold text-2xl ">Website</p>
+                  <WebsiteTraining />
                 </div>
               )}
             </div>
