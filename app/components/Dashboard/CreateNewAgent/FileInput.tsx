@@ -24,8 +24,8 @@ const FileInput: FC<FileInputProps> = ({
   setFileUrls,
   cantAddMore,
 }) => {
-  const maxFiles = 10;
-  const maxSizeMB = 5; // Maximum file size in MB
+  const maxFiles = 1000;
+  const maxSizeMB = 10; // Maximum file size in MB
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [uploading, setUploading] = useState(false);
