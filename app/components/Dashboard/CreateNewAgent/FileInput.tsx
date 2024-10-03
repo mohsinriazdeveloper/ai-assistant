@@ -67,7 +67,7 @@ const FileInput: FC<FileInputProps> = ({
       );
 
       if (totalSizeMB > maxSizeMB) {
-        showError("File size should not be larger than 5MB");
+        showError("File size should not be larger than 10MB");
         return;
       }
 
@@ -177,7 +177,7 @@ const FileInput: FC<FileInputProps> = ({
     );
 
     if (totalSizeMB > maxSizeMB) {
-      showError("File size should not be larger than 5MB");
+      showError("File size should not be larger than 10MB");
       return;
     }
 
