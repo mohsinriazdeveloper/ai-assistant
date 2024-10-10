@@ -54,9 +54,12 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   const [totalCharCount, settotalCharCount] = useState<number>(0);
   const [cantAddMore, setCantAddMore] = useState<boolean>(false);
+  const [website_content, setWebsiteContent] = useState<string>("");
+  const [website_url, setWebsiteUrl] = useState<string>("");
 
   useEffect(() => {
-    const newTotalCharCount = qaChar + textChar + filecharCount;
+    const newTotalCharCount =
+      qaChar + textChar + filecharCount + website_content.length;
     settotalCharCount(newTotalCharCount);
     if (newTotalCharCount <= MAX_TOTAL_CHARS) {
       setCantAddMore(false);
@@ -64,7 +67,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       toast.error("You have reached the maximum character limit");
       setCantAddMore(true);
     }
-  }, [text, qaChar, filecharCount]);
+  }, [text, qaChar, filecharCount, website_content.length]);
 
   const handleCreateAgent = async () => {
     if (totalCharCount > MAX_TOTAL_CHARS) {
@@ -83,6 +86,9 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         formData.append(`images`, image);
       });
       formData.append(`text`, text);
+      formData.append(`website_content`, website_content);
+      formData.append(`website_url`, website_url);
+
       formData.append(`qa`, JSON.stringify(qaList));
       try {
         const res = await creatingAgent(formData).unwrap();
@@ -338,7 +344,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               {checkOption === "website" && (
                 <div className="">
                   <p className="font-semibold text-2xl ">Website</p>
-                  <WebsiteTraining />
+                  <WebsiteTraining
+                    setWebsiteContent={setWebsiteContent}
+                    setWebsiteUrl={setWebsiteUrl}
+                  />
                 </div>
               )}
             </div>
@@ -356,6 +365,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               totalImages={totalImages}
               totalCharCount={totalCharCount}
               cantAddMore={cantAddMore}
+              website_content={website_content}
             />
           </div>
         </div>

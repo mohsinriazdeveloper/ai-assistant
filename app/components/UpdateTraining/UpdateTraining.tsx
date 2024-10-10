@@ -68,27 +68,73 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const [totalCharCount, settotalCharCount] = useState<number>(0);
   const [cantAddMore, setCantAddMore] = useState<boolean>(false);
   const [totalFileLength, setTotalFileLength] = useState<number>(0);
+  const [website_content, setWebsiteContent] = useState<string>("");
+  const [website_Url, setWebsiteUrl] = useState<string>("");
+  // const [fetchFlag, setFetchFlag] = useState<boolean>(false);
 
+  // console.log("new", website_content);
+  useEffect(() => {
+    if (agent?.file_urls) {
+      const websiteFile = agent.file_urls.find((file) => file.website_url);
+      if (websiteFile) {
+        setWebsiteUrl(websiteFile.website_url || "");
+        setWebsiteContent(websiteFile.text_content || "");
+      }
+    }
+  }, [agent?.file_urls]);
+
+  // useEffect(() => {
+  //   if (existingFiles) {
+  //     const totalLength = existingFiles.reduce(
+  //       (sum, file) => sum + (file.text_content?.length || 0),
+  //       0
+  //     );
+  //     setTotalFileLength(totalLength);
+  //   }
+  // }, [existingFiles]);
   useEffect(() => {
     if (existingFiles) {
-      const totalLength = existingFiles.reduce(
-        (sum, file) => sum + (file.text_content?.length || 0),
-        0
-      );
+      const totalLength = existingFiles.reduce((sum, file) => {
+        // Exclude files that have a website_url
+        if (!file.website_url) {
+          return sum + (file.text_content?.length || 0);
+        }
+        return sum;
+      }, 0);
       setTotalFileLength(totalLength);
     }
   }, [existingFiles]);
+  // useEffect(() => {
+  //   const newTotalCharCount =
+  //     qaChar +
+  //     textChar +
+  //     filecharCount +
+  //     totalFileLength +
+  //     website_content.length;
+  //   settotalCharCount(newTotalCharCount);
+  //   if (newTotalCharCount <= MAX_TOTAL_CHARS) {
+  //     setCantAddMore(false);
+  //   } else {
+  //     toast.error("You have reached the maximum character limit");
+  //     setCantAddMore(true);
+  //   }
+  // }, [text, qaChar, filecharCount, totalFileLength, website_content.length]);
   useEffect(() => {
-    const newTotalCharCount =
-      qaChar + textChar + filecharCount + totalFileLength;
+    let newTotalCharCount =
+      qaChar +
+      textChar +
+      filecharCount +
+      totalFileLength +
+      website_content.length;
     settotalCharCount(newTotalCharCount);
+
     if (newTotalCharCount <= MAX_TOTAL_CHARS) {
       setCantAddMore(false);
     } else {
       toast.error("You have reached the maximum character limit");
       setCantAddMore(true);
     }
-  }, [text, qaChar, filecharCount, totalFileLength]);
+  }, [text, qaChar, filecharCount, totalFileLength, website_content.length]);
 
   const handleUpdateAgent = async () => {
     if (agentName) {
@@ -96,8 +142,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       const formData = new FormData();
       formData.append("name", agentName);
       formData.append("id", agentID);
-
-      if (checkOption === "file") {
+      if (website_content) {
+        formData.append(`website_content`, website_content);
+        formData.append(`website_url`, website_Url);
+      } else if (checkOption === "file") {
         files.forEach((file) => {
           formData.append("files", file);
         });
@@ -330,16 +378,20 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                               () => handleOpenFile(item.file_url)
                             }
                           >
-                            {item.file_name.slice(0, 20) + " ..."}
+                            {item.file_name && (
+                              <>{item.file_name?.slice(0, 20) + " ..."}</>
+                            )}
                           </p>
-                          <div className="col-span-2 flex justify-end">
-                            <Image
-                              src={DeleteIcon}
-                              alt="Delete"
-                              className="w-5 cursor-pointer"
-                              onClick={() => handleDeleteFile(index, true)}
-                            />
-                          </div>
+                          {item.file_name && (
+                            <div className="col-span-2 flex justify-end">
+                              <Image
+                                src={DeleteIcon}
+                                alt="Delete"
+                                className="w-5 cursor-pointer"
+                                onClick={() => handleDeleteFile(index, true)}
+                              />
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -420,7 +472,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               {checkOption === "website" && (
                 <div className="">
                   <p className="font-semibold text-2xl ">Website</p>
-                  <WebsiteTraining />
+                  <WebsiteTraining
+                    setWebsiteContent={setWebsiteContent}
+                    website_Url={website_Url}
+                    setWebsiteUrl={setWebsiteUrl}
+                  />
                 </div>
               )}
             </div>
@@ -440,6 +496,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
               totalCharCount={totalCharCount}
               cantAddMore={cantAddMore}
               totalFileLength={totalFileLength}
+              website_content={website_content}
             />
           </div>
         </div>

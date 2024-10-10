@@ -1,12 +1,24 @@
 import Image from "next/image";
-import { FC, useState } from "react";
-import PlusIcon from "@/app/assets/icons/plus.png";
-import { RiDeleteBin7Line } from "react-icons/ri";
+import { Dispatch, FC, SetStateAction, useState } from "react";
+// import PlusIcon from "@/app/assets/icons/plus.png";
+// import { RiDeleteBin7Line } from "react-icons/ri";
+import axios from "axios";
+import * as cheerio from "cheerio";
+import toast from "react-hot-toast";
+import Loader from "../../Loader/Loader";
+interface WebsiteTrainingProps {
+  setWebsiteContent: Dispatch<SetStateAction<string>>;
+  website_Url?: string;
+  setWebsiteUrl: Dispatch<SetStateAction<string>>;
+}
 
-interface WebsiteTrainingProps {}
-
-const WebsiteTraining: FC<WebsiteTrainingProps> = () => {
-  const [crawUrl, setCrawlUrl] = useState<string>("");
+const WebsiteTraining: FC<WebsiteTrainingProps> = ({
+  setWebsiteContent,
+  website_Url,
+  setWebsiteUrl,
+}) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [crawUrl, setCrawlUrl] = useState<string>(website_Url || "");
   const [newLink, setNewLink] = useState<
     { id: number; url: string; isValid: boolean }[]
   >([]);
@@ -29,6 +41,83 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = () => {
     );
   };
 
+  const httpMessages: any = {
+    500: "Invalid Request",
+    400: "Invalid Url",
+    404: "Url Not Found",
+  };
+
+  const scrapeWebsite = async (website_url: string) => {
+    setLoading(true);
+    if (!website_url) {
+      toast.error("Please enter a URL");
+      setLoading(false);
+      return;
+    }
+    setWebsiteUrl(website_url);
+    try {
+      const fullUrl = `https://app.scrapingbee.com/api/v1/?api_key=${
+        process.env.NEXT_PUBLIC_SCRAPINGBEE_API_KEY
+      }&url=${encodeURIComponent(website_url)}`;
+
+      const response = await axios.get(fullUrl, {
+        params: { render_js: "true", block_ads: "true" },
+      });
+
+      const $ = cheerio.load(response.data);
+
+      const cleanText = (text: string) => {
+        return text
+          .replace(/[\n\t]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      };
+
+      $("script, style, noscript, iframe, table, tr, td").remove();
+
+      const text_content = cleanText($("body").text());
+
+      const paragraphs = $("p")
+        .map((_, p) => cleanText($(p).text()))
+        .get();
+
+      const headers = $("h1, h2, h3, h4, h5, h6")
+        .map((_, h) => cleanText($(h).text()))
+        .get();
+
+      const lists = $("ul li")
+        .map((_, li) => cleanText($(li).text()))
+        .get();
+
+      const divs = $("div")
+        .map((_, div) => cleanText($(div).text()))
+        .get();
+
+      const spans = $("span")
+        .map((_, span) => cleanText($(span).text()))
+        .get();
+
+      const website_content = [
+        ...headers,
+        ...paragraphs,
+        ...lists,
+        ...divs,
+        ...spans,
+      ]
+        .join(" ")
+        .replace(/\s+/g, " ")
+        .trim();
+      setLoading(false);
+      setWebsiteContent(website_content);
+      return { total_characters: website_content.length, website_content };
+    } catch (error: any) {
+      console.error("Error scraping the website:", error);
+      const message = httpMessages[error?.response.status];
+      toast.error(message);
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="mt-7">
       <div>
@@ -37,23 +126,30 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = () => {
           <label htmlFor="" className="grow">
             <input
               type="text"
-              placeholder="http://www.example.com"
+              placeholder="https://www.example.com"
               value={crawUrl}
               onChange={(e) => setCrawlUrl(e.target.value)}
               className="text-sm border rounded-md px-3 py-[6px] focus:outline-none w-full"
             />
           </label>
-          <button className="py-[6px] px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm">
-            Fetch Links
+          <button
+            onClick={() => scrapeWebsite(crawUrl)}
+            disabled={!crawUrl || loading}
+            className={`${
+              loading && "cursor-not-allowed"
+            } py-[6px] px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm`}
+          >
+            {loading ? <Loader /> : "Fetch Links"}
           </button>
         </div>
-        <p className="mt-2 text-sm">
+
+        {/* <p className="mt-2 text-sm">
           This will crawl all the links starting with the &apos;
           {crawUrl ? crawUrl : "URL"}&apos; (not including files on the
           website).
-        </p>
+        </p> */}
       </div>
-      <div className="flex items-center gap-2 my-9">
+      {/* <div className="flex items-center gap-2 my-9">
         <div className="border-b border w-full"></div>
         <p className="text-[52525b]">OR</p>
         <div className="border-b border w-full"></div>
@@ -121,7 +217,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = () => {
             <RiDeleteBin7Line className="text-red-500" />
           </div>
         </div>
-      ))}
+      ))} */}
     </div>
   );
 };

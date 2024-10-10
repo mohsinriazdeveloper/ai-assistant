@@ -17,6 +17,7 @@ interface RightBarProps {
   cantAddMore: boolean;
   totalCharCount: number;
   totalFileLength?: number;
+  website_content?: string;
 }
 
 const RightBar: FC<RightBarProps> = ({
@@ -33,6 +34,7 @@ const RightBar: FC<RightBarProps> = ({
   cantAddMore,
   totalCharCount,
   totalFileLength,
+  website_content,
 }) => {
   // const [totalFileLength, setTotalFileLength] = useState<number>(0);
   // useEffect(() => {
@@ -46,6 +48,8 @@ const RightBar: FC<RightBarProps> = ({
   // }, [existingFiles]);
 
   // const totalChar = totalFileLength + charCount + textChar + qaChar;
+  console.log({ fileCount });
+  console.log(existingFiles?.length);
 
   return (
     <div className="border border-gray-200 rounded-lg py-5 px-4">
@@ -68,6 +72,8 @@ const RightBar: FC<RightBarProps> = ({
         <p className="font-light text-sm">{textChar} Text Characters</p>
         <p className="font-light text-sm">{qaChar} QA Characters</p>
         <p className="font-light text-sm">{totalImages} Images</p>
+        <p className="font-light text-sm">{website_content?.length} Website</p>
+
         <p className="font-medium mt-4 text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
           {totalCharCount}

@@ -3,6 +3,7 @@ export type FileUrl = {
   text_content?: string;
   id: number;
   file_name: string;
+  website_url?: string;
 };
 export type Organization = {
   id: number;
