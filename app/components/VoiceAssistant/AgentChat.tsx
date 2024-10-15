@@ -85,12 +85,12 @@ const AgentChat: FC<AgentChatProps> = ({ agentId }) => {
         };
         setChat((prevChat) => [...prevChat, botMessage]);
       } catch (error: any) {
-        console.error("Failed to send message: ", error);
-        toast.error("Failed to send message. Please try again.");
         if (error.status === 429) {
-          toast.error(error.data.message);
+          toast.error(error.data.error);
           return;
         }
+        toast.error("Failed to send message. Please try again.");
+        console.error("Failed to send message: ", error);
       } finally {
         setLoading(false); // Enable sending new messages after the response is received
       }
