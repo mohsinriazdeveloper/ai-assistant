@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import axios from "axios";
 import * as cheerio from "cheerio";
 import toast from "react-hot-toast";
@@ -38,7 +38,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
 }) => {
   const [delExistingFile] = useDeleteFileMutation();
   const urlRegex = /^https:\/\/[a-zA-Z]/;
-
+  const [loading, setLoading] = useState<boolean>(false);
   const handleCreateNewInput = () => {
     setNewLinks((prev) => [
       ...prev,
@@ -64,20 +64,25 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   };
 
   const handleDeleteLink = async (index: number, id: number) => {
+    setLoading(true);
     const websiteToRemove = newLinks[index]; // Get the website to be removed
     try {
       await delExistingFile(id);
-      toast.success("file deleted successfully");
+      toast.success("URL deleted successfully");
+      setLoading(false);
     } catch (error) {
       toast.error("unable to delete file");
+      setLoading(false);
     }
     if (websiteToRemove.isScraped) {
       // If the website is already scraped, subtract its character count from total characters
       setWebsiteContentLength(
         (prevTotal) => prevTotal - websiteToRemove.content.length
       );
+      setLoading(false);
     }
     setNewLinks((prev) => prev.filter((_, i) => i !== index));
+    setLoading(false);
   };
 
   const scrapeWebsite = async (index: number) => {
@@ -143,7 +148,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
       </div>
 
       {newLinks.map((item, index) => (
-        <div key={item.id} className="flex items-center mb-1 gap-2">
+        <div key={item.id} className="flex items-start mb-1 gap-2">
           <label className="grow">
             <input
               type="text"
@@ -164,7 +169,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
               item.isScraped ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={() => scrapeWebsite(index)}
-            disabled={item.isLoading || item.isScraped}
+            disabled={item.isLoading || item.isScraped || !item.url}
           >
             {item.isLoading ? <Loader /> : "Scrape"}
           </button>
@@ -176,13 +181,16 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
           ) : (
             <div className="w-5"></div>
           )}
-
-          <div
-            onClick={() => handleDeleteLink(index, item.id)}
-            className="w-9 h-9 flex justify-center items-center cursor-pointer bg-white hover:bg-red-50 rounded-lg transition-colors duration-300"
-          >
-            <RiDeleteBin7Line className="text-red-500" />
-          </div>
+          {loading ? (
+            <Loader />
+          ) : (
+            <div
+              onClick={() => handleDeleteLink(index, item.id)}
+              className="w-9 h-9 flex justify-center items-center cursor-pointer bg-white hover:bg-red-50 rounded-lg transition-colors duration-300"
+            >
+              <RiDeleteBin7Line className="text-red-500" />
+            </div>
+          )}
         </div>
       ))}
     </div>
