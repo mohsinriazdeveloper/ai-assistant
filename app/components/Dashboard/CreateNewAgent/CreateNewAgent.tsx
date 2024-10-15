@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import LeftBar from "../../LeftBar/LeftBar";
 import FileInput from "./FileInput";
 import RightBar from "../../RightBar/RightBar";
@@ -11,7 +11,7 @@ import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
 import PreviousPage from "../../PreviousPage/PreviousPage";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import ImageTraining from "./ImageTraining";
 import pdfToText from "react-pdftotext";
 import mammoth from "mammoth";
@@ -33,6 +33,16 @@ interface QA {
 const MAX_TOTAL_CHARS = 500000;
 
 const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
+  const [newLinks, setNewLinks] = useState<
+    {
+      id: number;
+      url: string;
+      content: string;
+      isValid: boolean;
+      isLoading: boolean;
+      isScraped: boolean;
+    }[]
+  >([]);
   const currentPage = usePathname();
   const [files, setFiles] = useState<File[]>([]);
   const [checkOption, setCheckOption] = useState<string>("file");
@@ -54,12 +64,12 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   const [totalCharCount, settotalCharCount] = useState<number>(0);
   const [cantAddMore, setCantAddMore] = useState<boolean>(false);
-  const [website_content, setWebsiteContent] = useState<string>("");
+  const [websiteContentLength, setWebsiteContentLength] = useState<number>(0);
   const [website_url, setWebsiteUrl] = useState<string>("");
 
   useEffect(() => {
     const newTotalCharCount =
-      qaChar + textChar + filecharCount + website_content.length;
+      qaChar + textChar + filecharCount + websiteContentLength;
     settotalCharCount(newTotalCharCount);
     if (newTotalCharCount <= MAX_TOTAL_CHARS) {
       setCantAddMore(false);
@@ -67,7 +77,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       toast.error("You have reached the maximum character limit");
       setCantAddMore(true);
     }
-  }, [text, qaChar, filecharCount, website_content.length]);
+  }, [text, qaChar, filecharCount, websiteContentLength]);
 
   const handleCreateAgent = async () => {
     if (totalCharCount > MAX_TOTAL_CHARS) {
@@ -86,8 +96,14 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         formData.append(`images`, image);
       });
       formData.append(`text`, text);
-      formData.append(`website_content`, website_content);
-      formData.append(`website_url`, website_url);
+
+      newLinks.forEach((website, index) => {
+        formData.append(`website_data[${index}][website_url]`, website.url);
+        formData.append(
+          `website_data[${index}][website_content]`,
+          website.content
+        );
+      });
 
       formData.append(`qa`, JSON.stringify(qaList));
       try {
@@ -99,7 +115,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         setLoading(false);
         console.error("Failed to create agent: ", error);
         if (error.status === 401) {
-          toast.error("Access token expire, need to login in again");
+          toast.error("Access token expired, need to login again");
           router.push("/");
           return;
         } else if (error.status === "FETCH_ERROR") {
@@ -204,7 +220,6 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
 
   return (
     <div>
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div
         className={`md:container md:mx-auto mx-5 ${
           currentPage != "/dashboard/agent" && "py-10"
@@ -343,10 +358,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               )}
               {checkOption === "website" && (
                 <div className="">
-                  <p className="font-semibold text-2xl ">Website</p>
                   <WebsiteTraining
-                    setWebsiteContent={setWebsiteContent}
-                    setWebsiteUrl={setWebsiteUrl}
+                    setWebsiteContentLength={setWebsiteContentLength}
+                    newLinks={newLinks}
+                    setNewLinks={setNewLinks}
                   />
                 </div>
               )}
@@ -365,7 +380,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               totalImages={totalImages}
               totalCharCount={totalCharCount}
               cantAddMore={cantAddMore}
-              website_content={website_content}
+              websiteContentLength={websiteContentLength}
             />
           </div>
         </div>

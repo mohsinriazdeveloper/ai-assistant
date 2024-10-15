@@ -47,11 +47,6 @@ const QAInput: FC<QAInputProps> = ({
       key: keyof { question: string; answer: string },
       value: string
     ) => {
-      // if (cantAddMore) {
-      //   toast.error("You cannot edit questions or answers.");
-      //   return;
-      // }
-
       setQAList((prevQAList) => {
         const updatedQAList = [...prevQAList];
         updatedQAList[index] = { ...updatedQAList[index], [key]: value };
@@ -76,15 +71,15 @@ const QAInput: FC<QAInputProps> = ({
     [setQAList, cantAddMore]
   );
 
-  setQaChar(
-    useMemo(() => {
-      const total = qaList.reduce(
-        (acc, qa) => acc + qa.question.length + qa.answer.length,
-        0
-      );
-      return total;
-    }, [qaList])
-  );
+  // Update the qaChar whenever qaList changes
+  useEffect(() => {
+    const total = qaList.reduce(
+      (acc, qa) => acc + qa.question.length + qa.answer.length,
+      0
+    );
+    setQaChar(total);
+  }, [qaList, setQaChar]);
+
   const qaItems = useMemo(
     () =>
       qaList.map((qa, index) => (

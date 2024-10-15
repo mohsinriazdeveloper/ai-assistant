@@ -11,7 +11,7 @@ interface FileInputProps {
   setCharCount: Dispatch<SetStateAction<number>>;
   setFileCount: Dispatch<SetStateAction<number>>;
   handleDeleteFile: (index: number) => void;
-  setFileUrls: Dispatch<SetStateAction<string[]>>; // To store the URLs of uploaded files
+  setFileUrls: Dispatch<SetStateAction<string[]>>;
   cantAddMore: boolean;
 }
 
@@ -25,7 +25,7 @@ const FileInput: FC<FileInputProps> = ({
   cantAddMore,
 }) => {
   const maxFiles = 1000;
-  const maxSizeMB = 10; // Maximum file size in MB
+  const maxSizeMB = 10;
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -33,24 +33,23 @@ const FileInput: FC<FileInputProps> = ({
   const allowedFileTypes = [
     "application/pdf",
     "text/plain",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // Only allow .docx
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
 
   const showError = (message: string) => {
     setErrorMessage(message);
     setTimeout(() => {
       setErrorMessage("");
-    }, 2000); // Clear the error message after 2 seconds
+    }, 2000);
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (cantAddMore) return; // Prevent file upload if cantAddMore is true
+    if (cantAddMore) return;
     event.preventDefault();
 
     if (event.target.files) {
       const selectedFiles = Array.from(event.target.files);
 
-      // Check file types
       const invalidFiles = selectedFiles.filter(
         (file) => !allowedFileTypes.includes(file.type)
       );
@@ -79,13 +78,11 @@ const FileInput: FC<FileInputProps> = ({
       setErrorMessage("");
       setUploading(true);
 
-      // Display the loader for 3 seconds, then store the files
       setTimeout(() => {
         const newFiles = [...files, ...selectedFiles];
         setFiles(newFiles);
         setFileCount(newFiles.length);
 
-        // Create URLs for the new files
         const newUrls = selectedFiles.map((file) => URL.createObjectURL(file));
         setFileUrls((prevUrls) => [...prevUrls, ...newUrls]);
 
@@ -153,14 +150,13 @@ const FileInput: FC<FileInputProps> = ({
   );
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    if (cantAddMore) return; // Prevent drag and drop if cantAddMore is true
+    if (cantAddMore) return;
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(false);
 
     const selectedFiles = Array.from(event.dataTransfer.files);
 
-    // Check file types
     const invalidFiles = selectedFiles.filter(
       (file) => !allowedFileTypes.includes(file.type)
     );
@@ -189,13 +185,11 @@ const FileInput: FC<FileInputProps> = ({
     setErrorMessage("");
     setUploading(true);
 
-    // Display the loader for 3 seconds, then store the files
     setTimeout(() => {
       const newFiles = [...files, ...selectedFiles];
       setFiles(newFiles);
       setFileCount(newFiles.length);
 
-      // Create URLs for the new files
       const newUrls = selectedFiles.map((file) => URL.createObjectURL(file));
       setFileUrls((prevUrls) => [...prevUrls, ...newUrls]);
 
@@ -205,7 +199,7 @@ const FileInput: FC<FileInputProps> = ({
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    if (cantAddMore) return; // Prevent drag over if cantAddMore is true
+    if (cantAddMore) return;
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(true);
@@ -240,7 +234,7 @@ const FileInput: FC<FileInputProps> = ({
             multiple
             accept=".pdf, .docx, .txt"
             onChange={handleFileChange}
-            disabled={cantAddMore} // Disable the input when cantAddMore is true
+            disabled={cantAddMore}
           />
           <label
             htmlFor="file-upload"

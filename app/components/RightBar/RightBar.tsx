@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect, useState } from "react";
+import { FC } from "react";
 import Loader from "../Loader/Loader";
 import { FileUrl } from "../ReduxToolKit/types/agents.d";
 
@@ -17,7 +17,7 @@ interface RightBarProps {
   cantAddMore: boolean;
   totalCharCount: number;
   totalFileLength?: number;
-  website_content?: string;
+  websiteContentLength?: number;
 }
 
 const RightBar: FC<RightBarProps> = ({
@@ -34,45 +34,26 @@ const RightBar: FC<RightBarProps> = ({
   cantAddMore,
   totalCharCount,
   totalFileLength,
-  website_content,
+  websiteContentLength,
 }) => {
-  // const [totalFileLength, setTotalFileLength] = useState<number>(0);
-  // useEffect(() => {
-  //   if (existingFiles) {
-  //     const totalLength = existingFiles.reduce(
-  //       (sum, file) => sum + (file.text_content?.length || 0),
-  //       0
-  //     );
-  //     setTotalFileLength(totalLength);
-  //   }
-  // }, [existingFiles]);
-
-  // const totalChar = totalFileLength + charCount + textChar + qaChar;
-  console.log({ fileCount });
-  console.log(existingFiles?.length);
+  const totalFiles = fileCount + (existingFiles?.length || 0);
+  const fileCharacterCount = charCount + (totalFileLength || 0);
+  const websiteCharCount = websiteContentLength || 0;
 
   return (
     <div className="border border-gray-200 rounded-lg py-5 px-4">
       <p className="text-lg font-medium text-center">Sources</p>
       <div>
-        {existingFiles ? (
-          <p className="font-light text-sm">
-            {fileCount + existingFiles.length} Files
-          </p>
-        ) : (
-          <p className="font-light text-sm">{fileCount} Files</p>
-        )}
-        {totalFileLength ? (
-          <p className="font-light text-sm">
-            {charCount + totalFileLength} Files Characters
-          </p>
-        ) : (
-          <p className="font-light text-sm">{charCount} Files Characters</p>
-        )}
+        <p className="font-light text-sm">{totalFiles} Files</p>
+        <p className="font-light text-sm">
+          {fileCharacterCount} Files Characters
+        </p>
         <p className="font-light text-sm">{textChar} Text Characters</p>
         <p className="font-light text-sm">{qaChar} QA Characters</p>
-        <p className="font-light text-sm">{totalImages} Images</p>
-        <p className="font-light text-sm">{website_content?.length} Website</p>
+        <p className="font-light text-sm">{totalImages || 0} Images</p>
+        <p className="font-light text-sm">
+          {websiteCharCount} Website Characters
+        </p>
 
         <p className="font-medium mt-4 text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
@@ -90,15 +71,10 @@ const RightBar: FC<RightBarProps> = ({
         >
           {loading ? (
             <Loader />
+          ) : currentPage === "/dashboard/create-new-agent" ? (
+            "Create Agent"
           ) : (
-            <>
-              {" "}
-              {currentPage === "/dashboard/create-new-agent" ? (
-                <>Create Agent</>
-              ) : (
-                <>Retrain Agent</>
-              )}
-            </>
+            "Retrain Agent"
           )}
         </button>
       </div>
