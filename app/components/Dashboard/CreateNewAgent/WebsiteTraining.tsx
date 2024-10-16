@@ -38,7 +38,8 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
 }) => {
   const [delExistingFile] = useDeleteFileMutation();
   const urlRegex = /^https:\/\/[a-zA-Z]/;
-  const [loading, setLoading] = useState<boolean>(false);
+  const [deletingIds, setDeletingIds] = useState<number[]>([]); // State for tracking deleting items
+
   const handleCreateNewInput = () => {
     setNewLinks((prev) => [
       ...prev,
@@ -64,25 +65,26 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   };
 
   const handleDeleteLink = async (index: number, id: number) => {
-    setLoading(true);
-    const websiteToRemove = newLinks[index]; // Get the website to be removed
+    setDeletingIds((prev) => [...prev, id]); // Add the current ID to the deleting state
+
+    const websiteToRemove = newLinks[index];
     try {
       await delExistingFile(id);
       toast.success("URL deleted successfully");
-      setLoading(false);
+
+      if (websiteToRemove.isScraped) {
+        // If the website is already scraped, subtract its character count from total characters
+        setWebsiteContentLength(
+          (prevTotal) => prevTotal - websiteToRemove.content.length
+        );
+      }
+
+      setNewLinks((prev) => prev.filter((_, i) => i !== index));
     } catch (error) {
-      toast.error("unable to delete file");
-      setLoading(false);
+      toast.error("Unable to delete file");
+    } finally {
+      setDeletingIds((prev) => prev.filter((deletingId) => deletingId !== id)); // Remove the ID from the deleting state
     }
-    if (websiteToRemove.isScraped) {
-      // If the website is already scraped, subtract its character count from total characters
-      setWebsiteContentLength(
-        (prevTotal) => prevTotal - websiteToRemove.content.length
-      );
-      setLoading(false);
-    }
-    setNewLinks((prev) => prev.filter((_, i) => i !== index));
-    setLoading(false);
   };
 
   const scrapeWebsite = async (index: number) => {
@@ -169,24 +171,28 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
               item.isScraped ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={() => scrapeWebsite(index)}
-            disabled={item.isLoading || item.isScraped || !item.url}
+            disabled={
+              item.isLoading || item.isScraped || !item.url || !item.isValid
+            }
           >
             {item.isLoading ? <Loader /> : "Scrape"}
           </button>
 
           {item.isScraped ? (
-            <AiOutlineCheckCircle className="text-green-500" size={20} />
+            <div className="h-full flex justify-center self-center">
+              <AiOutlineCheckCircle className="text-green-500" size={20} />
+            </div>
           ) : item.isLoading ? (
             <Loader />
           ) : (
             <div className="w-5"></div>
           )}
-          {loading ? (
+          {deletingIds.includes(item.id) ? (
             <Loader />
           ) : (
             <div
               onClick={() => handleDeleteLink(index, item.id)}
-              className="w-9 h-9 flex justify-center items-center cursor-pointer bg-white hover:bg-red-50 rounded-lg transition-colors duration-300"
+              className="flex justify-center self-center cursor-pointer bg-white hover:bg-red-50 rounded-lg transition-colors duration-300"
             >
               <RiDeleteBin7Line className="text-red-500" />
             </div>

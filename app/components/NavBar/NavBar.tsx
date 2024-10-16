@@ -6,6 +6,7 @@ import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
 import PreviousPage from "../PreviousPage/PreviousPage";
 import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
 import toast, { Toaster } from "react-hot-toast";
+import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 
 type Content = {
   title: string;
@@ -20,6 +21,8 @@ interface NavBarProps {
 }
 
 const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
+  const { isLoading } = useGetAllAgentsQuery();
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [fixMargin, setFixMargin] = useState<boolean>(false);
@@ -69,9 +72,15 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
                   checkOption === item.url
                     ? "border-b-2 border-[#8B5CF6] text-black"
                     : "mb-0.5 text-[#71717a]"
-                } pb-1 hover:text-black text-sm font-medium cursor-pointer`}
+                } pb-1 hover:text-black text-sm font-medium ${
+                  isLoading ? "cursor-not-allowed" : " cursor-pointer"
+                }`}
               >
-                <p onClick={() => handleChangeTab(item.url)}>{item.title}</p>
+                {isLoading ? (
+                  <p>{item.title}</p>
+                ) : (
+                  <p onClick={() => handleChangeTab(item.url)}>{item.title}</p>
+                )}
               </div>
             ))}
           </div>

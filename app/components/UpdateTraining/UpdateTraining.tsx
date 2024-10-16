@@ -181,23 +181,42 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       });
 
       // Add files if the check option is file
-      if (checkOption === "file") {
-        files.forEach((file) => {
-          formData.append("files", file);
-        });
-      } else if (checkOption === "text") {
-        if (text) {
-          formData.append("text", text);
-        }
-      } else if (checkOption === "qa") {
-        formData.append("qa", JSON.stringify(qaList));
-      } else if (checkOption === "image-train") {
-        if (imagesFile) {
-          imagesFile.forEach((image) => {
-            formData.append("images", image);
-          });
-        }
+      // if (checkOption === "file") {
+      //   files.forEach((file) => {
+      //     formData.append("files", file);
+      //   });
+      // } else if (checkOption === "text") {
+      //   if (text) {
+      //     formData.append("text", text);
+      //   }
+      // } else if (checkOption === "qa") {
+      //   formData.append("qa", JSON.stringify(qaList));
+      // } else if (checkOption === "image-train") {
+      //   if (imagesFile) {
+      //     imagesFile.forEach((image) => {
+      //       formData.append("images", image);
+      //     });
+      //   }
+      // }
+      // if (checkOption === "file") {
+      files.forEach((file) => {
+        formData.append("files", file);
+      });
+      // } else if (checkOption === "text") {
+      if (text) {
+        formData.append("text", text);
+      } else {
+        formData.append("text", "_");
       }
+      // } else if (checkOption === "qa") {
+
+      formData.append("qa", JSON.stringify(qaList));
+
+      // } else if (checkOption === "image-train") {
+      imagesFile.forEach((image) => {
+        formData.append("images", image);
+      });
+      // }
 
       try {
         await updateAgent(formData).unwrap();
