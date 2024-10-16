@@ -206,7 +206,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       if (text) {
         formData.append("text", text);
       } else {
-        formData.append("text", "_");
+        formData.append("text", "temp");
       }
       // } else if (checkOption === "qa") {
 
@@ -225,7 +225,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       } catch (error: any) {
         setLoading(false);
         if (error.status === 400) {
-          toast.error("File type not supported");
+          toast.error(error.data[0]);
           return;
         }
         console.error("Failed to update agent: ", error);
@@ -358,15 +358,60 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
             <div className="w-full border border-gray-200 py-7 px-6 rounded-lg">
               {checkOption === "file" && (
                 <>
-                  <FileInput
-                    files={files}
-                    setFiles={setFiles}
-                    setCharCount={setfileCharCount}
-                    setFileCount={setFileCount}
-                    handleDeleteFile={handleDeleteFile}
-                    setFileUrls={setFileUrls}
-                    cantAddMore={cantAddMore}
-                  />
+                  <div className="mb-10">
+                    <p className="font-semibold text-2xl ">Files</p>
+                    <div className="w-full mt-7 mb-2">
+                      <FileInput
+                        files={files}
+                        setFiles={setFiles}
+                        setCharCount={setfileCharCount}
+                        setFileCount={setFileCount}
+                        handleDeleteFile={handleDeleteFile}
+                        setFileUrls={setFileUrls}
+                        cantAddMore={cantAddMore}
+                      />
+                    </div>
+                    <p className="text-sm text-gray-500 text-center">
+                      If you are uploading a PDF, make sure you can
+                      select/highlight the text.
+                    </p>
+                  </div>
+                  {files.length > 0 && (
+                    <div>
+                      <div className="flex justify-center items-center gap-2">
+                        <div className="border-b w-[40%]"></div>
+                        <div>
+                          <p className="text-gray-300">Attached Files</p>
+                        </div>
+                        <div className="border-b w-[40%]"></div>
+                      </div>
+                      {files.map((file, index) => (
+                        <div
+                          key={index}
+                          className="mt-5 grid grid-cols-12 items-center"
+                        >
+                          <p
+                            className="col-span-10 cursor-pointer text-blue-500"
+                            onClick={() => handleOpenFile(fileUrls[index])}
+                          >
+                            {file.name.length > 30 ? (
+                              <>{file.name.slice(0, 30) + " ..."}</>
+                            ) : (
+                              <>{file.name}</>
+                            )}
+                          </p>
+                          <div className="col-span-2 flex justify-end">
+                            <Image
+                              src={DeleteIcon}
+                              alt="Delete"
+                              className="w-5 cursor-pointer"
+                              onClick={() => handleDeleteFile(index)}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                   {nonImageFiles.length > 0 && (
                     <div>
                       <div className="flex justify-center items-center gap-2">
@@ -388,6 +433,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                             {item.file_name?.slice(0, 20) + " ..."}
                           </p>
                           <div className="col-span-2 flex justify-end">
+                            {}
                             <Image
                               src={DeleteIcon}
                               alt="Delete"
@@ -402,14 +448,16 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                 </>
               )}
               {checkOption === "text" && (
-                <div>
-                  <p className="font-semibold text-2xl">Text</p>
-                  <textarea
-                    className="focus:outline-none border border-gray-200 rounded w-full text-sm text-gray-700 px-3 py-2"
-                    rows={20}
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                  />
+                <div className="">
+                  <p className="font-semibold text-2xl ">Text</p>
+                  <div className="w-full mt-7 mb-2">
+                    <textarea
+                      className="focus:outline-none border border-gray-200 rounded w-full text-sm text-gray-700 px-3 py-2"
+                      rows={20}
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
+                    />
+                  </div>
                   <p className="text-center text-sm text-gray-500">
                     {textChar} Characters
                   </p>
@@ -427,13 +475,16 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
                 </div>
               )}
               {checkOption === "image-train" && (
-                <ImageTraining
-                  agentId={agentId}
-                  setTotalImage={setTotalImage}
-                  agent={agent}
-                  setImagesFile={setImagesFile}
-                  imageFiles={imagesFile}
-                />
+                <div className="">
+                  <p className="font-semibold text-2xl ">Train With Image</p>
+                  <ImageTraining
+                    agentId={agentId}
+                    setTotalImage={setTotalImage}
+                    agent={agent}
+                    setImagesFile={setImagesFile}
+                    imageFiles={imagesFile}
+                  />
+                </div>
               )}
               {checkOption === "website" && (
                 <WebsiteTraining
