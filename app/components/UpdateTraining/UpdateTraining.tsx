@@ -319,7 +319,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const handleOpenFile = (url: string | undefined) => {
     window.open(url, "_blank");
   };
-  console.log(newLinks);
   return (
     <div>
       <div className="md:container md:mx-auto mx-5">

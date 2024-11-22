@@ -48,7 +48,6 @@ const parseMathInText = (text: string) => {
 };
 
 const MathTextParser: FC<{ content: string }> = ({ content }) => {
-  console.log("content", content);
   const example =
     "o forecast net sales for 2018, we can look at the trend from previous years. Here are the net sales for Amazon from 2015 to 2017: - 2015: 107,006million−∗∗2016:∗∗107,006million−∗∗2016:∗∗135,987 million - 2017: 177,866 million We can see a consistent increase in net sales year over year. One way to estimate the 2018 net sales is to calculate the average growth rate and apply it to the 2017 net sales. 1. *Growth from 2015 to 2016:* [ \text{Growth Rate} = \frac{135,987 - 107,006}{107,006} approx 0.2701 \text{ or } 27.01% ] 2. *Growth from 2016 to 2017:* [ \text{Growth Rate} = \frac{177,866 - 135,987}{135,987} approx 0.3074 \text{ or } 30.74% ] 3. *Average Growth Rate:* [ \text{Average Growth Rate} = \frac{27.01% + 30.74%}{2} approx 28.88% ] 4. *Forecast for 2018:* [ \text{2018 Net Sales} = 177,866 \times (1 + 0.2888) approx 229,158 \text{ million} ] So, a reasonable forecast for Amazon's net sales in 2018 would be approximately229,158 million. If you have any other questions or need further assistance, feel free to ask!";
   return <>{parseMathInText(content)}</>;

@@ -2,10 +2,13 @@ import { FC, useState } from "react";
 import LeftBar from "../LeftBar/LeftBar";
 import { content } from "./content";
 import Image from "next/image";
+import Finance from "./Finance";
 
-interface ConnectProps {}
+interface ConnectProps {
+  agentId: number;
+}
 
-const Connect: FC<ConnectProps> = ({}) => {
+const Connect: FC<ConnectProps> = ({ agentId }) => {
   const [checkOption, setCheckOption] = useState<string>("integration");
   return (
     <div className="md:container md:mx-auto mx-5 my-10">
@@ -44,6 +47,7 @@ const Connect: FC<ConnectProps> = ({}) => {
             ))}
           </div>
         )}
+        {checkOption === "finance" && <Finance agentId={agentId} />}
       </div>
     </div>
   );

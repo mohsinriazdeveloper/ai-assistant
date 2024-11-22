@@ -25,6 +25,26 @@ const config: Config = {
           500: "#EF4444",
         },
       },
+      // animation: {
+      //   spinSlow: "spin 5s linear infinite",
+      // },
+      keyframes: {
+        // spin: {
+        //   from: { transform: "rotate(0deg)" },
+        //   to: { transform: "rotate(360deg)" },
+        // },
+        pulseExpandContract: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.2)" },
+        },
+      },
+      animation: {
+        slowSpin: "spin 5s linear infinite",
+        slowPulse: "pulseExpandContract 2s ease-in-out infinite",
+      },
+      fontFamily: {
+        customAnta: ["Anta"],
+      },
     },
   },
   plugins: [require("tailwind-scrollbar-hide")],

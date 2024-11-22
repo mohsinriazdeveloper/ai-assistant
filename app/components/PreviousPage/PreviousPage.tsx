@@ -6,10 +6,13 @@ import Arrow from "@/app/assets/icons/leftarrow.png";
 import { hideBackBtn } from "../HideLinks/HideLinks";
 import { useAppDispatch } from "../ReduxToolKit/hook";
 import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
-interface PreviousPageProps {}
+interface PreviousPageProps {
+  arrowColor?: string;
+}
 
-const PreviousPage: FC<PreviousPageProps> = ({}) => {
+const PreviousPage: FC<PreviousPageProps> = ({ arrowColor }) => {
   const currentPage = usePathname();
   const dispatch = useAppDispatch();
   const hideBack = hideBackBtn.includes(currentPage);
@@ -29,7 +32,7 @@ const PreviousPage: FC<PreviousPageProps> = ({}) => {
           className="flex items-center gap-1 font-medium cursor-pointer"
           onClick={handlePrevious}
         >
-          <Image src={Arrow} alt="" />
+          <FaArrowLeftLong className={`text-${arrowColor || "black"}`} />
           <p>Back</p>
         </div>
       )}

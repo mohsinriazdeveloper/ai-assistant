@@ -1,11 +1,11 @@
 export const content = {
   navBar: [
+    // {
+    //   title: "Voice-Agent",
+    //   url: "agent",
+    // },
     {
-      title: "Voice-Agent",
-      url: "agent",
-    },
-    {
-      title: "Chat-Agent",
+      title: "Chat",
       url: "chatagent",
     },
     {
@@ -13,11 +13,11 @@ export const content = {
       url: "sources",
     },
     {
-      title: "Connect",
+      title: "Connections",
       url: "connect",
     },
     {
-      title: "Settings",
+      title: "Model",
       url: "settings",
     },
   ],

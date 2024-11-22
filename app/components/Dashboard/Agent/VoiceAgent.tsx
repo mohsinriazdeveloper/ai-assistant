@@ -1,25 +1,42 @@
-"use client";
-import React, { useState, useEffect, useCallback, useRef, FC } from "react";
-import { ClipLoader } from "react-spinners";
-import { FaMicrophone, FaStop, FaRedo, FaPlay, FaPause } from "react-icons/fa";
 import {
-  useAgentVoiceMutation,
-  useGetAllAgentsQuery,
-} from "../ReduxToolKit/aiAssistantOtherApis";
-import { useAppDispatch, useAppSelector } from "../ReduxToolKit/hook";
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import MicBubbles from "@/app/assets/icons/micBubbles.png";
+import Image from "next/image";
+import { FaRegCirclePause, FaRegCircleStop } from "react-icons/fa6";
+import { RxCross2 } from "react-icons/rx";
+import BigCloud from "@/app/assets/Images/bigCloud.png";
+import SmallCloud from "@/app/assets/Images/smallCloud.png";
+import { FaMicrophone, FaRedo } from "react-icons/fa";
+import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
 import {
   selectVoiceResponse,
   voiceResponce,
-} from "../ReduxToolKit/voiceResSlice";
-
-interface VoiceAssistantProps {
+} from "../../ReduxToolKit/voiceResSlice";
+import {
+  useAgentVoiceMutation,
+  useGetAllAgentsQuery,
+} from "../../ReduxToolKit/aiAssistantOtherApis";
+import ResponseImg from "@/app/assets/Images/aiResponse.png";
+import { MdOutlinePlayCircle } from "react-icons/md";
+import { PiRecordFill } from "react-icons/pi";
+import toast from "react-hot-toast";
+interface VoiceAgentProps {
   agentId: number;
   specificChatId: number | null;
+  setIsVoice: Dispatch<SetStateAction<boolean>>;
 }
 
-const VoiceAssistant: FC<VoiceAssistantProps> = ({
+const VoiceAgent: FC<VoiceAgentProps> = ({
   agentId,
   specificChatId,
+  setIsVoice,
 }) => {
   const [response, setResponse] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -34,12 +51,21 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
   const analyserRef = useRef<AnalyserNode | null>(null);
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   let mediaStream: MediaStream | null = null; // Store media stream
+  const [audioSteps, setAudioSteps] = useState<string>("speaking");
 
   const dispatch = useAppDispatch();
   const inText = useAppSelector(selectVoiceResponse);
   // const stopAudioPlaying = useAppSelector(selectVoiceResponse);
   const [agentVoice] = useAgentVoiceMutation();
   const { data: allAgents } = useGetAllAgentsQuery();
+
+  useEffect(() => {
+    startRecording();
+    return () => {
+      stopRecording();
+    };
+  }, []);
+
   useEffect(() => {
     if (inText === "") {
       speechSynthesis.cancel();
@@ -69,6 +95,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
           "chat_session_id",
           specificChatId?.toString() ?? "null"
         );
+
         const result = await agentVoice(formData).unwrap();
 
         const responseText = result.response;
@@ -80,7 +107,8 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
         setResponse(responseText);
       } catch (error) {
         console.error("Error processing audio:", error);
-        setError("Voice input was not clearly taken. Please record again.");
+        toast.error("Voice input was not clearly taken. Please record again.");
+        setAudioSteps("speaking");
       } finally {
         setIsProcessing(false);
       }
@@ -177,8 +205,7 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
     }
 
     // Stop the media stream to turn off the microphone
-    //@ts-ignore
-    mediaStream.getTracks().forEach((track) => {
+    mediaStream?.getTracks().forEach((track) => {
       if (track.readyState === "live" && track.kind === "audio") {
         track.stop(); // Stop each audio track
       }
@@ -211,18 +238,26 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
   const playTextAsSpeech = (text: string) => {
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
+
       utterance.onstart = () => {
+        setAudioSteps("response"); // Set audioSteps to "response" when playing starts
         setIsPlaying(true);
         setIsPaused(false);
       };
+
       utterance.onend = () => {
+        setAudioSteps("speaking"); // Set audioSteps back to "speaking" when playing ends
         setIsPlaying(false);
         setIsPaused(false);
+        startRecording();
       };
+
       utterance.onerror = () => {
+        setAudioSteps("speaking"); // Handle errors by resetting to "speaking"
         setIsPlaying(false);
         setIsPaused(false);
       };
+
       speechSynthesis.speak(utterance);
     } else {
       console.error("Text-to-Speech not supported in this browser.");
@@ -231,106 +266,145 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
 
   const pauseAudio = () => {
     if (speechSynthesis.speaking && !speechSynthesis.paused) {
-      speechSynthesis.pause();
       setIsPaused(true);
+      speechSynthesis.pause();
     }
   };
 
   const resumeAudio = () => {
     if (speechSynthesis.paused) {
-      speechSynthesis.resume();
       setIsPaused(false);
+      speechSynthesis.resume();
     }
   };
 
   const resetResponse = () => {
     dispatch(voiceResponce({ inText: "" }));
+
     setResponse("");
     setIsPlaying(false);
     setIsPaused(false);
     setError(null);
     speechSynthesis.cancel();
   };
-
   return (
-    <div className="container mx-auto h-[500px] flex flex-col items-center py-10 gap-10">
-      <div className="mb-6 text-center">
-        <p className="font-bold text-gray-800">Voice Assistant</p>
-        <p className="text-sm font-semibold text-gray-500">
-          Record your voice and get the response
-        </p>
-      </div>
-      <div className="flex flex-col items-center">
-        <div className="flex items-center gap-6 mb-6">
-          <button
-            onClick={startRecording}
-            type="button"
-            className={`flex items-center justify-center bg-blue-500 text-white rounded-full p-4 transition-transform transform ${
-              isRecording || isPlaying
-                ? "scale-100 cursor-not-allowed"
-                : "scale-105 hover:scale-110"
-            } `}
-            disabled={isRecording || isPlaying}
-          >
-            <FaMicrophone size={24} />
-          </button>
-          <button
-            className={`flex items-center justify-center bg-red-500 text-white rounded-full p-4 transition-transform transform ${
-              !isRecording
-                ? "scale-100 cursor-not-allowed"
-                : "scale-105 hover:scale-110"
-            }`}
-            onClick={stopRecording}
-            type="button"
-            disabled={!isRecording}
-          >
-            <FaStop size={24} />
-          </button>
+    <div className="h-screen">
+      <div className="h-[65vh] flex flex-col justify-end items-center">
+        <div className="h-full flex items-end mb-7">
+          {audioSteps === "speaking" && (
+            <span className="relative flex w-[200px] h-[200px]">
+              <span className="animate-slowPulse absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full w-[200px] h-[200px] bg-white"></span>
+            </span>
+          )}
+          {audioSteps === "analyzing" && (
+            <div className="">
+              <div className="animate-slowSpin">
+                <Image
+                  src={BigCloud}
+                  alt=""
+                  className="w-[75%] animate-slowPulse"
+                />
+              </div>
+              <Image src={SmallCloud} alt="" />
+            </div>
+          )}
+          {audioSteps === "response" && (
+            <Image
+              src={ResponseImg}
+              alt=""
+              className="w-[75%] animate-slowPulse"
+            />
+          )}
         </div>
-        {isProcessing && <ClipLoader color="#000" size={50} />}
-        {error && (
-          <div className="mt-4 text-center text-red-500">
-            <p>{error}</p>
-          </div>
+        {audioSteps === "speaking" && <Image src={MicBubbles} alt="" />}
+        {audioSteps !== "speaking" && (
+          <FaMicrophone className="text-[#808080] text-2xl cursor-pointer" />
         )}
-        <div className="overflow-y-scroll scrollbar-hide">
-          <div className="h-[274px]">
-            {inText && (
-              <div className="mt-6 text-center bg-white p-4 rounded shadow-md">
-                <p className="text-lg font-semibold text-gray-700">Response:</p>
-                <p className="text-md text-gray-600">{inText}</p>
-                {isPlaying && (
-                  <div className="flex items-center justify-center mt-4">
-                    {!isPaused ? (
-                      <button
-                        onClick={pauseAudio}
-                        className="flex items-center justify-center bg-yellow-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
-                      >
-                        <FaPause size={20} />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={resumeAudio}
-                        className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 transition-transform transform hover:scale-110"
-                      >
-                        <FaPlay size={20} />
-                      </button>
-                    )}
-                  </div>
-                )}
-                <button
-                  onClick={resetResponse}
-                  className="flex items-center justify-center bg-green-500 text-white rounded-full p-3 mt-4 transition-transform transform hover:scale-110"
-                >
-                  <FaRedo size={20} />
-                </button>
+        {audioSteps === "speaking" && (
+          <p className="font-customAnta text-2xl text-white mt-2">
+            Start Speaking
+          </p>
+        )}
+        {audioSteps === "analyzing" && (
+          <p className="font-customAnta text-2xl text-[#dddddd] mt-2">
+            Click to Cancel
+          </p>
+        )}
+        {audioSteps === "response" && (
+          <p className="font-customAnta text-2xl text-[#dddddd] mt-2">
+            Click to interrupt
+          </p>
+        )}
+      </div>
+      <div className="h-[35vh] pt-8">
+        <div className="flex justify-center items-end gap-10">
+          <div className="relative flex justify-end">
+            {/* {audioSteps === "startRecording" && (
+              <div className="relative group">
+                <PiRecordFill
+                  className="text-white ml-auto text-3xl cursor-pointer"
+                  onClick={() => {
+                    setAudioSteps("speaking"), startRecording();
+                  }}
+                />
+                <span className="w-max absolute right-0 bottom-0 translate-y-full text-xs text-white bg-gray-700 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  Start Recording
+                </span>
+              </div>
+            )} */}
+            {audioSteps === "speaking" && (
+              <div className="relative group">
+                <FaRegCircleStop
+                  className="text-white ml-auto text-3xl cursor-pointer"
+                  onClick={() => {
+                    setAudioSteps("analyzing"), stopRecording();
+                  }}
+                />
+                <span className="w-max absolute right-0 bottom-0 translate-y-full text-xs text-white bg-gray-700 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  Stop Recording
+                </span>
               </div>
             )}
+            {audioSteps === "response" && (
+              <>
+                {!isPaused ? (
+                  <FaRegCirclePause
+                    className="text-white ml-auto text-3xl"
+                    onClick={pauseAudio}
+                  />
+                ) : (
+                  <MdOutlinePlayCircle
+                    className="text-white ml-auto text-3xl"
+                    onClick={resumeAudio}
+                  />
+                )}
+              </>
+            )}
           </div>
+          <div>
+            <div
+              onClick={() => {
+                setIsVoice(false), resetResponse();
+              }}
+              className="bg-[#ff7d75] w-12 h-12 rounded-full flex justify-center items-center text-white text-2xl"
+            >
+              <RxCross2 />
+            </div>
+          </div>
+          {response && ( // Conditionally render FaRedo based on response state
+            <div>
+              <FaRedo
+                className="text-white ml-auto text-xl cursor-pointer"
+                onClick={() => {
+                  resetResponse(), startRecording();
+                }}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
-
-export default VoiceAssistant;
+export default VoiceAgent;

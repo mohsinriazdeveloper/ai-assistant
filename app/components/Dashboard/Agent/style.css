@@ -1,0 +1,33 @@
+.recentChatScroller::-webkit-scrollbar {
+  width: 6px;
+}
+
+.recentChatScroller::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px #000000;
+  border-radius: 6px;
+}
+
+.recentChatScroller::-webkit-scrollbar-thumb {
+  background: #525252;
+  border-radius: 6px;
+}
+
+.recentChatScroller::-webkit-scrollbar-thumb:hover {
+  background: #525252;
+  cursor: pointer;
+}
+
+.text-fade p {
+  position: relative;
+  background: linear-gradient(to right, white, white 32%, rgba(66, 66, 66, 0));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.chatInput::placeholder {
+  color: white;
+}
+
+.chatSideBarSearch::placeholder {
+  color: #bbbbbb;
+}

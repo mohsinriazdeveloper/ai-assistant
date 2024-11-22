@@ -35,6 +35,7 @@ export interface AgentState {
   temperature?: number;
   created_at?: string;
   updated_at?: string;
+  boc_connected?: boolean;
   customuser?: number;
   instructions?: string;
 }
@@ -54,15 +55,23 @@ export const agentState: AgentState = {
   created_at: "",
   updated_at: "",
   customuser: 0,
+  boc_connected: false,
   instructions: "",
 };
+export type AgentAllChatType = {
+  id: number;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  agent: number;
+  user: number;
+};
+
 export type AgentChatType = {
-  id?: number;
-  message: string;
+  id: number | null;
   role: string;
-  timestamp?: string;
-  agent?: number;
-  user?: number;
+  message: string;
+  created_at?: string;
 };
 
 export type VoiceRes = {

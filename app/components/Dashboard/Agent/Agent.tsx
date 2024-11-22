@@ -9,6 +9,10 @@ import AgentSettings from "../../AgentSettings/AgentSettings";
 import UpdateTraining from "../../UpdateTraining/UpdateTraining";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
 import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
+import ChatAgent from "./ChatAgent";
+import AgentChatSideBar from "./AgentChatSideBar";
+import VoiceAgent from "./VoiceAgent";
+import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
 
 type NavContent = {
   title: string;
@@ -20,7 +24,11 @@ interface AgentProps {
 }
 
 const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
-  const [checkOption, setCheckOption] = useState<string>("agent");
+  const [checkOption, setCheckOption] = useState<string>("chatagent");
+  const [IsVoice, setIsVoice] = useState<boolean>(false);
+  const [specificChatId, setSpecificChatId] = useState<number | null>(null);
+  const [startNewChat, setStartNewChat] = useState<boolean>(true);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -35,24 +43,61 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
       }
     }
   }, [checkOption]);
-
   return (
-    <div className={`mb-10 ${checkOption === "chatagent" && "max-h-screen"}`}>
-      <div className="">
-        <NavBar
-          content={navBarContent}
-          setCheckOption={setCheckOption}
-          checkOption={checkOption}
-        />
-      </div>
-      {checkOption === "agent" && (
-        <AgentOption agentId={agentId} checkOption="agent" />
+    <div
+      className={` ${checkOption === "chatagent" ? "max-h-screen" : "mb-10"}`}
+    >
+      {checkOption !== "chatagent" && (
+        <div className="">
+          <NavBar
+            content={navBarContent}
+            setCheckOption={setCheckOption}
+            checkOption={checkOption}
+          />
+        </div>
       )}
       {checkOption === "chatagent" && (
-        <AgentOption agentId={agentId} checkOption="chatagent" />
+        <div className="grid grid-cols-12">
+          <div className="col-span-3 bg-[#181818]">
+            <AgentChatSideBar
+              agentId={agentId}
+              checkOption="chatagent"
+              setSpecificChatId={setSpecificChatId}
+              setStartNewChat={setStartNewChat}
+            />
+          </div>
+          <div className={`col-span-9 px-6 ${IsVoice && "bg-black"}`}>
+            {IsVoice ? (
+              <VoiceAgent
+                agentId={agentId}
+                specificChatId={specificChatId}
+                setIsVoice={setIsVoice}
+              />
+            ) : (
+              // <VoiceAssistant
+              //   agentId={agentId}
+              //   specificChatId={specificChatId}
+              // />
+              <>
+                <NavBar
+                  content={navBarContent}
+                  setCheckOption={setCheckOption}
+                  checkOption={checkOption}
+                />
+                <ChatAgent
+                  setIsVoice={setIsVoice}
+                  specificChatId={specificChatId}
+                  agentId={agentId}
+                  startNewChat={startNewChat}
+                  setStartNewChat={setStartNewChat}
+                />
+              </>
+            )}
+          </div>
+        </div>
       )}
       {checkOption === "sources" && <UpdateTraining agentId={agentId} />}
-      {checkOption === "connect" && <Connect />}
+      {checkOption === "connect" && <Connect agentId={agentId} />}
       {checkOption === "settings" && <AgentSettings agentId={agentId} />}
     </div>
   );

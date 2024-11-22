@@ -6,14 +6,16 @@ interface RangeBarProps {
   tempBoolean?: boolean;
   temperature?: number;
   setTemp?: (value: number) => void;
-  readOnly?: boolean; // New prop to control read-only behavior
+  readOnly?: boolean;
+  checkOption?: string;
 }
 
 const RangeBar: FC<RangeBarProps> = ({
   temperature = 0,
   setTemp,
   tempBoolean,
-  readOnly = false, // Default value is false
+  readOnly = false,
+  checkOption,
 }) => {
   const [temp, setTempState] = useState<number>(temperature);
 
@@ -33,16 +35,20 @@ const RangeBar: FC<RangeBarProps> = ({
 
   return (
     <div>
-      <p className="text-sm font-medium text-gray-900">{temp.toFixed(1)}</p>
+      {checkOption !== "chatagent" && (
+        <p className="text-sm font-medium text-gray-900">{temp.toFixed(1)}</p>
+      )}
       <input
         type="range"
-        className="range-input"
+        className={`range-input ${
+          checkOption === "chatagent" ? "h-[2px]" : "h-[6px]"
+        } `}
         min="0"
         max="1"
         step="0.1"
         value={temp}
         onChange={handleChange}
-        disabled={readOnly} // Disable the range input when readOnly is true
+        disabled={readOnly}
       />
     </div>
   );

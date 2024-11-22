@@ -23,8 +23,8 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   const [addImage, setAddImage] = useState<any>();
   const [preview, setPreview] = useState<string>();
   const [imgError, setImgError] = useState<string>("");
-
-  const { data: allAgents, isLoading } = useGetAllAgentsQuery();
+  const [imgLoading, setImgLoading] = useState<boolean>(false);
+  const { data: allAgents } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
   );
@@ -79,15 +79,37 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     }
   };
 
+  // const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const selectedFile = event.target.files?.[0];
+  //   const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
+
+  //   // Check if the selected file is in allowed formats
+  //   if (selectedFile && allowedFormats.includes(selectedFile.type)) {
+  //     setAddImage(selectedFile);
+  //     setPreview(URL.createObjectURL(selectedFile));
+  //     setImgError("");
+  //   } else {
+  //     setImgError("Allowed formats are .png, .jpeg, .jpg");
+  //     setAddImage(null);
+  //     setPreview(""); // Clear the preview
+  //   }
+  // };
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
 
     // Check if the selected file is in allowed formats
     if (selectedFile && allowedFormats.includes(selectedFile.type)) {
-      setAddImage(selectedFile);
-      setPreview(URL.createObjectURL(selectedFile));
-      setImgError("");
+      setImgLoading(true); // Show the loader
+      setImgError(""); // Clear any previous errors
+      setPreview(""); // Clear previous preview
+
+      // Use setTimeout to simulate loading
+      setTimeout(() => {
+        setAddImage(selectedFile);
+        setPreview(URL.createObjectURL(selectedFile));
+        setImgLoading(false); // Hide the loader
+      }, 2000);
     } else {
       setImgError("Allowed formats are .png, .jpeg, .jpg");
       setAddImage(null);
@@ -107,7 +129,6 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
 
   return (
     <div>
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="md:container md:mx-auto mx-5 my-10">
         <p className="text-3xl font-bold">Settings</p>
         <div className="grid grid-cols-12 gap-8 mt-10">
@@ -130,7 +151,9 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
                     <div>
                       <label htmlFor="addImage">
                         <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-                          {preview ? (
+                          {imgLoading ? (
+                            <Loader /> // Show loader while image is uploading
+                          ) : preview ? (
                             <div
                               className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
                               style={{ backgroundImage: `url(${preview})` }}

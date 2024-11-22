@@ -5,7 +5,7 @@ import RangeBar from "../../RangeBar/RangeBar";
 import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
 import { useGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 import Loader from "../../Loader/Loader";
-import AgentChat from "../../VoiceAssistant/AgentChat";
+// import AgentChat from "../../VoiceAssistant/AgentChat";
 
 interface QaItem {
   question: string;
@@ -187,9 +187,9 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
           </div>
         </div>
         <div className="sm:col-span-7 col-span-12 border border-gray-200 rounded-lg">
-          {checkOption === "agent" && <VoiceAssistant agentId={agent.id} />}
+          {/* {checkOption === "agent" && <VoiceAssistant agentId={agent.id} />}
 
-          {checkOption === "chatagent" && <AgentChat agentId={agent.id} />}
+          {checkOption === "chatagent" && <AgentChat agentId={agent.id} />} */}
         </div>
       </div>
     </div>

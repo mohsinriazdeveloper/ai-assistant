@@ -1,6 +1,11 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { RootState } from "./store";
-import { AgentChatType, AgentState, Organization } from "./types/agents";
+import {
+  AgentAllChatType,
+  AgentChatType,
+  AgentState,
+  Organization,
+} from "./types/agents";
 // Define your base query function
 const baseQuery = fetchBaseQuery({
   // baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -24,7 +29,6 @@ export const userApi = createApi({
     //get all agents
     getAllAgents: builder.query<AgentState[], void>({
       query: () => `/accounts/agents/`,
-
       providesTags: ["AllPosts"],
     }),
 
@@ -62,7 +66,7 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
     // get whole agent chat
-    getAgentChat: builder.query<AgentChatType, number>({
+    getAgentChat: builder.query<AgentAllChatType[], number>({
       query: (id) => `/accounts/chats/${id}/`,
       providesTags: ["AllPosts"],
     }),
@@ -117,6 +121,20 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["AllPosts"],
     }),
+    // get specific chat from session chats by id
+    getSpecificChat: builder.query<AgentChatType[], number | null>({
+      query: (id) => `/accounts/chat_session_messages/${id}/`,
+      providesTags: ["AllPosts"],
+    }),
+    // update chat session name/title
+    renameChatSession: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/chats/update/${id}/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
   }),
 });
 // Export the API endpoints
@@ -134,4 +152,6 @@ export const {
   useDeleteChatMutation,
   useUpdateInstructionsMutation,
   useTrainByImageMutation,
+  useGetSpecificChatQuery,
+  useRenameChatSessionMutation,
 } = userApi;
