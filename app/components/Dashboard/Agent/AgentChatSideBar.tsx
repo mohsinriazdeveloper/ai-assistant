@@ -38,6 +38,7 @@ interface AgentChatSideBar {
   checkOption: string;
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
+  setIsVoice: Dispatch<SetStateAction<boolean>>;
 }
 
 const AgentChatSideBar: FC<AgentChatSideBar> = ({
@@ -45,6 +46,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   checkOption,
   setSpecificChatId,
   setStartNewChat,
+  setIsVoice,
 }) => {
   const { data: AllChats } = useGetAgentChatQuery(agentId);
   const [deleteChatSession] = useDeleteChatMutation();
@@ -146,8 +148,15 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const handleDeleteChatSession = async (id: number) => {
     setDeleteChatLoading(id);
     setSessionChatDropDown(null);
-    await deleteChatSession(id);
-    setDeleteChatLoading(null);
+
+    try {
+      const res = await deleteChatSession(id).unwrap(); // Ensure the mutation is completed
+      toast.success("Chat session deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete chat session");
+    } finally {
+      setDeleteChatLoading(null);
+    }
   };
   const handleChangeTitle = async (id: number) => {
     setSessionChatDropDown(null);
@@ -167,6 +176,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
       searchChat.trim() === "" ||
       item.title.toLowerCase().includes(searchChat.toLowerCase())
   );
+  console.log(AllChats);
   return (
     <div className="pt-6 pb-4 text-white px-5 h-screen flex flex-col justify-between">
       <div>
@@ -221,7 +231,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                       type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="focus:outline-none bg-transparent grow mx-4"
+                      className="focus:outline-none bg-transparent grow mx-4 border"
                     />
                   ) : (
                     <div className="flex-1 mx-4 overflow-hidden text-fade">
@@ -281,62 +291,67 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
           </div>
         )}
       </div>
-      <div className="border-t border-[#808080] pt-5 text-xs text-[#9A9A9A]">
-        <div className="grid grid-cols-12 mb-3 gap-2">
-          <div className="col-span-8">
-            <p className="text-white font-medium">Agent ID:</p>
-            <div className="flex items-center gap-1 relative">
-              <p>{agent.ran_id}</p>
-              <MdContentCopy className=" cursor-pointer" onClick={handleCopy} />
+      <div className="h-full flex items-end">
+        <div className="border-t border-[#808080] pt-5 text-xs text-[#9A9A9A] w-full">
+          <div className="grid grid-cols-12 mb-3 gap-2">
+            <div className="col-span-8">
+              <p className="text-white font-medium">Agent ID:</p>
+              <div className="flex items-center gap-1 relative">
+                <p>{agent.ran_id}</p>
+                <MdContentCopy
+                  className=" cursor-pointer"
+                  onClick={handleCopy}
+                />
 
-              {isCopied && (
-                <span className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 mt-2">
-                  Copied!
-                </span>
-              )}
+                {isCopied && (
+                  <span className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 mt-2">
+                    Copied!
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="col-span-4">
+              <p className="text-white font-medium"># of characters:</p>
+              <p>{totalChar}</p>
             </div>
           </div>
-          <div className="col-span-4">
-            <p className="text-white font-medium"># of character:</p>
-            <p>{totalChar}</p>
-          </div>
-        </div>
-        <div className="grid grid-cols-12 mb-3 gap-2">
-          <div className="col-span-8">
-            <p className="text-white font-medium">
-              Temperature: {agent.temperature}
-            </p>
-            <div className="max-w-[184px]">
-              <RangeBar
-                temperature={agent.temperature}
-                checkOption={checkOption}
-                readOnly
-              />{" "}
-              {/* Pass the readOnly prop */}
+          <div className="grid grid-cols-12 mb-3 gap-2">
+            <div className="col-span-8">
+              <p className="text-white font-medium">
+                Temperature: {agent.temperature}
+              </p>
+              <div className="max-w-[184px]">
+                <RangeBar
+                  temperature={agent.temperature}
+                  checkOption={checkOption}
+                  readOnly
+                />{" "}
+                {/* Pass the readOnly prop */}
+              </div>
+            </div>
+            <div className="col-span-4">
+              <p className="text-white font-medium">Status:</p>
+              <div className="flex items-center gap-[2px]">
+                <div
+                  className={`w-[10px] h-[11px] rounded-full ${
+                    agent.status === "Trained" ? "bg-[#34E50C]" : "bg-red-500"
+                  }`}
+                ></div>
+                <p>{agent.status}</p>
+              </div>
             </div>
           </div>
-          <div className="col-span-4">
-            <p className="text-white font-medium">Status:</p>
-            <div className="flex items-center gap-[2px]">
-              <div
-                className={`w-[10px] h-[11px] rounded-full ${
-                  agent.status === "Trained" ? "bg-[#34E50C]" : "bg-red-500"
-                }`}
-              ></div>
-              <p>{agent.status}</p>
+          <div className="grid grid-cols-12 mb-3 gap-2">
+            <div className="col-span-8">
+              <p className="text-white font-medium">Last Trained:</p>
+              <p>
+                {formattedDate}, {formattedTime}
+              </p>
             </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-12 mb-3 gap-2">
-          <div className="col-span-8">
-            <p className="text-white font-medium">Last Trained:</p>
-            <p>
-              {formattedDate}, {formattedTime}
-            </p>
-          </div>
-          <div className="col-span-4">
-            <p className="text-white font-medium">Model:</p>
-            <p className="capitalize">{agent.model}</p>
+            <div className="col-span-4">
+              <p className="text-white font-medium">Model:</p>
+              <p className="capitalize">{agent.model}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -345,6 +360,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
         handleClose={() => setNewChatModal(false)}
         setSpecificChatId={setSpecificChatId}
         setStartNewChat={setStartNewChat}
+        setIsVoice={setIsVoice}
       />
     </div>
   );

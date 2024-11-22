@@ -66,6 +66,14 @@ export type AgentAllChatType = {
   agent: number;
   user: number;
 };
+export const agentAllChatType: AgentAllChatType = {
+  id: 0,
+  title: "",
+  created_at: "",
+  updated_at: "",
+  agent: 0,
+  user: 0,
+};
 
 export type AgentChatType = {
   id: number | null;

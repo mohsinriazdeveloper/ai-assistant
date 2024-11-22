@@ -150,16 +150,16 @@ const ChatAgent: FC<ChatAgentProps> = ({
           <GoPaperclip className="text-white text-2xl mr-1" />
         </div>
 
-        <textarea
-          ref={textareaRef}
-          rows={1}
+        <input
+          // ref={textareaRef}
           placeholder="Type your prompt here"
           className="text-lg text-white bg-transparent grow chatInput focus:outline-none"
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           disabled={loading}
-          onKeyDown={handleKeyDown}
-          onInput={handleTextareaInput}
+
+          // onKeyDown={handleKeyDown}
+          // onInput={handleTextareaInput}
         />
         <FaMicrophone
           className="text-white text-2xl cursor-pointer"

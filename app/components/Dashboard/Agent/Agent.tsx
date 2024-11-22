@@ -43,9 +43,12 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
       }
     }
   }, [checkOption]);
+  console.log({ IsVoice });
   return (
     <div
-      className={` ${checkOption === "chatagent" ? "max-h-screen" : "mb-10"}`}
+      className={` ${
+        checkOption === "chatagent" ? "max-h-screen fixed w-full" : "mb-10"
+      }`}
     >
       {checkOption !== "chatagent" && (
         <div className="">
@@ -64,6 +67,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
               checkOption="chatagent"
               setSpecificChatId={setSpecificChatId}
               setStartNewChat={setStartNewChat}
+              setIsVoice={setIsVoice}
             />
           </div>
           <div className={`col-span-9 px-6 ${IsVoice && "bg-black"}`}>

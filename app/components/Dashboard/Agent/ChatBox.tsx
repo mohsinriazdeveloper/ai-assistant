@@ -32,6 +32,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat }) => {
   const [isSmile, setIsSmile] = useState<boolean>(false);
   const [isSad, setIsSad] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [isCopied, setIsCopied] = useState<number | null>(null);
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
@@ -40,6 +41,13 @@ const ChatBox: FC<ChatBoxProps> = ({ chat }) => {
       });
     }
   }, [chat]);
+  const handleCopyResponse = (message: string, id: number | null) => {
+    setIsCopied(id);
+    navigator.clipboard.writeText(message);
+    setTimeout(() => {
+      setIsCopied(null);
+    }, 1000); // Tooltip will disappear after 2 seconds
+  };
   return (
     <div
       className="w-full pr-5 max-h-[70vh] overflow-hidden overflow-y-scroll scrollbar-hide"
@@ -135,9 +143,16 @@ const ChatBox: FC<ChatBoxProps> = ({ chat }) => {
                         <GrPowerReset />
                         <p>Generate Response</p>
                       </div> */}
-                      <div className="flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px]">
+                      <div
+                        onClick={() =>
+                          handleCopyResponse(message.message, message.id)
+                        }
+                        className={`flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px] cursor-pointer ${
+                          isCopied === message.id && "bg-black text-white"
+                        }`}
+                      >
                         <MdContentCopy />
-                        <p>Copy</p>
+                        <p>{isCopied === message.id ? "Copied" : "Copy"}</p>
                       </div>
                     </div>
                   </div>

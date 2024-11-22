@@ -20,9 +20,11 @@ import authReducer from "@/app/components/ReduxToolKit/authSlice";
 import { authApi } from "./aiAssistant";
 import { userApi } from "./aiAssistantOtherApis";
 import voiceResReducer from "./voiceResSlice";
+import ChatSessionSlice from "./chatSessionSlice";
 const rootReducer = combineReducers({
   auth: authReducer,
   voice: voiceResReducer,
+  chatSession: ChatSessionSlice,
   // state: stateReducer,
   // other reducers...
 });

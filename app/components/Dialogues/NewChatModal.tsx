@@ -10,6 +10,7 @@ type NewChatModalProps = {
   handleClose: () => void;
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
+  setIsVoice: Dispatch<SetStateAction<boolean>>;
 };
 
 const NewChatModal: FC<NewChatModalProps> = ({
@@ -17,6 +18,7 @@ const NewChatModal: FC<NewChatModalProps> = ({
   handleClose,
   setSpecificChatId,
   setStartNewChat,
+  setIsVoice,
 }) => {
   return (
     <div>
@@ -55,7 +57,10 @@ const NewChatModal: FC<NewChatModalProps> = ({
             <div className="flex gap-8 mt-4 items-center">
               <button
                 onClick={() => {
-                  setSpecificChatId(null), setStartNewChat(true), handleClose();
+                  setSpecificChatId(null),
+                    setStartNewChat(true),
+                    setIsVoice(false),
+                    handleClose();
                 }}
                 className="py-2 px-5 hover:bg-[#3C3C3F] bg-black text-white font-medium rounded-md text-sm"
               >
