@@ -8,6 +8,7 @@ import { dracula, CopyBlock } from "react-code-blocks";
 import "katex/dist/katex.min.css";
 
 const MarkDown = ({ content }) => {
+  const processedContent = content.replace(/\n\n/g, "<br /><br />");
   return (
     <div>
       <ReactMarkdown
@@ -208,7 +209,7 @@ const MarkDown = ({ content }) => {
           },
         }}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   );
