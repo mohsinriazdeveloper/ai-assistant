@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FC, useEffect, useRef, useState } from "react";
-import dummyImg from "@/app/assets/Images/chatImgPerson.webp";
+import dummyImg from "@/app/assets/Images/chatImgPerson.png";
 import { LiaEditSolid } from "react-icons/lia";
 import { GrPowerReset } from "react-icons/gr";
 import { MdContentCopy } from "react-icons/md";
