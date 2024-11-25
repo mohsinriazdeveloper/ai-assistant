@@ -1,34 +1,36 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-
-import { agentAllChatType, AgentAllChatType } from "./types/agents.d";
 import { RootState } from "./store";
+
+interface ChatSession {
+  id: number;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  agent: number;
+  user: number;
+}
+
+interface ChatSessionState {
+  chats: ChatSession[];
+}
+
+const initialState: ChatSessionState = {
+  chats: [],
+};
 
 export const chatSessionState = createSlice({
   name: "chatSession",
-  initialState: agentAllChatType,
+  initialState,
   reducers: {
-    userResult: (
-      state: AgentAllChatType,
-      action: PayloadAction<{
-        id: number;
-        title: string;
-        created_at: string;
-        updated_at: string;
-        agent: number;
-        user: number;
-      }>
-    ) => {
-      state.id = action.payload.id;
-      state.title = action.payload.title;
-      state.created_at = action.payload.created_at;
-      state.updated_at = action.payload.updated_at;
-      state.agent = action.payload.agent;
-      state.user = action.payload.user;
+    setChats: (state, action: PayloadAction<ChatSession[]>) => {
+      state.chats = action.payload;
+    },
+    deleteChat: (state, action: PayloadAction<number>) => {
+      state.chats = state.chats.filter((chat) => chat.id !== action.payload);
     },
   },
 });
 
-export const { userResult } = chatSessionState.actions;
+export const { setChats, deleteChat } = chatSessionState.actions;
 export default chatSessionState.reducer;
-// export const selectAuth = (state: RootState) => state.root.auth;
-export const selectResult = (state: RootState) => state.root.chatSession;
+export const selectChats = (state: RootState) => state.root.chatSession.chats;

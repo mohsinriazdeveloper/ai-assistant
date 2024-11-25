@@ -23,6 +23,12 @@ import { MdContentCopy, MdSaveAlt } from "react-icons/md";
 import toast from "react-hot-toast";
 import PreviousPage from "../../PreviousPage/PreviousPage";
 import NewChatModal from "../../Dialogues/NewChatModal";
+import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
+import {
+  deleteChat,
+  selectChats,
+  setChats,
+} from "../../ReduxToolKit/chatSessionSlice";
 
 interface QaItem {
   question: string;
@@ -55,6 +61,8 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     (agent) => agent.id.toString() === agentId.toString()
   );
   const [renameChatSessionName] = useRenameChatSessionMutation();
+  const dispatch = useAppDispatch();
+  const chatSessions = useAppSelector(selectChats);
   const [qaData, setQaData] = useState<QaItem[]>([]);
   const [qaCharacters, setqaCharacters] = useState<number>(0);
 
@@ -71,6 +79,12 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const [title, setTitle] = useState<string>("");
   const [searchChat, setSearchChat] = useState<string>("");
   const [newChatModal, setNewChatModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (AllChats) {
+      dispatch(setChats(AllChats));
+    }
+  }, [AllChats, dispatch]);
 
   useEffect(() => {
     if (agent?.file_urls) {
@@ -144,13 +158,14 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     minute: "2-digit",
     second: "2-digit",
   });
-
   const handleDeleteChatSession = async (id: number) => {
     setDeleteChatLoading(id);
     setSessionChatDropDown(null);
+    setStartNewChat(true);
 
     try {
-      const res = await deleteChatSession(id).unwrap(); // Ensure the mutation is completed
+      const res = await deleteChatSession(id).unwrap(); // API call to delete chat session
+      dispatch(deleteChat(id)); // Update Redux store
       toast.success("Chat session deleted successfully");
     } catch (error) {
       toast.error("Failed to delete chat session");
@@ -171,12 +186,11 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const handleDropdownToggle = (id: number) => {
     setSessionChatDropDown((prevId) => (prevId === id ? null : id));
   };
-  const filteredItems = AllChats?.filter(
+  const filteredItems = chatSessions?.filter(
     (item) =>
       searchChat.trim() === "" ||
       item.title.toLowerCase().includes(searchChat.toLowerCase())
   );
-  console.log(AllChats);
   return (
     <div className="pt-6 pb-4 text-white px-5 h-screen flex flex-col justify-between">
       <div>
@@ -186,9 +200,6 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
         </div>
         <div className="flex flex-col gap-[10px] mb-9">
           <div
-            // onClick={() => {
-            //   setSpecificChatId(null), setStartNewChat(true);
-            // }}
             onClick={() => setNewChatModal(true)}
             className="w-full px-[18px] text-sm py-4 border border-white rounded-xl flex justify-between items-center font-semibold cursor-pointer"
           >
@@ -206,8 +217,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
             />
           </div>
         </div>
-
-        {filteredItems ? (
+        {filteredItems.length !== 0 ? (
           <div className="text-white text-xs mb-5">
             <p className="font-medium">Recent Chats</p>
             <div
@@ -219,27 +229,31 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
               {filteredItems?.map((chat, index) => (
                 <div
                   key={index}
-                  className="bg-[#424242] text-white rounded-lg flex items-center justify-between py-4 px-6 mr-2 relative cursor-pointer"
-                  onClick={() => {
-                    setSpecificChatId(chat.id);
-                    setStartNewChat(false);
-                  }}
+                  className="bg-[#424242] text-white rounded-lg flex items-center justify-between pr-6 mr-2 relative"
                 >
-                  <FiMessageSquare />
-                  {isEditTitle === chat.id ? (
-                    <input
-                      type="text"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="focus:outline-none bg-transparent grow mx-4 border"
-                    />
-                  ) : (
-                    <div className="flex-1 mx-4 overflow-hidden text-fade">
-                      <p className="whitespace-nowrap overflow-hidden text-ellipsis">
-                        {chat.title}
-                      </p>
-                    </div>
-                  )}
+                  <div
+                    className="h-full w-full flex items-center justify-between py-4 pl-6 cursor-pointer"
+                    onClick={() => {
+                      setSpecificChatId(chat.id);
+                      setStartNewChat(false);
+                    }}
+                  >
+                    <FiMessageSquare />
+                    {isEditTitle === chat.id ? (
+                      <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="focus:outline-none bg-transparent grow mx-4 border px-2"
+                      />
+                    ) : (
+                      <div className="flex-1 mx-4 overflow-hidden text-fade">
+                        <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+                          {chat.title}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                   {isEditTitle === chat.id ? (
                     <MdSaveAlt
                       className="cursor-pointer"

@@ -26,6 +26,7 @@ interface ChatAgentProps {
   agentId: number;
   startNewChat: boolean;
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
+  setSpecificChatId: Dispatch<SetStateAction<number | null>>;
 }
 
 const ChatAgent: FC<ChatAgentProps> = ({
@@ -34,6 +35,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   agentId,
   startNewChat,
   setStartNewChat,
+  setSpecificChatId,
 }) => {
   const {
     data: getChat,
@@ -46,12 +48,15 @@ const ChatAgent: FC<ChatAgentProps> = ({
   const [textInput, setTextInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [chatSessionId, setChatSessionId] = useState<number | null>(null);
 
   useEffect(() => {
     if (startNewChat) {
       setChat([]); // Clear all existing messages
+      setSpecificChatId(null);
     }
   }, [startNewChat]);
+
   useEffect(() => {
     if (textareaRef.current && isLoading === false) {
       textareaRef.current.focus();
@@ -84,8 +89,9 @@ const ChatAgent: FC<ChatAgentProps> = ({
         const response = await agentChat({
           agent_id,
           text_input: textInput,
+          chat_session_id: specificChatId,
         }).unwrap();
-
+        setSpecificChatId(response.chat_session_id);
         const botMessage: AgentChatType = {
           id: specificChatId || null,
           role: "agent",
@@ -151,15 +157,11 @@ const ChatAgent: FC<ChatAgentProps> = ({
         </div>
 
         <input
-          // ref={textareaRef}
           placeholder="Type your prompt here"
           className="text-lg text-white bg-transparent grow chatInput focus:outline-none"
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           disabled={loading}
-
-          // onKeyDown={handleKeyDown}
-          // onInput={handleTextareaInput}
         />
         <FaMicrophone
           className="text-white text-2xl cursor-pointer"

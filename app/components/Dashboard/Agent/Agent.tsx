@@ -94,6 +94,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
                   agentId={agentId}
                   startNewChat={startNewChat}
                   setStartNewChat={setStartNewChat}
+                  setSpecificChatId={setSpecificChatId}
                 />
               </>
             )}
