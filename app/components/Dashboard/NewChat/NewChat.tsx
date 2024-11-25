@@ -14,12 +14,14 @@ interface NewChatProps {
 
 const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
   const [checkOption, setCheckOption] = useState<string>("aiAgent");
+  const [isMobile, setIsMobile] = useState<boolean>(false);
   return (
     <div>
       <NavBar
         content={navBarContent}
         setCheckOption={setCheckOption}
         checkOption={checkOption}
+        setIsMobile={setIsMobile}
       />
       {checkOption === "aiAgent" && <Agents />}
       {checkOption === "newChatSettings" && <Settings />}

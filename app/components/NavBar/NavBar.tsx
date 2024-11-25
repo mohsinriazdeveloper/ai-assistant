@@ -8,6 +8,7 @@ import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
 import toast, { Toaster } from "react-hot-toast";
 import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import { MdOutlineShortText } from "react-icons/md";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
 type Content = {
   title: string;
@@ -19,9 +20,15 @@ interface NavBarProps {
   setCheckOption: Dispatch<SetStateAction<string>>;
   checkOption: string;
   setStopPlayingAudio?: Dispatch<SetStateAction<boolean>>;
+  setIsMobile: Dispatch<SetStateAction<boolean>>;
 }
 
-const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
+const NavBar: FC<NavBarProps> = ({
+  content,
+  setCheckOption,
+  checkOption,
+  setIsMobile,
+}) => {
   const { isLoading } = useGetAllAgentsQuery();
 
   const currentRoute = usePathname();
@@ -53,7 +60,6 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
   const handleChangeTab = (item: string) => {
     setCheckOption(item);
   };
-  const gridCols = content.length.toString();
   return (
     <div
       className={`pt-5 ${
@@ -61,7 +67,14 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
       } md:w-full sm:container sm:mx-auto sm:px-0 px-4`}
     >
       <div className="md:container md:mx-auto mx-5 flex justify-between items-center pb-5">
-        {checkOption !== "chatagent" && <PreviousPage />}
+        {checkOption === "chatagent" ? (
+          <HiOutlineDotsHorizontal
+            className="text-2xl md:hidden block"
+            onClick={() => setIsMobile(true)}
+          />
+        ) : (
+          <PreviousPage />
+        )}
         <div
           onClick={handleSignOut}
           className="font-medium rounded-md text-sm text-[#8A8A8A] md:hidden flex items-center lg:gap-2 gap-1 cursor-pointer"
@@ -74,14 +87,14 @@ const NavBar: FC<NavBarProps> = ({ content, setCheckOption, checkOption }) => {
       <div
         className={`${
           checkOption === "chatagent"
-            ? "flex justify-between items-center"
+            ? "md:flex justify-between items-center"
             : "md:flex lg:gap-0 md:gap-3 "
         } overflow-x-auto`}
       >
         <div
           className={`overflow-hidden whitespace-nowrap ${
             checkOption === "chatagent"
-              ? "w-[80%]"
+              ? "md:w-[80%] sm:w-[100%] w-[565px]"
               : "lg:w-[62%] md:w-[80%] w-[565px] mx-auto"
           } border border-[#EDEDED] rounded-full bg-[#F7F7F7] grid ${
             currentRoute === "/dashboard/agents" ? "grid-cols-2" : "grid-cols-4"

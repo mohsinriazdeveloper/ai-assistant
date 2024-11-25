@@ -27,16 +27,19 @@ import ResponseImg from "@/app/assets/Images/aiResponse.png";
 import { MdOutlinePlayCircle } from "react-icons/md";
 import { PiRecordFill } from "react-icons/pi";
 import toast from "react-hot-toast";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
 interface VoiceAgentProps {
   agentId: number;
   specificChatId: number | null;
   setIsVoice: Dispatch<SetStateAction<boolean>>;
+  setIsMobile: Dispatch<SetStateAction<boolean>>;
 }
 
 const VoiceAgent: FC<VoiceAgentProps> = ({
   agentId,
   specificChatId,
   setIsVoice,
+  setIsMobile,
 }) => {
   const [response, setResponse] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -50,7 +53,7 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  let mediaStream: MediaStream | null = null; // Store media stream
+  let mediaStream: MediaStream | null = null;
   const [audioSteps, setAudioSteps] = useState<string>("speaking");
 
   const dispatch = useAppDispatch();
@@ -289,6 +292,12 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
   };
   return (
     <div className="h-screen">
+      <div className="pt-3">
+        <HiOutlineDotsHorizontal
+          className="text-2xl md:hidden block text-white"
+          onClick={() => setIsMobile(true)}
+        />
+      </div>
       <div className="h-[65vh] flex flex-col justify-end items-center">
         <div className="h-full flex items-end mb-7">
           {audioSteps === "speaking" && (

@@ -29,6 +29,7 @@ import {
   selectChats,
   setChats,
 } from "../../ReduxToolKit/chatSessionSlice";
+import { FaRegSave } from "react-icons/fa";
 
 interface QaItem {
   question: string;
@@ -45,6 +46,7 @@ interface AgentChatSideBar {
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
   setIsVoice: Dispatch<SetStateAction<boolean>>;
+  setIsMobile: Dispatch<SetStateAction<boolean>>;
 }
 
 const AgentChatSideBar: FC<AgentChatSideBar> = ({
@@ -53,6 +55,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   setSpecificChatId,
   setStartNewChat,
   setIsVoice,
+  setIsMobile,
 }) => {
   const { data: AllChats } = useGetAgentChatQuery(agentId);
   const [deleteChatSession] = useDeleteChatMutation();
@@ -192,11 +195,14 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
       item.title.toLowerCase().includes(searchChat.toLowerCase())
   );
   return (
-    <div className="pt-6 pb-4 text-white px-5 h-screen flex flex-col justify-between">
+    <div className="pt-6 pb-4 text-white px-5 h-screen flex flex-col justify-between relative z-50">
       <div>
         <div className="mb-6 flex justify-between">
           <PreviousPage arrowColor="white" />
-          <HiOutlineDotsHorizontal className="text-2xl " />
+          <HiOutlineDotsHorizontal
+            className="text-2xl md:hidden block"
+            onClick={() => setIsMobile(false)}
+          />
         </div>
         <div className="flex flex-col gap-[10px] mb-9">
           <div
@@ -255,7 +261,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                     )}
                   </div>
                   {isEditTitle === chat.id ? (
-                    <MdSaveAlt
+                    <FaRegSave
                       className="cursor-pointer"
                       onClick={() => handleChangeTitle(chat.id)}
                     />
@@ -311,11 +317,13 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
             <div className="col-span-8">
               <p className="text-white font-medium">Agent ID:</p>
               <div className="flex items-center gap-1 relative">
-                <p>{agent.ran_id}</p>
-                <MdContentCopy
-                  className=" cursor-pointer"
-                  onClick={handleCopy}
-                />
+                <p className="break-all">{agent.ran_id}</p>
+                <div className="w-3">
+                  <MdContentCopy
+                    className="cursor-pointer"
+                    onClick={handleCopy}
+                  />
+                </div>
 
                 {isCopied && (
                   <span className="absolute top-full left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs rounded py-1 px-2 mt-2">

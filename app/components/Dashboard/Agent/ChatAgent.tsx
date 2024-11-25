@@ -136,10 +136,10 @@ const ChatAgent: FC<ChatAgentProps> = ({
     <div className="h-[80vh] flex flex-col justify-between items-center">
       {startNewChat ? (
         <div className="grow flex flex-col justify-center items-center text-center">
-          <p className="text-black text-5xl font-medium">
+          <p className="text-black md:text-5xl sm:text-4xl text-3xl font-medium">
             Use Your <span className="text-[#9747FF]">AI</span> Now!
           </p>
-          <p className="w-[53%] mx-auto mt-3 text-[#767676] leading-4">
+          <p className="md:w-[53%] sm:w-[70%] mx-auto mt-3 text-[#767676] leading-4">
             This AI is connected to your unique data sources and interacts with
             you according to your instructions, context, and model setup in the
             model tab.
@@ -152,31 +152,33 @@ const ChatAgent: FC<ChatAgentProps> = ({
         onSubmit={handleSendMessage}
         className="w-full flex gap-4 items-center p-[6px] bg-[#181818] rounded-full"
       >
-        <div className="flex justify-center items-center bg-[#343434] w-12 h-12 rounded-full cursor-not-allowed">
-          <GoPaperclip className="text-white text-2xl mr-1" />
+        <div className="flex justify-center items-center bg-[#343434] sm:w-12 w-7 sm:h-12 h-7 sm:min-w-12 min-w-7 sm:min-h-12 min-h-7 rounded-full cursor-not-allowed">
+          <GoPaperclip className="text-white sm:text-2xl text-lg mr-1" />
         </div>
 
         <input
           placeholder="Type your prompt here"
-          className="text-lg text-white bg-transparent grow chatInput focus:outline-none"
+          className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none"
           value={textInput}
           onChange={(e) => setTextInput(e.target.value)}
           disabled={loading}
         />
-        <FaMicrophone
-          className="text-white text-2xl cursor-pointer"
-          onClick={() => setIsVoice(true)}
-        />
+        <div className="sm:min-w-6 min-w-4">
+          <FaMicrophone
+            className="text-white sm:text-2xl text-lg cursor-pointer"
+            onClick={() => setIsVoice(true)}
+          />
+        </div>
         <button
           type="submit"
           disabled={textInput === "" || loading}
-          className={`flex justify-center items-center bg-white w-12 h-12 rounded-full ${
+          className={`flex justify-center items-center bg-white sm:w-12 w-7 sm:h-12 h-7 sm:min-w-12 min-w-7 sm:min-h-12 min-h-7 rounded-full ${
             textInput === "" || loading
               ? "cursor-not-allowed"
               : "cursor-pointer"
           }`}
         >
-          <HiArrowRight className="text-black text-2xl" />
+          <HiArrowRight className="text-black sm:text-2xl text-lg" />
         </button>
       </form>
     </div>

@@ -28,7 +28,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   const [IsVoice, setIsVoice] = useState<boolean>(false);
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);
   const [startNewChat, setStartNewChat] = useState<boolean>(true);
-
+  const [isMobile, setIsMobile] = useState<boolean>(true);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -43,7 +43,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
       }
     }
   }, [checkOption]);
-  console.log({ IsVoice });
+  console.log({ isMobile });
   return (
     <div
       className={` ${
@@ -56,37 +56,43 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
             content={navBarContent}
             setCheckOption={setCheckOption}
             checkOption={checkOption}
+            setIsMobile={setIsMobile}
           />
         </div>
       )}
       {checkOption === "chatagent" && (
-        <div className="grid grid-cols-12">
-          <div className="col-span-3 bg-[#181818]">
+        <div className="md:grid grid-cols-12 relative">
+          <div
+            className={`lg:col-span-3 col-span-4 bg-[#181818] md:relative absolute z-50 ${
+              isMobile ? "block" : "hidden"
+            }`}
+          >
             <AgentChatSideBar
               agentId={agentId}
               checkOption="chatagent"
               setSpecificChatId={setSpecificChatId}
               setStartNewChat={setStartNewChat}
               setIsVoice={setIsVoice}
+              setIsMobile={setIsMobile}
             />
           </div>
-          <div className={`col-span-9 px-6 ${IsVoice && "bg-black"}`}>
+          <div
+            className={`lg:col-span-9 col-span-8 px-6 ${IsVoice && "bg-black"}`}
+          >
             {IsVoice ? (
               <VoiceAgent
                 agentId={agentId}
                 specificChatId={specificChatId}
                 setIsVoice={setIsVoice}
+                setIsMobile={setIsMobile}
               />
             ) : (
-              // <VoiceAssistant
-              //   agentId={agentId}
-              //   specificChatId={specificChatId}
-              // />
               <>
                 <NavBar
                   content={navBarContent}
                   setCheckOption={setCheckOption}
                   checkOption={checkOption}
+                  setIsMobile={setIsMobile}
                 />
                 <ChatAgent
                   setIsVoice={setIsVoice}
