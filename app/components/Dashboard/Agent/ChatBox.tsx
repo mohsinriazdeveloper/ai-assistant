@@ -67,9 +67,11 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
                 <div className="flex items-center gap-2 text-[#1E1F22]">
                   <p className="text-xs font-semibold ">You</p>
                   <p className="text-[8px]">
-                    {message.created_at
-                      ? formatDate(message.created_at)
-                      : "N/A"}
+                    {message.created_at ? (
+                      formatDate(message.created_at)
+                    ) : (
+                      <div className="h-1 bg-slate-700 rounded col-span-1 animate-pulse w-10"></div>
+                    )}
                   </p>
                 </div>
               </div>
@@ -88,9 +90,11 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
                 <div className="flex items-center gap-2 text-[#1E1F22]">
                   <p className="text-xs font-semibold ">Response</p>
                   <p className="text-[8px]">
-                    {message.created_at
-                      ? formatDate(message.created_at)
-                      : "N/A"}
+                    {message.created_at ? (
+                      formatDate(message.created_at)
+                    ) : (
+                      <div className="h-1 bg-slate-700 rounded col-span-1 animate-pulse w-10"></div>
+                    )}
                   </p>
                 </div>
               </div>
