@@ -69,6 +69,47 @@ const ChatAgent: FC<ChatAgentProps> = ({
     }
   }, [getChat]);
 
+  // const handleSendMessage = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (textInput !== "" && !loading) {
+  //     setStartNewChat(false);
+  //     setLoading(true);
+  //     const agent_id = agentId;
+  //     if (textInput.trim() === "") return;
+
+  //     const userMessage: AgentChatType = {
+  //       id: specificChatId || null,
+  //       role: "user",
+  //       message: textInput,
+  //     };
+  //     setChat((prevChat) => [...prevChat, userMessage]);
+  //     setTextInput("");
+
+  //     try {
+  //       const response = await agentChat({
+  //         agent_id,
+  //         text_input: textInput,
+  //         chat_session_id: specificChatId,
+  //       }).unwrap();
+  //       setSpecificChatId(response.chat_session_id);
+  //       const botMessage: AgentChatType = {
+  //         id: specificChatId || null,
+  //         role: "agent",
+  //         message: response.response,
+  //       };
+  //       setChat((prevChat) => [...prevChat, botMessage]);
+  //     } catch (error: any) {
+  //       if (error.status === 429) {
+  //         toast.error(error.data.error);
+  //       } else {
+  //         toast.error("Failed to send message. Please try again.");
+  //         console.error("Failed to send message: ", error);
+  //       }
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
@@ -82,7 +123,18 @@ const ChatAgent: FC<ChatAgentProps> = ({
         role: "user",
         message: textInput,
       };
+
+      // Add the user's message to the chat
       setChat((prevChat) => [...prevChat, userMessage]);
+
+      // Add a placeholder for the upcoming response with a loader
+      const loadingMessage: AgentChatType = {
+        id: null,
+        role: "agent",
+        message: "loading", // Placeholder for the loader
+      };
+      setChat((prevChat) => [...prevChat, loadingMessage]);
+
       setTextInput("");
 
       try {
@@ -91,14 +143,22 @@ const ChatAgent: FC<ChatAgentProps> = ({
           text_input: textInput,
           chat_session_id: specificChatId,
         }).unwrap();
+
         setSpecificChatId(response.chat_session_id);
-        const botMessage: AgentChatType = {
-          id: specificChatId || null,
-          role: "agent",
-          message: response.response,
-        };
-        setChat((prevChat) => [...prevChat, botMessage]);
+
+        // Replace the loading placeholder with the actual response
+        setChat((prevChat) => {
+          const updatedChat = [...prevChat];
+          updatedChat[updatedChat.length - 1] = {
+            id: specificChatId || null,
+            role: "agent",
+            message: response.response,
+          };
+          return updatedChat;
+        });
       } catch (error: any) {
+        // Remove the loading message and show error
+        setChat((prevChat) => prevChat.slice(0, -1));
         if (error.status === 429) {
           toast.error(error.data.error);
         } else {
@@ -146,7 +206,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
           </p>
         </div>
       ) : (
-        <ChatBox chat={chat} />
+        <ChatBox chat={chat} loading={loading} />
       )}
       <form
         onSubmit={handleSendMessage}

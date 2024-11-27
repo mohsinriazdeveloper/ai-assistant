@@ -10,6 +10,7 @@ import SadFill from "@/app/assets/icons/SadFill.png";
 import Sad from "@/app/assets/icons/Sad.png";
 import { AgentChatType } from "../../ReduxToolKit/types/agents";
 import MarkDown from "../../MarkDown/MarkDown";
+import Loader from "../../Loader/Loader";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -26,9 +27,10 @@ const formatDate = (dateString: string) => {
 };
 interface ChatBoxProps {
   chat: AgentChatType[];
+  loading: boolean;
 }
 
-const ChatBox: FC<ChatBoxProps> = ({ chat }) => {
+const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
   const [isSmile, setIsSmile] = useState<boolean>(false);
   const [isSad, setIsSad] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -93,8 +95,22 @@ const ChatBox: FC<ChatBoxProps> = ({ chat }) => {
                 </div>
               </div>
               <div className="flex items-center gap-2 relative -top-5 -right-5 ">
-                <div className="py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] w-fit ">
-                  <MarkDown content={message.message} />
+                <div
+                  className={`py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] ${
+                    message.message === "loading" ? "w-[50%]" : "w-fit"
+                  }  `}
+                >
+                  {message.message === "loading" ? (
+                    <div className="space-y-3 animate-pulse">
+                      <div className="grid grid-cols-3 gap-4">
+                        <div className="h-2 bg-slate-700 rounded col-span-2"></div>
+                        <div className="h-2 bg-slate-700 rounded col-span-1"></div>
+                      </div>
+                      <div className="h-2 bg-slate-700 rounded"></div>
+                    </div>
+                  ) : (
+                    <MarkDown content={message.message} />
+                  )}
 
                   <div className="flex justify-end items-center mt-2">
                     {/* <div className="p-[2px] rounded-full flex items-center gap-2 bg-[#F1F1F1]">
@@ -138,23 +154,25 @@ const ChatBox: FC<ChatBoxProps> = ({ chat }) => {
                         )}
                       </div>
                     </div> */}
-                    <div className="flex items-center gap-3">
-                      {/* <div className="flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px]">
+                    {message.message !== "loading" && (
+                      <div className="flex items-center gap-3">
+                        {/* <div className="flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px]">
                         <GrPowerReset />
                         <p>Generate Response</p>
                       </div> */}
-                      <div
-                        onClick={() =>
-                          handleCopyResponse(message.message, message.id)
-                        }
-                        className={`flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px] cursor-pointer ${
-                          isCopied === message.id && "bg-black text-white"
-                        }`}
-                      >
-                        <MdContentCopy />
-                        <p>{isCopied === message.id ? "Copied" : "Copy"}</p>
+                        <div
+                          onClick={() =>
+                            handleCopyResponse(message.message, message.id)
+                          }
+                          className={`flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px] cursor-pointer ${
+                            isCopied === message.id && "bg-black text-white"
+                          }`}
+                        >
+                          <MdContentCopy />
+                          <p>{isCopied === message.id ? "Copied" : "Copy"}</p>
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>

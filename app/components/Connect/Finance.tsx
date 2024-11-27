@@ -30,24 +30,82 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
     }
   }, [agent]);
 
+  // const handleConnectBOC = async () => {
+  //   setLoading(true);
+  //   const formData = new FormData();
+  //   formData.append("id", agentID);
+  //   // @ts-ignore
+  //   formData.append("boc_connected", !isConnected);
+  //   try {
+  //     const res = await updating(formData);
+  //     if (!isConnected) {
+  //       toast.success("Connected to bank of Canada FX");
+  //     } else {
+  //       toast.success("Successfully disconnected from bank of Canada FX");
+  //     }
+  //     setLoading(false);
+  //   } catch (error) {
+  //     setLoading(false);
+  //     toast.error("Failed to update");
+  //     console.error("Failed to update", error);
+  //   }
+  // };
+  // const handleConnectBOC = async () => {
+  //   setLoading(true);
+  //   const updatedConnectionStatus = !isConnected;
+  //   setIsConnected(updatedConnectionStatus); // Optimistically update the state
+
+  //   const formData = new FormData();
+  //   formData.append("id", agentID);
+  //   // @ts-ignore
+  //   formData.append("boc_connected", updatedConnectionStatus);
+  //   try {
+  //     await updating(formData);
+
+  //     if (updatedConnectionStatus) {
+  //       toast.success("Connected to bank of Canada FX");
+  //     } else {
+  //       toast.success("Successfully disconnected from bank of Canada FX");
+  //     }
+  //   } catch (error) {
+  //     // Revert optimistic update if API call fails
+  //     setIsConnected(!updatedConnectionStatus);
+  //     toast.error("Failed to update");
+  //     console.error("Failed to update", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleConnectBOC = async () => {
     setLoading(true);
+    const previousState = isConnected; // Save the current state
+    const updatedConnectionStatus = !isConnected;
+
+    // Temporarily update the UI state
+    setIsConnected(updatedConnectionStatus);
+
     const formData = new FormData();
     formData.append("id", agentID);
     // @ts-ignore
-    formData.append("boc_connected", !isConnected);
+    formData.append("boc_connected", updatedConnectionStatus);
+
     try {
-      const res = await updating(formData);
-      if (!isConnected) {
-        toast.success("Connected to bank of Canada FX");
+      // Make the API call
+      await updating(formData);
+
+      // Success: Notify the user
+      if (updatedConnectionStatus) {
+        toast.success("Connected to Bank of Canada FX");
       } else {
-        toast.success("Successfully disconnected from bank of Canada FX");
+        toast.success("Successfully disconnected from Bank of Canada FX");
       }
-      setLoading(false);
     } catch (error) {
-      setLoading(false);
-      toast.error("Failed to update");
+      // Revert to the previous state if the API call fails
+      setIsConnected(previousState);
+      toast.error("Failed to update. Please try again.");
       console.error("Failed to update", error);
+    } finally {
+      setLoading(false);
     }
   };
 
