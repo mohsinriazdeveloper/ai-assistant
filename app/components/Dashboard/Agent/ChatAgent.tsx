@@ -45,7 +45,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
 
   const [agentChat] = useAgentChatMutation();
   const [chat, setChat] = useState<AgentChatType[]>([]);
-  const [textInput, setTextInput] = useState<string>("");
+  const [textInput, setTextInput] = useState<string>(""); // Track input for current session
   const [loading, setLoading] = useState<boolean>(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [chatSessionId, setChatSessionId] = useState<number | null>(null);
@@ -68,6 +68,26 @@ const ChatAgent: FC<ChatAgentProps> = ({
       setChat(getChat);
     }
   }, [getChat]);
+
+  // Load unsent text from localStorage for the current chat session
+  useEffect(() => {
+    if (specificChatId !== null) {
+      const savedText = localStorage.getItem(`chat_${specificChatId}`);
+      setTextInput(savedText || ""); // Set text from storage or empty if no text is saved
+    } else {
+      setTextInput(""); // Clear text if no session is selected
+    }
+  }, [specificChatId]);
+
+  const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newText = e.target.value;
+    setTextInput(newText);
+
+    // Save the input text to localStorage for the current chat session
+    if (specificChatId !== null) {
+      localStorage.setItem(`chat_${specificChatId}`, newText);
+    }
+  };
 
   // const handleSendMessage = async (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -110,6 +130,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   //     }
   //   }
   // };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
@@ -127,6 +148,13 @@ const ChatAgent: FC<ChatAgentProps> = ({
       // Add the user's message to the chat
       setChat((prevChat) => [...prevChat, userMessage]);
 
+      // Remove the text for the current session from localStorage
+      if (specificChatId !== null) {
+        localStorage.removeItem(`chat_${specificChatId}`);
+      }
+
+      setTextInput("");
+
       // Add a placeholder for the upcoming response with a loader
       const loadingMessage: AgentChatType = {
         id: null,
@@ -134,8 +162,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
         message: "loading", // Placeholder for the loader
       };
       setChat((prevChat) => [...prevChat, loadingMessage]);
-
-      setTextInput("");
 
       try {
         const response = await agentChat({
@@ -219,8 +245,8 @@ const ChatAgent: FC<ChatAgentProps> = ({
         <input
           placeholder="Type your prompt here"
           className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none"
-          value={textInput}
-          onChange={(e) => setTextInput(e.target.value)}
+          value={textInput} // Use text for the active session
+          onChange={handleTextInputChange}
           disabled={loading}
         />
         <div className="sm:min-w-6 min-w-4">

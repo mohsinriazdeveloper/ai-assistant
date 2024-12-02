@@ -6,13 +6,13 @@ import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { dracula, CopyBlock } from "react-code-blocks";
 import "katex/dist/katex.min.css";
-const preprocessText = (text) => {
-  return text.replace(/([^\n])\n([^\n-])/g, "$1\n\n$2");
-};
+
 const MarkDown = ({ content }) => {
-  const example = preprocessText(content);
+  // Replace double newlines with a Markdown-compatible line break syntax
+  const formattedContent = content.replace(/\n\n/g, "\n\n&nbsp;\n\n");
+
   return (
-    <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.6" }}>
+    <div>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeRaw, rehypeKatex]}
@@ -21,12 +21,7 @@ const MarkDown = ({ content }) => {
           h1({ children, ...props }) {
             return (
               <h1
-                style={{
-                  fontSize: "2em",
-                  fontWeight: "bold",
-                  margin: "1em 0",
-                  color: "#333",
-                }}
+                style={{ fontSize: "2em", fontWeight: "bold", margin: "1em 0" }}
                 {...props}
               >
                 {children}
@@ -37,10 +32,9 @@ const MarkDown = ({ content }) => {
             return (
               <h2
                 style={{
-                  fontSize: "1.75em",
+                  fontSize: "1.5em",
                   fontWeight: "bold",
                   margin: "1em 0",
-                  color: "#444",
                 }}
                 {...props}
               >
@@ -48,19 +42,18 @@ const MarkDown = ({ content }) => {
               </h2>
             );
           },
-          p({ children, ...props }) {
+          h3({ children, ...props }) {
             return (
-              <p
+              <h3
                 style={{
-                  marginTop: "0.5em",
-                  marginBottom: "0.5em",
-                  fontSize: "1em",
-                  color: "#555",
+                  fontSize: "1.25em",
+                  fontWeight: "bold",
+                  margin: "1em 0",
                 }}
                 {...props}
               >
                 {children}
-              </p>
+              </h3>
             );
           },
           code({ inline, className, children, ...props }) {
@@ -69,97 +62,53 @@ const MarkDown = ({ content }) => {
               const codeString = String(children).replace(/\n$/, "");
 
               return (
-                <CopyBlock
-                  text={codeString}
-                  language={match[1]}
-                  showLineNumbers={false}
-                  wrapLongLines
-                  theme={dracula}
-                  {...props}
-                />
+                <div
+                  style={{
+                    padding: "15px",
+                    backgroundColor: "#282a36",
+                    borderRadius: "5px",
+                    overflowX: "auto",
+                    margin: "10px 0",
+                  }}
+                >
+                  <CopyBlock
+                    text={codeString}
+                    language={match[1]}
+                    showLineNumbers={false}
+                    wrapLongLines
+                    theme={dracula}
+                    {...props}
+                  />
+                </div>
               );
             }
             return (
               <code
                 style={{
-                  backgroundColor: "#f4f4f4",
-                  padding: "0.2em 0.4em",
-                  borderRadius: "4px",
-                  fontSize: "0.95em",
-                  fontFamily: "monospace",
+                  padding: inline ? "2px 4px" : "10px",
+                  backgroundColor: inline ? "none" : "#282a36",
+                  borderRadius: inline ? "none" : "5px",
+                  display: inline ? "inline" : "block",
+                  margin: inline ? "0" : "10px 0",
+                  color: inline ? "inherit" : "#f8f8f2",
+                  whiteSpace: inline ? "nowrap" : "pre-wrap",
                 }}
+                className={className}
                 {...props}
               >
                 {children}
               </code>
             );
           },
-          blockquote({ children, ...props }) {
-            return (
-              <blockquote
-                style={{
-                  borderLeft: "4px solid #ccc",
-                  margin: "1em 0",
-                  padding: "0.5em 1em",
-                  fontStyle: "italic",
-                  color: "#666",
-                  backgroundColor: "#f9f9f9",
-                }}
-                {...props}
-              >
-                {children}
-              </blockquote>
-            );
-          },
-          ul({ children, ...props }) {
-            return (
-              <ul
-                style={{
-                  listStyleType: "disc",
-                  marginLeft: "1.5em",
-                  marginBottom: "1em",
-                }}
-                {...props}
-              >
-                {children}
-              </ul>
-            );
-          },
-          ol({ children, ...props }) {
-            return (
-              <ol
-                style={{
-                  listStyleType: "decimal",
-                  marginLeft: "1.5em",
-                  marginBottom: "1em",
-                }}
-                {...props}
-              >
-                {children}
-              </ol>
-            );
-          },
-          li({ children, ...props }) {
-            return (
-              <li
-                style={{
-                  marginBottom: "0.5em",
-                }}
-                {...props}
-              >
-                {children}
-              </li>
-            );
-          },
           table({ children, ...props }) {
             return (
               <table
                 style={{
-                  width: "100%",
                   borderCollapse: "collapse",
-                  margin: "1em 0",
-                  fontSize: "1em",
-                  textAlign: "left",
+                  width: "100%",
+                  fontFamily: "Arial, sans-serif",
+                  fontSize: "36px",
+                  lineHeight: "20px",
                 }}
                 {...props}
               >
@@ -167,26 +116,20 @@ const MarkDown = ({ content }) => {
               </table>
             );
           },
-          th({ children, ...props }) {
+          tr({ children, ...props }) {
             return (
-              <th
-                style={{
-                  padding: "0.5em",
-                  borderBottom: "2px solid #ddd",
-                  textAlign: "left",
-                }}
-                {...props}
-              >
+              <tr style={{ backgroundColor: "#f8f8f8" }} {...props}>
                 {children}
-              </th>
+              </tr>
             );
           },
           td({ children, ...props }) {
             return (
               <td
                 style={{
-                  padding: "0.5em",
+                  padding: "8px",
                   border: "1px solid #ddd",
+                  fontSize: "16px",
                 }}
                 {...props}
               >
@@ -194,22 +137,103 @@ const MarkDown = ({ content }) => {
               </td>
             );
           },
+          th({ children, ...props }) {
+            return (
+              <th
+                style={{
+                  padding: "8px",
+                  border: "1px solid #ddd",
+                  fontWeight: 600,
+                  textAlign: "left",
+                  fontSize: "16px",
+                }}
+                {...props}
+              >
+                {children}
+              </th>
+            );
+          },
           a({ href, children, ...props }) {
             return (
               <a
                 href={href}
-                style={{ color: "#007bff", textDecoration: "none" }}
+                {...props}
                 target="_blank"
                 rel="noopener noreferrer"
-                {...props}
               >
                 {children}
               </a>
             );
           },
+          ul({ children }) {
+            return (
+              <ul className="list-disc whitespace-normal pl-5">{children}</ul>
+            );
+          },
+          ol({ children, props }) {
+            return (
+              <ol className="list-decimal whitespace-normal pl-5" {...props}>
+                {children}
+              </ol>
+            );
+          },
+          li({ children, ...props }) {
+            if (typeof children === "string") {
+              children = children.replace(/(\d+\.)\s*\n\s*/g, "$1 ").trim();
+            }
+            return <li {...props}>{children}</li>;
+          },
+          p({ children, ...props }) {
+            return (
+              <p style={{ marginTop: "0" }} {...props}>
+                {children}
+              </p>
+            );
+          },
+          span({ className, children, ...props }) {
+            if (className === "math-inline") {
+              return (
+                <span
+                  className={className}
+                  style={{
+                    margin: "0 4px",
+                  }}
+                  {...props}
+                >
+                  {children}
+                </span>
+              );
+            }
+            return (
+              <span className={className} {...props}>
+                {children}
+              </span>
+            );
+          },
+          div({ className, children, ...props }) {
+            if (className === "math-display") {
+              return (
+                <div
+                  className={className}
+                  style={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                  }}
+                  {...props}
+                >
+                  {children}
+                </div>
+              );
+            }
+            return (
+              <div className={className} {...props}>
+                {children}
+              </div>
+            );
+          },
         }}
       >
-        {example}
+        {formattedContent}
       </ReactMarkdown>
     </div>
   );
