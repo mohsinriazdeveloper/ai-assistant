@@ -68,7 +68,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const chatSessions = useAppSelector(selectChats);
   const [qaData, setQaData] = useState<QaItem[]>([]);
   const [qaCharacters, setqaCharacters] = useState<number>(0);
-
+  console.log({ AllChats });
   const [fileData, setFileData] = useState<FileItem[]>([]);
   const [fileChar, setFileChar] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false); // State to manage the tooltip
@@ -86,6 +86,8 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   useEffect(() => {
     if (AllChats) {
       dispatch(setChats(AllChats));
+    } else {
+      dispatch(setChats([]));
     }
   }, [AllChats, dispatch]);
 

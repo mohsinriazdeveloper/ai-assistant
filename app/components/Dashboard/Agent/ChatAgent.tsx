@@ -52,7 +52,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
 
   useEffect(() => {
     if (startNewChat) {
-      setChat([]); // Clear all existing messages
+      setChat([]);
       setSpecificChatId(null);
     }
   }, [startNewChat]);
