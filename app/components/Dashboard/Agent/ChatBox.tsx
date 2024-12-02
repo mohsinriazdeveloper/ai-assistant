@@ -101,7 +101,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
               <div className="flex items-center gap-2 relative -top-5 -right-5 ">
                 <div
                   className={`py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] ${
-                    message.message === "loading" ? "w-[50%]" : "w-fit"
+                    message.message === "loading" ? "w-[50%]" : "w-[90%]"
                   }  `}
                 >
                   {message.message === "loading" ? (

@@ -222,6 +222,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         await updateAgent(formData).unwrap();
         setLoading(false);
         toast.success("Agent successfully updated");
+        setFiles([]);
       } catch (error: any) {
         setLoading(false);
         if (error.status === 400) {
