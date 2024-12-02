@@ -47,9 +47,8 @@ const ChatAgent: FC<ChatAgentProps> = ({
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [textInput, setTextInput] = useState<string>(""); // Track input for current session
   const [loading, setLoading] = useState<boolean>(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLInputElement>(null);
   const [chatSessionId, setChatSessionId] = useState<number | null>(null);
-
   useEffect(() => {
     if (startNewChat) {
       setChat([]);
@@ -58,7 +57,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   }, [startNewChat]);
 
   useEffect(() => {
-    if (textareaRef.current && isLoading === false) {
+    if (textareaRef.current && !isLoading) {
       textareaRef.current.focus();
     }
   }, [isLoading]);
@@ -69,13 +68,12 @@ const ChatAgent: FC<ChatAgentProps> = ({
     }
   }, [getChat]);
 
-  // Load unsent text from localStorage for the current chat session
   useEffect(() => {
     if (specificChatId !== null) {
       const savedText = localStorage.getItem(`chat_${specificChatId}`);
-      setTextInput(savedText || ""); // Set text from storage or empty if no text is saved
+      setTextInput(savedText || "");
     } else {
-      setTextInput(""); // Clear text if no session is selected
+      setTextInput("");
     }
   }, [specificChatId]);
 
@@ -243,6 +241,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
         </div>
 
         <input
+          ref={textareaRef}
           placeholder="Type your prompt here"
           className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none"
           value={textInput} // Use text for the active session
