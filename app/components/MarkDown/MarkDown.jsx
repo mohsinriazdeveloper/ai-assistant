@@ -58,9 +58,10 @@ const MarkDown = ({ content }) => {
           },
           code({ inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
+
             if (!inline && match) {
               const codeString = String(children).replace(/\n$/, "");
-
+              const removenbsp = String(codeString).replace(/&nbsp;/, "");
               return (
                 <div
                   style={{
@@ -72,7 +73,7 @@ const MarkDown = ({ content }) => {
                   }}
                 >
                   <CopyBlock
-                    text={codeString}
+                    text={removenbsp}
                     language={match[1]}
                     showLineNumbers={false}
                     wrapLongLines

@@ -11,6 +11,7 @@ type NewChatModalProps = {
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
   setIsVoice: Dispatch<SetStateAction<boolean>>;
+  focusInputById: () => void;
 };
 
 const NewChatModal: FC<NewChatModalProps> = ({
@@ -19,6 +20,7 @@ const NewChatModal: FC<NewChatModalProps> = ({
   setSpecificChatId,
   setStartNewChat,
   setIsVoice,
+  focusInputById,
 }) => {
   return (
     <div>
@@ -61,6 +63,7 @@ const NewChatModal: FC<NewChatModalProps> = ({
                     setStartNewChat(true),
                     setIsVoice(false),
                     handleClose();
+                  focusInputById();
                 }}
                 className="py-2 px-5 hover:bg-[#3C3C3F] bg-black text-white font-medium rounded-md text-sm"
               >

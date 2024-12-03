@@ -29,6 +29,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);
   const [startNewChat, setStartNewChat] = useState<boolean>(true);
   const [isMobile, setIsMobile] = useState<boolean>(true);
+  const inputIdRef = useRef<HTMLTextAreaElement>(null);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -43,7 +44,11 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
       }
     }
   }, [checkOption]);
-  console.log({ isMobile });
+
+  const focusInputById = () => {
+    inputIdRef.current?.focus();
+  };
+
   return (
     <div
       className={` ${
@@ -74,6 +79,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
               setStartNewChat={setStartNewChat}
               setIsVoice={setIsVoice}
               setIsMobile={setIsMobile}
+              focusInputById={focusInputById}
             />
           </div>
           <div
@@ -101,6 +107,8 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
                   startNewChat={startNewChat}
                   setStartNewChat={setStartNewChat}
                   setSpecificChatId={setSpecificChatId}
+                  inputIdRef={inputIdRef}
+                  focusInputById={focusInputById}
                 />
               </>
             )}

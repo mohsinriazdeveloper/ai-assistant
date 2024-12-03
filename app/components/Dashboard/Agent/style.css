@@ -1,3 +1,6 @@
+textarea {
+  resize: none;
+}
 .recentChatScroller::-webkit-scrollbar {
   width: 6px;
 }
@@ -19,7 +22,7 @@
 
 .text-fade p {
   position: relative;
-  background: linear-gradient(to right, white, white 32%, rgba(66, 66, 66, 0));
+  background: linear-gradient(to right, white, white 10%, rgba(66, 66, 66, 0));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

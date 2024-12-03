@@ -1,6 +1,7 @@
 import {
   Dispatch,
   FC,
+  RefObject,
   SetStateAction,
   useEffect,
   useRef,
@@ -27,6 +28,8 @@ interface ChatAgentProps {
   startNewChat: boolean;
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
+  inputIdRef: RefObject<HTMLTextAreaElement>;
+  focusInputById: () => void;
 }
 
 const ChatAgent: FC<ChatAgentProps> = ({
@@ -36,35 +39,42 @@ const ChatAgent: FC<ChatAgentProps> = ({
   startNewChat,
   setStartNewChat,
   setSpecificChatId,
+  inputIdRef,
+  focusInputById,
 }) => {
   const {
     data: getChat,
     isLoading,
     error,
-  } = useGetSpecificChatQuery(specificChatId ?? skipToken); // Skip query when specificChatId is null
-
+  } = useGetSpecificChatQuery(specificChatId);
+  console.log({ specificChatId });
   const [agentChat] = useAgentChatMutation();
   const [chat, setChat] = useState<AgentChatType[]>([]);
-  const [textInput, setTextInput] = useState<string>(""); // Track input for current session
+  const [textInput, setTextInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const textareaRef = useRef<HTMLInputElement>(null);
-  const [chatSessionId, setChatSessionId] = useState<number | null>(null);
+  // const textareaRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const savedChatId = localStorage.getItem("specificChatId");
+    if (savedChatId !== null) {
+      setSpecificChatId(Number(savedChatId)); // Convert to number if needed
+    }
+  }, []);
   useEffect(() => {
     if (startNewChat) {
-      setChat([]);
       setSpecificChatId(null);
     }
   }, [startNewChat]);
 
   useEffect(() => {
-    if (textareaRef.current && !isLoading) {
-      textareaRef.current.focus();
+    if (!isLoading) {
+      focusInputById();
     }
   }, [isLoading]);
 
   useEffect(() => {
     if (getChat) {
       setChat(getChat);
+      focusInputById();
     }
   }, [getChat]);
 
@@ -77,7 +87,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
     }
   }, [specificChatId]);
 
-  const handleTextInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTextInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setTextInput(newText);
 
@@ -100,8 +110,22 @@ const ChatAgent: FC<ChatAgentProps> = ({
   //       role: "user",
   //       message: textInput,
   //     };
+
+  //     // Add the user's message to the chat
   //     setChat((prevChat) => [...prevChat, userMessage]);
+
+  //     // Remove the text for the current session from localStorage
+  //     if (specificChatId !== null) {
+  //       localStorage.removeItem(`chat_${specificChatId}`);
+  //     }
   //     setTextInput("");
+  //     // Add a placeholder for the upcoming response with a loader
+  //     const loadingMessage: AgentChatType = {
+  //       id: null,
+  //       role: "agent",
+  //       message: "loading", // Placeholder for the loader
+  //     };
+  //     setChat((prevChat) => [...prevChat, loadingMessage]);
 
   //     try {
   //       const response = await agentChat({
@@ -109,14 +133,22 @@ const ChatAgent: FC<ChatAgentProps> = ({
   //         text_input: textInput,
   //         chat_session_id: specificChatId,
   //       }).unwrap();
+
   //       setSpecificChatId(response.chat_session_id);
-  //       const botMessage: AgentChatType = {
-  //         id: specificChatId || null,
-  //         role: "agent",
-  //         message: response.response,
-  //       };
-  //       setChat((prevChat) => [...prevChat, botMessage]);
+
+  //       // Replace the loading placeholder with the actual response
+  //       setChat((prevChat) => {
+  //         const updatedChat = [...prevChat];
+  //         updatedChat[updatedChat.length - 1] = {
+  //           id: specificChatId || null,
+  //           role: "agent",
+  //           message: response.response,
+  //         };
+  //         return updatedChat;
+  //       });
   //     } catch (error: any) {
+  //       // Remove the loading message and show error
+  //       setChat((prevChat) => prevChat.slice(0, -1));
   //       if (error.status === 429) {
   //         toast.error(error.data.error);
   //       } else {
@@ -128,13 +160,12 @@ const ChatAgent: FC<ChatAgentProps> = ({
   //     }
   //   }
   // };
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
       setStartNewChat(false);
       setLoading(true);
-      const agent_id = agentId;
+
       if (textInput.trim() === "") return;
 
       const userMessage: AgentChatType = {
@@ -143,34 +174,34 @@ const ChatAgent: FC<ChatAgentProps> = ({
         message: textInput,
       };
 
-      // Add the user's message to the chat
+      // Add user's message to chat
       setChat((prevChat) => [...prevChat, userMessage]);
 
-      // Remove the text for the current session from localStorage
+      // Save the input text to localStorage for the current chat session
       if (specificChatId !== null) {
         localStorage.removeItem(`chat_${specificChatId}`);
       }
 
       setTextInput("");
-
-      // Add a placeholder for the upcoming response with a loader
-      const loadingMessage: AgentChatType = {
-        id: null,
-        role: "agent",
-        message: "loading", // Placeholder for the loader
-      };
-      setChat((prevChat) => [...prevChat, loadingMessage]);
+      setChat((prevChat) => [
+        ...prevChat,
+        { id: null, role: "agent", message: "loading" },
+      ]);
 
       try {
         const response = await agentChat({
-          agent_id,
+          agent_id: agentId,
           text_input: textInput,
           chat_session_id: specificChatId,
         }).unwrap();
 
         setSpecificChatId(response.chat_session_id);
+        localStorage.setItem(
+          "specificChatId",
+          response.chat_session_id.toString()
+        );
 
-        // Replace the loading placeholder with the actual response
+        // Replace loading message with the actual response
         setChat((prevChat) => {
           const updatedChat = [...prevChat];
           updatedChat[updatedChat.length - 1] = {
@@ -181,20 +212,13 @@ const ChatAgent: FC<ChatAgentProps> = ({
           return updatedChat;
         });
       } catch (error: any) {
-        // Remove the loading message and show error
         setChat((prevChat) => prevChat.slice(0, -1));
-        if (error.status === 429) {
-          toast.error(error.data.error);
-        } else {
-          toast.error("Failed to send message. Please try again.");
-          console.error("Failed to send message: ", error);
-        }
+        toast.error("Failed to send message. Please try again.");
       } finally {
         setLoading(false);
       }
     }
   };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -207,6 +231,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
     textarea.style.height = "auto";
     textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`; // 76.8px equals around 5 rows
   };
+  console.log(specificChatId);
 
   if (isLoading) {
     return (
@@ -240,10 +265,11 @@ const ChatAgent: FC<ChatAgentProps> = ({
           <GoPaperclip className="text-white sm:text-2xl text-lg mr-1" />
         </div>
 
-        <input
-          ref={textareaRef}
+        <textarea
+          ref={inputIdRef}
+          rows={1}
           placeholder="Type your prompt here"
-          className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none"
+          className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none recentChatScroller"
           value={textInput} // Use text for the active session
           onChange={handleTextInputChange}
           disabled={loading}

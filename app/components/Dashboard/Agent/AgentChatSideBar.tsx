@@ -30,6 +30,8 @@ import {
   setChats,
 } from "../../ReduxToolKit/chatSessionSlice";
 import { FaRegSave } from "react-icons/fa";
+import { format } from "date-fns";
+import ChatSessions from "./ChatSessions";
 
 interface QaItem {
   question: string;
@@ -47,6 +49,7 @@ interface AgentChatSideBar {
   setStartNewChat: Dispatch<SetStateAction<boolean>>;
   setIsVoice: Dispatch<SetStateAction<boolean>>;
   setIsMobile: Dispatch<SetStateAction<boolean>>;
+  focusInputById: () => void;
 }
 
 const AgentChatSideBar: FC<AgentChatSideBar> = ({
@@ -56,30 +59,21 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   setStartNewChat,
   setIsVoice,
   setIsMobile,
+  focusInputById,
 }) => {
   const { data: AllChats } = useGetAgentChatQuery(agentId);
-  const [deleteChatSession] = useDeleteChatMutation();
   const { data: allAgents, isLoading } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
   );
-  const [renameChatSessionName] = useRenameChatSessionMutation();
   const dispatch = useAppDispatch();
   const chatSessions = useAppSelector(selectChats);
   const [qaData, setQaData] = useState<QaItem[]>([]);
   const [qaCharacters, setqaCharacters] = useState<number>(0);
-  console.log({ AllChats });
   const [fileData, setFileData] = useState<FileItem[]>([]);
   const [fileChar, setFileChar] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false); // State to manage the tooltip
-  const [sessionChatDropDown, setSessionChatDropDown] = useState<number | null>(
-    null
-  );
-  const [deleteChatLoading, setDeleteChatLoading] = useState<number | null>(
-    null
-  );
-  const [isEditTitle, setIsEditTitle] = useState<number | null>(null);
-  const [title, setTitle] = useState<string>("");
+
   const [searchChat, setSearchChat] = useState<string>("");
   const [newChatModal, setNewChatModal] = useState<boolean>(false);
 
@@ -163,39 +157,22 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     minute: "2-digit",
     second: "2-digit",
   });
-  const handleDeleteChatSession = async (id: number) => {
-    setDeleteChatLoading(id);
-    setSessionChatDropDown(null);
-    setStartNewChat(true);
 
-    try {
-      const res = await deleteChatSession(id).unwrap(); // API call to delete chat session
-      dispatch(deleteChat(id)); // Update Redux store
-      toast.success("Chat session deleted successfully");
-    } catch (error) {
-      toast.error("Failed to delete chat session");
-    } finally {
-      setDeleteChatLoading(null);
-    }
-  };
-  const handleChangeTitle = async (id: number) => {
-    setSessionChatDropDown(null);
-    try {
-      await renameChatSessionName({ id, data: { title } });
-      setIsEditTitle(null);
-    } catch (error) {
-      setIsEditTitle(null);
-      toast.error("unable to rename chat session");
-    }
-  };
-  const handleDropdownToggle = (id: number) => {
-    setSessionChatDropDown((prevId) => (prevId === id ? null : id));
-  };
   const filteredItems = chatSessions?.filter(
     (item) =>
       searchChat.trim() === "" ||
       item.title.toLowerCase().includes(searchChat.toLowerCase())
   );
+  const currentDate = format(new Date(), "yyyy-MM-dd"); // Format the current date
+
+  const todayChats = filteredItems.filter(
+    (chat) => format(new Date(chat.updated_at), "yyyy-MM-dd") === currentDate
+  );
+
+  const previousChats = filteredItems.filter(
+    (chat) => format(new Date(chat.updated_at), "yyyy-MM-dd") !== currentDate
+  );
+
   return (
     <div className="pt-6 pb-4 text-white px-5 h-screen flex flex-col justify-between relative z-50">
       <div>
@@ -225,7 +202,42 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
             />
           </div>
         </div>
-        {filteredItems.length !== 0 ? (
+        {filteredItems.length === 0 && (
+          <div className="text-white text-xs mb-5">
+            <p className="font-medium">Recent Chats</p>
+            <p>No recent chats found.</p>
+          </div>
+        )}
+        <div
+          className={`mt-[18px] max-h-[300px] ${
+            filteredItems?.length > 4 &&
+            "overflow-hidden overflow-y-scroll recentChatScroller"
+          } `}
+        >
+          {todayChats.length > 0 && (
+            <div className="text-white text-xs">
+              <p className="font-medium mb-3">Today</p>
+              <ChatSessions
+                session={todayChats}
+                setSpecificChatId={setSpecificChatId}
+                setStartNewChat={setStartNewChat}
+                focusInputById={focusInputById}
+              />
+            </div>
+          )}
+          {previousChats.length > 0 && (
+            <div className="text-white text-xs">
+              <p className="font-medium mb-3">Previous</p>
+              <ChatSessions
+                session={previousChats}
+                setSpecificChatId={setSpecificChatId}
+                setStartNewChat={setStartNewChat}
+                focusInputById={focusInputById}
+              />
+            </div>
+          )}
+        </div>
+        {/* {filteredItems.length !== 0 ? (
           <div className="text-white text-xs mb-5">
             <p className="font-medium">Recent Chats</p>
             <div
@@ -311,7 +323,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
             <p className="font-medium">Recent Chats</p>
             <p>No recent chats found.</p>
           </div>
-        )}
+        )} */}
       </div>
       <div className="h-full flex items-end">
         <div className="border-t border-[#808080] pt-5 text-xs text-[#9A9A9A] w-full">
@@ -349,8 +361,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                   temperature={agent.temperature}
                   checkOption={checkOption}
                   readOnly
-                />{" "}
-                {/* Pass the readOnly prop */}
+                />
               </div>
             </div>
             <div className="col-span-4">
@@ -385,6 +396,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
         setSpecificChatId={setSpecificChatId}
         setStartNewChat={setStartNewChat}
         setIsVoice={setIsVoice}
+        focusInputById={focusInputById}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
-interface ChatSession {
+export interface ChatSession {
   id: number;
   title: string;
   created_at: string;
