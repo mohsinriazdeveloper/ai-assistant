@@ -19,6 +19,7 @@ const PreviousPage: FC<PreviousPageProps> = ({ arrowColor }) => {
 
   const router = useRouter();
   const handlePrevious = () => {
+    localStorage.setItem("myCustomChatId", "0");
     dispatch(voiceResponce({ inText: "" }));
     router.back();
   };

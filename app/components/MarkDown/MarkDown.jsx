@@ -171,19 +171,57 @@ const MarkDown = ({ content }) => {
               <ul className="list-disc whitespace-normal pl-5">{children}</ul>
             );
           },
-          ol({ children, props }) {
+          // ol({ children, props }) {
+          //   return (
+          //     <ol className="list-decimal whitespace-normal pl-5" {...props}>
+          //       {children}
+          //     </ol>
+          //   );
+          // },
+          // ol({ children, ...props }) {
+          //   return (
+          //     <ol
+          //       className="list-decimal pl-5"
+          //       style={{ listStylePosition: "outside", paddingLeft: "20px" }}
+          //       {...props}
+          //     >
+          //       {children}
+          //     </ol>
+          //   );
+          // },
+          ol({ children, ...props }) {
             return (
-              <ol className="list-decimal whitespace-normal pl-5" {...props}>
+              <ol
+                className="list-decimal pl-5"
+                style={{
+                  listStylePosition: "outside",
+                  paddingLeft: "20px",
+                }}
+                {...props}
+              >
                 {children}
               </ol>
             );
           },
           li({ children, ...props }) {
-            if (typeof children === "string") {
-              children = children.replace(/(\d+\.)\s*\n\s*/g, "$1 ").trim();
-            }
-            return <li {...props}>{children}</li>;
+            return (
+              <li
+                style={{
+                  fontWeight: "bold", // Bold the number
+                  margin: "5px 0",
+                }}
+                {...props}
+              >
+                <span style={{ fontWeight: "normal" }}>{children}</span>
+              </li>
+            );
           },
+          // li({ children, ...props }) {
+          //   if (typeof children === "string") {
+          //     children = children.replace(/(\d+\.)\s*\n\s*/g, "$1 ").trim();
+          //   }
+          //   return <li {...props}>{children}</li>;
+          // },
           p({ children, ...props }) {
             return (
               <p style={{ marginTop: "0" }} {...props}>

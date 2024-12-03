@@ -66,6 +66,14 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
       localStorage.setItem("myCustomChatId", specificChatId.toString());
     }
   }, [specificChatId]);
+  useEffect(() => {
+    const savedChatId = localStorage.getItem("myCustomChatId");
+    if (savedChatId === "0") {
+      setStartNewChat(true);
+      setSpecificChatId(null);
+      console.log("here");
+    }
+  }, []);
   return (
     <div
       className={` ${

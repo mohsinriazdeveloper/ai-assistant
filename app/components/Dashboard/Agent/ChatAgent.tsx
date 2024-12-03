@@ -48,7 +48,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
     isLoading,
     error,
   } = useGetSpecificChatQuery(specificChatId);
-  console.log({ specificChatId });
   const [agentChat] = useAgentChatMutation();
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [textInput, setTextInput] = useState<string>("");
