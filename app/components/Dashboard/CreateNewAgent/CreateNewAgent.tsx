@@ -30,7 +30,7 @@ interface QA {
   answer: string;
 }
 
-const MAX_TOTAL_CHARS = 500000;
+const MAX_TOTAL_CHARS = 400000;
 
 const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [newLinks, setNewLinks] = useState<

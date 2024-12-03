@@ -76,7 +76,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
             onClick={() => {
               setSpecificChatId(chat.id);
               setStartNewChat(false);
-              focusInputById();
+              // focusInputById();
             }}
           >
             <FiMessageSquare />

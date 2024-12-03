@@ -6,6 +6,7 @@ import Loader from "../../Loader/Loader";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { AiOutlineCheckCircle } from "react-icons/ai";
 import { useDeleteFileMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
+import { MdOutlineCancel } from "react-icons/md";
 
 interface WebsiteTrainingProps {
   setWebsiteContentLength: Dispatch<SetStateAction<number>>;
@@ -16,6 +17,7 @@ interface WebsiteTrainingProps {
     isValid: boolean;
     isLoading: boolean;
     isScraped: boolean;
+    isScrapingError?: boolean; // Added field for tracking errors per item
   }[];
   setNewLinks: Dispatch<
     SetStateAction<
@@ -26,6 +28,7 @@ interface WebsiteTrainingProps {
         isValid: boolean;
         isLoading: boolean;
         isScraped: boolean;
+        isScrapingError?: boolean;
       }[]
     >
   >;
@@ -39,6 +42,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   const [delExistingFile] = useDeleteFileMutation();
   const urlRegex = /^https:\/\/[a-zA-Z]/;
   const [deletingIds, setDeletingIds] = useState<number[]>([]); // State for tracking deleting items
+  const [scrappingError, setScrapingError] = useState<boolean>(false); // Kept for backward compatibility
 
   const handleCreateNewInput = () => {
     setNewLinks((prev) => [
@@ -50,6 +54,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
         isValid: true,
         isLoading: false,
         isScraped: false,
+        isScrapingError: false, // Initialize with no error
       },
     ]);
   };
@@ -119,6 +124,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                 content: website_content,
                 isLoading: false,
                 isScraped: true,
+                isScrapingError: false, // Clear any previous error
               }
             : link
         )
@@ -131,7 +137,9 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
       toast.error("Error scraping website");
       setNewLinks((prev) =>
         prev.map((link, i) =>
-          i === index ? { ...link, isLoading: false } : link
+          i === index
+            ? { ...link, isLoading: false, isScrapingError: true }
+            : link
         )
       );
     }
@@ -177,15 +185,22 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
           >
             {item.isLoading ? <Loader /> : "Scrape"}
           </button>
-
-          {item.isScraped ? (
+          {item.isScrapingError ? (
             <div className="h-full flex justify-center self-center">
-              <AiOutlineCheckCircle className="text-green-500" size={20} />
+              <MdOutlineCancel className="text-red-500 " size={20} />
             </div>
-          ) : item.isLoading ? (
-            <Loader />
           ) : (
-            <div className="w-5"></div>
+            <>
+              {item.isScraped ? (
+                <div className="h-full flex justify-center self-center">
+                  <AiOutlineCheckCircle className="text-green-500" size={20} />
+                </div>
+              ) : item.isLoading ? (
+                <Loader />
+              ) : (
+                <div className="w-5"></div>
+              )}
+            </>
           )}
           {deletingIds.includes(item.id) ? (
             <Loader />

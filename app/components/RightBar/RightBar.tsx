@@ -58,13 +58,13 @@ const RightBar: FC<RightBarProps> = ({
         <p className="font-medium mt-4 text-sm">Total detected characters</p>
         <p className="text-sm text-center font-bold">
           {totalCharCount}
-          <span className="text-gray-300 font-normal">/ 500000 limit</span>
+          <span className="text-gray-300 font-normal">/ 400000 limit</span>
         </p>
       </div>
       <div className="mt-2">
         <button
           className={`py-2 px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm w-full ${
-            cantAddMore && "bg-[#3C3C3F]"
+            cantAddMore && "bg-[#3C3C3F] opacity-70 cursor-not-allowed"
           }`}
           onClick={agentCreateFunc}
           disabled={loading || cantAddMore}
@@ -78,7 +78,7 @@ const RightBar: FC<RightBarProps> = ({
           )}
         </button>
       </div>
-      {totalCharCount >= 500000 && (
+      {totalCharCount >= 400000 && (
         <p className="mt-2 text-xs text-red-500">Characters exceed the limit</p>
       )}
     </div>

@@ -20,6 +20,7 @@ import { AgentChatType } from "../../ReduxToolKit/types/agents";
 import toast from "react-hot-toast";
 import { IoMdSend } from "react-icons/io";
 import { skipToken } from "@reduxjs/toolkit/query";
+import Loader from "../../Loader/Loader";
 
 interface ChatAgentProps {
   setIsVoice: Dispatch<SetStateAction<boolean>>;
@@ -189,7 +190,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
           text_input: textInput,
           chat_session_id: specificChatId,
         }).unwrap();
-
+        focusInputById();
         setSpecificChatId(response.chat_session_id);
         localStorage.setItem(
           "specificChatId",
@@ -230,7 +231,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   if (isLoading) {
     return (
       <div className="w-full h-full flex justify-center items-center">
-        <p>Loading...</p>
+        <Loader />
       </div>
     );
   }
@@ -266,6 +267,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
           className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none recentChatScroller"
           value={textInput} // Use text for the active session
           onChange={handleTextInputChange}
+          onKeyDown={handleKeyDown}
           disabled={loading}
         />
         <div className="sm:min-w-6 min-w-4">

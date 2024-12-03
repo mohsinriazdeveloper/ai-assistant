@@ -54,6 +54,10 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
     const savedChatId = localStorage.getItem("myCustomChatId");
     if (savedChatId !== null) {
       setSpecificChatId(Number(savedChatId)); // Ensure it's stored as a number
+      setStartNewChat(false);
+    } else {
+      setSpecificChatId(null);
+      setStartNewChat(true);
     }
   }, []);
   // New useEffect to store specificChatId in localStorage whenever it changes

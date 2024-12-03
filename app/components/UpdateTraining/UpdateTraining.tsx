@@ -29,7 +29,7 @@ interface QA {
   answer: string;
 }
 
-const MAX_TOTAL_CHARS = 500000;
+const MAX_TOTAL_CHARS = 400000;
 
 const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   const { data: allAgents } = useGetAllAgentsQuery();
