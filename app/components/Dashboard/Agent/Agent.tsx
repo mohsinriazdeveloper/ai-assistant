@@ -27,7 +27,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   const [checkOption, setCheckOption] = useState<string>("chatagent");
   const [IsVoice, setIsVoice] = useState<boolean>(false);
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);
-  const [startNewChat, setStartNewChat] = useState<boolean>(true);
+  const [startNewChat, setStartNewChat] = useState<boolean>();
   const [isMobile, setIsMobile] = useState<boolean>(true);
   const inputIdRef = useRef<HTMLTextAreaElement>(null);
   const dispatch = useAppDispatch();
@@ -49,6 +49,19 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
     inputIdRef.current?.focus();
   };
 
+  // New useEffect to retrieve specificChatId from localStorage on page load
+  useEffect(() => {
+    const savedChatId = localStorage.getItem("myCustomChatId");
+    if (savedChatId !== null) {
+      setSpecificChatId(Number(savedChatId)); // Ensure it's stored as a number
+    }
+  }, []);
+  // New useEffect to store specificChatId in localStorage whenever it changes
+  useEffect(() => {
+    if (specificChatId !== null) {
+      localStorage.setItem("myCustomChatId", specificChatId.toString());
+    }
+  }, [specificChatId]);
   return (
     <div
       className={` ${

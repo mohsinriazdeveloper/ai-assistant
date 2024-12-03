@@ -25,8 +25,8 @@ interface ChatAgentProps {
   setIsVoice: Dispatch<SetStateAction<boolean>>;
   specificChatId: number | null;
   agentId: number;
-  startNewChat: boolean;
-  setStartNewChat: Dispatch<SetStateAction<boolean>>;
+  startNewChat: boolean | undefined;
+  setStartNewChat: Dispatch<SetStateAction<boolean | undefined>>;
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   inputIdRef: RefObject<HTMLTextAreaElement>;
   focusInputById: () => void;
@@ -53,12 +53,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   const [textInput, setTextInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   // const textareaRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const savedChatId = localStorage.getItem("specificChatId");
-    if (savedChatId !== null) {
-      setSpecificChatId(Number(savedChatId)); // Convert to number if needed
-    }
-  }, []);
+
   useEffect(() => {
     if (startNewChat) {
       setSpecificChatId(null);
@@ -231,7 +226,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
     textarea.style.height = "auto";
     textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`; // 76.8px equals around 5 rows
   };
-  console.log(specificChatId);
 
   if (isLoading) {
     return (

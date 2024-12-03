@@ -14,7 +14,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 interface ChatSessionsProps {
   session: ChatSession[];
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
-  setStartNewChat: Dispatch<SetStateAction<boolean>>;
+  setStartNewChat: Dispatch<SetStateAction<boolean | undefined>>;
   focusInputById: () => void;
 }
 

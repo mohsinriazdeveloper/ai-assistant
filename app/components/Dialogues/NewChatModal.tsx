@@ -9,7 +9,7 @@ type NewChatModalProps = {
   openDialogue: boolean;
   handleClose: () => void;
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
-  setStartNewChat: Dispatch<SetStateAction<boolean>>;
+  setStartNewChat: Dispatch<SetStateAction<boolean | undefined>>;
   setIsVoice: Dispatch<SetStateAction<boolean>>;
   focusInputById: () => void;
 };
