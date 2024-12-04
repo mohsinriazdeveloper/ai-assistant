@@ -19,6 +19,8 @@ import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
 import pdfToText from "react-pdftotext";
 import mammoth from "mammoth";
 import WebsiteTraining from "../Dashboard/CreateNewAgent/WebsiteTraining";
+import { useAppSelector } from "../ReduxToolKit/hook";
+import { selectIsConnect } from "../ReduxToolKit/connectSlice";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -82,6 +84,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   >([]);
 
   const [websiteContentLength, setWebsiteContentLength] = useState<number>(0);
+  const { updateConnectStatus } = useAppSelector(selectIsConnect);
 
   useEffect(() => {
     if (agent?.file_urls) {
@@ -168,7 +171,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       const formData = new FormData();
       formData.append("name", agentName);
       formData.append("id", agentID);
-
+      formData.append("boc_connected", String(updateConnectStatus));
       // Retain previously scraped and existing links
       newLinks.forEach((link, index) => {
         if (!link?.isExisting) {

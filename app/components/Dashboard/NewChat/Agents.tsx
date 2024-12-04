@@ -6,6 +6,7 @@ import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApi
 import Loader from "../../Loader/Loader";
 import { useAppDispatch } from "../../ReduxToolKit/hook";
 import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
+import { isNewChat } from "../../ReduxToolKit/forChatSlice";
 
 interface AgentsProps {}
 
@@ -24,7 +25,10 @@ const Agents: FC<AgentsProps> = () => {
   if (isLoading) {
     dispatch(voiceResponce({ inText: "" }));
   }
-
+  const hanldeChat = () => {
+    // dispatch(isNewChat({ chatId: null, newChat: true }));
+    localStorage.setItem("myCustomChatId", "0");
+  };
   return (
     <div className="md:w-[795px] md:mx-auto mx-5 mt-16">
       <div className="flex justify-between items-center">
@@ -48,7 +52,7 @@ const Agents: FC<AgentsProps> = () => {
         <div className="grid md:grid-cols-5 sm:grid-cols-3 grid-cols-2 mt-10 gap-5">
           {sortedAgents?.map((agent, index) => (
             <div key={index} className="col-span-1 cursor-pointer">
-              <Link href={`/dashboard/agent/${agent.id}`}>
+              <Link href={`/dashboard/agent/${agent.id}`} onClick={hanldeChat}>
                 {agent.image_url ? (
                   <div
                     className="bg-no-repeat bg-cover bg-center h-[120px] mb-1"

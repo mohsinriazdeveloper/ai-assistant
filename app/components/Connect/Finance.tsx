@@ -9,6 +9,8 @@ import toast from "react-hot-toast";
 import Loader from "../Loader/Loader";
 import { MdCheck } from "react-icons/md";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { useAppDispatch } from "../ReduxToolKit/hook";
+import { isConnectSlice } from "../ReduxToolKit/connectSlice";
 
 interface FinanceProps {
   agentId: number;
@@ -23,7 +25,7 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
   const [isConnected, setIsConnected] = useState<boolean>();
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     if (agent) {
       setIsConnected(agent?.boc_connected);
@@ -86,12 +88,16 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
 
     const formData = new FormData();
     formData.append("id", agentID);
-    // @ts-ignore
-    formData.append("boc_connected", updatedConnectionStatus);
+    formData.append("boc_connected", String(updatedConnectionStatus));
 
     try {
       // Make the API call
       await updating(formData);
+      dispatch(
+        isConnectSlice({
+          updateConnectStatus: updatedConnectionStatus,
+        })
+      );
 
       // Success: Notify the user
       if (updatedConnectionStatus) {
@@ -102,6 +108,12 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
     } catch (error) {
       // Revert to the previous state if the API call fails
       setIsConnected(previousState);
+      dispatch(
+        isConnectSlice({
+          //@ts-ignore
+          updateConnectStatus: previousState,
+        })
+      );
       toast.error("Failed to update. Please try again.");
       console.error("Failed to update", error);
     } finally {

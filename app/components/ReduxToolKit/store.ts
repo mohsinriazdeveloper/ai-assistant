@@ -21,10 +21,14 @@ import { authApi } from "./aiAssistant";
 import { userApi } from "./aiAssistantOtherApis";
 import voiceResReducer from "./voiceResSlice";
 import ChatSessionSlice from "./chatSessionSlice";
+import ConnectCod from "./connectSlice";
+import NewChat from "./forChatSlice";
 const rootReducer = combineReducers({
   auth: authReducer,
   voice: voiceResReducer,
   chatSession: ChatSessionSlice,
+  connect: ConnectCod,
+  forChat: NewChat,
   // state: stateReducer,
   // other reducers...
 });

@@ -13,6 +13,7 @@ import ChatAgent from "./ChatAgent";
 import AgentChatSideBar from "./AgentChatSideBar";
 import VoiceAgent from "./VoiceAgent";
 import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
+import { selectForChat } from "../../ReduxToolKit/forChatSlice";
 
 type NavContent = {
   title: string;
@@ -24,6 +25,7 @@ interface AgentProps {
 }
 
 const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
+  const { chatId, newChat } = useAppSelector(selectForChat);
   const [checkOption, setCheckOption] = useState<string>("chatagent");
   const [IsVoice, setIsVoice] = useState<boolean>(false);
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);

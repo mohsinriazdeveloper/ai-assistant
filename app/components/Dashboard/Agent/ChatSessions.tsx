@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { ChatSession, deleteChat } from "../../ReduxToolKit/chatSessionSlice";
 import { FiMessageSquare } from "react-icons/fi";
 import { FaRegSave } from "react-icons/fa";
@@ -35,6 +35,14 @@ const ChatSessions: FC<ChatSessionsProps> = ({
   const [sessionChatDropDown, setSessionChatDropDown] = useState<number | null>(
     null
   );
+  const [activeChat, SetActiveChat] = useState<any>(null);
+
+  useEffect(() => {
+    const savedChatId = localStorage.getItem("myCustomChatId");
+    if (savedChatId) {
+      SetActiveChat(Number(savedChatId)); // Convert savedChatId to a number if needed
+    }
+  }, []);
 
   const handleDeleteChatSession = async (id: number) => {
     setDeleteChatLoading(id);
@@ -64,19 +72,22 @@ const ChatSessions: FC<ChatSessionsProps> = ({
   const handleDropdownToggle = (id: number) => {
     setSessionChatDropDown((prevId) => (prevId === id ? null : id));
   };
+  // 5c5c5c
   return (
     <div className=" flex flex-col gap-2 mb-5">
       {session?.map((chat, index) => (
         <div
           key={index}
-          className="bg-[#424242] text-white rounded-lg flex items-center justify-between pr-6 mr-2 relative"
+          className={`${
+            chat.id === activeChat ? "bg-[#5c5c5c] border" : "bg-[#424242]"
+          } text-white rounded-lg flex items-center justify-between pr-6 mr-2 relative`}
         >
           <div
             className="h-full w-full flex items-center justify-between py-4 pl-6 cursor-pointer"
             onClick={() => {
               setSpecificChatId(chat.id);
               setStartNewChat(false);
-              // focusInputById();
+              SetActiveChat(chat.id);
             }}
           >
             <FiMessageSquare />
