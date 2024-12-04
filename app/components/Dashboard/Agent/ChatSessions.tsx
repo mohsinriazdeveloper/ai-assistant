@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { FaRegSave } from "react-icons/fa";
 import { FiMessageSquare } from "react-icons/fi";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { MdDeleteOutline, MdOutlineEdit } from "react-icons/md";
 import Loader from "../../Loader/Loader";
 import {
   useDeleteChatMutation,
@@ -126,14 +127,35 @@ const ChatSessions: FC<ChatSessionsProps> = ({
             </>
           )}
           {sessionChatDropDown === chat.id && (
-            <div className="bg-[#181818] py-1 rounded-md w-[100px] absolute right-6 top-8 z-20">
-              <p
-                onClick={() => handleDeleteChatSession(chat.id)}
-                className="text-red-500 text-xs hover:bg-[#424242] duration-300 transition-colors cursor-pointer py-1 px-2"
+            <div className="bg-[#181818] py-1 rounded-md w-[120px] absolute right-6 top-8 z-20">
+              <div
+                className="grid grid-cols-12 text-white text-xs hover:bg-[#424242] duration-300 transition-colors cursor-pointer py-2 px-2"
+                onClick={() => {
+                  setIsEditTitle(chat.id),
+                    setSessionChatDropDown(null),
+                    setTitle(chat.title);
+                }}
               >
-                Delete Chat
-              </p>
-              <p
+                <div className="col-span-3 text-base">
+                  <MdOutlineEdit />
+                </div>
+                <div className="col-span-9">
+                  <p>Rename</p>
+                </div>
+              </div>
+              <div
+                className="grid grid-cols-12 text-red-500 text-xs hover:bg-[#424242] duration-300 transition-colors cursor-pointer py-2 px-2"
+                onClick={() => handleDeleteChatSession(chat.id)}
+              >
+                <div className="col-span-3 text-base">
+                  <MdDeleteOutline />
+                </div>
+                <div className="col-span-9">
+                  <p>Delete Chat</p>
+                </div>
+              </div>
+
+              {/* <p
                 onClick={() => {
                   setIsEditTitle(chat.id),
                     setSessionChatDropDown(null),
@@ -142,7 +164,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
                 className="text-blue-500 text-xs hover:bg-[#424242] duration-300 transition-colors cursor-pointer py-1 px-2"
               >
                 Edit title
-              </p>
+              </p> */}
             </div>
           )}
         </div>
