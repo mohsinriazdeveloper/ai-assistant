@@ -1,12 +1,10 @@
 "use client";
-import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import Arrow from "@/app/assets/icons/leftarrow.png";
+import { FC } from "react";
+import { FaArrowLeftLong } from "react-icons/fa6";
 import { hideBackBtn } from "../HideLinks/HideLinks";
 import { useAppDispatch } from "../ReduxToolKit/hook";
 import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
-import { FaArrowLeftLong } from "react-icons/fa6";
 
 interface PreviousPageProps {
   arrowColor?: string;
@@ -19,7 +17,6 @@ const PreviousPage: FC<PreviousPageProps> = ({ arrowColor }) => {
 
   const router = useRouter();
   const handlePrevious = () => {
-    // localStorage.setItem("myCustomChatId", "0");
     dispatch(voiceResponce({ inText: "" }));
     router.back();
   };

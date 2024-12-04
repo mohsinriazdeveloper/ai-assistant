@@ -1,6 +1,5 @@
 "use client";
 import CreateNewAgent from "@/app/components/Dashboard/CreateNewAgent/CreateNewAgent";
-import Join from "@/app/components/Dashboard/Join/Join";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
@@ -14,12 +13,12 @@ const Page: FC<PageProps> = () => {
 
   useEffect(() => {
     if (!access) {
-      router.push("/"); // Redirect to login if access token is missing
+      router.push("/");
     }
   }, [access, router]);
 
   if (!access) {
-    return null; // Return null or a loading indicator while redirecting
+    return null;
   }
   return <CreateNewAgent />;
 };

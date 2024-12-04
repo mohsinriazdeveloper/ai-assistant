@@ -1,37 +1,21 @@
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import "./style.css";
-import { FiMessageSquare } from "react-icons/fi";
+import { format } from "date-fns";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { IoSearch } from "react-icons/io5";
+import { MdContentCopy } from "react-icons/md";
+import NewChatModal from "../../Dialogues/NewChatModal";
+import Loader from "../../Loader/Loader";
+import PreviousPage from "../../PreviousPage/PreviousPage";
+import RangeBar from "../../RangeBar/RangeBar";
 import {
-  useDeleteChatMutation,
   useGetAgentChatQuery,
   useGetAllAgentsQuery,
-  useRenameChatSessionMutation,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
-import Loader from "../../Loader/Loader";
-import RangeBar from "../../RangeBar/RangeBar";
-import { MdContentCopy, MdSaveAlt } from "react-icons/md";
-import toast from "react-hot-toast";
-import PreviousPage from "../../PreviousPage/PreviousPage";
-import NewChatModal from "../../Dialogues/NewChatModal";
+import { selectChats, setChats } from "../../ReduxToolKit/chatSessionSlice";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
-import {
-  deleteChat,
-  selectChats,
-  setChats,
-} from "../../ReduxToolKit/chatSessionSlice";
-import { FaRegSave } from "react-icons/fa";
-import { format } from "date-fns";
 import ChatSessions from "./ChatSessions";
+import "./style.css";
 
 interface QaItem {
   question: string;
@@ -72,7 +56,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const [qaCharacters, setqaCharacters] = useState<number>(0);
   const [fileData, setFileData] = useState<FileItem[]>([]);
   const [fileChar, setFileChar] = useState<number>(0);
-  const [isCopied, setIsCopied] = useState<boolean>(false); // State to manage the tooltip
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const [searchChat, setSearchChat] = useState<string>("");
   const [newChatModal, setNewChatModal] = useState<boolean>(false);
@@ -130,7 +114,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
-    }, 2000); // Tooltip will disappear after 2 seconds
+    }, 2000);
   };
 
   if (isLoading || !agent) {
@@ -163,8 +147,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
       searchChat.trim() === "" ||
       item.title.toLowerCase().includes(searchChat.toLowerCase())
   );
-  const currentDate = format(new Date(), "yyyy-MM-dd"); // Format the current date
-
+  const currentDate = format(new Date(), "yyyy-MM-dd");
   const todayChats = filteredItems.filter(
     (chat) => format(new Date(chat.updated_at), "yyyy-MM-dd") === currentDate
   );

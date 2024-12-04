@@ -1,6 +1,5 @@
 "use client";
 
-import Join from "@/app/components/Dashboard/Join/Join";
 import NewChat from "@/app/components/Dashboard/NewChat/NewChat";
 import { FC, useEffect } from "react";
 import { content } from "./content";
@@ -16,12 +15,12 @@ const Page: FC<PageProps> = () => {
 
   useEffect(() => {
     if (!access) {
-      router.push("/"); // Redirect to login if access token is missing
+      router.push("/");
     }
   }, [access, router]);
 
   if (!access) {
-    return null; // Return null or a loading indicator while redirecting
+    return null;
   }
   return <NewChat navBarContent={content.navBar} />;
 };

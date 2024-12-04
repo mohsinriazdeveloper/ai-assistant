@@ -1,16 +1,16 @@
+import BankOfCanadaImg from "@/app/assets/Images/bankOfCanada.png";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
-import BankOfCanadaImg from "@/app/assets/Images/bankOfCanada.png";
+import toast from "react-hot-toast";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { MdCheck } from "react-icons/md";
+import Loader from "../Loader/Loader";
 import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import toast from "react-hot-toast";
-import Loader from "../Loader/Loader";
-import { MdCheck } from "react-icons/md";
-import { BsThreeDotsVertical } from "react-icons/bs";
-import { useAppDispatch } from "../ReduxToolKit/hook";
 import { isConnectSlice } from "../ReduxToolKit/connectSlice";
+import { useAppDispatch } from "../ReduxToolKit/hook";
 
 interface FinanceProps {
   agentId: number;
@@ -32,58 +32,11 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
     }
   }, [agent]);
 
-  // const handleConnectBOC = async () => {
-  //   setLoading(true);
-  //   const formData = new FormData();
-  //   formData.append("id", agentID);
-  //   // @ts-ignore
-  //   formData.append("boc_connected", !isConnected);
-  //   try {
-  //     const res = await updating(formData);
-  //     if (!isConnected) {
-  //       toast.success("Connected to bank of Canada FX");
-  //     } else {
-  //       toast.success("Successfully disconnected from bank of Canada FX");
-  //     }
-  //     setLoading(false);
-  //   } catch (error) {
-  //     setLoading(false);
-  //     toast.error("Failed to update");
-  //     console.error("Failed to update", error);
-  //   }
-  // };
-  // const handleConnectBOC = async () => {
-  //   setLoading(true);
-  //   const updatedConnectionStatus = !isConnected;
-  //   setIsConnected(updatedConnectionStatus); // Optimistically update the state
-
-  //   const formData = new FormData();
-  //   formData.append("id", agentID);
-  //   // @ts-ignore
-  //   formData.append("boc_connected", updatedConnectionStatus);
-  //   try {
-  //     await updating(formData);
-
-  //     if (updatedConnectionStatus) {
-  //       toast.success("Connected to bank of Canada FX");
-  //     } else {
-  //       toast.success("Successfully disconnected from bank of Canada FX");
-  //     }
-  //   } catch (error) {
-  //     // Revert optimistic update if API call fails
-  //     setIsConnected(!updatedConnectionStatus);
-  //     toast.error("Failed to update");
-  //     console.error("Failed to update", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const handleConnectBOC = async () => {
     setLoading(true);
-    const previousState = isConnected; // Save the current state
+    const previousState = isConnected;
     const updatedConnectionStatus = !isConnected;
 
-    // Temporarily update the UI state
     setIsConnected(updatedConnectionStatus);
 
     const formData = new FormData();
@@ -91,7 +44,6 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
     formData.append("boc_connected", String(updatedConnectionStatus));
 
     try {
-      // Make the API call
       await updating(formData);
       dispatch(
         isConnectSlice({
@@ -99,14 +51,12 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
         })
       );
 
-      // Success: Notify the user
       if (updatedConnectionStatus) {
         toast.success("Connected to Bank of Canada FX");
       } else {
         toast.success("Successfully disconnected from Bank of Canada FX");
       }
     } catch (error) {
-      // Revert to the previous state if the API call fails
       setIsConnected(previousState);
       dispatch(
         isConnectSlice({

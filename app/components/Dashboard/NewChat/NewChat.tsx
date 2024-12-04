@@ -1,8 +1,8 @@
 "use client";
 import { FC, useState } from "react";
+import NavBar from "../../NavBar/NavBar";
 import Agents from "./Agents";
 import Settings from "./Settings/Settings";
-import NavBar from "../../NavBar/NavBar";
 
 type NavContent = {
   title: string;

@@ -1,7 +1,7 @@
-import filesIcon from "@/app/assets/icons/fileIcon.png";
-import TextLines from "@/app/assets/icons/textLines.png";
 import QA from "@/app/assets/icons/chatIcon.png";
+import filesIcon from "@/app/assets/icons/fileIcon.png";
 import GlobeIcon from "@/app/assets/icons/internetIcon.png";
+import TextLines from "@/app/assets/icons/textLines.png";
 
 export const content = {
   sideBarOptions: [

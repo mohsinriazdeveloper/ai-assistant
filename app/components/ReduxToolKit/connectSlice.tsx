@@ -27,7 +27,3 @@ export const connectTypeState = createSlice({
 export const { isConnectSlice } = connectTypeState.actions;
 export default connectTypeState.reducer;
 export const selectIsConnect = (state: RootState) => state.root.connect;
-
-// export const { setChats, deleteChat } = chatSessionState.actions;
-// export default chatSessionState.reducer;
-// export const selectChats = (state: RootState) => state.root.chatSession.chats;

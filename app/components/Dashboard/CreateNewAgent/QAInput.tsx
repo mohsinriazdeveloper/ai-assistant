@@ -1,3 +1,6 @@
+import PlusIcon from "@/app/assets/icons/plus.png";
+import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import Image from "next/image";
 import {
   Dispatch,
   FC,
@@ -6,9 +9,6 @@ import {
   useEffect,
   useMemo,
 } from "react";
-import PlusIcon from "@/app/assets/icons/plus.png";
-import Image from "next/image";
-import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import toast from "react-hot-toast";
 
 interface QAInputProps {

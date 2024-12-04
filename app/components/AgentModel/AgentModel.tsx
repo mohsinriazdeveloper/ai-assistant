@@ -1,16 +1,15 @@
 "use client";
-import { FC, useState, useEffect } from "react";
+import DownCarret from "@/app/assets/icons/DownCarret";
+import { FC, useState } from "react";
+import toast from "react-hot-toast";
+import Loader from "../Loader/Loader";
+import RangeBar from "../RangeBar/RangeBar";
 import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
   useUpdateInstructionsMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import RangeBar from "../RangeBar/RangeBar";
-import Loader from "../Loader/Loader";
-import DownCarret from "@/app/assets/icons/DownCarret";
 import Instructions from "./Instructions";
-import { InstructionsType } from "../ReduxToolKit/types/agents.d";
-import toast, { Toaster } from "react-hot-toast";
 
 interface AgentModelProps {
   agentId: any;
@@ -54,7 +53,6 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
         //@ts-ignore
         id,
         data: instData,
-        // is_active: true,
       }).unwrap();
       const res = await updating(formData).unwrap();
       setLoading(false);
@@ -80,7 +78,6 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
 
   return (
     <div className="flex flex-col gap-10 mb-10">
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5">
         <div>
           <p className="text-2xl font-medium">Model</p>
@@ -110,7 +107,6 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
                   className="py-2 px-5 hover:bg-gray-200 cursor-not-allowed"
                   onClick={() => {
                     setOpenModels(!openModels);
-                    // setAgentModel("gpt-3.5");
                   }}
                 >
                   gpt-3.5
@@ -126,7 +122,6 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
             setInstructionId={setInstructionId}
             setIsActive={setIsActive}
             isActive={isActive}
-            // setInstructionPayload={setInstructionPayload}
           />
 
           <div>

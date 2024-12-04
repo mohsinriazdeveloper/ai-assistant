@@ -1,20 +1,14 @@
 "use client";
 import LeftBar from "@/app/components/LeftBar/LeftBar";
+import Loader from "@/app/components/Loader/Loader";
+import { useGetOrganizationQuery } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { FC, useState } from "react";
 import { content } from "./content";
-import DeleteAgent from "@/app/components/DeleteAgent/DeleteAgent";
-import DeleteModal from "@/app/components/Dialogues/DeleteModal";
-import {
-  useGetOrganizationQuery,
-  useUpdateAgentMutation,
-} from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
-import Loader from "@/app/components/Loader/Loader";
 
 interface SettingsProps {}
 
 const Settings: FC<SettingsProps> = ({}) => {
   const { data: getOrg, isLoading } = useGetOrganizationQuery();
-  const [openDialogue, setOpenDialogue] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("setting");
 
   return (

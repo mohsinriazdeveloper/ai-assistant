@@ -1,16 +1,12 @@
 "use client";
-import { FC, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import ShowIcon from "@/app/assets/icons/viewPassword.png";
 import HideIcon from "@/app/assets/icons/hidePassword.png";
-import {
-  useUserForgotMutation,
-  useUserPasswordResetMutation,
-} from "../ReduxToolKit/aiAssistant";
+import ShowIcon from "@/app/assets/icons/viewPassword.png";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import toast from "react-hot-toast";
 import Loader from "../Loader/Loader";
-import toast, { Toaster } from "react-hot-toast";
+import { useUserPasswordResetMutation } from "../ReduxToolKit/aiAssistant";
 
 type ResetPayload = {
   token?: string;

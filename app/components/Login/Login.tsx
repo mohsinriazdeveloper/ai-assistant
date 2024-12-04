@@ -1,19 +1,16 @@
 "use client";
-import Image from "next/image";
-import ShowIcon from "@/app/assets/icons/viewPassword.png";
 import HideIcon from "@/app/assets/icons/hidePassword.png";
-import { FC, useState } from "react";
+import ShowIcon from "@/app/assets/icons/viewPassword.png";
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import toast from "react-hot-toast";
+import Loader from "../Loader/Loader";
 import { useUserLoginMutation } from "../ReduxToolKit/aiAssistant";
-// import { useDispatch } from "react-redux";
+import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import { userLoginSuccess } from "../ReduxToolKit/authSlice";
 import { useAppDispatch } from "../ReduxToolKit/hook";
-import { useRouter } from "next/navigation";
-import PreviousPage from "../PreviousPage/PreviousPage";
-import Loader from "../Loader/Loader";
-// import { clearDataSucces } from "../ReduxToolKit/clearStateData";
-import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
-import toast, { Toaster } from "react-hot-toast";
 type LoginInputs = {
   email: string;
   password: string;
@@ -37,9 +34,7 @@ const Login: FC<LoginProps> = ({}) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // if (allAgents) {
     sessionStorage.clear();
-    // }
     if (!loginEmail && !loginPassword) {
       setEmailError("Email is required");
       setPassError("Password is required");
@@ -69,8 +64,6 @@ const Login: FC<LoginProps> = ({}) => {
           access: res.access,
         })
       );
-      // alert("login");
-      // return router.push("/dashboard/join");
       setLoading(false);
       toast.success("Welcome back! You have successfully signed in");
       return router.push("/dashboard/agents");
@@ -87,7 +80,6 @@ const Login: FC<LoginProps> = ({}) => {
 
   return (
     <div className="md:container md:mx-auto mx-5 py-12 h-screen flex flex-col justify-center">
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>

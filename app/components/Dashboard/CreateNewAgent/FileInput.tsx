@@ -1,8 +1,8 @@
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
+import mammoth from "mammoth";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
 import pdfToText from "react-pdftotext";
-import mammoth from "mammoth";
 import Loader from "../../Loader/Loader";
 
 interface FileInputProps {

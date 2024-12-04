@@ -1,14 +1,13 @@
-import React, { memo } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import rehypeRaw from "rehype-raw";
-import rehypeKatex from "rehype-katex";
-import remarkMath from "remark-math";
-import { dracula, CopyBlock } from "react-code-blocks";
 import "katex/dist/katex.min.css";
+import { memo } from "react";
+import { CopyBlock, dracula } from "react-code-blocks";
+import ReactMarkdown from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 const MarkDown = ({ content }) => {
-  // Replace double newlines with a Markdown-compatible line break syntax
   const formattedContent = content.replace(/\n\n/g, "\n\n&nbsp;\n\n");
 
   return (

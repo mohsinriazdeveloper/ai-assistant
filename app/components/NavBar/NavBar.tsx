@@ -1,14 +1,13 @@
 "use client";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAppDispatch } from "../ReduxToolKit/hook";
-import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
-import PreviousPage from "../PreviousPage/PreviousPage";
-import { voiceResponce } from "../ReduxToolKit/voiceResSlice";
-import toast, { Toaster } from "react-hot-toast";
-import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
-import { MdOutlineShortText } from "react-icons/md";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { MdOutlineShortText } from "react-icons/md";
+import PreviousPage from "../PreviousPage/PreviousPage";
+import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
+import { useAppDispatch } from "../ReduxToolKit/hook";
 
 type Content = {
   title: string;
@@ -45,7 +44,6 @@ const NavBar: FC<NavBarProps> = ({
   }, [checkOption]);
 
   const handleSignOut = () => {
-    // const intext = dispatch(voiceResponce({ inText: "" }));
     setTimeout(() => {
       dispatch(
         userLogoutSuccess({

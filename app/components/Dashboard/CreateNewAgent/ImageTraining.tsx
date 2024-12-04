@@ -1,26 +1,22 @@
+import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import UploadIcon from "@/app/assets/icons/uploadIcon.png";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import React, {
   Dispatch,
   FC,
   SetStateAction,
-  useState,
   useCallback,
   useEffect,
   useRef,
+  useState,
 } from "react";
-import { IoMdAdd } from "react-icons/io";
-import toast, { Toaster } from "react-hot-toast";
-import Loader from "../../Loader/Loader";
+import toast from "react-hot-toast";
 import {
   useDeleteFileMutation,
   useTrainByImageMutation,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { AgentState } from "../../ReduxToolKit/types/agents";
-import Image from "next/image";
-import DeleteIcon from "@/app/assets/icons/recyclebin.png";
-import ResizeIcon from "@/app/assets/icons/resize.png";
-import { usePathname } from "next/navigation";
-import UploadIcon from "@/app/assets/icons/uploadIcon.png";
-import TestingImg from "@/app/assets/Images/Discipline.png";
 
 interface ImageTrainingProps {
   setTotalImage: Dispatch<SetStateAction<number>>;
@@ -55,42 +51,18 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     setTotalImage(imageFiles.length);
   }, [imageFiles, setTotalImage]);
 
-  // const processImage = (file: File) => {
-  //   // Check if the file is an image
-  //   if (!file.type.startsWith("image/")) {
-  //     toast.error("Only images are allowed");
-  //     return;
-  //   }
-
-  //   // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
-  //   if (file.size > 1048576) {
-  //     toast.error("Image size should not exceed 1 MB");
-  //     return;
-  //   }
-
-  //   // Check if the file is already added
-  //   if (imageFiles.some((img) => img.name === file.name)) {
-  //     toast.error("Image Already Added");
-  //   } else {
-  //     setImagesFile((prevImages) => [...prevImages, file]);
-  //   }
-  // };
   const processImage = (file: File) => {
     const allowedExtensions = /(\.png|\.jpg|\.jpeg)$/i;
 
-    // Check if the file is an image and has an allowed extension
     if (!allowedExtensions.test(file.name)) {
       toast.error("Only .png, .jpg, .jpeg images are allowed");
       return;
     }
-
-    // Check if the file size is greater than 1 MB (1 MB = 1048576 bytes)
     if (file.size > 1048576) {
       toast.error("Image size should not exceed 1 MB");
       return;
     }
 
-    // Check if the file is already added
     if (imageFiles.some((img) => img.name === file.name)) {
       toast.error("Image Already Added");
     } else {
@@ -126,7 +98,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     fd.append("id", agentId);
 
     imageFiles.forEach((imageFile) => {
-      fd.append("images", imageFile); // Appending each image file to the 'images' key
+      fd.append("images", imageFile);
     });
 
     try {
@@ -177,13 +149,11 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   };
 
   const triggerFileInput = () => {
-    fileInputRef.current?.click(); // Programmatically trigger the file input click
+    fileInputRef.current?.click();
   };
 
   return (
     <div>
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
-
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
@@ -318,7 +288,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
       )}
 
       <div className="w-full flex flex-col gap-10 mt-10">
-        {/* Enlarged Image View */}
         {enlargedIndex !== null && (
           <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75">
             <div className="relative">

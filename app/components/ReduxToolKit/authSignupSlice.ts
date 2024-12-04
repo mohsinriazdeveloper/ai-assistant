@@ -1,6 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { AuthState, SignUpState, signUpState } from "./types/authSlice.d";
+import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import { signUpState } from "./types/authSlice.d";
 
 export const authSignUpSlice = createSlice({
   name: "authSignup",
@@ -8,6 +8,5 @@ export const authSignUpSlice = createSlice({
   reducers: {},
 });
 
-// export const { userLoginSuccess, userLogoutSuccess } = authSignUpSlice.actions;
 export default authSignUpSlice.reducer;
 export const selectAuth = (state: RootState) => state.root.auth;

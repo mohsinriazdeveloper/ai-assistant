@@ -1,12 +1,12 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
-import "react-responsive-modal/styles.css";
-import Modal from "react-responsive-modal";
 import CancleIcon from "@/app/assets/icons/CancleIcon";
-import { useDeleteChatMutation } from "../ReduxToolKit/aiAssistantOtherApis";
-import Loader from "../Loader/Loader";
+import { FC, useState } from "react";
 import toast from "react-hot-toast";
+import Modal from "react-responsive-modal";
+import "react-responsive-modal/styles.css";
+import Loader from "../Loader/Loader";
+import { useDeleteChatMutation } from "../ReduxToolKit/aiAssistantOtherApis";
 type DeleteChatModalProps = {
   agentId: any;
   openDialogue: boolean;

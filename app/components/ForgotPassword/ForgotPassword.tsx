@@ -1,9 +1,8 @@
 "use client";
 import { FC, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useUserForgotMutation } from "../ReduxToolKit/aiAssistant";
+import toast from "react-hot-toast";
 import Loader from "../Loader/Loader";
-import toast, { Toaster } from "react-hot-toast";
+import { useUserForgotMutation } from "../ReduxToolKit/aiAssistant";
 
 type EmailPayload = {
   email: string;
@@ -13,7 +12,6 @@ interface ForgotPasswordProps {}
 
 const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
   const [userForgotPassword] = useUserForgotMutation();
-  const router = useRouter();
   const [ForgotEmail, setForgotEmail] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [emailIndication, setEmailIndication] = useState<string>("");
@@ -44,7 +42,6 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
   };
   return (
     <div className="max-w-[360px] mx-auto py-12">
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>
       </div>

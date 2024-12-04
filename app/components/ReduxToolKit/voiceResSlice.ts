@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-// import { authState, AuthState } from "./types/voiceResSlice";
 import { RootState } from "./store";
 import { VoiceRes, voiceRes } from "./types/agents.d";
 

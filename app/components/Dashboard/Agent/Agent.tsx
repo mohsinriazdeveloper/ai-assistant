@@ -1,19 +1,15 @@
 "use client";
 
 import { FC, useEffect, useRef, useState } from "react";
-import NavBar from "../../NavBar/NavBar";
-import AgentOption from "./AgentOption";
-import CreateNewAgent from "../CreateNewAgent/CreateNewAgent";
-import Connect from "../../Connect/Connect";
 import AgentSettings from "../../AgentSettings/AgentSettings";
-import UpdateTraining from "../../UpdateTraining/UpdateTraining";
-import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
+import Connect from "../../Connect/Connect";
+import NavBar from "../../NavBar/NavBar";
+import { useAppDispatch } from "../../ReduxToolKit/hook";
 import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
-import ChatAgent from "./ChatAgent";
+import UpdateTraining from "../../UpdateTraining/UpdateTraining";
 import AgentChatSideBar from "./AgentChatSideBar";
+import ChatAgent from "./ChatAgent";
 import VoiceAgent from "./VoiceAgent";
-import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
-import { selectForChat } from "../../ReduxToolKit/forChatSlice";
 
 type NavContent = {
   title: string;
@@ -25,7 +21,6 @@ interface AgentProps {
 }
 
 const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
-  const { chatId, newChat } = useAppSelector(selectForChat);
   const [checkOption, setCheckOption] = useState<string>("chatagent");
   const [IsVoice, setIsVoice] = useState<boolean>(false);
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);
@@ -51,18 +46,16 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
     inputIdRef.current?.focus();
   };
 
-  // New useEffect to retrieve specificChatId from localStorage on page load
   useEffect(() => {
     const savedChatId = localStorage.getItem("myCustomChatId");
     if (savedChatId !== null) {
-      setSpecificChatId(Number(savedChatId)); // Ensure it's stored as a number
+      setSpecificChatId(Number(savedChatId));
       setStartNewChat(false);
     } else {
       setSpecificChatId(null);
       setStartNewChat(true);
     }
   }, []);
-  // New useEffect to store specificChatId in localStorage whenever it changes
   useEffect(() => {
     if (specificChatId !== null) {
       localStorage.setItem("myCustomChatId", specificChatId.toString());

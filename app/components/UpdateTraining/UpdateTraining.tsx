@@ -1,26 +1,26 @@
 "use client";
-import { FC, useCallback, useEffect, useState } from "react";
-import { content } from "./content";
-import { usePathname, useRouter } from "next/navigation";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import mammoth from "mammoth";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { FC, useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import pdfToText from "react-pdftotext";
+import FileInput from "../Dashboard/CreateNewAgent/FileInput";
+import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
+import QAInput from "../Dashboard/CreateNewAgent/QAInput";
+import WebsiteTraining from "../Dashboard/CreateNewAgent/WebsiteTraining";
+import LeftBar from "../LeftBar/LeftBar";
 import {
   useDeleteFileMutation,
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import LeftBar from "../LeftBar/LeftBar";
-import FileInput from "../Dashboard/CreateNewAgent/FileInput";
-import QAInput from "../Dashboard/CreateNewAgent/QAInput";
-import RightBar from "../RightBar/RightBar";
-import { FileUrl } from "../ReduxToolKit/types/agents.d";
-import toast from "react-hot-toast";
-import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
-import pdfToText from "react-pdftotext";
-import mammoth from "mammoth";
-import WebsiteTraining from "../Dashboard/CreateNewAgent/WebsiteTraining";
-import { useAppSelector } from "../ReduxToolKit/hook";
 import { selectIsConnect } from "../ReduxToolKit/connectSlice";
+import { useAppSelector } from "../ReduxToolKit/hook";
+import { FileUrl } from "../ReduxToolKit/types/agents.d";
+import RightBar from "../RightBar/RightBar";
+import { content } from "./content";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -101,27 +101,23 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
 
       agent.file_urls.forEach((file) => {
         if (file.website_url) {
-          // Add to newLinks if website_url exists
           updatedNewLinks.push({
-            id: file.id, // Use the file's id for uniqueness
+            id: file.id,
             url: file.website_url,
-            content: file.text_content || "", // If content is empty, default to an empty string
-            isValid: true, // Assuming the website_url is valid
-            isLoading: false, // Not loading initially
-            isScraped: true, // Since we have the content, it's already scraped
+            content: file.text_content || "",
+            isValid: true,
+            isLoading: false,
+            isScraped: true,
             isExisting: true,
           });
         } else {
-          // Otherwise, add to existingFiles
           newExistingFiles.push(file);
         }
       });
 
-      // Set the state with filtered files and new links
       setExistingFiles(newExistingFiles);
-      setNewLinks(updatedNewLinks); // Set the new links
+      setNewLinks(updatedNewLinks);
 
-      // Calculate and update website content length based on newLinks
       const totalWebsiteContentLength = updatedNewLinks.reduce(
         (total, data) => {
           return total + data.content.length;
@@ -129,14 +125,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
         0
       );
 
-      setWebsiteContentLength(totalWebsiteContentLength); // Set the total content length
+      setWebsiteContentLength(totalWebsiteContentLength);
     }
   }, [agent?.file_urls]);
 
   useEffect(() => {
     if (existingFiles) {
       const totalLength = existingFiles.reduce((sum, file) => {
-        // Exclude files that have a website_url
         if (!file.website_url) {
           return sum + (file.text_content?.length || 0);
         }
@@ -146,7 +141,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     }
   }, [existingFiles]);
 
-  // Update total character count based on all inputs (files, text, QA, website)
   useEffect(() => {
     let newTotalCharCount =
       qaChar +
@@ -172,7 +166,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
       formData.append("name", agentName);
       formData.append("id", agentID);
       formData.append("boc_connected", String(updateConnectStatus));
-      // Retain previously scraped and existing links
       newLinks.forEach((link, index) => {
         if (!link?.isExisting) {
           formData.append(`website_data[${index}][website_url]`, link.url);
@@ -182,44 +175,20 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
           );
         }
       });
-
-      // Add files if the check option is file
-      // if (checkOption === "file") {
-      //   files.forEach((file) => {
-      //     formData.append("files", file);
-      //   });
-      // } else if (checkOption === "text") {
-      //   if (text) {
-      //     formData.append("text", text);
-      //   }
-      // } else if (checkOption === "qa") {
-      //   formData.append("qa", JSON.stringify(qaList));
-      // } else if (checkOption === "image-train") {
-      //   if (imagesFile) {
-      //     imagesFile.forEach((image) => {
-      //       formData.append("images", image);
-      //     });
-      //   }
-      // }
-      // if (checkOption === "file") {
       files.forEach((file) => {
         formData.append("files", file);
       });
-      // } else if (checkOption === "text") {
       if (text) {
         formData.append("text", text);
       } else {
         formData.append("text", "temp");
       }
-      // } else if (checkOption === "qa") {
 
       formData.append("qa", JSON.stringify(qaList));
 
-      // } else if (checkOption === "image-train") {
       imagesFile.forEach((image) => {
         formData.append("images", image);
       });
-      // }
 
       try {
         await updateAgent(formData).unwrap();

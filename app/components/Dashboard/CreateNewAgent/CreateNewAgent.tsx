@@ -1,20 +1,20 @@
 "use client";
 
+import DeleteIcon from "@/app/assets/icons/recyclebin.png";
+import mammoth from "mammoth";
+import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import pdfToText from "react-pdftotext";
 import LeftBar from "../../LeftBar/LeftBar";
-import FileInput from "./FileInput";
+import PreviousPage from "../../PreviousPage/PreviousPage";
+import { useCreateAgentMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
 import RightBar from "../../RightBar/RightBar";
 import { content } from "./content";
-import { useCreateAgentMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
-import QAInput from "./QAInput";
-import { usePathname, useRouter } from "next/navigation";
-import DeleteIcon from "@/app/assets/icons/recyclebin.png";
-import Image from "next/image";
-import PreviousPage from "../../PreviousPage/PreviousPage";
-import toast from "react-hot-toast";
+import FileInput from "./FileInput";
 import ImageTraining from "./ImageTraining";
-import pdfToText from "react-pdftotext";
-import mammoth from "mammoth";
+import QAInput from "./QAInput";
 import WebsiteTraining from "./WebsiteTraining";
 
 type FileUrl = {
@@ -56,7 +56,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
   const [images, setImages] = useState<File[]>([]);
-  const [fileUrls, setFileUrls] = useState<string[]>([]); // State to store file URLs
+  const [fileUrls, setFileUrls] = useState<string[]>([]);
 
   const [qaChar, setQaChar] = useState<number>(0);
   const [filecharCount, setfileCharCount] = useState<number>(0);
@@ -65,7 +65,6 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [totalCharCount, settotalCharCount] = useState<number>(0);
   const [cantAddMore, setCantAddMore] = useState<boolean>(false);
   const [websiteContentLength, setWebsiteContentLength] = useState<number>(0);
-  const [website_url, setWebsiteUrl] = useState<string>("");
 
   useEffect(() => {
     const newTotalCharCount =
@@ -140,7 +139,6 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       const fileToRemove = files[index];
 
       const updateStateAfterDeletion = (filecharCountToRemove: number) => {
-        // Remove the file from the list and update the character count
         setFiles((prevFiles) => {
           const updatedFiles = prevFiles.filter((_, i) => i !== index);
           return updatedFiles;
@@ -150,7 +148,6 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         );
         setFileCount((prevCount) => prevCount - 1);
 
-        // Update the file URLs
         setFileUrls((prevUrls) => prevUrls.filter((_, i) => i !== index));
         toast.success("File Successfully deleted");
       };
@@ -189,7 +186,6 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         };
         reader.readAsArrayBuffer(fileToRemove);
       } else {
-        // If the file type is not supported, just remove it without adjusting the character count
         updateStateAfterDeletion(0);
       }
     },

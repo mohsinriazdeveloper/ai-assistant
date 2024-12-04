@@ -4,23 +4,20 @@ import {
   RefObject,
   SetStateAction,
   useEffect,
-  useRef,
   useState,
 } from "react";
+import toast from "react-hot-toast";
 import { FaMicrophone } from "react-icons/fa";
 import { GoPaperclip } from "react-icons/go";
 import { HiArrowRight } from "react-icons/hi";
-import "./style.css";
-import ChatBox from "./ChatBox";
+import Loader from "../../Loader/Loader";
 import {
   useAgentChatMutation,
   useGetSpecificChatQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { AgentChatType } from "../../ReduxToolKit/types/agents";
-import toast from "react-hot-toast";
-import { IoMdSend } from "react-icons/io";
-import { skipToken } from "@reduxjs/toolkit/query";
-import Loader from "../../Loader/Loader";
+import ChatBox from "./ChatBox";
+import "./style.css";
 
 interface ChatAgentProps {
   setIsVoice: Dispatch<SetStateAction<boolean>>;
@@ -52,7 +49,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [textInput, setTextInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  // const textareaRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (startNewChat) {
@@ -86,75 +82,11 @@ const ChatAgent: FC<ChatAgentProps> = ({
     const newText = e.target.value;
     setTextInput(newText);
 
-    // Save the input text to localStorage for the current chat session
     if (specificChatId !== null) {
       localStorage.setItem(`chat_${specificChatId}`, newText);
     }
   };
 
-  // const handleSendMessage = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (textInput !== "" && !loading) {
-  //     setStartNewChat(false);
-  //     setLoading(true);
-  //     const agent_id = agentId;
-  //     if (textInput.trim() === "") return;
-
-  //     const userMessage: AgentChatType = {
-  //       id: specificChatId || null,
-  //       role: "user",
-  //       message: textInput,
-  //     };
-
-  //     // Add the user's message to the chat
-  //     setChat((prevChat) => [...prevChat, userMessage]);
-
-  //     // Remove the text for the current session from localStorage
-  //     if (specificChatId !== null) {
-  //       localStorage.removeItem(`chat_${specificChatId}`);
-  //     }
-  //     setTextInput("");
-  //     // Add a placeholder for the upcoming response with a loader
-  //     const loadingMessage: AgentChatType = {
-  //       id: null,
-  //       role: "agent",
-  //       message: "loading", // Placeholder for the loader
-  //     };
-  //     setChat((prevChat) => [...prevChat, loadingMessage]);
-
-  //     try {
-  //       const response = await agentChat({
-  //         agent_id,
-  //         text_input: textInput,
-  //         chat_session_id: specificChatId,
-  //       }).unwrap();
-
-  //       setSpecificChatId(response.chat_session_id);
-
-  //       // Replace the loading placeholder with the actual response
-  //       setChat((prevChat) => {
-  //         const updatedChat = [...prevChat];
-  //         updatedChat[updatedChat.length - 1] = {
-  //           id: specificChatId || null,
-  //           role: "agent",
-  //           message: response.response,
-  //         };
-  //         return updatedChat;
-  //       });
-  //     } catch (error: any) {
-  //       // Remove the loading message and show error
-  //       setChat((prevChat) => prevChat.slice(0, -1));
-  //       if (error.status === 429) {
-  //         toast.error(error.data.error);
-  //       } else {
-  //         toast.error("Failed to send message. Please try again.");
-  //         console.error("Failed to send message: ", error);
-  //       }
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
@@ -166,13 +98,11 @@ const ChatAgent: FC<ChatAgentProps> = ({
       const userMessage: AgentChatType = {
         id: specificChatId || null,
         role: "user",
-        message: textInput,
+        message: textInput.trim(),
       };
 
-      // Add user's message to chat
       setChat((prevChat) => [...prevChat, userMessage]);
 
-      // Save the input text to localStorage for the current chat session
       if (specificChatId !== null) {
         localStorage.removeItem(`chat_${specificChatId}`);
       }
@@ -186,7 +116,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
       try {
         const response = await agentChat({
           agent_id: agentId,
-          text_input: textInput,
+          text_input: textInput.trim(),
           chat_session_id: specificChatId,
         }).unwrap();
         focusInputById();
@@ -196,7 +126,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
           response.chat_session_id.toString()
         );
 
-        // Replace loading message with the actual response
         setChat((prevChat) => {
           const updatedChat = [...prevChat];
           updatedChat[updatedChat.length - 1] = {
@@ -224,7 +153,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   const handleTextareaInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
     const textarea = e.currentTarget;
     textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`; // 76.8px equals around 5 rows
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`;
   };
 
   if (isLoading) {
@@ -264,7 +193,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
           rows={1}
           placeholder="Type your prompt here"
           className="sm:text-lg text-white bg-transparent grow chatInput focus:outline-none recentChatScroller"
-          value={textInput} // Use text for the active session
+          value={textInput}
           onChange={handleTextInputChange}
           onKeyDown={handleKeyDown}
           disabled={loading}

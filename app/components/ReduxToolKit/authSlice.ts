@@ -1,6 +1,6 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { authState, AuthState } from "./types/authSlice.d";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import { authState, AuthState } from "./types/authSlice.d";
 
 export const authSlice = createSlice({
   name: "auth",
@@ -26,7 +26,6 @@ export const authSlice = createSlice({
       state.refresh = action.payload.refresh;
       state.access = action.payload.access;
     },
-    //get all agents
   },
 });
 

@@ -1,11 +1,9 @@
+import CopyIcon from "@/app/assets/icons/copyIcon.png";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
-import CopyIcon from "@/app/assets/icons/copyIcon.png";
-import RangeBar from "../../RangeBar/RangeBar";
-import VoiceAssistant from "../../VoiceAssistant/VoiceAssistant";
-import { useGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 import Loader from "../../Loader/Loader";
-// import AgentChat from "../../VoiceAssistant/AgentChat";
+import RangeBar from "../../RangeBar/RangeBar";
+import { useGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 
 interface QaItem {
   question: string;
@@ -32,7 +30,7 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
 
   const [fileData, setFileData] = useState<FileItem[]>([]);
   const [fileChar, setFileChar] = useState<number>(0);
-  const [isCopied, setIsCopied] = useState<boolean>(false); // State to manage the tooltip
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const date = new Date();
 
@@ -81,7 +79,7 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
-    }, 2000); // Tooltip will disappear after 2 seconds
+    }, 2000);
   };
 
   if (isLoading || !agent) {
@@ -176,7 +174,6 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
             <p className="text-gray-300">Temperature</p>
             <div className="max-w-[184px]">
               <RangeBar temperature={agent.temperature} readOnly />{" "}
-              {/* Pass the readOnly prop */}
             </div>
           </div>
           <div className="text-sm font-semibold">
@@ -185,11 +182,6 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
               {formattedDate} at {formattedTime}
             </p>
           </div>
-        </div>
-        <div className="sm:col-span-7 col-span-12 border border-gray-200 rounded-lg">
-          {/* {checkOption === "agent" && <VoiceAssistant agentId={agent.id} />}
-
-          {checkOption === "chatagent" && <AgentChat agentId={agent.id} />} */}
         </div>
       </div>
     </div>

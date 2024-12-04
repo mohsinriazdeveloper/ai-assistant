@@ -1,15 +1,15 @@
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { ChatSession, deleteChat } from "../../ReduxToolKit/chatSessionSlice";
-import { FiMessageSquare } from "react-icons/fi";
+import toast from "react-hot-toast";
 import { FaRegSave } from "react-icons/fa";
+import { FiMessageSquare } from "react-icons/fi";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import Loader from "../../Loader/Loader";
 import {
   useDeleteChatMutation,
   useRenameChatSessionMutation,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
+import { ChatSession, deleteChat } from "../../ReduxToolKit/chatSessionSlice";
 import { useAppDispatch } from "../../ReduxToolKit/hook";
-import toast from "react-hot-toast";
-import Loader from "../../Loader/Loader";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
 interface ChatSessionsProps {
   session: ChatSession[];
@@ -40,7 +40,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
   useEffect(() => {
     const savedChatId = localStorage.getItem("myCustomChatId");
     if (savedChatId) {
-      SetActiveChat(Number(savedChatId)); // Convert savedChatId to a number if needed
+      SetActiveChat(Number(savedChatId));
     }
   }, []);
 
@@ -50,8 +50,8 @@ const ChatSessions: FC<ChatSessionsProps> = ({
     setStartNewChat(true);
 
     try {
-      const res = await deleteChatSession(id).unwrap(); // API call to delete chat session
-      dispatch(deleteChat(id)); // Update Redux store
+      const res = await deleteChatSession(id).unwrap();
+      dispatch(deleteChat(id));
       toast.success("Chat session deleted successfully");
     } catch (error) {
       toast.error("Failed to delete chat session");
@@ -72,7 +72,6 @@ const ChatSessions: FC<ChatSessionsProps> = ({
   const handleDropdownToggle = (id: number) => {
     setSessionChatDropDown((prevId) => (prevId === id ? null : id));
   };
-  // 5c5c5c
   return (
     <div className=" flex flex-col gap-2 mb-5">
       {session?.map((chat, index) => (
@@ -119,7 +118,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
                 <HiOutlineDotsHorizontal
                   className="cursor-pointer relative z-10"
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent event bubbling
+                    e.stopPropagation();
                     handleDropdownToggle(chat.id);
                   }}
                 />

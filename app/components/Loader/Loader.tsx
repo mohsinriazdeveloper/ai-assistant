@@ -1,6 +1,6 @@
+import LoaderImg from "@/app/assets/icons/loader.png";
 import Image from "next/image";
 import { FC } from "react";
-import LoaderImg from "@/app/assets/icons/loader.png";
 
 interface LoaderProps {
   height?: string;

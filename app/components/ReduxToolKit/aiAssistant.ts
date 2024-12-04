@@ -1,6 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "./store";
-import { AgentState } from "./types/agents";
 // Define your base query function
 const baseQuery = fetchBaseQuery({
   // baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -54,16 +52,6 @@ export const authApi = createApi({
         body: credentials,
       }),
     }),
-
-    // create agent endpoint
-    // createAgent: builder.mutation({
-    //   query: (credentials) => ({
-    //     url: "/accounts/agents/",
-    //     // url: "/accounts/agents/",
-    //     method: "POST",
-    //     body: credentials,
-    //   }),
-    // }),
   }),
 });
 // Export the API endpoints
@@ -72,5 +60,4 @@ export const {
   useUserSignUpMutation,
   useUserForgotMutation,
   useUserPasswordResetMutation,
-  // useCreateAgentMutation,
 } = authApi;

@@ -1,9 +1,5 @@
 export const content = {
   navBar: [
-    // {
-    //   title: "Voice-Agent",
-    //   url: "agent",
-    // },
     {
       title: "Chat",
       url: "chatagent",

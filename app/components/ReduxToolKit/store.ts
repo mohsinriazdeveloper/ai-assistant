@@ -1,28 +1,27 @@
+import authReducer from "@/app/components/ReduxToolKit/authSlice";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
-  persistStore,
-  persistReducer,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import { authApi } from "./aiAssistant";
+import { userApi } from "./aiAssistantOtherApis";
+import ChatSessionSlice from "./chatSessionSlice";
+import ConnectCod from "./connectSlice";
+import NewChat from "./forChatSlice";
+import voiceResReducer from "./voiceResSlice";
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
 };
-// import stateReducer from "@/app/components/ReduxToolKit/stateSlice";
-import authReducer from "@/app/components/ReduxToolKit/authSlice";
-import { authApi } from "./aiAssistant";
-import { userApi } from "./aiAssistantOtherApis";
-import voiceResReducer from "./voiceResSlice";
-import ChatSessionSlice from "./chatSessionSlice";
-import ConnectCod from "./connectSlice";
-import NewChat from "./forChatSlice";
 const rootReducer = combineReducers({
   auth: authReducer,
   voice: voiceResReducer,

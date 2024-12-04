@@ -1,3 +1,8 @@
+import MicBubbles from "@/app/assets/icons/micBubbles.png";
+import ResponseImg from "@/app/assets/Images/aiResponse.png";
+import BigCloud from "@/app/assets/Images/bigCloud.png";
+import SmallCloud from "@/app/assets/Images/smallCloud.png";
+import Image from "next/image";
 import {
   Dispatch,
   FC,
@@ -7,27 +12,21 @@ import {
   useRef,
   useState,
 } from "react";
-import MicBubbles from "@/app/assets/icons/micBubbles.png";
-import Image from "next/image";
-import { FaRegCirclePause, FaRegCircleStop } from "react-icons/fa6";
-import { RxCross2 } from "react-icons/rx";
-import BigCloud from "@/app/assets/Images/bigCloud.png";
-import SmallCloud from "@/app/assets/Images/smallCloud.png";
+import toast from "react-hot-toast";
 import { FaMicrophone, FaRedo } from "react-icons/fa";
+import { FaRegCirclePause, FaRegCircleStop } from "react-icons/fa6";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { MdOutlinePlayCircle } from "react-icons/md";
+import { RxCross2 } from "react-icons/rx";
+import {
+  useAgentVoiceMutation,
+  useGetAllAgentsQuery,
+} from "../../ReduxToolKit/aiAssistantOtherApis";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
 import {
   selectVoiceResponse,
   voiceResponce,
 } from "../../ReduxToolKit/voiceResSlice";
-import {
-  useAgentVoiceMutation,
-  useGetAllAgentsQuery,
-} from "../../ReduxToolKit/aiAssistantOtherApis";
-import ResponseImg from "@/app/assets/Images/aiResponse.png";
-import { MdOutlinePlayCircle } from "react-icons/md";
-import { PiRecordFill } from "react-icons/pi";
-import toast from "react-hot-toast";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 interface VoiceAgentProps {
   agentId: number;
   specificChatId: number | null;
@@ -58,7 +57,6 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
 
   const dispatch = useAppDispatch();
   const inText = useAppSelector(selectVoiceResponse);
-  // const stopAudioPlaying = useAppSelector(selectVoiceResponse);
   const [agentVoice] = useAgentVoiceMutation();
   const { data: allAgents } = useGetAllAgentsQuery();
 
@@ -141,11 +139,10 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
     resetResponse();
 
     navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-      mediaStream = stream; // Store the media stream
+      mediaStream = stream;
       const mediaRecorder = new MediaRecorder(stream);
       mediaChunksRef.current = [];
 
-      // Create audio context to analyze input
       audioContextRef.current = new AudioContext();
       const source = audioContextRef.current.createMediaStreamSource(stream);
       analyserRef.current = audioContextRef.current.createAnalyser();
@@ -155,34 +152,29 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
 
       source.connect(analyserRef.current);
 
-      // Function to check for silence
       const checkForSilence = () => {
         analyserRef.current?.getByteTimeDomainData(dataArray);
         const maxAmplitude = Math.max(...dataArray);
 
-        // If the amplitude is low, consider it silence
         if (Math.abs(maxAmplitude - 128) < 5) {
-          // Tolerance around 128 for silence
           if (!silenceTimeoutRef.current) {
             silenceTimeoutRef.current = setTimeout(() => {
-              stopRecording(); // Stop recording if silent for 4 seconds
-            }, 7000); // 4 seconds timeout
+              stopRecording();
+            }, 7000);
           }
         } else {
-          // Clear the silence timeout if there is sound
           if (silenceTimeoutRef.current) {
             clearTimeout(silenceTimeoutRef.current);
             silenceTimeoutRef.current = null;
           }
         }
 
-        // Keep checking for silence while recording
         if (isRecording) {
           requestAnimationFrame(checkForSilence);
         }
       };
 
-      checkForSilence(); // Start checking for silence
+      checkForSilence();
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -207,13 +199,12 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
       mediaRecorderRef.current.stop();
     }
 
-    // Stop the media stream to turn off the microphone
     mediaStream?.getTracks().forEach((track) => {
       if (track.readyState === "live" && track.kind === "audio") {
-        track.stop(); // Stop each audio track
+        track.stop();
       }
     });
-    mediaStream = null; // Clear the media stream reference
+    mediaStream = null;
     // if (mediaStream) {
     //   mediaStream.getTracks().forEach((track) => {
     //     if (track.readyState === "live" && track.kind === "audio") {
@@ -223,19 +214,17 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
     //   mediaStream = null; // Clear the media stream reference
     // }
 
-    // Clear any existing silence detection timeout
     if (silenceTimeoutRef.current) {
       clearTimeout(silenceTimeoutRef.current);
       silenceTimeoutRef.current = null;
     }
 
-    // Stop audio context and reset for future recordings
     if (audioContextRef.current) {
       audioContextRef.current.close();
       audioContextRef.current = null;
     }
 
-    setIsRecording(false); // Ensure the state is updated to not recording
+    setIsRecording(false);
   };
 
   const playTextAsSpeech = (text: string) => {
@@ -243,20 +232,20 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
       const utterance = new SpeechSynthesisUtterance(text);
 
       utterance.onstart = () => {
-        setAudioSteps("response"); // Set audioSteps to "response" when playing starts
+        setAudioSteps("response");
         setIsPlaying(true);
         setIsPaused(false);
       };
 
       utterance.onend = () => {
-        setAudioSteps("speaking"); // Set audioSteps back to "speaking" when playing ends
+        setAudioSteps("speaking");
         setIsPlaying(false);
         setIsPaused(false);
         startRecording();
       };
 
       utterance.onerror = () => {
-        setAudioSteps("speaking"); // Handle errors by resetting to "speaking"
+        setAudioSteps("speaking");
         setIsPlaying(false);
         setIsPaused(false);
       };
@@ -401,7 +390,7 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
               <RxCross2 />
             </div>
           </div>
-          {response && ( // Conditionally render FaRedo based on response state
+          {response && (
             <div>
               <FaRedo
                 className="text-white ml-auto text-xl cursor-pointer"

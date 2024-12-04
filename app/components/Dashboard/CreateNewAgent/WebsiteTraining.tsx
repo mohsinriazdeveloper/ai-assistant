@@ -1,12 +1,12 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
 import axios from "axios";
 import * as cheerio from "cheerio";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
-import Loader from "../../Loader/Loader";
-import { RiDeleteBin7Line } from "react-icons/ri";
 import { AiOutlineCheckCircle } from "react-icons/ai";
-import { useDeleteFileMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { MdOutlineCancel } from "react-icons/md";
+import { RiDeleteBin7Line } from "react-icons/ri";
+import Loader from "../../Loader/Loader";
+import { useDeleteFileMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
 
 interface WebsiteTrainingProps {
   setWebsiteContentLength: Dispatch<SetStateAction<number>>;
@@ -17,7 +17,7 @@ interface WebsiteTrainingProps {
     isValid: boolean;
     isLoading: boolean;
     isScraped: boolean;
-    isScrapingError?: boolean; // Added field for tracking errors per item
+    isScrapingError?: boolean;
   }[];
   setNewLinks: Dispatch<
     SetStateAction<
@@ -41,8 +41,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
 }) => {
   const [delExistingFile] = useDeleteFileMutation();
   const urlRegex = /^https:\/\/[a-zA-Z]/;
-  const [deletingIds, setDeletingIds] = useState<number[]>([]); // State for tracking deleting items
-  const [scrappingError, setScrapingError] = useState<boolean>(false); // Kept for backward compatibility
+  const [deletingIds, setDeletingIds] = useState<number[]>([]);
 
   const handleCreateNewInput = () => {
     setNewLinks((prev) => [
@@ -54,7 +53,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
         isValid: true,
         isLoading: false,
         isScraped: false,
-        isScrapingError: false, // Initialize with no error
+        isScrapingError: false,
       },
     ]);
   };
@@ -70,7 +69,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   };
 
   const handleDeleteLink = async (index: number, id: number) => {
-    setDeletingIds((prev) => [...prev, id]); // Add the current ID to the deleting state
+    setDeletingIds((prev) => [...prev, id]);
 
     const websiteToRemove = newLinks[index];
     try {
@@ -78,7 +77,6 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
       toast.success("URL deleted successfully");
 
       if (websiteToRemove.isScraped) {
-        // If the website is already scraped, subtract its character count from total characters
         setWebsiteContentLength(
           (prevTotal) => prevTotal - websiteToRemove.content.length
         );
@@ -88,7 +86,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
     } catch (error) {
       toast.error("Unable to delete file");
     } finally {
-      setDeletingIds((prev) => prev.filter((deletingId) => deletingId !== id)); // Remove the ID from the deleting state
+      setDeletingIds((prev) => prev.filter((deletingId) => deletingId !== id));
     }
   };
 
@@ -124,13 +122,12 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                 content: website_content,
                 isLoading: false,
                 isScraped: true,
-                isScrapingError: false, // Clear any previous error
+                isScrapingError: false,
               }
             : link
         )
       );
 
-      // Update the total character count
       setWebsiteContentLength((prev) => prev + charCount);
       toast.success("Data scraped successfully");
     } catch (error: any) {

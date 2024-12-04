@@ -1,16 +1,8 @@
-import Image from "next/image";
-import { FC, useEffect, useRef, useState } from "react";
 import dummyImg from "@/app/assets/Images/chatImgPerson.png";
-import { LiaEditSolid } from "react-icons/lia";
-import { GrPowerReset } from "react-icons/gr";
+import { FC, useEffect, useRef, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
-import SmileyFill from "@/app/assets/icons/SmileyFill.png";
-import Smiley from "@/app/assets/icons/Smiley.png";
-import SadFill from "@/app/assets/icons/SadFill.png";
-import Sad from "@/app/assets/icons/Sad.png";
-import { AgentChatType } from "../../ReduxToolKit/types/agents";
 import MarkDown from "../../MarkDown/MarkDown";
-import Loader from "../../Loader/Loader";
+import { AgentChatType } from "../../ReduxToolKit/types/agents";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);

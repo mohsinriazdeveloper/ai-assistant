@@ -1,17 +1,17 @@
 "use client";
 import { FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { IoMdAdd } from "react-icons/io";
+import AgentModel from "../AgentModel/AgentModel";
+import DeleteAgent from "../DeleteAgent/DeleteAgent";
+import DeleteModal from "../Dialogues/DeleteModal";
+import LeftBar from "../LeftBar/LeftBar";
+import Loader from "../Loader/Loader";
 import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import LeftBar from "../LeftBar/LeftBar";
 import { content } from "./content";
-import DeleteModal from "../Dialogues/DeleteModal";
-import DeleteAgent from "../DeleteAgent/DeleteAgent";
-import AgentModel from "../AgentModel/AgentModel";
-import Loader from "../Loader/Loader";
-import { IoMdAdd } from "react-icons/io";
-import toast, { Toaster } from "react-hot-toast";
 
 interface AgentSettings {
   agentId: any;
@@ -58,7 +58,6 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     formData.append("id", agentID);
     formData.append("name", agentName);
 
-    // Only append the image to the formData if a new image has been selected
     if (addImage && typeof addImage !== "string") {
       formData.append("image", addImage);
     }
@@ -79,41 +78,24 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     }
   };
 
-  // const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const selectedFile = event.target.files?.[0];
-  //   const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
-
-  //   // Check if the selected file is in allowed formats
-  //   if (selectedFile && allowedFormats.includes(selectedFile.type)) {
-  //     setAddImage(selectedFile);
-  //     setPreview(URL.createObjectURL(selectedFile));
-  //     setImgError("");
-  //   } else {
-  //     setImgError("Allowed formats are .png, .jpeg, .jpg");
-  //     setAddImage(null);
-  //     setPreview(""); // Clear the preview
-  //   }
-  // };
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     const allowedFormats = ["image/png", "image/jpeg", "image/jpg"];
 
-    // Check if the selected file is in allowed formats
     if (selectedFile && allowedFormats.includes(selectedFile.type)) {
-      setImgLoading(true); // Show the loader
-      setImgError(""); // Clear any previous errors
-      setPreview(""); // Clear previous preview
+      setImgLoading(true);
+      setImgError("");
+      setPreview("");
 
-      // Use setTimeout to simulate loading
       setTimeout(() => {
         setAddImage(selectedFile);
         setPreview(URL.createObjectURL(selectedFile));
-        setImgLoading(false); // Hide the loader
+        setImgLoading(false);
       }, 2000);
     } else {
       setImgError("Allowed formats are .png, .jpeg, .jpg");
       setAddImage(null);
-      setPreview(""); // Clear the preview
+      setPreview("");
     }
   };
 
@@ -152,7 +134,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
                       <label htmlFor="addImage">
                         <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
                           {imgLoading ? (
-                            <Loader /> // Show loader while image is uploading
+                            <Loader />
                           ) : preview ? (
                             <div
                               className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"

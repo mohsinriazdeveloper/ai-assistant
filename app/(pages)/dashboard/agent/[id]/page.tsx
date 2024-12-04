@@ -16,12 +16,12 @@ const Page: FC<PageProps> = ({ params }) => {
 
   useEffect(() => {
     if (!access) {
-      router.push("/"); // Redirect to login if access token is missing
+      router.push("/");
     }
   }, [access, router]);
 
   if (!access) {
-    return null; // Return null or a loading indicator while redirecting
+    return null;
   }
   const { id } = params;
   return <Agent navBarContent={content.navBar} agentId={id} />;

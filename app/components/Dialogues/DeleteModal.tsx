@@ -1,15 +1,15 @@
 "use client";
 
-import React, { FC, useState } from "react";
-import "react-responsive-modal/styles.css";
-import Modal from "react-responsive-modal";
 import CancleIcon from "@/app/assets/icons/CancleIcon";
+import { useRouter } from "next/navigation";
+import { FC, useState } from "react";
+import Modal from "react-responsive-modal";
+import "react-responsive-modal/styles.css";
+import Loader from "../Loader/Loader";
 import {
   useDeleteAgentMutation,
   useGetAllAgentsQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import { useRouter } from "next/navigation";
-import Loader from "../Loader/Loader";
 type DeleteModalProps = {
   agentId: any;
   openDialogue: boolean;
@@ -27,7 +27,6 @@ const DeleteModal: FC<DeleteModalProps> = ({
     (agent) => agent.id.toString() === agentId.toString()
   );
 
-  // const [inputValue, setInputValue] = useState<string>("");
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
   const handleDelete = async () => {
@@ -37,10 +36,8 @@ const DeleteModal: FC<DeleteModalProps> = ({
       setLoading(false);
       handleClose();
       return router.push("/dashboard/agents");
-      // handle successful deletion, e.g., refresh the agent list
     } catch (error) {
       setLoading(false);
-      // handle error
       console.error("unable to delete agent", error);
     }
   };
@@ -88,13 +85,6 @@ const DeleteModal: FC<DeleteModalProps> = ({
               </div>
             </div>
           </div>
-          {/* <input
-            type="text"
-            placeholder="Agent"
-            className="focus:outline-none w-full border border-red-500 px-4 py-3 text-red-500 rounded-md mt-3"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          /> */}
           <div className="flex justify-end mt-5">
             <button
               onClick={handleDelete}

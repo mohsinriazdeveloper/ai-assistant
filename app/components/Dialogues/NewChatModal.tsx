@@ -1,9 +1,9 @@
 "use client";
 
-import React, { Dispatch, FC, SetStateAction } from "react";
-import "react-responsive-modal/styles.css";
-import Modal from "react-responsive-modal";
 import CancleIcon from "@/app/assets/icons/CancleIcon";
+import { Dispatch, FC, SetStateAction } from "react";
+import Modal from "react-responsive-modal";
+import "react-responsive-modal/styles.css";
 
 type NewChatModalProps = {
   openDialogue: boolean;

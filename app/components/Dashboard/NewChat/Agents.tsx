@@ -1,12 +1,11 @@
 "use client";
-import { FC, useEffect } from "react";
 import AiImg from "@/app/assets/Images/aiImg.webp";
 import Link from "next/link";
-import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
+import { FC, useEffect } from "react";
 import Loader from "../../Loader/Loader";
+import { useLazyGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { useAppDispatch } from "../../ReduxToolKit/hook";
 import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
-import { isNewChat } from "../../ReduxToolKit/forChatSlice";
 
 interface AgentsProps {}
 
@@ -26,7 +25,6 @@ const Agents: FC<AgentsProps> = () => {
     dispatch(voiceResponce({ inText: "" }));
   }
   const hanldeChat = () => {
-    // dispatch(isNewChat({ chatId: null, newChat: true }));
     localStorage.setItem("myCustomChatId", "0");
   };
   return (

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import pdfToText from "react-pdftotext";
 
-// eslint-disable-next-line react/prop-types
 const PdfReader = () => {
   const [text, setText] = useState("");
 

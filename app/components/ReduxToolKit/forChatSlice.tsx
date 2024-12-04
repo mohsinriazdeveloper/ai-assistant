@@ -31,7 +31,3 @@ export const forChatState = createSlice({
 export const { isNewChat } = forChatState.actions;
 export default forChatState.reducer;
 export const selectForChat = (state: RootState) => state.root.forChat;
-
-// export const { setChats, deleteChat } = chatSessionState.actions;
-// export default chatSessionState.reducer;
-// export const selectChats = (state: RootState) => state.root.chatSession.chats;

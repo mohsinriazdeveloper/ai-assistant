@@ -1,13 +1,13 @@
 "use client";
-import Image from "next/image";
-import ShowIcon from "@/app/assets/icons/viewPassword.png";
 import HideIcon from "@/app/assets/icons/hidePassword.png";
-import { FC, useState } from "react";
+import ShowIcon from "@/app/assets/icons/viewPassword.png";
+import Image from "next/image";
 import Link from "next/link";
-import { useUserSignUpMutation } from "../ReduxToolKit/aiAssistant";
 import { useRouter } from "next/navigation";
-import Loader from "../Loader/Loader";
+import { FC, useState } from "react";
 import toast from "react-hot-toast";
+import Loader from "../Loader/Loader";
+import { useUserSignUpMutation } from "../ReduxToolKit/aiAssistant";
 
 type SignUpInputs = {
   organization_name: string;
@@ -106,7 +106,6 @@ const SignUp: FC<SignUpProps> = ({}) => {
 
     // Validate Password Strength
     if (strength !== "Strong") {
-      // setPasswordError("Password must be strong");
       setLoading(false);
       return;
     }

@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, useEffect, useCallback, useRef, FC } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FaMicrophone, FaPause, FaPlay, FaRedo, FaStop } from "react-icons/fa";
 import { ClipLoader } from "react-spinners";
-import { FaMicrophone, FaStop, FaRedo, FaPlay, FaPause } from "react-icons/fa";
 import {
   useAgentVoiceMutation,
   useGetAllAgentsQuery,
