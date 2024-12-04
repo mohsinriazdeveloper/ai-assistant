@@ -9,6 +9,8 @@ import {
   useUpdateAgentMutation,
   useUpdateInstructionsMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
+import { selectIsConnect } from "../ReduxToolKit/connectSlice";
+import { useAppSelector } from "../ReduxToolKit/hook";
 import Instructions from "./Instructions";
 
 interface AgentModelProps {
@@ -36,6 +38,8 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   const [instructionContent, setInsturctionContent] = useState<string>("");
   const [instructionId, setInstructionId] = useState<number>();
   const [isActive, setIsActive] = useState<boolean>(true);
+  const { updateConnectStatus } = useAppSelector(selectIsConnect);
+
   const handleUpdate = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
@@ -48,6 +52,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
     formData.append("id", agentId);
     formData.append("temperature", temp.toString());
     formData.append("model", agentModel);
+    formData.append("boc_connected", String(updateConnectStatus));
     try {
       const inst = await updateInstructions({
         //@ts-ignore

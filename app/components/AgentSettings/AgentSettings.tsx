@@ -11,6 +11,8 @@ import {
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
+import { selectIsConnect } from "../ReduxToolKit/connectSlice";
+import { useAppSelector } from "../ReduxToolKit/hook";
 import { content } from "./content";
 
 interface AgentSettings {
@@ -35,6 +37,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
   const [agentNameError, setAgentNameError] = useState<string>("");
+  const { updateConnectStatus } = useAppSelector(selectIsConnect);
 
   useEffect(() => {
     if (agent?.image_url) {
@@ -57,7 +60,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
     const formData = new FormData();
     formData.append("id", agentID);
     formData.append("name", agentName);
-
+    formData.append("boc_connected", String(updateConnectStatus));
     if (addImage && typeof addImage !== "string") {
       formData.append("image", addImage);
     }
