@@ -93,7 +93,9 @@ const ChatAgent: FC<ChatAgentProps> = ({
       setStartNewChat(false);
       setLoading(true);
 
-      if (textInput.trim() === "") return;
+      if (textInput.trim() === "") {
+        return;
+      }
 
       const userMessage: AgentChatType = {
         id: specificChatId || null,
@@ -206,9 +208,9 @@ const ChatAgent: FC<ChatAgentProps> = ({
         </div>
         <button
           type="submit"
-          disabled={textInput === "" || loading}
+          disabled={textInput.trim() === "" || loading}
           className={`flex justify-center items-center bg-white sm:w-12 w-7 sm:h-12 h-7 sm:min-w-12 min-w-7 sm:min-h-12 min-h-7 rounded-full ${
-            textInput === "" || loading
+            textInput.trim() === "" || loading
               ? "cursor-not-allowed"
               : "cursor-pointer"
           }`}
