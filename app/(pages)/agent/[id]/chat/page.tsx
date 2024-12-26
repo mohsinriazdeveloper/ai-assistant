@@ -20,10 +20,10 @@ interface PageProps {
 }
 
 const Page: FC<PageProps> = ({ params }) => {
+  const { id } = params;
   const router = useRouter();
   const { access } = useAppSelector(selectAuth);
 
-  const { id } = params;
   const [checkOption, setCheckOption] = useState<string>("chatagent");
   const [IsVoice, setIsVoice] = useState<boolean>(false);
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);
@@ -90,8 +90,12 @@ const Page: FC<PageProps> = ({ params }) => {
 
   return (
     <Background>
-      <div className="grid grid-cols-12 h-full">
-        <div className={`${isMobile ? "hidden" : "block"} col-span-3`}>
+      <div className="tab:grid grid-cols-12 w-full h-full">
+        <div
+          className={`${
+            isMobile ? "hidden" : "block"
+          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide `}
+        >
           <AgentChatSideBar
             agentId={id}
             checkOption="chatagent"

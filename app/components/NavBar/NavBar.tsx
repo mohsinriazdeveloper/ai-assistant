@@ -50,10 +50,12 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
   return (
     <div
       className={`${
-        currentRoute.includes("/dashboard") ? "w-[80%] ml-auto" : "w-full pl-10"
-      } grid grid-cols-12`}
+        currentRoute.includes("/dashboard")
+          ? "tab:w-[80%] ml-auto"
+          : "w-full pl-10"
+      } grid grid-cols-12 overflow-x-scroll scrollbar-hide`}
     >
-      <div className="col-span-9 flex justify-between items-center">
+      <div className="tab:col-span-9 col-span-12 tab:order-1 order-2 flex justify-between items-center tab:pr-0 pr-2 md:w-full w-[650px]">
         <div className="">
           <div
             id="step-3"
@@ -114,9 +116,10 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
         )}
       </div>
       <div
-        className={`col-span-3 ml-3 font-medium rounded-md text-sm text-[#8A8A8A] md:flex ${
-          !currentRoute.includes("/dashboard") && "justify-center"
-        } items-center hidden lg:gap-2 gap-1 cursor-pointer`}
+        className={`tab:col-span-3 col-span-12 tab:order-2 order-1 font-medium rounded-md text-sm text-[#8A8A8A] flex ml-2 ${
+          !currentRoute.includes("/dashboard") &&
+          "tab:justify-center justify-between tab:mb-0 mb-2 tab:pr-0 pr-2 "
+        } items-center lg:gap-2 gap-1 cursor-pointer`}
       >
         {!currentRoute.includes("/dashboard") && (
           <button

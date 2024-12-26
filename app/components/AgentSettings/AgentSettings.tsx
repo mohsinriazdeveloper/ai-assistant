@@ -7,7 +7,7 @@ import DeleteAgent from "../DeleteAgent/DeleteAgent";
 import DeleteModal from "../Dialogues/DeleteModal";
 import Loader from "../Loader/Loader";
 import {
-  useGetAllAgentsQuery,
+  useGetAgentByIdQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { selectIsConnect } from "../ReduxToolKit/connectSlice";
@@ -24,10 +24,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
   const [preview, setPreview] = useState<string>();
   const [imgError, setImgError] = useState<string>("");
   const [imgLoading, setImgLoading] = useState<boolean>(false);
-  const { data: allAgents } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   //@ts-ignore
   const [agentName, setAgentName] = useState<string>("" || agent?.name);
@@ -180,7 +177,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
                 </div>
               </form>
             </div>
-            {allAgents && (
+            {agent && (
               <div>
                 <DeleteAgent setOpenDialogue={setOpenDialogue} />
               </div>

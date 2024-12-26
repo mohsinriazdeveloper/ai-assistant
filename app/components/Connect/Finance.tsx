@@ -6,7 +6,7 @@ import { MdCheck } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Loader from "../Loader/Loader";
 import {
-  useGetAllAgentsQuery,
+  useGetAgentByIdQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { isConnectSlice } from "../ReduxToolKit/connectSlice";
@@ -17,10 +17,8 @@ interface FinanceProps {
 }
 
 const Finance: FC<FinanceProps> = ({ agentId }) => {
-  const { data: allAgents } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
+
   const [agentID] = useState<any>(agent?.id);
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);

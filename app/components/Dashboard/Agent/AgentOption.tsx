@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import Loader from "../../Loader/Loader";
 import RangeBar from "../../RangeBar/RangeBar";
-import { useGetAllAgentsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
+import { useGetAgentByIdQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 
 interface QaItem {
   question: string;
@@ -20,10 +20,7 @@ interface AgentOptionProps {
 }
 
 const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
-  const { data: allAgents, isLoading } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   const [qaData, setQaData] = useState<QaItem[]>([]);
   const [qaCharacters, setqaCharacters] = useState<number>(0);

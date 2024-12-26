@@ -8,7 +8,7 @@ import "react-responsive-modal/styles.css";
 import Loader from "../Loader/Loader";
 import {
   useDeleteAgentMutation,
-  useGetAllAgentsQuery,
+  useGetAgentByIdQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 type DeleteModalProps = {
   agentId: any;
@@ -22,10 +22,7 @@ const DeleteModal: FC<DeleteModalProps> = ({
   agentId,
 }) => {
   const [deleteAgent] = useDeleteAgentMutation();
-  const { data: allAgents } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);

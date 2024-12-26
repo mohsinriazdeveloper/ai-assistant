@@ -5,7 +5,8 @@ import {
   AgentChatType,
   AgentState,
   Organization,
-} from "./types/agents";
+  StateAgent,
+} from "./types/agents.d";
 // Define your base query function
 const baseQuery = fetchBaseQuery({
   // baseUrl: process.env.NEXT_PUBLIC_API_URL,
@@ -26,9 +27,25 @@ export const userApi = createApi({
   baseQuery,
   tagTypes: ["AllPosts"],
   endpoints: (builder) => ({
-    //get all agents
-    getAllAgents: builder.query<AgentState[], void>({
+    // 1 create agent endpoint
+    createAgent: builder.mutation({
+      query: (credentials) => ({
+        url: "/accounts/agents/create/",
+        method: "POST",
+        body: credentials,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 2 get all agents
+    getAllAgents: builder.query<StateAgent[], void>({
       query: () => `/accounts/agents/`,
+      providesTags: ["AllPosts"],
+    }),
+
+    // 3 get agent by Id
+    getAgentById: builder.query<AgentState, number>({
+      query: (id) => `/accounts/agents/${id}/`,
       providesTags: ["AllPosts"],
     }),
 
@@ -38,15 +55,6 @@ export const userApi = createApi({
       providesTags: ["AllPosts"],
     }),
 
-    // create agent endpoint
-    createAgent: builder.mutation({
-      query: (credentials) => ({
-        url: "/accounts/agents/create/",
-        method: "POST",
-        body: credentials,
-      }),
-      invalidatesTags: ["AllPosts"],
-    }),
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -141,6 +149,7 @@ export const userApi = createApi({
 export const {
   useCreateAgentMutation,
   useLazyGetAllAgentsQuery,
+  useGetAgentByIdQuery,
   useGetAllAgentsQuery,
   useGetOrganizationQuery,
   useDeleteAgentMutation,

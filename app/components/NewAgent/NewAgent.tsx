@@ -37,11 +37,8 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
       return;
     }
     if (agentName) {
-      const formData = new FormData();
-      formData.append("name", agentName);
-
       try {
-        const res = await creatingAgent(formData).unwrap();
+        const res = await creatingAgent({ name: agentName }).unwrap();
         // console.log({ res });
         inputRef.current?.blur();
         toast.success("Agent successfully created");

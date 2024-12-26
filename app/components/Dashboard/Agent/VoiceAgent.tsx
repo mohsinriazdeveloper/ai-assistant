@@ -19,7 +19,7 @@ import { MdOutlinePlayCircle } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import {
   useAgentVoiceMutation,
-  useGetAllAgentsQuery,
+  useGetAgentByIdQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
 import {
@@ -55,7 +55,7 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
   const dispatch = useAppDispatch();
   const inText = useAppSelector(selectVoiceResponse);
   const [agentVoice] = useAgentVoiceMutation();
-  const { data: allAgents } = useGetAllAgentsQuery();
+  const { data: agent } = useGetAgentByIdQuery(agentId);
 
   useEffect(() => {
     startRecording();
@@ -111,7 +111,7 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
         setIsProcessing(false);
       }
     },
-    [allAgents, agentVoice, agentId, dispatch]
+    [agent, agentVoice, agentId, dispatch]
   );
 
   // useEffect(() => {

@@ -9,7 +9,7 @@ import FileTag from "../Dashboard/CreateNewAgent/SourceTags/FileTag";
 import ImageTag from "../Dashboard/CreateNewAgent/SourceTags/ImageTag";
 import WebsiteTraining from "../Dashboard/CreateNewAgent/WebsiteTraining";
 import {
-  useGetAllAgentsQuery,
+  useGetAgentByIdQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { selectIsConnect } from "../ReduxToolKit/connectSlice";
@@ -30,10 +30,8 @@ interface QA {
 const MAX_TOTAL_CHARS = 400000;
 
 const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
-  const { data: allAgents } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
+
   const currentPage = usePathname();
   const [files, setFiles] = useState<File[]>([]);
   // @ts-ignore

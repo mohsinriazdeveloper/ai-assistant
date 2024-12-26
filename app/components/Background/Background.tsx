@@ -11,7 +11,7 @@ const Background: FC<BackgroundProps> = ({ children }) => {
   return (
     <div className="bg-[#101010] h-screen p-5">
       <div
-        className={`w-full h-full rounded-[20px] overflow-auto scrollbar-hide ${
+        className={`w-full h-full rounded-[20px] overflow-y-scroll scrollbar-hide ${
           currentRoute.includes("/dashboard/") && "pb-8 bg-white"
         }`}
       >

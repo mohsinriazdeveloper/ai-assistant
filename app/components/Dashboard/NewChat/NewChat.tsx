@@ -21,7 +21,7 @@ const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
   console.log({ createAgentStatus });
   return (
     <Background>
-      <div className="pt-8">
+      <div className="pt-8 px-5">
         <NavBar
           content={navBarContent}
           // setCreateAgent={setCreateAgent}

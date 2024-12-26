@@ -6,7 +6,7 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { MdContentCopy } from "react-icons/md";
 import Loader from "../Loader/Loader";
 import RangeBar from "../RangeBar/RangeBar";
-import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import { useGetAgentByIdQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import "./style.css";
 
 type TabType = {
@@ -40,10 +40,7 @@ const SideBar: FC<SideBarProps> = ({
   setCheckOption,
   checkOption,
 }) => {
-  const { data: allAgents, isLoading } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   const currentRoute = usePathname();
   const [qaData, setQaData] = useState<QaItem[]>([]);

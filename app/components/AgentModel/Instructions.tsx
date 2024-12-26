@@ -1,7 +1,7 @@
 "use client";
 import DownCarret from "@/app/assets/icons/DownCarret";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import { useGetAgentByIdQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import { InstructionsType } from "../ReduxToolKit/types/agents.d";
 
 interface InstructionsProps {
@@ -20,10 +20,7 @@ const Instructions: FC<InstructionsProps> = ({
   setInstructionId,
   setIsActive,
 }) => {
-  const { data: allAgents } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   const [instructionArr, setInstructionArr] = useState<InstructionsType[]>([]);
   const [openOptions, setOpenOptions] = useState<boolean>(false);

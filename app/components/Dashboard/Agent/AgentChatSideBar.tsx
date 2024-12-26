@@ -8,8 +8,8 @@ import NewChatModal from "../../Dialogues/NewChatModal";
 import Loader from "../../Loader/Loader";
 import RangeBar from "../../RangeBar/RangeBar";
 import {
+  useGetAgentByIdQuery,
   useGetAgentChatQuery,
-  useGetAllAgentsQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { selectChats, setChats } from "../../ReduxToolKit/chatSessionSlice";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
@@ -45,10 +45,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   focusInputById,
 }) => {
   const { data: AllChats } = useGetAgentChatQuery(agentId);
-  const { data: allAgents, isLoading } = useGetAllAgentsQuery();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
   const dispatch = useAppDispatch();
   const chatSessions = useAppSelector(selectChats);
   const [qaData, setQaData] = useState<QaItem[]>([]);
@@ -155,7 +152,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   );
 
   return (
-    <div className=" text-white pr-5 h-full flex flex-col justify-between relative z-50">
+    <div className="text-white pr-5 h-[95vh] flex flex-col justify-between relative z-50">
       <div>
         <HiOutlineDotsHorizontal
           className="text-2xl mb-6 ml-auto cursor-pointer"

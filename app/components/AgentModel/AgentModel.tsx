@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 import Loader from "../Loader/Loader";
 import RangeBar from "../RangeBar/RangeBar";
 import {
-  useGetAllAgentsQuery,
+  useGetAgentByIdQuery,
   useUpdateAgentMutation,
   useUpdateInstructionsMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
@@ -22,13 +22,11 @@ export type InstPayload = {
 };
 
 const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
-  const { data: allAgents } = useGetAllAgentsQuery();
+  const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   const [updateInstructions] = useUpdateInstructionsMutation();
   const [updating] = useUpdateAgentMutation();
-  const agent = allAgents?.find(
-    (agent) => agent.id.toString() === agentId.toString()
-  );
+
   //@ts-ignore
   const [temp, setTemp] = useState<any>(agent?.temperature || 0);
   const [tempBoolean] = useState<boolean>(true);

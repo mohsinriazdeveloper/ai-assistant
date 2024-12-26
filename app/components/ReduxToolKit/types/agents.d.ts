@@ -19,9 +19,14 @@ export type InstructionsType = {
   is_active: boolean;
 };
 
+export interface StateAgent {
+  id: number;
+  name: string;
+  image_url: null | string;
+}
+
 export interface AgentState {
   id: number;
-  image_url: string;
   organization?: Organization | null;
   instructions?: InstructionsType[];
   file_urls?: FileUrl[];
@@ -33,10 +38,13 @@ export interface AgentState {
   model?: string;
   visibility?: string;
   temperature?: number;
+  image_url: string;
+  boc_connected?: boolean;
   created_at?: string;
   updated_at?: string;
-  boc_connected?: boolean;
   customuser?: number;
+
+  // need to remove this one but later⬇️
   instructions?: string;
 }
 export const agentState: AgentState = {

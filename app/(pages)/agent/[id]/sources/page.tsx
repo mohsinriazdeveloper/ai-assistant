@@ -33,50 +33,58 @@ const Page: FC<PageProps> = ({ params }) => {
   if (!access) {
     return null;
   }
+
   const handleTourEnd = () => {
     setStartTour(false);
   };
   return (
     <Background>
-      <TourGuide
-        start={startTour}
-        setStartTour={setStartTour}
-        onTourEnd={handleTourEnd}
-      />
-      <div className="grid grid-cols-12 h-full">
-        <div className={`${isMobile ? "hidden" : "block"} col-span-3 step-1`}>
-          <SideBar
-            agentId={id}
-            setIsMobile={setIsMobile}
-            tab={sideBarOptions.sourcesTabs}
-            setCheckOption={setCheckOption}
-            checkOption={checkOption}
-          />
-        </div>
-        <div
-          className={`${
-            isMobile ? "col-span-12" : "col-span-9"
-          } rounded-[20px] bg-white h-full`}
-        >
-          <div className="flex items-center pt-5 step-2">
-            {isMobile && (
-              <HiOutlineDotsHorizontal
-                className={`text-2xl cursor-pointer ml-3`}
-                onClick={() => setIsMobile(false)}
-              />
-            )}
-            <NavBar content={navContent.navBar} />
+      <div className="h-full overflow-hidden overflow-y-scroll bg-white rounded-[20px]">
+        <TourGuide
+          start={startTour}
+          setStartTour={setStartTour}
+          onTourEnd={handleTourEnd}
+        />
+        <div className="tab:grid grid-cols-12 w-full h-full">
+          <div
+            className={`${
+              isMobile ? "hidden" : "block"
+            } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide `}
+          >
+            <SideBar
+              agentId={id}
+              setIsMobile={setIsMobile}
+              tab={sideBarOptions.sourcesTabs}
+              setCheckOption={setCheckOption}
+              checkOption={checkOption}
+            />
           </div>
-
-          <div className="my-5 px-10 h-[78vh] overflow-y-scroll scrollbar-hide">
-            <UpdateTraining agentId={id} checkOption={checkOption} />
+          <div
+            className={`${
+              isMobile ? "col-span-12" : "col-span-9"
+            } rounded-[20px] bg-white h-full`}
+          >
+            <div className="flex items-center pt-5 step-2">
+              {isMobile && (
+                <HiOutlineDotsHorizontal
+                  className={`text-2xl cursor-pointer ml-3`}
+                  onClick={() => setIsMobile(false)}
+                />
+              )}
+              <NavBar content={navContent.navBar} />
+            </div>
+            <div className="">
+              <div className="my-5 px-10">
+                <UpdateTraining agentId={id} checkOption={checkOption} />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      {/* <TrainingStepsModal
+        {/* <TrainingStepsModal
         openDialogue={openDialogue}
         handleClose={() => setOpenDialogue(false)}
       /> */}
+      </div>
     </Background>
   );
 };

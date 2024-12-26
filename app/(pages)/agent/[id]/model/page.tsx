@@ -33,8 +33,12 @@ const Page: FC<PageProps> = ({ params }) => {
   }
   return (
     <Background>
-      <div className="grid grid-cols-12 h-full">
-        <div className={`${isMobile ? "hidden" : "block"} col-span-3 step-1`}>
+      <div className="tab:grid grid-cols-12 w-full h-full">
+        <div
+          className={`${
+            isMobile ? "hidden" : "block"
+          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide`}
+        >
           <SideBar
             agentId={id}
             setIsMobile={setIsMobile}
