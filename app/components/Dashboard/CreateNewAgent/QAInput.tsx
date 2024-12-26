@@ -1,4 +1,3 @@
-import PlusIcon from "@/app/assets/icons/plus.png";
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
 import {
@@ -10,6 +9,7 @@ import {
   useMemo,
 } from "react";
 import toast from "react-hot-toast";
+import { FaPlus } from "react-icons/fa";
 
 interface QAInputProps {
   qaList: { question: string; answer: string }[];
@@ -120,20 +120,23 @@ const QAInput: FC<QAInputProps> = ({
 
   return (
     <div className="w-full">
-      <div className="flex justify-end items-center gap-4">
-        {qaList.length > 0 && (
-          <p
-            className="text-sm text-red-500 font-medium cursor-pointer"
-            onClick={handleDeleteAll}
+      <div className="flex justify-between items-center">
+        <p className="font-bold text-2xl">Q&A</p>
+        <div className="flex justify-end items-center gap-4">
+          {qaList.length > 0 && (
+            <p
+              className="text-sm text-red-500 font-medium cursor-pointer"
+              onClick={handleDeleteAll}
+            >
+              Delete All
+            </p>
+          )}
+          <div
+            className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+            onClick={handleAddQA}
           >
-            Delete All
-          </p>
-        )}
-        <div
-          className="w-9 h-9 bg-gray-200 rounded-lg flex justify-center items-center cursor-pointer"
-          onClick={handleAddQA}
-        >
-          <Image src={PlusIcon} alt="Add" className="w-3" />
+            <FaPlus />
+          </div>
         </div>
       </div>
       {qaItems}

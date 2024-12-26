@@ -7,9 +7,16 @@ import { usePathname, useRouter } from "next/navigation";
 import { FC, useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import pdfToText from "react-pdftotext";
+import { useDispatch } from "react-redux";
 import LeftBar from "../../LeftBar/LeftBar";
 import PreviousPage from "../../PreviousPage/PreviousPage";
+import {
+  selectAgentName,
+  setAgentName,
+} from "../../ReduxToolKit/agentNameSlice";
 import { useCreateAgentMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
+import { setCreateAgent } from "../../ReduxToolKit/createAgentSlice";
+import { useAppSelector } from "../../ReduxToolKit/hook";
 import RightBar from "../../RightBar/RightBar";
 import { content } from "./content";
 import FileInput from "./FileInput";
@@ -33,6 +40,8 @@ interface QA {
 const MAX_TOTAL_CHARS = 400000;
 
 const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
+  const { agentName } = useAppSelector(selectAgentName);
+  const dispatch = useDispatch();
   const [newLinks, setNewLinks] = useState<
     {
       id: number;
@@ -48,7 +57,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [checkOption, setCheckOption] = useState<string>("file");
   const [fileCount, setFileCount] = useState<number>(files.length);
   const [text, setText] = useState<string>("");
-  const [agentName, setAgentName] = useState<string>("");
+  // const [agentName, setAgentName] = useState<string>("");
   const [qaList, setQAList] = useState<QA[]>([]);
   const [creatingAgent] = useCreateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
@@ -65,6 +74,10 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
   const [totalCharCount, settotalCharCount] = useState<number>(0);
   const [cantAddMore, setCantAddMore] = useState<boolean>(false);
   const [websiteContentLength, setWebsiteContentLength] = useState<number>(0);
+
+  useEffect(() => {
+    dispatch(setCreateAgent({ createAgentStatus: false }));
+  }, [dispatch]);
 
   useEffect(() => {
     const newTotalCharCount =
@@ -107,8 +120,14 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
       formData.append(`qa`, JSON.stringify(qaList));
       try {
         const res = await creatingAgent(formData).unwrap();
+        dispatch(
+          setAgentName({
+            agentName: "",
+          })
+        );
         setLoading(false);
         toast.success("Agent successfully created");
+
         router.push("/dashboard/agents");
       } catch (error: any) {
         setLoading(false);
@@ -200,15 +219,15 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
     }
   };
 
-  const handleAgentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    if (newName.length <= 100) {
-      setAgentName(newName);
-      setAgentNameError("");
-    } else {
-      setAgentNameError("Name cannot exceed 100 characters.");
-    }
-  };
+  // const handleAgentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newName = e.target.value;
+  //   if (newName.length <= 100) {
+  //     setAgentName(newName);
+  //     setAgentNameError("");
+  //   } else {
+  //     setAgentNameError("Name cannot exceed 100 characters.");
+  //   }
+  // };
 
   const handleOpenFile = (url: string) => {
     window.open(url, "_blank");
@@ -234,7 +253,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
         </div>
         <div className="grid grid-cols-12 gap-8">
           <div className="md:col-span-2 col-span-12">
-            <div className="mb-2">
+            {/* <div className="mb-2">
               <p className="text-sm font-semibold mb-1">
                 Agent Name <span className="text-red-500">*</span>
               </p>
@@ -248,7 +267,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
               {agentNameError && (
                 <p className="text-xs text-red-500 italic ">{agentNameError}</p>
               )}
-            </div>
+            </div> */}
             <LeftBar
               content={content.sideBarOptions}
               setCheckOption={setCheckOption}
@@ -268,7 +287,7 @@ const CreateNewAgent: FC<CreateNewAgentProps> = ({ agentId }) => {
                         setFiles={setFiles}
                         setCharCount={setfileCharCount}
                         setFileCount={setFileCount}
-                        handleDeleteFile={handleDeleteFile}
+                        // handleDeleteFile={handleDeleteFile}
                         cantAddMore={cantAddMore}
                       />
                     </div>

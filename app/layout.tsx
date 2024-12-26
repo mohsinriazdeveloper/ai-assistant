@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-// import { Inter } from "next/font/google";
-import "./globals.css";
-import Providers from "./components/ReduxToolKit/providers";
+import { Noto_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import Providers from "./components/ReduxToolKit/providers";
+import "./globals.css";
 
-// const inter = Inter({ subsets: ["latin"] });
+// Initialize the Noto Sans font
+const notoSans = Noto_Sans({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], // Include desired font weights
+  style: ["normal", "italic"], // Include styles if needed
+  display: "swap", // Use font-display: swap for better loading
+});
 
 export const metadata: Metadata = {
   title: "AI Assistant",
@@ -17,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={notoSans.className}>
       {/* <body className={inter.className}> */}
       <body>
         <Toaster position="top-right" reverseOrder={false} />

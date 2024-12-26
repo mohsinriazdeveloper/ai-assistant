@@ -2,11 +2,11 @@ export const content = {
   navBar: [
     {
       title: "My AI Agent",
-      url: "aiAgent",
+      url: "/dashboard/agents",
     },
     {
       title: "Settings",
-      url: "newChatSettings",
+      url: "/dashboard/settings",
     },
   ],
 };

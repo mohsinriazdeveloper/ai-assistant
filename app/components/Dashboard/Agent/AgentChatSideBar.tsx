@@ -6,7 +6,6 @@ import { IoSearch } from "react-icons/io5";
 import { MdContentCopy } from "react-icons/md";
 import NewChatModal from "../../Dialogues/NewChatModal";
 import Loader from "../../Loader/Loader";
-import PreviousPage from "../../PreviousPage/PreviousPage";
 import RangeBar from "../../RangeBar/RangeBar";
 import {
   useGetAgentChatQuery,
@@ -125,8 +124,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     );
   }
 
-  //@ts-ignore
-  const totalChar = qaCharacters + agent.text?.length + fileChar;
+  const totalChar = qaCharacters + (agent.text?.length ?? 0) + fileChar;
 
   //@ts-ignore
   const formattedDate = new Date(agent.updated_at).toLocaleDateString("en-US", {
@@ -157,15 +155,12 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   );
 
   return (
-    <div className="pt-6 pb-4 text-white px-5 h-screen flex flex-col justify-between relative z-50">
+    <div className=" text-white pr-5 h-full flex flex-col justify-between relative z-50">
       <div>
-        <div className="mb-6 flex justify-between">
-          <PreviousPage arrowColor="white" />
-          <HiOutlineDotsHorizontal
-            className="text-2xl md:hidden block"
-            onClick={() => setIsMobile(false)}
-          />
-        </div>
+        <HiOutlineDotsHorizontal
+          className="text-2xl mb-6 ml-auto cursor-pointer"
+          onClick={() => setIsMobile(true)}
+        />
         <div className="flex flex-col gap-[10px] mb-9">
           <div
             onClick={() => setNewChatModal(true)}

@@ -2,8 +2,8 @@ import BankOfCanadaImg from "@/app/assets/Images/bankOfCanada.png";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { BsThreeDotsVertical } from "react-icons/bs";
 import { MdCheck } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import Loader from "../Loader/Loader";
 import {
   useGetAllAgentsQuery,
@@ -72,45 +72,57 @@ const Finance: FC<FinanceProps> = ({ agentId }) => {
   };
 
   return (
-    <div className="md:col-span-10 col-span-12 grid md:grid-cols-4 sm:grid-cols-2 grid-cols-1 gap-4">
-      <div className="col-span-1 p-6 border border-gray-200 rounded-lg">
-        <Image src={BankOfCanadaImg} alt="" className="w-20 mb-5" />
-        <p className="font-bold text-xl mb-2">Bank Of Canada (FX)</p>
-        <p className="text-sm">
-          {isConnected
-            ? "You are connected to bank of Canada FX for real-time data on foreign exchange rates"
-            : "Connect to bank of Canada FX to get real-time data on foreign exchange rates"}
-        </p>
-        <div className="flex items-center gap-3 mt-8">
-          <div
-            onClick={handleConnectBOC}
-            className={`cursor-pointer w-full border border-black rounded-full py-1 text-lg hover:bg-black hover:text-white duration-300 transition-colors ${
-              isConnected && "bg-black text-white"
-            }`}
-          >
-            {loading ? (
-              <Loader height="7" />
-            ) : (
-              <>
-                {isConnected ? (
-                  <div className="grid grid-cols-12 items-center px-3">
-                    <div className="col-span-3">
-                      <MdCheck className="text-[#418a46] text-2xl" />
+    <div className="w-full pt-10">
+      <p className="text-2xl font-black">Connetions</p>
+      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mt-10">
+        <div className="col-span-1 p-6 border-2 border-gray-200 rounded-lg">
+          <Image src={BankOfCanadaImg} alt="" className="w-20 mb-5" />
+          <p className="font-black text-lg mb-2">Bank Of Canada (FX)</p>
+          <p className="text-sm font-light">
+            {/* {isConnected
+              ? "You are connected to bank of Canada FX for real-time data on foreign exchange rates"
+              : "Connect to bank of Canada FX to get real-time data on foreign exchange rates"} */}
+            Connect to bank of Canada FX to get real-time data on foreign
+            exchange rates
+          </p>
+          <div className="flex items-center gap-1 mt-8">
+            <div
+              onClick={handleConnectBOC}
+              className={`cursor-pointer w-full border border-black rounded-md py-1 text-lg hover:bg-black hover:text-white duration-300 transition-colors ${
+                isConnected && "bg-black text-white"
+              }`}
+            >
+              {loading ? (
+                <Loader height="7" />
+              ) : (
+                <>
+                  {isConnected ? (
+                    <div className="grid grid-cols-12 items-center px-3">
+                      <div className="col-span-3">
+                        <div className="text-white text-sm p-1 w-fit rounded-full bg-[#08AD36]">
+                          <MdCheck />
+                        </div>
+                      </div>
+                      <p className="col-span-9">Connected</p>
                     </div>
-                    <p className="col-span-9">Connected</p>
-                  </div>
-                ) : (
-                  <p className="text-center">Connect</p>
-                )}
-              </>
+                  ) : (
+                    <p className="text-center">Connect</p>
+                  )}
+                </>
+              )}
+            </div>
+            {isConnected && (
+              <div className="flex items-center gap-1">
+                <button className="py-[10px] px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max">
+                  Raw data
+                </button>
+                <RiDeleteBin6Line
+                  className="text-base cursor-pointer"
+                  onClick={handleConnectBOC}
+                />
+              </div>
             )}
           </div>
-          {isConnected && (
-            <BsThreeDotsVertical
-              className="text-2xl cursor-pointer"
-              onClick={handleConnectBOC}
-            />
-          )}
         </div>
       </div>
     </div>

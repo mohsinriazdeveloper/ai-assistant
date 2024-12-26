@@ -1,18 +1,14 @@
 "use client";
-import DeleteIcon from "@/app/assets/icons/recyclebin.png";
-import mammoth from "mammoth";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { FC, useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import pdfToText from "react-pdftotext";
 import FileInput from "../Dashboard/CreateNewAgent/FileInput";
 import ImageTraining from "../Dashboard/CreateNewAgent/ImageTraining";
 import QAInput from "../Dashboard/CreateNewAgent/QAInput";
+import FileTag from "../Dashboard/CreateNewAgent/SourceTags/FileTag";
+import ImageTag from "../Dashboard/CreateNewAgent/SourceTags/ImageTag";
 import WebsiteTraining from "../Dashboard/CreateNewAgent/WebsiteTraining";
-import LeftBar from "../LeftBar/LeftBar";
 import {
-  useDeleteFileMutation,
   useGetAllAgentsQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
@@ -20,10 +16,10 @@ import { selectIsConnect } from "../ReduxToolKit/connectSlice";
 import { useAppSelector } from "../ReduxToolKit/hook";
 import { FileUrl } from "../ReduxToolKit/types/agents.d";
 import RightBar from "../RightBar/RightBar";
-import { content } from "./content";
 
 interface UpdateTrainingProps {
   agentId: number;
+  checkOption: string;
 }
 
 interface QA {
@@ -33,13 +29,12 @@ interface QA {
 
 const MAX_TOTAL_CHARS = 400000;
 
-const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
+const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const { data: allAgents } = useGetAllAgentsQuery();
   const agent = allAgents?.find(
     (agent) => agent.id.toString() === agentId.toString()
   );
   const currentPage = usePathname();
-  const [delExistingFile] = useDeleteFileMutation();
   const [files, setFiles] = useState<File[]>([]);
   // @ts-ignore
   const [existingFiles, setExistingFiles] = useState<FileUrl[]>(
@@ -49,20 +44,23 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
     (file) => !/\.(png|PNG|jpg|JPG|JPEG|jpeg)$/i.test(file.file_name)
   );
 
-  const [checkOption, setCheckOption] = useState<string>("file");
+  const [existingImgs, setExistingImgs] = useState(
+    agent?.file_urls?.filter((file) =>
+      /\.(png|PNG|jpg|JPG|JPEG|jpeg)$/i.test(file.file_name)
+    ) || []
+  );
+
   const [filecharCount, setfileCharCount] = useState<number>(0);
   const [fileCount, setFileCount] = useState<number>(files.length);
   const [qaChar, setQaChar] = useState<number>(0);
   const [text, setText] = useState<string | undefined>(agent?.text || "");
   const textChar = text?.length || 0;
-  const [agentName, setAgentName] = useState<string>(agent?.name || "");
   const [agentID] = useState<any>(agent?.id || "");
-  // @ts-ignore
-  const [qaList, setQAList] = useState<QA[]>(JSON.parse(agent?.qa) || []);
+  const [qaList, setQAList] = useState<QA[]>(
+    agent?.qa ? JSON.parse(agent.qa) : []
+  );
   const [updateAgent] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
-  const router = useRouter();
-  const [agentNameError, setAgentNameError] = useState<string>("");
   const [totalImages, setTotalImage] = useState<number>(0);
   const [imagesFile, setImagesFile] = useState<File[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]);
@@ -160,331 +158,225 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId }) => {
   }, [text, qaChar, filecharCount, totalFileLength, newLinks]);
 
   const handleUpdateAgent = async () => {
-    if (agentName) {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("name", agentName);
-      formData.append("id", agentID);
-      formData.append("boc_connected", String(updateConnectStatus));
-      newLinks.forEach((link, index) => {
-        if (!link?.isExisting) {
-          formData.append(`website_data[${index}][website_url]`, link.url);
-          formData.append(
-            `website_data[${index}][website_content]`,
-            link.content
-          );
-        }
-      });
-      files.forEach((file) => {
-        formData.append("files", file);
-      });
-      if (text) {
-        formData.append("text", text);
-      } else {
-        formData.append("text", "temp");
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("id", agentID);
+    formData.append("boc_connected", String(updateConnectStatus));
+    newLinks.forEach((link, index) => {
+      if (!link?.isExisting) {
+        formData.append(`website_data[${index}][website_url]`, link.url);
+        formData.append(
+          `website_data[${index}][website_content]`,
+          link.content
+        );
       }
-
-      formData.append("qa", JSON.stringify(qaList));
-
-      imagesFile.forEach((image) => {
-        formData.append("images", image);
-      });
-
-      try {
-        await updateAgent(formData).unwrap();
-        setLoading(false);
-        toast.success("Agent successfully updated");
-        setFiles([]);
-      } catch (error: any) {
-        setLoading(false);
-        if (error.status === 400) {
-          toast.error(error.data[0]);
-          return;
-        }
-        console.error("Failed to update agent: ", error);
-        toast.error(error.data?.message || "Failed to update agent");
-      }
+    });
+    files.forEach((file) => {
+      formData.append("files", file);
+    });
+    if (text) {
+      formData.append("text", text);
     } else {
-      setAgentNameError("Agent Name is required");
+      formData.append("text", "temp");
     }
-  };
 
-  const handleDeleteFile = useCallback(
-    (index: number, isExisting: boolean = false) => {
-      if (isExisting) {
-        const fileToRemove = existingFiles[index];
-        delExistingFile(fileToRemove.id)
-          .then(() => {
-            setExistingFiles((prevFiles) =>
-              prevFiles.filter((_, i) => i !== index)
-            );
-            toast.success("File successfully deleted.");
-          })
-          .catch((error) => {
-            console.error("Failed to delete file ", error);
-            toast.error("Failed to delete file");
-          });
-      } else {
-        const fileToRemove = files[index];
-        const updateStateAfterDeletion = (filecharCountToRemove: number) => {
-          setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-          setfileCharCount(
-            (prevfileCharCount) => prevfileCharCount - filecharCountToRemove
-          );
-          setFileCount((prevCount) => prevCount - 1);
-          toast.success("File successfully deleted.");
-        };
+    formData.append("qa", JSON.stringify(qaList));
 
-        if (fileToRemove.type === "application/pdf") {
-          pdfToText(fileToRemove)
-            .then((text) => {
-              updateStateAfterDeletion(text.length);
-            })
-            .catch((error) =>
-              console.error("Failed to extract text from PDF", error)
-            );
-        } else if (fileToRemove.type === "text/plain") {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const content = e.target?.result as string;
-            updateStateAfterDeletion(content.length);
-          };
-          reader.readAsText(fileToRemove);
-        } else if (
-          fileToRemove.type === "application/msword" ||
-          fileToRemove.type ===
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const arrayBuffer = e.target?.result as ArrayBuffer;
-            mammoth
-              .extractRawText({ arrayBuffer })
-              .then((result) => {
-                updateStateAfterDeletion(result.value.length);
-              })
-              .catch((error) =>
-                console.error(
-                  "Failed to extract text from Word document",
-                  error
-                )
-              );
-          };
-          reader.readAsArrayBuffer(fileToRemove);
-        } else {
-          updateStateAfterDeletion(0);
-        }
+    imagesFile.forEach((image) => {
+      formData.append("images", image);
+    });
+
+    try {
+      await updateAgent(formData).unwrap();
+      setLoading(false);
+      toast.success("Agent successfully updated");
+      setFiles([]);
+    } catch (error: any) {
+      setLoading(false);
+      if (error.status === 400) {
+        toast.error(error.data[0]);
+        return;
       }
-    },
-    [existingFiles, files, delExistingFile]
-  );
-
-  const handleAgentNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newName = e.target.value;
-    if (newName.length <= 100) {
-      setAgentName(newName);
-      setAgentNameError("");
-    } else {
-      setAgentNameError("Name cannot exceed 100 characters.");
+      console.error("Failed to update agent: ", error);
+      toast.error(error.data?.message || "Failed to update agent");
     }
-  };
-
-  const handleOpenFile = (url: string | undefined) => {
-    window.open(url, "_blank");
   };
   return (
-    <div>
-      <div className="md:container md:mx-auto mx-5">
-        <div className="mb-10">
-          <p className="text-center font-bold text-3xl mb-2">
-            Update Data Sources
-          </p>
-          <p className="text-gray-300 text-center">
-            Update your data sources to retrain your chatbot
-          </p>
-        </div>
-        <div className="grid grid-cols-12 gap-8">
-          <div className="md:col-span-2 col-span-12">
-            <div className="mb-2">
-              <p className="text-sm font-semibold mb-1">
-                Agent Name <span className="text-red-500">*</span>
-              </p>
-              <input
-                placeholder="Add your agent name"
-                type="text"
-                className="w-full focus:outline-none border rounded text-sm py-2 px-3"
-                value={agentName}
-                onChange={handleAgentNameChange}
-              />
-              {agentNameError && (
-                <p className="text-xs text-red-500 italic">{agentNameError}</p>
-              )}
-            </div>
-            <LeftBar
-              content={content.sideBarOptions}
-              setCheckOption={setCheckOption}
-              checkOption={checkOption}
-            />
-          </div>
-          <div className="md:col-span-7 col-span-12">
-            <div className="w-full border border-gray-200 py-7 px-6 rounded-lg">
-              {checkOption === "file" && (
-                <>
-                  <div className="mb-10">
-                    <p className="font-semibold text-2xl ">Files</p>
-                    <div className="w-full mt-7 mb-2">
-                      <FileInput
-                        files={files}
-                        setFiles={setFiles}
-                        setCharCount={setfileCharCount}
-                        setFileCount={setFileCount}
-                        handleDeleteFile={handleDeleteFile}
-                        setFileUrls={setFileUrls}
-                        cantAddMore={cantAddMore}
-                      />
-                    </div>
-                    <p className="text-sm text-gray-500 text-center">
-                      If you are uploading a PDF, make sure you can
-                      select/highlight the text.
-                    </p>
-                  </div>
-                  {files.length > 0 && (
-                    <div>
-                      <div className="flex justify-center items-center gap-2">
-                        <div className="border-b w-[40%]"></div>
-                        <div>
-                          <p className="text-gray-300">Attached Files</p>
-                        </div>
-                        <div className="border-b w-[40%]"></div>
-                      </div>
-                      {files.map((file, index) => (
-                        <div
-                          key={index}
-                          className="mt-5 grid grid-cols-12 items-center"
-                        >
-                          <p
-                            className="col-span-10 cursor-pointer text-blue-500"
-                            onClick={() => handleOpenFile(fileUrls[index])}
-                          >
-                            {file.name.length > 30 ? (
-                              <>{file.name.slice(0, 30) + " ..."}</>
-                            ) : (
-                              <>{file.name}</>
-                            )}
-                          </p>
-                          <div className="col-span-2 flex justify-end">
-                            <Image
-                              src={DeleteIcon}
-                              alt="Delete"
-                              className="w-5 cursor-pointer"
-                              onClick={() => handleDeleteFile(index)}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {nonImageFiles.length > 0 && (
-                    <div>
-                      <div className="flex justify-center items-center gap-2">
-                        <div className="border-b w-[40%]"></div>
-                        <div>
-                          <p className="text-gray-300">Existing Files</p>
-                        </div>
-                        <div className="border-b w-[40%]"></div>
-                      </div>
-                      {nonImageFiles.map((item, index) => (
-                        <div
-                          key={index}
-                          className="mt-5 grid grid-cols-12 items-center"
-                        >
-                          <p
-                            className="col-span-10 cursor-pointer text-blue-500"
-                            onClick={() => handleOpenFile(item.file_url)}
-                          >
-                            {item.file_name?.slice(0, 20) + " ..."}
-                          </p>
-                          <div className="col-span-2 flex justify-end">
-                            {}
-                            <Image
-                              src={DeleteIcon}
-                              alt="Delete"
-                              className="w-5 cursor-pointer"
-                              onClick={() => handleDeleteFile(index, true)}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-              {checkOption === "text" && (
-                <div className="">
-                  <p className="font-semibold text-2xl ">Text</p>
-                  <div className="w-full mt-7 mb-2">
-                    <textarea
-                      className="focus:outline-none border border-gray-200 rounded w-full text-sm text-gray-700 px-3 py-2"
-                      rows={20}
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
+    <div className="mt-10">
+      <div className="grid grid-cols-12 gap-4">
+        <div className="md:col-span-9 col-span-12">
+          {checkOption === "files" && (
+            <>
+              <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-5">
+                <div className="mb-10">
+                  <div className="w-full mb-2">
+                    <FileInput
+                      files={files}
+                      setFiles={setFiles}
+                      setCharCount={setfileCharCount}
+                      setFileCount={setFileCount}
+                      setFileUrls={setFileUrls}
+                      cantAddMore={cantAddMore}
                     />
                   </div>
-                  <p className="text-center text-sm text-gray-500">
-                    {textChar} Characters
+                  <p className="text-xs text-gray-500 text-center">
+                    If you are uploading a PDF, make sure you can
+                    select/highlight the text.
                   </p>
                 </div>
+              </div>
+              {files.length > 0 && (
+                <>
+                  {files.map((file, index) => (
+                    <div key={index}>
+                      <FileTag
+                        fileName={file.name}
+                        fileUrl={fileUrls[index]}
+                        existingFiles={existingFiles}
+                        setExistingFiles={setExistingFiles}
+                        files={files}
+                        setFiles={setFiles}
+                        setfileCharCount={setfileCharCount}
+                        setFileCount={setFileCount}
+                        isNew={true}
+                        index={index}
+                      />
+                    </div>
+                  ))}
+                </>
               )}
-              {checkOption === "qa" && (
-                <div>
-                  <p className="font-semibold text-2xl">Q&A</p>
-                  <QAInput
-                    setQaChar={setQaChar}
-                    qaList={qaList}
-                    setQAList={setQAList}
-                    cantAddMore={cantAddMore}
-                  />
-                </div>
+              {nonImageFiles.length > 0 && (
+                <>
+                  {nonImageFiles.map((item, index) => (
+                    <div key={index}>
+                      <FileTag
+                        fileName={item.file_name}
+                        fileUrl={item.file_url}
+                        existingFiles={existingFiles}
+                        setExistingFiles={setExistingFiles}
+                        files={files}
+                        setFiles={setFiles}
+                        setfileCharCount={setfileCharCount}
+                        setFileCount={setFileCount}
+                        isNew={false}
+                        index={index}
+                      />
+                    </div>
+                  ))}
+                </>
               )}
-              {checkOption === "image-train" && (
-                <div className="">
-                  <p className="font-semibold text-2xl ">Train With Image</p>
-                  <ImageTraining
-                    agentId={agentId}
-                    setTotalImage={setTotalImage}
-                    agent={agent}
-                    setImagesFile={setImagesFile}
-                    imageFiles={imagesFile}
-                  />
-                </div>
-              )}
-              {checkOption === "website" && (
-                <WebsiteTraining
-                  setNewLinks={setNewLinks}
-                  setWebsiteContentLength={setWebsiteContentLength}
-                  newLinks={newLinks}
+            </>
+          )}
+          {checkOption === "text" && (
+            <div className="">
+              <p className="font-bold text-2xl ">Text</p>
+              <div className="w-full mt-5 mb-2">
+                <textarea
+                  className="focus:outline-none border border-gray-200 rounded-md w-full text-sm text-gray-700 px-3 py-2"
+                  rows={18}
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
                 />
-              )}
+              </div>
+              <p className="text-center text-sm text-gray-500">
+                {textChar} Characters
+              </p>
             </div>
-          </div>
-          <div className="md:col-span-3 col-span-12">
-            <RightBar
-              currentPage={currentPage}
-              loading={loading}
-              qaChar={qaChar}
-              agentCreateFunc={handleUpdateAgent}
-              charCount={filecharCount}
-              fileCount={fileCount}
-              existingFiles={existingFiles}
-              textChar={textChar}
-              checkOption={checkOption}
-              totalImages={totalImages}
-              totalCharCount={totalCharCount}
-              cantAddMore={cantAddMore}
-              totalFileLength={totalFileLength}
-              websiteContentLength={websiteContentLength}
+          )}
+          {checkOption === "qa" && (
+            <div>
+              <QAInput
+                setQaChar={setQaChar}
+                qaList={qaList}
+                setQAList={setQAList}
+                cantAddMore={cantAddMore}
+              />
+            </div>
+          )}
+          {checkOption === "imageTraining" && (
+            <>
+              <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-5">
+                <div className="mb-10">
+                  <div className="w-full mb-2">
+                    <ImageTraining
+                      agentId={agentId}
+                      setTotalImage={setTotalImage}
+                      agent={agent}
+                      setImagesFile={setImagesFile}
+                      imageFiles={imagesFile}
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 text-center">
+                    Make sure the image should not be blur and only contains
+                    text.
+                  </p>
+                </div>
+              </div>
+              {imagesFile.length > 0 && (
+                <>
+                  {imagesFile.map((image, index) => (
+                    <div key={index}>
+                      <ImageTag
+                        imageId={0}
+                        imageUrl={undefined}
+                        imageName={image.name}
+                        index={index}
+                        imageFiles={imagesFile}
+                        setImagesFile={setImagesFile}
+                        existingImgs={existingImgs}
+                        setExistingImgs={setExistingImgs}
+                        isNew={true}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+              {existingImgs.length > 0 && (
+                <>
+                  {existingImgs.map((image, index) => (
+                    <div key={index}>
+                      <ImageTag
+                        imageId={image.id}
+                        imageName={image.file_name}
+                        imageUrl={image.file_url}
+                        index={index}
+                        imageFiles={imagesFile}
+                        setImagesFile={setImagesFile}
+                        existingImgs={existingImgs}
+                        setExistingImgs={setExistingImgs}
+                        isNew={false}
+                      />
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          )}
+          {checkOption === "website" && (
+            <WebsiteTraining
+              setNewLinks={setNewLinks}
+              setWebsiteContentLength={setWebsiteContentLength}
+              newLinks={newLinks}
             />
-          </div>
+          )}
+        </div>
+        <div className="md:col-span-3 col-span-12">
+          <RightBar
+            currentPage={currentPage}
+            loading={loading}
+            qaChar={qaChar}
+            agentCreateFunc={handleUpdateAgent}
+            charCount={filecharCount}
+            fileCount={fileCount}
+            existingFiles={existingFiles}
+            textChar={textChar}
+            checkOption={checkOption}
+            totalImages={totalImages}
+            totalCharCount={totalCharCount}
+            cantAddMore={cantAddMore}
+            totalFileLength={totalFileLength}
+            websiteContentLength={websiteContentLength}
+          />
         </div>
       </div>
     </div>

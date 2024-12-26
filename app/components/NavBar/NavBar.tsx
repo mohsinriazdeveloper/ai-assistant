@@ -1,13 +1,16 @@
 "use client";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import toast from "react-hot-toast";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { MdOutlineShortText } from "react-icons/md";
-import PreviousPage from "../PreviousPage/PreviousPage";
-import { useGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import { setAgentName } from "../ReduxToolKit/agentNameSlice";
+import { useLazyGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
-import { useAppDispatch } from "../ReduxToolKit/hook";
+import {
+  selectCreateAgent,
+  setCreateAgent,
+} from "../ReduxToolKit/createAgentSlice";
+import { useAppDispatch, useAppSelector } from "../ReduxToolKit/hook";
 
 type Content = {
   title: string;
@@ -16,112 +19,117 @@ type Content = {
 
 interface NavBarProps {
   content: Content[];
-  setCheckOption: Dispatch<SetStateAction<string>>;
-  checkOption: string;
-  setStopPlayingAudio?: Dispatch<SetStateAction<boolean>>;
-  setIsMobile: Dispatch<SetStateAction<boolean>>;
+  // setCreateAgent: Dispatch<SetStateAction<boolean>>;
+  // createAgent: boolean;
 }
 
-const NavBar: FC<NavBarProps> = ({
-  content,
-  setCheckOption,
-  checkOption,
-  setIsMobile,
-}) => {
-  const { isLoading } = useGetAllAgentsQuery();
-
-  const currentRoute = usePathname();
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const [fixMargin, setFixMargin] = useState<boolean>(false);
-
+const NavBar: FC<NavBarProps> = ({ content }) => {
+  const [trigger, { data: allAgents }] = useLazyGetAllAgentsQuery();
   useEffect(() => {
-    if (checkOption === "agent" || checkOption === "chatagent") {
-      setFixMargin(true);
-    } else {
-      setFixMargin(false);
-    }
-  }, [checkOption]);
+    trigger();
+  }, []);
+  const currentRoute = usePathname();
+  const route = useRouter();
+  const { createAgentStatus } = useAppSelector(selectCreateAgent);
+  const dispatch = useAppDispatch();
 
   const handleSignOut = () => {
-    setTimeout(() => {
-      dispatch(
-        userLogoutSuccess({
-          refresh: "",
-          access: "",
-        })
-      );
-      router.push("/");
-    }, 1000);
+    // setTimeout(() => {
+    dispatch(
+      userLogoutSuccess({
+        refresh: "",
+        access: "",
+      })
+    );
+    localStorage.clear();
+    route.push("/");
+    // }, 1000);
     toast.success("You have been logged out successfully");
   };
-  const handleChangeTab = (item: string) => {
-    setCheckOption(item);
-  };
+
   return (
     <div
-      className={`pt-5 ${
-        fixMargin ? "mb-5" : "mb-[57px]"
-      } md:w-full sm:container sm:mx-auto sm:px-0 px-4`}
+      className={`${
+        currentRoute.includes("/dashboard") ? "w-[80%] ml-auto" : "w-full pl-10"
+      } grid grid-cols-12`}
     >
-      <div className="md:container md:mx-auto mx-5 flex justify-between items-center pb-5">
-        {checkOption === "chatagent" ? (
-          <HiOutlineDotsHorizontal
-            className="text-2xl md:hidden block"
-            onClick={() => setIsMobile(true)}
-          />
-        ) : (
-          <PreviousPage />
-        )}
-        <div
-          onClick={handleSignOut}
-          className="font-medium rounded-md text-sm text-[#8A8A8A] md:hidden flex items-center lg:gap-2 gap-1 cursor-pointer"
-        >
-          Sign Out
-          <MdOutlineShortText className="text-2xl transform scale-x-[-1] text-gray-900" />
-        </div>
-      </div>
-
-      <div
-        className={`${
-          checkOption === "chatagent"
-            ? "md:flex justify-between items-center"
-            : "md:flex lg:gap-0 md:gap-3 "
-        } overflow-x-auto`}
-      >
-        <div
-          className={`overflow-hidden whitespace-nowrap ${
-            checkOption === "chatagent"
-              ? "md:w-[80%] sm:w-[100%] w-[565px]"
-              : "lg:w-[62%] md:w-[80%] w-[565px] mx-auto"
-          } border border-[#EDEDED] rounded-full bg-[#F7F7F7] grid ${
-            currentRoute === "/dashboard/agents" ? "grid-cols-2" : "grid-cols-4"
-          } lg:gap-7 gap-3 p-1`}
-        >
-          {content.map((item, index) => (
-            <div
-              key={index}
-              className={`col-span-1 py-2 text-sm font-semibold text-center px-3 ${
-                checkOption === item.url
-                  ? "text-white bg-[#202020] rounded-full"
-                  : "text-[#8A8A8A]"
-              } ${isLoading ? "cursor-not-allowed" : " cursor-pointer"}`}
-            >
-              {isLoading ? (
+      <div className="col-span-9 flex justify-between items-center">
+        <div className="">
+          <div
+            id="step-3"
+            className={`bg-[#FBFBFB] border border-[#EDEDED] p-1 rounded-full text-sm font-semibold text-center grid ${
+              !currentRoute.includes("/dashboard/")
+                ? "grid-cols-5"
+                : "grid-cols-2"
+            }`}
+          >
+            {content.map((item, index) => (
+              <Link
+                href={item.url}
+                key={index}
+                className={`col-span-1 rounded-full py-2 px-6 ${
+                  currentRoute === item.url
+                    ? "bg-[#424242] text-white"
+                    : "bg-transparent text-[#8A8A8A]"
+                }`}
+              >
                 <p>{item.title}</p>
-              ) : (
-                <p onClick={() => handleChangeTab(item.url)}>{item.title}</p>
-              )}
-            </div>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
-        <div
-          onClick={handleSignOut}
-          className="font-medium rounded-md text-sm text-[#8A8A8A] md:flex items-center hidden lg:gap-2 gap-1 cursor-pointer"
-        >
-          Sign Out
-          <MdOutlineShortText className="text-2xl transform scale-x-[-1] text-gray-900" />
-        </div>
+
+        {currentRoute === "/dashboard/agents" && (
+          <>
+            {createAgentStatus ? (
+              <button
+                onClick={() =>
+                  dispatch(setCreateAgent({ createAgentStatus: false }))
+                }
+                className="py-2 px-4 border border-[#3C3C3F] text-[#18181b] bg-white font-medium rounded-md text-sm"
+              >
+                Home
+              </button>
+            ) : (
+              <>
+                {allAgents && allAgents.length > 0 && (
+                  <button
+                    onClick={() =>
+                      dispatch(
+                        setCreateAgent({ createAgentStatus: true }),
+                        setAgentName({
+                          agentName: "",
+                        })
+                      )
+                    }
+                    // onClick={() => setCreateAgent(true)}
+                    className="py-3 px-4 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
+                  >
+                    Create New Agent
+                  </button>
+                )}
+              </>
+            )}
+          </>
+        )}
+      </div>
+      <div
+        className={`col-span-3 ml-3 font-medium rounded-md text-sm text-[#8A8A8A] md:flex ${
+          !currentRoute.includes("/dashboard") && "justify-center"
+        } items-center hidden lg:gap-2 gap-1 cursor-pointer`}
+      >
+        {!currentRoute.includes("/dashboard") && (
+          <button
+            onClick={() => {
+              dispatch(setCreateAgent({ createAgentStatus: false }));
+              route.push("/dashboard/agents");
+            }}
+            className="py-2 px-4 border border-[#3C3C3F] text-[#18181b] bg-white font-medium rounded-md text-sm"
+          >
+            Home
+          </button>
+        )}
+        <p onClick={handleSignOut}>Sign Out</p>
       </div>
     </div>
   );

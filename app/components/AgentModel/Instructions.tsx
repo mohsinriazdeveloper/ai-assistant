@@ -46,7 +46,7 @@ const Instructions: FC<InstructionsProps> = ({
         setInstructionId(defaultInstruction.id);
       }
     }
-  }, [agent]);
+  }, [agent?.instructions]);
 
   return (
     <div className="text-sm">

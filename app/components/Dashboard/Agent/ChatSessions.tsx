@@ -43,7 +43,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
     if (savedChatId) {
       SetActiveChat(Number(savedChatId));
     }
-  }, []);
+  }, [localStorage]);
 
   const handleDeleteChatSession = async (id: number) => {
     setDeleteChatLoading(id);

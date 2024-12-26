@@ -1,7 +1,15 @@
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
 import mammoth from "mammoth";
 import Image from "next/image";
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
+import { FaPlus } from "react-icons/fa";
 import pdfToText from "react-pdftotext";
 import Loader from "../../Loader/Loader";
 
@@ -10,7 +18,7 @@ interface FileInputProps {
   setFiles: Dispatch<SetStateAction<File[]>>;
   setCharCount: Dispatch<SetStateAction<number>>;
   setFileCount: Dispatch<SetStateAction<number>>;
-  handleDeleteFile: (index: number) => void;
+  // handleDeleteFile: (index: number) => void;
   setFileUrls: Dispatch<SetStateAction<string[]>>;
   cantAddMore: boolean;
 }
@@ -20,7 +28,7 @@ const FileInput: FC<FileInputProps> = ({
   setFiles,
   setCharCount,
   setFileCount,
-  handleDeleteFile,
+  // handleDeleteFile,
   setFileUrls,
   cantAddMore,
 }) => {
@@ -29,7 +37,7 @@ const FileInput: FC<FileInputProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [uploading, setUploading] = useState(false);
-
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const allowedFileTypes = [
     "application/pdf",
     "text/plain",
@@ -211,24 +219,40 @@ const FileInput: FC<FileInputProps> = ({
     setIsDragging(false);
   };
 
+  const handleDivClick = () => {
+    if (!cantAddMore && fileInputRef.current) {
+      fileInputRef.current.click(); // Programmatically trigger the file input click
+    }
+  };
+
   return (
     <div>
+      <div className="flex justify-between items-center">
+        <p className="font-bold text-2xl ">Files</p>
+        <div
+          onClick={handleDivClick}
+          className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+        >
+          <FaPlus />
+        </div>
+      </div>
       <label htmlFor="file-upload">
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          className={`flex flex-col items-center justify-center border ${
+          className={`flex mt-3 flex-col items-center justify-center border ${
             isDragging ? "border-blue-400" : "border-gray-200"
-          } p-6 rounded h-[200px] cursor-pointer ${
+          } px-6 rounded h-[165px] cursor-pointer ${
             cantAddMore ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
           <div>
-            <Image src={UploadIcon} alt="" className="max-w-5" />
+            <Image src={UploadIcon} alt="" className="max-w-4" />
           </div>
           <input
             type="file"
+            ref={fileInputRef}
             className="hidden"
             id="file-upload"
             multiple
@@ -238,18 +262,18 @@ const FileInput: FC<FileInputProps> = ({
           />
           <label
             htmlFor="file-upload"
-            className="mt-4 text-sm text-gray-600 cursor-pointer"
+            className="mt-4 text-xs text-gray-600 cursor-pointer"
           >
             Drag & drop files here, or click to select files
           </label>
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-[10px] text-gray-500">
             Supported File Types: .pdf, .docx, .txt
           </p>
           {errorMessage && (
             <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
           )}
           {uploading && (
-            <div className="flex items-center mt-5 text-sm text-gray-500">
+            <div className="flex items-center mt-5 text-gray-500 text-xs">
               <p>Uploading </p> <Loader />
             </div>
           )}

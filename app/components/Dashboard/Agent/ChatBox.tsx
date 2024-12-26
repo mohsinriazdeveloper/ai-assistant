@@ -42,6 +42,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
       setIsCopied(null);
     }, 1000);
   };
+  console.log(chat);
   return (
     <div
       className="w-full pr-5 max-h-[70vh] overflow-hidden overflow-y-scroll scrollbar-hide"
@@ -53,7 +54,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
             <div>
               <div className="flex gap-2 items-start">
                 <div
-                  className="w-8 h-9 rounded-lg bg-no-repeat bg-center bg-cover"
+                  className="w-8 h-9 rounded-lg bg-no-repeat bg-center bg-cover relative z-10"
                   style={{ backgroundImage: `url(${dummyImg.src})` }}
                 ></div>
                 <div className="flex items-center gap-2 text-[#1E1F22]">
@@ -67,9 +68,10 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 relative -top-5 -right-5 -z-10">
+              <div className="flex items-center gap-2 relative -top-5 -right-5">
                 <div className="py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] w-fit ">
-                  <MarkDown content={message.message} />
+                  {/* <MarkDown content={message.message} /> */}
+                  <p>{message.message}</p>
                 </div>
                 {/* <LiaEditSolid className="text-[#9B9DA6] text-lg cursor-pointer" /> */}
               </div>

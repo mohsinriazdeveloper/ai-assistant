@@ -1,7 +1,7 @@
+import Image from "next/image";
 import { FC, useState } from "react";
 import LeftBar from "../LeftBar/LeftBar";
-import { content } from "./content";
-import Image from "next/image";
+import { connectionContent } from "./content";
 import Finance from "./Finance";
 
 interface ConnectProps {
@@ -18,12 +18,12 @@ const Connect: FC<ConnectProps> = ({ agentId }) => {
           <LeftBar
             setCheckOption={setCheckOption}
             checkOption={checkOption}
-            content={content.sideBarOptions}
+            content={connectionContent.sideBarOptions}
           />
         </div>
         {checkOption === "integration" && (
           <div className="md:col-span-10 col-span-12 grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
-            {content.integrationOptions.map((item, index) => (
+            {connectionContent.integrationOptions.map((item, index) => (
               <div
                 key={index}
                 className="col-span-1 p-6 border border-gray-200 rounded-lg"

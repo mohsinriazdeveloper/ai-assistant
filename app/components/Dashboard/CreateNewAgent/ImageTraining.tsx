@@ -1,4 +1,3 @@
-import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -12,6 +11,7 @@ import React, {
   useState,
 } from "react";
 import toast from "react-hot-toast";
+import { FaPlus } from "react-icons/fa";
 import {
   useDeleteFileMutation,
   useTrainByImageMutation,
@@ -154,14 +154,23 @@ const ImageTraining: FC<ImageTrainingProps> = ({
 
   return (
     <div>
+      <div className="flex justify-between items-center">
+        <p className="font-bold text-2xl ">Train with image</p>
+        <div
+          onClick={triggerFileInput}
+          className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+        >
+          <FaPlus />
+        </div>
+      </div>
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onClick={triggerFileInput}
-        className="border border-gray-200 mt-10 p-6 rounded h-[200px] cursor-pointer flex flex-col items-center justify-center"
+        className="border border-gray-200 mt-3 p-6 rounded h-[165px] cursor-pointer flex flex-col items-center justify-center"
       >
         <div>
-          <Image src={UploadIcon} alt="" className="max-w-5" />
+          <Image src={UploadIcon} alt="" className="max-w-4" />
         </div>
         <input
           ref={fileInputRef}
@@ -174,16 +183,16 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         />
         <label
           htmlFor="addImage"
-          className="mt-4 text-sm text-gray-600 cursor-pointer"
+          className="mt-4 text-xs text-gray-600 cursor-pointer"
         >
           Drag & drop image here, or click to select images
         </label>
-        <p className="mt-2 text-xs text-gray-500">
+        <p className="mt-2 text-[10px] text-gray-500">
           Supported Image Types: .png, .jpg, .jpeg
         </p>
       </div>
 
-      <div className=" mt-10 pb-5">
+      {/* <div className=" mt-10 pb-5">
         {imageFiles.length > 0 && (
           <div className="flex justify-center items-center gap-2 mb-5">
             <div className="border-b w-[40%]"></div>
@@ -311,7 +320,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
             </div>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

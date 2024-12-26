@@ -2,9 +2,8 @@ import axios from "axios";
 import * as cheerio from "cheerio";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
-import { AiOutlineCheckCircle } from "react-icons/ai";
-import { MdOutlineCancel } from "react-icons/md";
-import { RiDeleteBin7Line } from "react-icons/ri";
+import { FaPlus } from "react-icons/fa";
+import { RiDeleteBinLine } from "react-icons/ri";
 import Loader from "../../Loader/Loader";
 import { useDeleteFileMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
 
@@ -144,71 +143,159 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
 
   return (
     <div className="">
-      <p className="font-semibold text-2xl">Websites</p>
-      <div className="flex justify-end items-center gap-5 mb-6">
-        <div
-          onClick={handleCreateNewInput}
-          className="w-9 h-9 bg-gray-200 rounded-lg flex justify-center items-center cursor-pointer"
-        >
-          <span className="text-black">+</span>
+      <div className="flex justify-between items-center mb-6">
+        <p className="font-bold text-2xl">Websites</p>
+        <div className="flex justify-end items-center gap-5">
+          <div
+            onClick={handleCreateNewInput}
+            className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+          >
+            <FaPlus />
+          </div>
         </div>
       </div>
-
       {newLinks.map((item, index) => (
-        <div key={item.id} className="flex items-start mb-1 gap-2">
-          <label className="grow">
-            <input
-              type="text"
-              placeholder="https://www.example.com/"
-              value={item.url}
-              onChange={(e) => handleUrlChange(index, e.target.value)}
-              className={`text-sm border rounded-md px-3 py-[6px] focus:outline-none w-full ${
-                item.isValid ? "" : "border-red-500"
-              }`}
-              disabled={item.isScraped}
-            />
-            {!item.isValid && (
-              <p className="text-red-500 text-xs">Invalid URL</p>
-            )}
-          </label>
-          <button
-            className={`py-[6px] px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm ${
-              item.isScraped ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            onClick={() => scrapeWebsite(index)}
-            disabled={
-              item.isLoading || item.isScraped || !item.url || !item.isValid
-            }
-          >
-            {item.isLoading ? <Loader /> : "Scrape"}
-          </button>
-          {item.isScrapingError ? (
-            <div className="h-full flex justify-center self-center">
-              <MdOutlineCancel className="text-red-500 " size={20} />
-            </div>
-          ) : (
-            <>
-              {item.isScraped ? (
-                <div className="h-full flex justify-center self-center">
-                  <AiOutlineCheckCircle className="text-green-500" size={20} />
+        <div key={item.id} className=" border rounded-lg p-4 text-sm mb-5">
+          <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-10 gap-3">
+              <label className="">
+                <input
+                  type="text"
+                  placeholder="https://www.example.com/"
+                  value={item.url}
+                  onChange={(e) => handleUrlChange(index, e.target.value)}
+                  className={`text-sm border border-[#c4c4c4] rounded-md px-3 py-[6px] focus:outline-none w-full ${
+                    item.isValid ? "" : "border-red-500"
+                  }`}
+                  disabled={item.isScraped}
+                />
+                {!item.isValid && (
+                  <p className="text-red-500 text-xs">Invalid URL</p>
+                )}
+              </label>
+              <div className="space-y-4 mt-5">
+                <div className="">
+                  <p>Source Name</p>
+                  <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
+                    <input
+                      type="text"
+                      placeholder="Source Unique Label"
+                      className="font-light focus:outline-none w-full"
+                    />
+                  </div>
                 </div>
-              ) : item.isLoading ? (
-                <Loader />
-              ) : (
-                <div className="w-5"></div>
-              )}
-            </>
-          )}
-          {deletingIds.includes(item.id) ? (
-            <Loader />
-          ) : (
-            <div
-              onClick={() => handleDeleteLink(index, item.id)}
-              className="flex justify-center self-center cursor-pointer bg-white hover:bg-red-50 rounded-lg transition-colors duration-300"
-            >
-              <RiDeleteBin7Line className="text-red-500" />
+                <div className="">
+                  <div className="w-full flex justify-between items-end">
+                    <p>Context/clarifications</p>
+                    <p className="text-xs max-w-[345px]">
+                      Give more information and context to your AI about this
+                      data source. This will help the AI to fetch this data
+                      appropriately
+                    </p>
+                  </div>
+
+                  <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
+                    <textarea
+                      rows={2}
+                      placeholder="Enter Context"
+                      className=" focus:outline-none font-light w-full resize-none"
+                    />
+                  </div>
+                </div>
+                <div className="">
+                  <div className="w-full flex justify-between items-end">
+                    <p>Instructions</p>
+                    <p className="text-xs max-w-[345px]">
+                      Give instructions to your AI to help him understand how to
+                      use your data source.
+                    </p>
+                  </div>
+
+                  <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
+                    <textarea
+                      rows={2}
+                      placeholder="Enter Instructions"
+                      className=" focus:outline-none font-light w-full resize-none"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          )}
+            <div className="col-span-2">
+              <div className="col-span-2">
+                <button
+                  className={`border rounded-lg px-3 py-1 ${
+                    item.isScrapingError
+                      ? "border-red-400 bg-red-300 text-red-700"
+                      : "border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468]"
+                  }`}
+                >
+                  {item.isScrapingError ? (
+                    "Failed"
+                  ) : (
+                    <>
+                      {item.isScraped ? (
+                        "Success"
+                      ) : item.isLoading ? (
+                        <Loader />
+                      ) : (
+                        "Success"
+                      )}
+                    </>
+                  )}
+                </button>
+                <p className="text-end text-[10px] font-semibold">
+                  Jan 2024 - Aug 2024
+                </p>
+              </div>
+              {/* {item.isScrapingError ? (
+                <div className="h-full flex justify-center self-center">
+                  <MdOutlineCancel className="text-red-500 " size={20} />
+                </div>
+              ) : (
+                <>
+                  {item.isScraped ? (
+                    <div className="h-full flex justify-center self-center">
+                      <AiOutlineCheckCircle
+                        className="text-green-500"
+                        size={20}
+                      />
+                    </div>
+                  ) : item.isLoading ? (
+                    <Loader />
+                  ) : (
+                    <div className="w-5"></div>
+                  )}
+                </>
+              )} */}
+            </div>
+          </div>
+          <div className="flex justify-end items-end gap-3 mt-8">
+            <button className="py-1 px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max">
+              Raw data
+            </button>
+            <button
+              onClick={() => scrapeWebsite(index)}
+              disabled={
+                item.isLoading || item.isScraped || !item.url || !item.isValid
+              }
+              className={`py-2 w-[120px] border border-[#0790FF] bg-[#0790FF] text-white hover:bg-transparent hover:text-[#0790FF] font-medium text-sm rounded-full  ${
+                item.isScraped
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+              }`}
+            >
+              Save
+            </button>
+            {deletingIds.includes(item.id) ? (
+              <Loader />
+            ) : (
+              <RiDeleteBinLine
+                className="mb-1 cursor-pointer"
+                onClick={() => handleDeleteLink(index, item.id)}
+              />
+            )}
+          </div>
         </div>
       ))}
     </div>

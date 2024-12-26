@@ -41,29 +41,26 @@ const RightBar: FC<RightBarProps> = ({
   const websiteCharCount = websiteContentLength || 0;
 
   return (
-    <div className="border border-gray-200 rounded-lg py-5 px-4">
-      <p className="text-lg font-medium text-center">Sources</p>
+    <div className="border border-gray-200 rounded-lg py-5 px-4 text-xs step-3">
+      <p className="text-base font-medium text-center">Sources</p>
       <div>
-        <p className="font-light text-sm">{totalFiles} Files</p>
-        <p className="font-light text-sm">
-          {fileCharacterCount} Files Characters
-        </p>
-        <p className="font-light text-sm">{textChar} Text Characters</p>
-        <p className="font-light text-sm">{qaChar} QA Characters</p>
-        <p className="font-light text-sm">{totalImages || 0} Images</p>
-        <p className="font-light text-sm">
-          {websiteCharCount} Website Characters
-        </p>
+        <p className="font-light ">{totalFiles} Files</p>
+        <p className="font-light ">{fileCharacterCount} Files Characters</p>
+        <p className="font-light ">{textChar} Text Characters</p>
+        <p className="font-light ">{qaChar} QA Characters</p>
+        <p className="font-light ">{totalImages || 0} Images</p>
+        <p className="font-light ">{websiteCharCount} Website Characters</p>
 
-        <p className="font-medium mt-4 text-sm">Total detected characters</p>
-        <p className="text-sm text-center font-bold">
+        <p className="font-medium mt-4 ">Total detected characters</p>
+        <p className=" text-center font-bold">
           {totalCharCount}
           <span className="text-gray-300 font-normal">/ 400000 limit</span>
         </p>
       </div>
       <div className="mt-2">
         <button
-          className={`py-2 px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm w-full ${
+          id="step-2"
+          className={`py-2 px-3 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md  w-full ${
             cantAddMore && "bg-[#3C3C3F] opacity-70 cursor-not-allowed"
           }`}
           onClick={agentCreateFunc}

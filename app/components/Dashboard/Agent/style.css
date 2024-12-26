@@ -27,9 +27,9 @@ textarea {
   -webkit-text-fill-color: transparent;
 }
 
-.chatInput::placeholder {
+/* .chatInput::placeholder {
   color: white;
-}
+} */
 
 .chatSideBarSearch::placeholder {
   color: #bbbbbb;

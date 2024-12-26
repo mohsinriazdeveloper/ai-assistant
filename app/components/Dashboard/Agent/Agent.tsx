@@ -1,12 +1,9 @@
 "use client";
 
 import { FC, useEffect, useRef, useState } from "react";
-import AgentSettings from "../../AgentSettings/AgentSettings";
-import Connect from "../../Connect/Connect";
 import NavBar from "../../NavBar/NavBar";
 import { useAppDispatch } from "../../ReduxToolKit/hook";
 import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
-import UpdateTraining from "../../UpdateTraining/UpdateTraining";
 import AgentChatSideBar from "./AgentChatSideBar";
 import ChatAgent from "./ChatAgent";
 import VoiceAgent from "./VoiceAgent";
@@ -30,17 +27,17 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(
-      voiceResponce({
-        inText: "",
-      })
-    );
     if (checkOption !== "agent") {
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
       }
     }
-  }, [checkOption]);
+    dispatch(
+      voiceResponce({
+        inText: "",
+      })
+    );
+  }, [checkOption, dispatch]);
 
   const focusInputById = () => {
     inputIdRef.current?.focus();
@@ -66,7 +63,6 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
     if (savedChatId === "0") {
       setStartNewChat(true);
       setSpecificChatId(null);
-      console.log("here");
     }
   }, []);
   return (
@@ -77,12 +73,7 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
     >
       {checkOption !== "chatagent" && (
         <div className="">
-          <NavBar
-            content={navBarContent}
-            setCheckOption={setCheckOption}
-            checkOption={checkOption}
-            setIsMobile={setIsMobile}
-          />
+          <NavBar content={navBarContent} />
         </div>
       )}
       {checkOption === "chatagent" && (
@@ -110,16 +101,10 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
                 agentId={agentId}
                 specificChatId={specificChatId}
                 setIsVoice={setIsVoice}
-                setIsMobile={setIsMobile}
               />
             ) : (
               <>
-                <NavBar
-                  content={navBarContent}
-                  setCheckOption={setCheckOption}
-                  checkOption={checkOption}
-                  setIsMobile={setIsMobile}
-                />
+                <NavBar content={navBarContent} />
                 <ChatAgent
                   setIsVoice={setIsVoice}
                   specificChatId={specificChatId}
@@ -135,9 +120,6 @@ const Agent: FC<AgentProps> = ({ navBarContent, agentId }) => {
           </div>
         </div>
       )}
-      {checkOption === "sources" && <UpdateTraining agentId={agentId} />}
-      {checkOption === "connect" && <Connect agentId={agentId} />}
-      {checkOption === "settings" && <AgentSettings agentId={agentId} />}
     </div>
   );
 };

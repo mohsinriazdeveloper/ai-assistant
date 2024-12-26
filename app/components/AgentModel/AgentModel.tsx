@@ -82,7 +82,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
   });
 
   return (
-    <div className="flex flex-col gap-10 mb-10">
+    <div className="mb-5">
       <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5">
         <div>
           <p className="text-2xl font-medium">Model</p>
@@ -148,7 +148,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
           </div>
         </form>
       </div>
-      <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5">
+      <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5 mt-5">
         <p className="text-2xl font-medium">Training</p>
         <div className="font-semibold text-sm">
           <p className="text-gray-300">Last Trained at</p>

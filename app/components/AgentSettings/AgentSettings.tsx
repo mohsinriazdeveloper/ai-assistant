@@ -5,7 +5,6 @@ import { IoMdAdd } from "react-icons/io";
 import AgentModel from "../AgentModel/AgentModel";
 import DeleteAgent from "../DeleteAgent/DeleteAgent";
 import DeleteModal from "../Dialogues/DeleteModal";
-import LeftBar from "../LeftBar/LeftBar";
 import Loader from "../Loader/Loader";
 import {
   useGetAllAgentsQuery,
@@ -13,14 +12,13 @@ import {
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { selectIsConnect } from "../ReduxToolKit/connectSlice";
 import { useAppSelector } from "../ReduxToolKit/hook";
-import { content } from "./content";
 
 interface AgentSettings {
   agentId: any;
+  checkOption: string;
 }
 
-const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
-  const [checkOption, setCheckOption] = useState<string>("settings");
+const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
   const [openDialogue, setOpenDialogue] = useState<boolean>(false);
   const [addImage, setAddImage] = useState<any>();
   const [preview, setPreview] = useState<string>();
@@ -114,97 +112,83 @@ const AgentSettings: FC<AgentSettings> = ({ agentId }) => {
 
   return (
     <div>
-      <div className="md:container md:mx-auto mx-5 my-10">
-        <p className="text-3xl font-bold">Settings</p>
-        <div className="grid grid-cols-12 gap-8 mt-10">
-          <div className="md:col-span-2 col-span-12">
-            <LeftBar
-              setCheckOption={setCheckOption}
-              checkOption={checkOption}
-              content={content.sideBarOptions}
-            />
-          </div>
-          <div className="md:col-span-10 col-span-12">
-            {checkOption === "settings" ? (
+      <div className="">
+        {checkOption === "general" ? (
+          <div>
+            <div className="w-full border border-gray-200 rounded-lg py-7 px-6 space-y-5 mb-5">
+              <p className="text-2xl font-bold">General</p>
               <div>
-                <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-10 mb-10">
-                  <p className="text-2xl font-medium">General</p>
-                  <div>
-                    <p className="text-sm font-medium text-gray-300 mb-2">
-                      Add Agent Image
-                    </p>
-                    <div>
-                      <label htmlFor="addImage">
-                        <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-                          {imgLoading ? (
-                            <Loader />
-                          ) : preview ? (
-                            <div
-                              className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
-                              style={{ backgroundImage: `url(${preview})` }}
-                            >
-                              <div className="rounded-full bg-gray-100 p-2">
-                                <IoMdAdd color="#3F3F46" />
-                              </div>
-                            </div>
-                          ) : (
+                <p className="text-sm font-medium text-gray-300 mb-2">
+                  Add Agent Image
+                </p>
+                <div>
+                  <label htmlFor="addImage">
+                    <div className="w-[142px] h-[121px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+                      {imgLoading ? (
+                        <Loader />
+                      ) : preview ? (
+                        <div
+                          className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
+                          style={{ backgroundImage: `url(${preview})` }}
+                        >
+                          <div className="rounded-full bg-gray-100 p-2">
                             <IoMdAdd color="#3F3F46" />
-                          )}
-                          <input
-                            id="addImage"
-                            type="file"
-                            onChange={handleAddImage}
-                            className="hidden"
-                            accept=".png, .jpeg, .jpg"
-                          />
+                          </div>
                         </div>
-                      </label>
-                    </div>
-                    <p className="text-sm text-red-600">{imgError}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-300 mb-2">
-                      Agent ID
-                    </p>
-                    <p className="text-sm font-medium ">{agent?.ran_id}</p>
-                  </div>
-                  <form onSubmit={handleUpdate}>
-                    <div>
-                      <p className="text-sm font-medium text-gray-300 mb-2">
-                        Name
-                      </p>
+                      ) : (
+                        <IoMdAdd color="#3F3F46" />
+                      )}
                       <input
-                        value={agentName}
-                        onChange={handleAgentNameChange}
-                        placeholder="Your Agent Name"
-                        type="text"
-                        className="focus:outline-none w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md"
+                        id="addImage"
+                        type="file"
+                        onChange={handleAddImage}
+                        className="hidden"
+                        accept=".png, .jpeg, .jpg"
                       />
                     </div>
-                    {agentNameError && (
-                      <p className="text-sm text-red-500">{agentNameError}</p>
-                    )}
-                    <div className="flex justify-end mt-5">
-                      <button
-                        type="submit"
-                        className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
-                      >
-                        {loading ? <Loader /> : <>save</>}
-                      </button>
-                    </div>
-                  </form>
+                  </label>
                 </div>
-                {allAgents && (
-                  <div>
-                    <DeleteAgent setOpenDialogue={setOpenDialogue} />
-                  </div>
-                )}
+                <p className="text-sm text-red-600">{imgError}</p>
               </div>
-            ) : (
-              <AgentModel agentId={agentId} />
+              <div className="pt-2">
+                <p className="text-sm font-medium text-gray-300 mb-1">
+                  Agent ID
+                </p>
+                <p className="text-sm font-medium ">{agent?.ran_id}</p>
+              </div>
+              <form onSubmit={handleUpdate} className="pt-1">
+                <div>
+                  <p className="text-sm font-medium text-gray-300 mb-2">Name</p>
+                  <input
+                    value={agentName}
+                    onChange={handleAgentNameChange}
+                    placeholder="Your Agent Name"
+                    type="text"
+                    className="focus:outline-none w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md"
+                  />
+                </div>
+                {agentNameError && (
+                  <p className="text-sm text-red-500">{agentNameError}</p>
+                )}
+                <div className="flex justify-end mt-5">
+                  <button
+                    type="submit"
+                    className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
+                  >
+                    {loading ? <Loader /> : <>save</>}
+                  </button>
+                </div>
+              </form>
+            </div>
+            {allAgents && (
+              <div>
+                <DeleteAgent setOpenDialogue={setOpenDialogue} />
+              </div>
             )}
           </div>
-        </div>
+        ) : (
+          <AgentModel agentId={agentId} />
+        )}
       </div>
       <DeleteModal
         agentId={agentId}

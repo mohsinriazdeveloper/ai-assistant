@@ -1,8 +1,11 @@
 "use client";
 import { FC, useState } from "react";
+import Background from "../../Background/Background";
 import NavBar from "../../NavBar/NavBar";
+import NewAgent from "../../NewAgent/NewAgent";
+import { selectCreateAgent } from "../../ReduxToolKit/createAgentSlice";
+import { useAppSelector } from "../../ReduxToolKit/hook";
 import Agents from "./Agents";
-import Settings from "./Settings/Settings";
 
 type NavContent = {
   title: string;
@@ -13,19 +16,26 @@ interface NewChatProps {
 }
 
 const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
-  const [checkOption, setCheckOption] = useState<string>("aiAgent");
   const [isMobile, setIsMobile] = useState<boolean>(false);
+  const { createAgentStatus } = useAppSelector(selectCreateAgent);
+  console.log({ createAgentStatus });
   return (
-    <div>
-      <NavBar
-        content={navBarContent}
-        setCheckOption={setCheckOption}
-        checkOption={checkOption}
-        setIsMobile={setIsMobile}
-      />
-      {checkOption === "aiAgent" && <Agents />}
-      {checkOption === "newChatSettings" && <Settings />}
-    </div>
+    <Background>
+      <div className="pt-8">
+        <NavBar
+          content={navBarContent}
+          // setCreateAgent={setCreateAgent}
+          // createAgent={createAgent}
+        />
+        {createAgentStatus ? (
+          <div className="flex items-center h-[70vh] pt-12">
+            <NewAgent />
+          </div>
+        ) : (
+          <Agents />
+        )}
+      </div>
+    </Background>
   );
 };
 export default NewChat;

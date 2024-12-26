@@ -15,7 +15,6 @@ import {
 import toast from "react-hot-toast";
 import { FaMicrophone, FaRedo } from "react-icons/fa";
 import { FaRegCirclePause, FaRegCircleStop } from "react-icons/fa6";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { MdOutlinePlayCircle } from "react-icons/md";
 import { RxCross2 } from "react-icons/rx";
 import {
@@ -31,14 +30,12 @@ interface VoiceAgentProps {
   agentId: number;
   specificChatId: number | null;
   setIsVoice: Dispatch<SetStateAction<boolean>>;
-  setIsMobile: Dispatch<SetStateAction<boolean>>;
 }
 
 const VoiceAgent: FC<VoiceAgentProps> = ({
   agentId,
   specificChatId,
   setIsVoice,
-  setIsMobile,
 }) => {
   const [response, setResponse] = useState<string>("");
   const [isRecording, setIsRecording] = useState<boolean>(false);
@@ -117,9 +114,9 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
     [allAgents, agentVoice, agentId, dispatch]
   );
 
-  useEffect(() => {
-    return () => {};
-  });
+  // useEffect(() => {
+  //   return () => {};
+  // });
 
   useEffect(() => {
     if (mediaBlobUrl) {
@@ -280,14 +277,14 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
     speechSynthesis.cancel();
   };
   return (
-    <div className="h-screen">
-      <div className="pt-3">
+    <div className="">
+      {/* <div className="pt-3">
         <HiOutlineDotsHorizontal
           className="text-2xl md:hidden block text-white"
           onClick={() => setIsMobile(true)}
         />
-      </div>
-      <div className="h-[65vh] flex flex-col justify-end items-center">
+      </div> */}
+      <div className="h-[60vh] flex flex-col justify-end items-center">
         <div className="h-full flex items-end mb-7">
           {audioSteps === "speaking" && (
             <span className="relative flex w-[200px] h-[200px]">
@@ -335,7 +332,7 @@ const VoiceAgent: FC<VoiceAgentProps> = ({
           </p>
         )}
       </div>
-      <div className="h-[35vh] pt-8">
+      <div className="h-[30vh] pt-8">
         <div className="flex justify-center items-end gap-10">
           <div className="relative flex justify-end">
             {/* {audioSteps === "startRecording" && (

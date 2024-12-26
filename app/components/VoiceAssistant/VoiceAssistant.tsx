@@ -88,9 +88,9 @@ const VoiceAssistant: FC<VoiceAssistantProps> = ({
     [allAgents, agentVoice, agentId, dispatch]
   );
 
-  useEffect(() => {
-    return () => {};
-  });
+  // useEffect(() => {
+  //   return () => {};
+  // });
 
   useEffect(() => {
     if (mediaBlobUrl) {

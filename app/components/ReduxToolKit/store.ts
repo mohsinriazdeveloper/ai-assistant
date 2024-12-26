@@ -11,10 +11,12 @@ import {
   REHYDRATE,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import AgentName from "./agentNameSlice";
 import { authApi } from "./aiAssistant";
 import { userApi } from "./aiAssistantOtherApis";
 import ChatSessionSlice from "./chatSessionSlice";
 import ConnectCod from "./connectSlice";
+import CreateAgent from "./createAgentSlice";
 import NewChat from "./forChatSlice";
 import voiceResReducer from "./voiceResSlice";
 const persistConfig = {
@@ -28,6 +30,8 @@ const rootReducer = combineReducers({
   chatSession: ChatSessionSlice,
   connect: ConnectCod,
   forChat: NewChat,
+  createAgent: CreateAgent,
+  agentName: AgentName,
   // state: stateReducer,
   // other reducers...
 });

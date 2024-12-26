@@ -1,0 +1,10 @@
+.gradient-box {
+  /* width: 300px;
+  height: 350px; */
+  background: linear-gradient(
+    145deg,
+    #565656,
+    #101010
+  ); /* Adjust colors to match the gradient */
+  /* box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5); Subtle shadow for depth */
+}
