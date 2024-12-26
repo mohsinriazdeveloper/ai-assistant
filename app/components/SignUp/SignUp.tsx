@@ -1,6 +1,7 @@
 "use client";
 import HideIcon from "@/app/assets/icons/hidePassword.png";
 import ShowIcon from "@/app/assets/icons/viewPassword.png";
+import Logo from "@/app/assets/Images/aiStar.png";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -178,13 +179,15 @@ const SignUp: FC<SignUpProps> = ({}) => {
   };
 
   return (
-    <div className="md:container md:mx-auto mx-5 py-12">
+    <div className="h-full overflow-auto scrollbar-hide py-12 bg-white">
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>
-            <div className="mx-auto w-[70px] h-[72px] border rounded-lg mb-4 flex justify-center items-center">
+            <Image src={Logo} alt="" className="mx-auto mb-4" />
+
+            {/* <div className="mx-auto w-[70px] h-[72px] border rounded-lg mb-4 flex justify-center items-center">
               <p>LOGO</p>
-            </div>
+            </div> */}
             <p className="text-center">
               Create an AI assistant in minutes with no code
             </p>
