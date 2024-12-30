@@ -97,3 +97,12 @@ export type VoiceRes = {
 export const voiceRes: VoiceRes = {
   inText: "",
 };
+
+export type UserProfile = {
+  id: number;
+  first_name: string;
+  email: string;
+  role: string;
+  organization: number;
+  is_first_interaction_with_agent: boolean;
+};

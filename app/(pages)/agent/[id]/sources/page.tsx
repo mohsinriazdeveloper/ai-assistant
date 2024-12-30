@@ -2,6 +2,7 @@
 import Background from "@/app/components/Background/Background";
 import SideBar from "@/app/components/LeftBar/SideBar";
 import NavBar from "@/app/components/NavBar/NavBar";
+import { useGetUserProfileQuery } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import TourGuide from "@/app/components/StepsGuide/TourGuide";
@@ -17,11 +18,12 @@ interface PageProps {
 
 const Page: FC<PageProps> = ({ params }) => {
   const router = useRouter();
+  const { data: userData } = useGetUserProfileQuery();
   const { access } = useAppSelector(selectAuth);
   const { id } = params;
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("files");
-  const [startTour, setStartTour] = useState(true);
+  const [startTour, setStartTour] = useState<boolean>(false);
   const navContent = getContent(id);
 
   useEffect(() => {
@@ -30,6 +32,11 @@ const Page: FC<PageProps> = ({ params }) => {
     }
   }, [access, router]);
 
+  useEffect(() => {
+    if (userData?.is_first_interaction_with_agent) {
+      setStartTour(userData.is_first_interaction_with_agent);
+    }
+  }, [userData]);
   if (!access) {
     return null;
   }

@@ -133,7 +133,7 @@ const SideBar: FC<SideBarProps> = ({
         </div>
         <div>
           <p className="text-white font-medium mb-5">{tab.heading}</p>
-          <div id="abc" className="w-full space-y-1 mb-10">
+          <div id="step-1" className="w-full space-y-1 mb-10">
             {tab.tabs.map((option, index) => (
               <div
                 key={index}

@@ -1,11 +1,11 @@
 "use client";
 
 import NewChat from "@/app/components/Dashboard/NewChat/NewChat";
+import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
+import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
+import { useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 import { content } from "./content";
-import { useRouter } from "next/navigation";
-import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
-import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 
 interface PageProps {}
 

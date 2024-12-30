@@ -6,6 +6,7 @@ import {
   AgentState,
   Organization,
   StateAgent,
+  UserProfile,
 } from "./types/agents.d";
 // Define your base query function
 const baseQuery = fetchBaseQuery({
@@ -47,6 +48,32 @@ export const userApi = createApi({
     getAgentById: builder.query<AgentState, number>({
       query: (id) => `/accounts/agents/${id}/`,
       providesTags: ["AllPosts"],
+    }),
+
+    // 4 get user profile
+    getUserProfile: builder.query<UserProfile, void>({
+      query: () => `/accounts/user/profile/`,
+      providesTags: ["AllPosts"],
+    }),
+
+    // 5 update user profile
+    updateUser: builder.mutation({
+      query: (data) => ({
+        url: `/accounts/user/profile/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 6 update user password
+    updatePassword: builder.mutation({
+      query: (data) => ({
+        url: `/accounts/user/change_password/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
     }),
 
     //get organization
@@ -150,6 +177,10 @@ export const {
   useCreateAgentMutation,
   useLazyGetAllAgentsQuery,
   useGetAgentByIdQuery,
+  useGetUserProfileQuery,
+  useUpdateUserMutation,
+  useUpdatePasswordMutation,
+
   useGetAllAgentsQuery,
   useGetOrganizationQuery,
   useDeleteAgentMutation,
