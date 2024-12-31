@@ -8,6 +8,7 @@ import { useAppSelector } from "../../ReduxToolKit/hook";
 import Agents from "./Agents";
 
 type NavContent = {
+  id: number;
   title: string;
   url: string;
 };

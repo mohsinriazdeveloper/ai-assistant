@@ -1,7 +1,6 @@
 "use client";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { setAgentName } from "../ReduxToolKit/agentNameSlice";
 import { useLazyGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
@@ -13,14 +12,13 @@ import {
 import { useAppDispatch, useAppSelector } from "../ReduxToolKit/hook";
 
 type Content = {
+  id: number;
   title: string;
   url: string;
 };
 
 interface NavBarProps {
   content: Content[];
-  // setCreateAgent: Dispatch<SetStateAction<boolean>>;
-  // createAgent: boolean;
 }
 
 const NavBar: FC<NavBarProps> = ({ content }) => {
@@ -32,6 +30,7 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
   const route = useRouter();
   const { createAgentStatus } = useAppSelector(selectCreateAgent);
   const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState<number | null>(null);
 
   const handleSignOut = () => {
     // setTimeout(() => {
@@ -46,7 +45,10 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
     // }, 1000);
     toast.success("You have been logged out successfully");
   };
-
+  const handleRedirect = (url: string, id: number) => {
+    setLoading(id);
+    route.push(url);
+  };
   return (
     <div
       className={`${
@@ -65,18 +67,36 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
                 : "grid-cols-2"
             }`}
           >
-            {content.map((item, index) => (
-              <Link
-                href={item.url}
+            {/* {content.map((item, index) => (
+              <div
+                onClick={() => handleRedirect(item.url, item.id)}
+                // href={item.url}
                 key={index}
-                className={`col-span-1 rounded-full py-2 px-6 ${
+                className={`col-span-1 rounded-full py-2 px-6 cursor-pointer hover:bg-[#424242] hover:text-white ${
+                  loading === item.id && "bg-[#c2c2c2]"
+                } ${
                   currentRoute === item.url
                     ? "bg-[#424242] text-white"
                     : "bg-transparent text-[#8A8A8A]"
                 }`}
               >
                 <p>{item.title}</p>
-              </Link>
+              </div>
+            ))} */}
+            {content.map((item, index) => (
+              <div
+                onClick={() => handleRedirect(item.url, item.id)}
+                key={index}
+                className={`col-span-1 rounded-full py-2 px-6 cursor-pointer border border-transparent hover:border-[#424242] ${
+                  currentRoute === item.url
+                    ? "bg-[#424242] border-[#424242] text-white" // Keep the selected item style
+                    : loading === item.id
+                    ? "bg-[#c2c2c2] border-[#c2c2c2] text-white" // Show loading style only if not already selected
+                    : "bg-transparent text-[#8A8A8A] border-transparent"
+                }`}
+              >
+                <p>{item.title}</p>
+              </div>
             ))}
           </div>
         </div>
@@ -88,7 +108,9 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
                 onClick={() =>
                   dispatch(setCreateAgent({ createAgentStatus: false }))
                 }
-                className="py-2 px-4 border border-[#3C3C3F] text-[#18181b] bg-white font-medium rounded-md text-sm"
+                className={`${
+                  allAgents?.length === 0 ? "hidden" : "block"
+                } py-2 px-4 border border-[#3C3C3F] text-[#18181b] bg-white font-medium rounded-md text-sm`}
               >
                 Home
               </button>
@@ -116,7 +138,7 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
         )}
       </div>
       <div
-        className={`tab:col-span-3 col-span-12 tab:order-2 order-1 font-medium rounded-md text-sm text-[#8A8A8A] flex ml-2 ${
+        className={`tab:col-span-3 col-span-12 tab:order-2 order-1 font-medium rounded-md text-sm text-[#8A8A8A] flex ml-5 ${
           !currentRoute.includes("/dashboard") &&
           "tab:justify-center justify-between tab:mb-0 mb-2 tab:pr-0 pr-2 "
         } items-center lg:gap-2 gap-1 cursor-pointer`}

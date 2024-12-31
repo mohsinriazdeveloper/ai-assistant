@@ -14,7 +14,6 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
   const [updateUser, isLoading] = useUpdateUserMutation();
   const [updatePassword, { isLoading: passLoading }] =
     useUpdatePasswordMutation();
-
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
@@ -126,9 +125,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
       <div className="mt-8 pb-10 border-b">
         <div className="grid grid-cols-2 gap-5">
           <div>
-            <p className="text-[#222529] text-xs font-medium mt-5">
-              FIRST NAME
-            </p>
+            <p className="text-[#222529] text-xs font-medium mt-5">NAME</p>
             <div className="border border-[#e4e7eb] rounded mt-2 py-3 px-4 text-sm">
               <input
                 type="text"
@@ -144,7 +141,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
               <input
                 type="text"
                 value={userEmail}
-                className="focus:outline-none w-full"
+                className="focus:outline-none w-full text-gray-300"
                 readOnly
               />
             </div>

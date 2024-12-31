@@ -11,6 +11,7 @@ export type Organization = {
   name: string;
   email: string;
   created_at: string;
+  image: string | null;
 };
 export type InstructionsType = {
   id: number;

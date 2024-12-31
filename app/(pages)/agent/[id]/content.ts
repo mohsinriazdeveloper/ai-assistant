@@ -1,25 +1,18 @@
 export const getContent = (id: number | undefined) => ({
   navBar: [
     {
+      id: 3,
       title: "Chat",
       url: `/agent/${id}/chat`,
     },
     {
+      id: 4,
       title: "Sources",
       url: `/agent/${id}/sources`,
     },
-    {
-      title: "Connections",
-      url: `/agent/${id}/connections`,
-    },
-    {
-      title: "Model",
-      url: `/agent/${id}/model`,
-    },
-    {
-      title: "Tools",
-      url: `/agent/${id}/tools`,
-    },
+    { id: 5, title: "Connections", url: `/agent/${id}/connections` },
+    { id: 6, title: "Model", url: `/agent/${id}/model` },
+    { id: 7, title: "Tools", url: `/agent/${id}/tools` },
   ],
 });
 

@@ -9,6 +9,7 @@ import ChatAgent from "./ChatAgent";
 import VoiceAgent from "./VoiceAgent";
 
 type NavContent = {
+  id: number;
   title: string;
   url: string;
 };

@@ -25,7 +25,7 @@ const Page: FC<PageProps> = ({ params }) => {
   }
   return (
     <Background>
-      <div className="pt-8">
+      <div className="pt-8 fixed w-full">
         <NavBar content={content.navBar} />
         <Settings />
       </div>

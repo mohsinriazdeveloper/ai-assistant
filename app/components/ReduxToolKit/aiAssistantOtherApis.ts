@@ -76,10 +76,29 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
-    //get organization
+    // 7 get organization
     getOrganization: builder.query<Organization, void>({
       query: () => `/accounts/org/my/`,
       providesTags: ["AllPosts"],
+    }),
+
+    // 8 add org image
+    updateOrgImg: builder.mutation({
+      query: (data) => ({
+        url: `/accounts/org/logo/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 9 delete org image
+    deleteOrgImg: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/org/logo/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AllPosts"],
     }),
 
     //agent voice
@@ -180,9 +199,11 @@ export const {
   useGetUserProfileQuery,
   useUpdateUserMutation,
   useUpdatePasswordMutation,
+  useGetOrganizationQuery,
+  useUpdateOrgImgMutation,
+  useDeleteOrgImgMutation,
 
   useGetAllAgentsQuery,
-  useGetOrganizationQuery,
   useDeleteAgentMutation,
   useAgentVoiceMutation,
   useAgentChatMutation,
