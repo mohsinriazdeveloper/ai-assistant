@@ -138,7 +138,7 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
         )}
       </div>
       <div
-        className={`tab:col-span-3 col-span-12 tab:order-2 order-1 font-medium rounded-md text-sm text-[#8A8A8A] flex ml-5 ${
+        className={`tab:col-span-3 col-span-12 tab:order-2 order-1 font-medium rounded-md text-sm text-[#8A8A8A] flex duration-300 transition-all ${
           !currentRoute.includes("/dashboard") &&
           "tab:justify-center justify-between tab:mb-0 mb-2 tab:pr-0 pr-2 "
         } items-center lg:gap-2 gap-1 cursor-pointer`}
@@ -149,12 +149,14 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
               dispatch(setCreateAgent({ createAgentStatus: false }));
               route.push("/dashboard/agents");
             }}
-            className="py-2 px-4 border border-[#3C3C3F] text-[#18181b] bg-white font-medium rounded-md text-sm"
+            className="py-2 px-4 border hover:bg-gray-100 border-[#3C3C3F] text-[#18181b] bg-white font-medium rounded-md text-sm duration-300 transition-colors"
           >
             Home
           </button>
         )}
-        <p onClick={handleSignOut}>Sign Out</p>
+        <p onClick={handleSignOut} className="ml-5">
+          Sign Out
+        </p>
       </div>
     </div>
   );
