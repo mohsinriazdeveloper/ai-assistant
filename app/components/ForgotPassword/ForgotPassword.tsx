@@ -1,4 +1,6 @@
 "use client";
+import Logo from "@/app/assets/Images/aiStar.png";
+import Image from "next/image";
 import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import Loader from "../Loader/Loader";
@@ -41,7 +43,8 @@ const ForgotPassword: FC<ForgotPasswordProps> = ({}) => {
     }
   };
   return (
-    <div className="max-w-[360px] mx-auto py-12">
+    <div className="w-[360px]">
+      <Image src={Logo} alt="" className="mx-auto mb-4" />
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>
       </div>

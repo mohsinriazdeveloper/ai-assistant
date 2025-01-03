@@ -13,6 +13,7 @@ import {
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { selectChats, setChats } from "../../ReduxToolKit/chatSessionSlice";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
+import { QATypes } from "../../UpdateTraining/trainingTypes.d";
 import ChatSessions from "./ChatSessions";
 import "./style.css";
 
@@ -48,14 +49,38 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
   const dispatch = useAppDispatch();
   const chatSessions = useAppSelector(selectChats);
-  const [qaData, setQaData] = useState<QaItem[]>([]);
-  const [qaCharacters, setqaCharacters] = useState<number>(0);
-  const [fileData, setFileData] = useState<FileItem[]>([]);
-  const [fileChar, setFileChar] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false);
-
   const [searchChat, setSearchChat] = useState<string>("");
   const [newChatModal, setNewChatModal] = useState<boolean>(false);
+
+  const [totalchar, setTotalchar] = useState<number>(0);
+  const [qaData, setQaData] = useState<QATypes[]>([]);
+  useEffect(() => {
+    let char: number = 0;
+    if (agent?.text) {
+      char += agent.text.length;
+    }
+    if (agent?.qa) {
+      const parsedQa =
+        typeof agent.qa === "string" ? JSON.parse(agent.qa) : agent.qa;
+      if (Array.isArray(parsedQa)) {
+        setQaData(parsedQa);
+      }
+      const total = qaData.reduce(
+        (acc, qa) => acc + qa.question.length + qa.answer.length,
+        0
+      );
+      char += total;
+    }
+    if (agent?.files) {
+      const filesChar = agent.files.reduce(
+        (sum, file) => sum + (file.file_characters || 0),
+        0
+      );
+      char += filesChar;
+    }
+    setTotalchar(char);
+  }, [agent]);
 
   useEffect(() => {
     if (AllChats) {
@@ -64,45 +89,6 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
       dispatch(setChats([]));
     }
   }, [AllChats, dispatch]);
-
-  useEffect(() => {
-    if (agent?.file_urls) {
-      //@ts-ignore
-      setFileData(agent?.file_urls);
-    }
-  }, [agent]);
-
-  useEffect(() => {
-    if (fileData.length > 0) {
-      const total = fileData.reduce((acc, obj) => {
-        return acc + obj.text_content.length;
-      }, 0);
-      setFileChar(total);
-    }
-  }, [fileData]);
-
-  useEffect(() => {
-    if (agent?.qa) {
-      try {
-        const parsedQa =
-          typeof agent.qa === "string" ? JSON.parse(agent.qa) : agent.qa;
-        if (Array.isArray(parsedQa)) {
-          setQaData(parsedQa);
-        }
-      } catch (error) {
-        console.error("Error parsing QA data:", error);
-      }
-    }
-  }, [agent]);
-
-  useEffect(() => {
-    if (qaData.length > 0) {
-      const total = qaData.reduce((acc, obj) => {
-        return acc + obj.question.length + obj.answer.length;
-      }, 0);
-      setqaCharacters(total);
-    }
-  }, [qaData]);
 
   const handleCopy = () => {
     //@ts-ignore
@@ -120,8 +106,6 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
       </div>
     );
   }
-
-  const totalChar = qaCharacters + (agent.text?.length ?? 0) + fileChar;
 
   //@ts-ignore
   const formattedDate = new Date(agent.updated_at).toLocaleDateString("en-US", {
@@ -236,7 +220,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
             </div>
             <div className="col-span-4">
               <p className="text-white font-medium"># of characters:</p>
-              <p>{totalChar}</p>
+              <p>{totalchar}</p>
             </div>
           </div>
           <div className="grid grid-cols-12 mb-3 gap-2">

@@ -101,6 +101,56 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    // 10 post files/images and get character count
+    fileCharCount: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/${id}/sources/character_counter/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 11 train agent by files
+    trainByFiles: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/${id}/train_files/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 12 train agent by images
+    trainByImages: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/${id}/train_images/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 13 train agent by website
+    trainByWebsite: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/${id}/train_websites/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 14 update agent text, QA and other
+    updateAgent: builder.mutation({
+      query: (data) => ({
+        url: `/accounts/agents/update/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -132,15 +182,7 @@ export const userApi = createApi({
       }),
       invalidatesTags: ["AllPosts"],
     }),
-    // update agent endpoint
-    updateAgent: builder.mutation({
-      query: (data) => ({
-        url: `/accounts/agents/update/`,
-        method: "PUT",
-        body: data,
-      }),
-      invalidatesTags: ["AllPosts"],
-    }),
+
     // Train by image
     trainByImage: builder.mutation({
       query: (data) => ({
@@ -202,13 +244,17 @@ export const {
   useGetOrganizationQuery,
   useUpdateOrgImgMutation,
   useDeleteOrgImgMutation,
+  useFileCharCountMutation,
+  useTrainByFilesMutation,
+  useTrainByImagesMutation,
+  useTrainByWebsiteMutation,
+  useUpdateAgentMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,
   useAgentVoiceMutation,
   useAgentChatMutation,
   useGetAgentChatQuery,
-  useUpdateAgentMutation,
   useDeleteFileMutation,
   useDeleteChatMutation,
   useUpdateInstructionsMutation,

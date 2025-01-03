@@ -7,6 +7,7 @@ import { MdContentCopy } from "react-icons/md";
 import Loader from "../Loader/Loader";
 import RangeBar from "../RangeBar/RangeBar";
 import { useGetAgentByIdQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import { QATypes } from "../UpdateTraining/trainingTypes.d";
 import "./style.css";
 
 type TabType = {
@@ -43,49 +44,36 @@ const SideBar: FC<SideBarProps> = ({
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
 
   const currentRoute = usePathname();
-  const [qaData, setQaData] = useState<QaItem[]>([]);
-  const [qaCharacters, setqaCharacters] = useState<number>(0);
-  const [fileData, setFileData] = useState<FileItem[]>([]);
-  const [fileChar, setFileChar] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
+  const [totalchar, setTotalchar] = useState<number>(0);
+  const [qaData, setQaData] = useState<QATypes[]>([]);
   useEffect(() => {
-    if (agent?.file_urls) {
-      //@ts-ignore
-      setFileData(agent?.file_urls);
+    let char: number = 0;
+    if (agent?.text) {
+      char += agent.text.length;
     }
-  }, [agent]);
-
-  useEffect(() => {
-    if (fileData.length > 0) {
-      const total = fileData.reduce((acc, obj) => {
-        return acc + obj.text_content.length;
-      }, 0);
-      setFileChar(total);
-    }
-  }, [fileData]);
-  useEffect(() => {
     if (agent?.qa) {
-      try {
-        const parsedQa =
-          typeof agent.qa === "string" ? JSON.parse(agent.qa) : agent.qa;
-        if (Array.isArray(parsedQa)) {
-          setQaData(parsedQa);
-        }
-      } catch (error) {
-        console.error("Error parsing QA data:", error);
+      const parsedQa =
+        typeof agent.qa === "string" ? JSON.parse(agent.qa) : agent.qa;
+      if (Array.isArray(parsedQa)) {
+        setQaData(parsedQa);
       }
+      const total = qaData.reduce(
+        (acc, qa) => acc + qa.question.length + qa.answer.length,
+        0
+      );
+      char += total;
     }
+    if (agent?.files) {
+      const filesChar = agent.files.reduce(
+        (sum, file) => sum + (file.file_characters || 0),
+        0
+      );
+      char += filesChar;
+    }
+    setTotalchar(char);
   }, [agent]);
-
-  useEffect(() => {
-    if (qaData.length > 0) {
-      const total = qaData.reduce((acc, obj) => {
-        return acc + obj.question.length + obj.answer.length;
-      }, 0);
-      setqaCharacters(total);
-    }
-  }, [qaData]);
 
   const handleCopy = () => {
     //@ts-ignore
@@ -103,8 +91,6 @@ const SideBar: FC<SideBarProps> = ({
       </div>
     );
   }
-
-  const totalChar = qaCharacters + (agent.text?.length ?? 0) + fileChar;
 
   //@ts-ignore
   const formattedDate = new Date(agent.updated_at).toLocaleDateString("en-US", {
@@ -192,7 +178,7 @@ const SideBar: FC<SideBarProps> = ({
             </div>
             <div className="col-span-4">
               <p className="text-white font-medium"># of characters:</p>
-              <p>{totalChar}</p>
+              <p>{totalchar}</p>
             </div>
           </div>
           <div className="grid grid-cols-12 mb-3 gap-2">

@@ -102,8 +102,6 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
       } else {
         toast.success("Password updated successfully");
       }
-
-      console.log("Response:", res);
     } catch (error: any) {
       if (error?.data) {
         // Extracting and displaying errors from the API response
@@ -118,7 +116,6 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
     }
   };
 
-  console.log(passLoading);
   return (
     <div className="pt-16">
       <p className="text-xl font-bold">Profile Info</p>

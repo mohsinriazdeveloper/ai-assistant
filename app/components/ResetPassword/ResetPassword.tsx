@@ -1,6 +1,7 @@
 "use client";
 import HideIcon from "@/app/assets/icons/hidePassword.png";
 import ShowIcon from "@/app/assets/icons/viewPassword.png";
+import Logo from "@/app/assets/Images/aiStar.png";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FC, useState } from "react";
@@ -92,8 +93,9 @@ const ResetPassword: FC<ResetPasswordProps> = ({ token }) => {
   };
 
   return (
-    <div className="max-w-[360px] mx-auto py-12">
+    <div className="w-[360px]">
       {/* <Toaster position="top-right" reverseOrder={false} /> */}
+      <Image src={Logo} alt="" className="mx-auto mb-4" />
 
       <div className="mb-8">
         <p className="text-center font-semibold text-2xl">Recover Password</p>

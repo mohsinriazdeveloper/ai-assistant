@@ -32,9 +32,9 @@ const AgentOption: FC<AgentOptionProps> = ({ agentId, checkOption }) => {
   const date = new Date();
 
   useEffect(() => {
-    if (agent?.file_urls) {
+    if (agent?.files) {
       //@ts-ignore
-      setFileData(agent?.file_urls);
+      setFileData(agent?.files);
     }
   }, [agent]);
 

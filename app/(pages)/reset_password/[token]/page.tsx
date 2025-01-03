@@ -1,4 +1,5 @@
 "use client";
+import Background from "@/app/components/Background/Background";
 import ResetPassword from "@/app/components/ResetPassword/ResetPassword";
 import { FC } from "react";
 
@@ -19,8 +20,15 @@ const Page: FC<PageProps> = () => {
     }
   }
 
-  // @ts-ignore
-  return <ResetPassword token={token} />;
+  return (
+    <Background>
+      <div className="flex justify-center items-center w-full h-full bg-white">
+        <ResetPassword // @ts-ignore
+          token={token}
+        />
+      </div>
+    </Background>
+  );
 };
 
 export default Page;

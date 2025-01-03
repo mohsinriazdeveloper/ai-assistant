@@ -46,13 +46,13 @@ const Page: FC<PageProps> = ({ params }) => {
   };
   return (
     <Background>
-      <div className="h-full overflow-hidden overflow-y-scroll bg-white rounded-[20px]">
+      <div className=" w-full bg-white rounded-[20px]">
         <TourGuide
           start={startTour}
           setStartTour={setStartTour}
           onTourEnd={handleTourEnd}
         />
-        <div className="tab:grid grid-cols-12 w-full h-full">
+        <div className="tab:grid grid-cols-12 w-full">
           <div
             className={`${
               isMobile ? "hidden" : "block"
@@ -71,7 +71,7 @@ const Page: FC<PageProps> = ({ params }) => {
               isMobile ? "col-span-12" : "col-span-9"
             } rounded-[20px] bg-white h-full`}
           >
-            <div className="flex items-center pt-5 step-2">
+            <div className="flex items-center pt-5 step-2 ">
               {isMobile && (
                 <HiOutlineDotsHorizontal
                   className={`text-2xl cursor-pointer ml-3`}
@@ -80,17 +80,13 @@ const Page: FC<PageProps> = ({ params }) => {
               )}
               <NavBar content={navContent.navBar} />
             </div>
-            <div className="">
+            <div className=" ">
               <div className="my-5 px-10">
                 <UpdateTraining agentId={id} checkOption={checkOption} />
               </div>
             </div>
           </div>
         </div>
-        {/* <TrainingStepsModal
-        openDialogue={openDialogue}
-        handleClose={() => setOpenDialogue(false)}
-      /> */}
       </div>
     </Background>
   );

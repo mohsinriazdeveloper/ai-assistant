@@ -15,20 +15,14 @@ interface QAInputProps {
   qaList: { question: string; answer: string }[];
   setQAList: Dispatch<SetStateAction<{ question: string; answer: string }[]>>;
   setQaChar: Dispatch<SetStateAction<number>>;
-  cantAddMore: boolean;
 }
 
-const QAInput: FC<QAInputProps> = ({
-  qaList,
-  setQAList,
-  setQaChar,
-  cantAddMore,
-}) => {
+const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
   const handleAddQA = useCallback(() => {
-    if (cantAddMore) {
-      toast.error("You cannot add more questions or answers.");
-      return;
-    }
+    // if (cantAddMore) {
+    //   toast.error("You cannot add more questions or answers.");
+    //   return;
+    // }
 
     if (qaList.length > 0) {
       const lastQA = qaList[qaList.length - 1];
@@ -39,7 +33,7 @@ const QAInput: FC<QAInputProps> = ({
     }
 
     setQAList((prevQAList) => [...prevQAList, { question: "", answer: "" }]);
-  }, [qaList, setQAList, cantAddMore]);
+  }, [qaList, setQAList]);
 
   const handleQAChange = useCallback(
     (
@@ -62,13 +56,13 @@ const QAInput: FC<QAInputProps> = ({
 
   const handleDeleteQA = useCallback(
     (index: number) => {
-      if (cantAddMore) {
-        toast.error("You cannot delete questions or answers.");
-        return;
-      }
+      // if (cantAddMore) {
+      //   toast.error("You cannot delete questions or answers.");
+      //   return;
+      // }
       setQAList((prevQAList) => prevQAList.filter((_, i) => i !== index));
     },
-    [setQAList, cantAddMore]
+    [setQAList]
   );
 
   // Update the qaChar whenever qaList changes
@@ -97,25 +91,21 @@ const QAInput: FC<QAInputProps> = ({
             />
           </div>
           <textarea
-            className={`w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3 mb-4 ${
-              cantAddMore ? "bg-gray-200" : ""
-            }`}
+            className={`w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3 mb-4 `}
             rows={3}
             value={qa.question}
             onChange={(e) => handleQAChange(index, "question", e.target.value)}
           ></textarea>
           <p>Answer {index + 1}</p>
           <textarea
-            className={`w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3 ${
-              cantAddMore ? "bg-gray-200" : ""
-            }`}
+            className={`w-full focus:outline-none border border-gray-200 rounded px-3 py-1 mt-3`}
             rows={8}
             value={qa.answer}
             onChange={(e) => handleQAChange(index, "answer", e.target.value)}
           ></textarea>
         </div>
       )),
-    [qaList, handleQAChange, handleDeleteQA, cantAddMore]
+    [qaList, handleQAChange, handleDeleteQA]
   );
 
   return (

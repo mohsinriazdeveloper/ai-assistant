@@ -1,9 +1,24 @@
-export type FileUrl = {
-  file_url?: string;
-  text_content?: string;
-  id: number;
+// export type File = {
+//   file_url?: string;
+//   text_content?: string;
+//   id: number;
+//   file_name: string;
+//   website_url?: string;
+// };
+
+export type Files = {
+  created_at: string;
+  file_category: string;
+  file_characters: number;
   file_name: string;
-  website_url?: string;
+  file_url: string;
+  id: number;
+  source_context: string;
+  source_instructions: string;
+  source_name: string;
+  updated_at: string;
+  website_auto_update: null | string;
+  website_url: null | string;
 };
 export type Organization = {
   id: number;
@@ -30,7 +45,7 @@ export interface AgentState {
   id: number;
   organization?: Organization | null;
   instructions?: InstructionsType[];
-  file_urls?: FileUrl[];
+  files?: Files[];
   name?: string;
   text?: string;
   qa?: string;
@@ -44,9 +59,6 @@ export interface AgentState {
   created_at?: string;
   updated_at?: string;
   customuser?: number;
-
-  // need to remove this one but later⬇️
-  instructions?: string;
 }
 export const agentState: AgentState = {
   id: 0,

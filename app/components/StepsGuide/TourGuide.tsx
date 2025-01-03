@@ -144,7 +144,7 @@ const TourGuide: FC<TourGuideProps> = ({ start, setStartTour, onTourEnd }) => {
       try {
         updateUser({ is_first_interaction_with_agent: false }).unwrap();
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
   };

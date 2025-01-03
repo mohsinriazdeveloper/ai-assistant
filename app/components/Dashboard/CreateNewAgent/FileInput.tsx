@@ -1,234 +1,88 @@
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
-import mammoth from "mammoth";
 import Image from "next/image";
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
+import { FC, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import pdfToText from "react-pdftotext";
 import Loader from "../../Loader/Loader";
 
 interface FileInputProps {
   files: File[];
-  setFiles: Dispatch<SetStateAction<File[]>>;
-  setCharCount: Dispatch<SetStateAction<number>>;
-  setFileCount: Dispatch<SetStateAction<number>>;
-  // handleDeleteFile: (index: number) => void;
-  setFileUrls: Dispatch<SetStateAction<string[]>>;
-  cantAddMore: boolean;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  fileCharLoading: boolean;
+  // setCharCount: React.Dispatch<React.SetStateAction<number>>; // can be unused, left here for compatibility
+  // setFileCount: React.Dispatch<React.SetStateAction<number>>; // can be unused, left here for compatibility
+  // setFileUrls: React.Dispatch<React.SetStateAction<string[]>>; // can be unused, left here for compatibility
 }
 
 const FileInput: FC<FileInputProps> = ({
   files,
   setFiles,
-  setCharCount,
-  setFileCount,
-  // handleDeleteFile,
-  setFileUrls,
-  cantAddMore,
+  fileCharLoading,
 }) => {
-  const maxFiles = 1000;
-  const maxSizeMB = 10;
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const allowedFileTypes = [
     "application/pdf",
     "text/plain",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
 
-  const showError = (message: string) => {
-    setErrorMessage(message);
-    setTimeout(() => {
-      setErrorMessage("");
-    }, 2000);
-  };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (cantAddMore) return;
-    event.preventDefault();
+    if (!event.target.files) return;
 
-    if (event.target.files) {
-      const selectedFiles = Array.from(event.target.files);
-
-      const invalidFiles = selectedFiles.filter(
-        (file) => !allowedFileTypes.includes(file.type)
-      );
-      if (invalidFiles.length > 0) {
-        showError(
-          "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
-        );
-        return;
-      }
-
-      const totalSizeMB = selectedFiles.reduce(
-        (acc, file) => acc + file.size / (1024 * 1024),
-        0
-      );
-
-      if (totalSizeMB > maxSizeMB) {
-        showError("File size should not be larger than 10MB");
-        return;
-      }
-
-      if (files.length + selectedFiles.length > maxFiles) {
-        alert(`You can only upload up to ${maxFiles} files in total.`);
-        return;
-      }
-
-      setErrorMessage("");
-      setUploading(true);
-
-      setTimeout(() => {
-        const newFiles = [...files, ...selectedFiles];
-        setFiles(newFiles);
-        setFileCount(newFiles.length);
-
-        const newUrls = selectedFiles.map((file) => URL.createObjectURL(file));
-        setFileUrls((prevUrls) => [...prevUrls, ...newUrls]);
-
-        setUploading(false);
-        processFiles(newFiles);
-      }, 3000);
-    }
-  };
-
-  const processFiles = useCallback(
-    (selectedFiles: File[]) => {
-      let totalCharCount = 0;
-      const fileReaders = selectedFiles.map((file) => {
-        return new Promise<void>((resolve) => {
-          if (file.type === "application/pdf") {
-            pdfToText(file)
-              .then((text) => {
-                totalCharCount += text.length;
-                resolve();
-              })
-              .catch((error) =>
-                console.error("Failed to extract text from PDF", error)
-              );
-          } else if (file.type === "text/plain") {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const content = e.target?.result as string;
-              totalCharCount += content.length;
-              resolve();
-            };
-            reader.readAsText(file);
-          } else if (
-            file.type === "application/msword" ||
-            file.type ===
-              "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          ) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const arrayBuffer = e.target?.result as ArrayBuffer;
-              mammoth
-                .extractRawText({ arrayBuffer })
-                .then((result) => {
-                  totalCharCount += result.value.length;
-                  resolve();
-                })
-                .catch((error) =>
-                  console.error(
-                    "Failed to extract text from Word document",
-                    error
-                  )
-                );
-            };
-            reader.readAsArrayBuffer(file);
-          } else {
-            resolve();
-          }
-        });
-      });
-
-      Promise.all(fileReaders).then(() => {
-        setCharCount(totalCharCount);
-      });
-    },
-    [setCharCount]
-  );
-
-  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
-    if (cantAddMore) return;
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(false);
-
-    const selectedFiles = Array.from(event.dataTransfer.files);
-
-    const invalidFiles = selectedFiles.filter(
-      (file) => !allowedFileTypes.includes(file.type)
+    const selectedFiles = Array.from(event.target.files).filter((file) =>
+      allowedFileTypes.includes(file.type)
     );
-    if (invalidFiles.length > 0) {
-      showError(
+
+    if (selectedFiles.length === 0) {
+      setErrorMessage(
         "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
       );
       return;
     }
 
-    const totalSizeMB = selectedFiles.reduce(
-      (acc, file) => acc + file.size / (1024 * 1024),
-      0
+    setErrorMessage("");
+    setFiles([...files, ...selectedFiles]); // Update the files array
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const selectedFiles = Array.from(event.dataTransfer.files).filter((file) =>
+      allowedFileTypes.includes(file.type)
     );
 
-    if (totalSizeMB > maxSizeMB) {
-      showError("File size should not be larger than 10MB");
-      return;
-    }
-
-    if (files.length + selectedFiles.length > maxFiles) {
-      alert(`You can only upload up to ${maxFiles} files in total.`);
+    if (selectedFiles.length === 0) {
+      setErrorMessage(
+        "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
+      );
       return;
     }
 
     setErrorMessage("");
-    setUploading(true);
 
-    setTimeout(() => {
-      const newFiles = [...files, ...selectedFiles];
-      setFiles(newFiles);
-      setFileCount(newFiles.length);
-
-      const newUrls = selectedFiles.map((file) => URL.createObjectURL(file));
-      setFileUrls((prevUrls) => [...prevUrls, ...newUrls]);
-
-      setUploading(false);
-      processFiles(newFiles);
-    }, 3000);
+    setFiles([...files, ...selectedFiles]); // Update the files array
   };
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    if (cantAddMore) return;
     event.preventDefault();
-    event.stopPropagation();
     setIsDragging(true);
   };
 
-  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(false);
-  };
+  const handleDragLeave = () => setIsDragging(false);
 
   const handleDivClick = () => {
-    if (!cantAddMore && fileInputRef.current) {
-      fileInputRef.current.click(); // Programmatically trigger the file input click
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
   return (
     <div>
       <div className="flex justify-between items-center">
-        <p className="font-bold text-2xl ">Files</p>
+        <p className="font-bold text-2xl">Files</p>
         <div
           onClick={handleDivClick}
           className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
@@ -243,9 +97,7 @@ const FileInput: FC<FileInputProps> = ({
           onDragLeave={handleDragLeave}
           className={`flex mt-3 flex-col items-center justify-center border ${
             isDragging ? "border-blue-400" : "border-gray-200"
-          } px-6 rounded h-[165px] cursor-pointer ${
-            cantAddMore ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          } px-6 rounded h-[165px] cursor-pointer`}
         >
           <div>
             <Image src={UploadIcon} alt="" className="max-w-4" />
@@ -258,7 +110,6 @@ const FileInput: FC<FileInputProps> = ({
             multiple
             accept=".pdf, .docx, .txt"
             onChange={handleFileChange}
-            disabled={cantAddMore}
           />
           <label
             htmlFor="file-upload"
@@ -269,13 +120,13 @@ const FileInput: FC<FileInputProps> = ({
           <p className="mt-2 text-[10px] text-gray-500">
             Supported File Types: .pdf, .docx, .txt
           </p>
+          {fileCharLoading && (
+            <div className="mt-2">
+              <Loader />
+            </div>
+          )}
           {errorMessage && (
             <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
-          )}
-          {uploading && (
-            <div className="flex items-center mt-5 text-gray-500 text-xs">
-              <p>Uploading </p> <Loader />
-            </div>
           )}
         </div>
       </label>

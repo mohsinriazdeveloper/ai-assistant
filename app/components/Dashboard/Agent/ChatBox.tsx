@@ -42,7 +42,6 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
       setIsCopied(null);
     }, 1000);
   };
-  console.log(chat);
   return (
     <div
       className="w-full pr-5 max-h-[70vh] overflow-hidden overflow-y-scroll scrollbar-hide"

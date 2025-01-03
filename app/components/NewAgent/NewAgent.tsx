@@ -39,7 +39,6 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
     if (agentName) {
       try {
         const res = await creatingAgent({ name: agentName }).unwrap();
-        // console.log({ res });
         inputRef.current?.blur();
         toast.success("Agent successfully created");
         route.push(`/agent/${res.id}/sources`);
