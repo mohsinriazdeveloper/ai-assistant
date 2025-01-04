@@ -87,84 +87,86 @@ const Settings: FC<SettingsProps> = ({}) => {
               content={content.sideBarOptions}
             />
           </div>
-          <div className="md:col-span-10 col-span-12 flex flex-col gap-10 h-[74vh] overflow-y-scroll scrollbar-hide pt-16">
-            {checkOption === "setting" && (
-              <div>
-                <form className="mb-10">
-                  <div className="w-full border border-gray-200 py-7 px-6 rounded-lg flex flex-col gap-6">
-                    <p className="text-2xl font-semibold">General</p>
-                    <div>
-                      <p className="text-sm font-medium">Organization ID</p>
-                      <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
-                        {getOrg ? <p>{getOrg.ran_id}</p> : <Loader />}
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">Organization Name</p>
-                      <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
-                        {getOrg ? <p>{getOrg.name}</p> : <Loader />}
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                <div className="flex gap-5">
-                  <div>
-                    {preview ? (
-                      <div
-                        className="w-[150px] h-[146px] border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
-                        style={{ backgroundImage: `url(${preview})` }}
-                      ></div>
-                    ) : (
-                      <div className="w-[150px] h-[146px] border border-[#bfbfbf] rounded-lg bg-gradient-to-br from-[#f9f9f9] to-[#ffffff] flex justify-center items-center">
-                        <p className="font-medium text-lg text-[#BDBDBD]">
-                          No Logo
-                        </p>
-                      </div>
-                    )}
-                    <p className="text-sm text-red-600">{imgError}</p>
-                  </div>
-                  <div className="h-full flex flex-col justify-between pt-3">
-                    <div className="mb-6">
-                      <p className="text-lg font-medium">
-                        Account / Organization Logo
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs">
-                        This logo will be used on a black GB. Use a <br />
-                        white/colored logo for better results
-                      </p>
-                      <div className="mt-4 flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            document.getElementById("fileInput")?.click()
-                          }
-                          className="border border-black rounded-full py-2 px-8 text-xs hover:bg-black hover:text-white duration-300 transition-colors"
-                        >
-                          Upload Image
-                        </button>
-                        <div
-                          onClick={handleRemoveImage}
-                          className="flex items-center gap-1 cursor-pointer"
-                        >
-                          <RiDeleteBin6Line className="text-sm" />
-                          <p className="text-xs">Remove</p>
+          <div className="w-full md:col-span-10 col-span-12 overflow-y-scroll primaryScroller">
+            <div className="flex flex-col gap-10 pt-16 h-[74vh] pr-4">
+              {checkOption === "setting" && (
+                <div>
+                  <form className="mb-10">
+                    <div className="w-full border border-gray-200 py-7 px-6 rounded-lg flex flex-col gap-6">
+                      <p className="text-2xl font-semibold">General</p>
+                      <div>
+                        <p className="text-sm font-medium">Organization ID</p>
+                        <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
+                          {getOrg ? <p>{getOrg.ran_id}</p> : <Loader />}
                         </div>
                       </div>
-                      <input
-                        id="fileInput"
-                        type="file"
-                        accept="image/jpeg, image/png, image/jpg"
-                        className="hidden"
-                        onChange={handleFileChange}
-                      />
+                      <div>
+                        <p className="text-sm font-medium">Organization Name</p>
+                        <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
+                          {getOrg ? <p>{getOrg.name}</p> : <Loader />}
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                  <div className="flex gap-5">
+                    <div>
+                      {preview ? (
+                        <div
+                          className="w-[150px] h-[146px] border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
+                          style={{ backgroundImage: `url(${preview})` }}
+                        ></div>
+                      ) : (
+                        <div className="w-[150px] h-[146px] border border-[#bfbfbf] rounded-lg bg-gradient-to-br from-[#f9f9f9] to-[#ffffff] flex justify-center items-center">
+                          <p className="font-medium text-lg text-[#BDBDBD]">
+                            No Logo
+                          </p>
+                        </div>
+                      )}
+                      <p className="text-sm text-red-600">{imgError}</p>
+                    </div>
+                    <div className="h-full flex flex-col justify-between pt-3">
+                      <div className="mb-6">
+                        <p className="text-lg font-medium">
+                          Account / Organization Logo
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs">
+                          This logo will be used on a black GB. Use a <br />
+                          white/colored logo for better results
+                        </p>
+                        <div className="mt-4 flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              document.getElementById("fileInput")?.click()
+                            }
+                            className="border border-black rounded-full py-2 px-8 text-xs hover:bg-black hover:text-white duration-300 transition-colors"
+                          >
+                            Upload Image
+                          </button>
+                          <div
+                            onClick={handleRemoveImage}
+                            className="flex items-center gap-1 cursor-pointer"
+                          >
+                            <RiDeleteBin6Line className="text-sm" />
+                            <p className="text-xs">Remove</p>
+                          </div>
+                        </div>
+                        <input
+                          id="fileInput"
+                          type="file"
+                          accept="image/jpeg, image/png, image/jpg"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                      </div>
                     </div>
                   </div>
+                  <ProfileInfo />
                 </div>
-                <ProfileInfo />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

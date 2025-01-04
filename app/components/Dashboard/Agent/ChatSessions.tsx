@@ -17,6 +17,8 @@ interface ChatSessionsProps {
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   setStartNewChat: Dispatch<SetStateAction<boolean | undefined>>;
   focusInputById: () => void;
+  setActiveChat: Dispatch<SetStateAction<number | null>>;
+  activeChat: number | null;
 }
 
 const ChatSessions: FC<ChatSessionsProps> = ({
@@ -24,6 +26,8 @@ const ChatSessions: FC<ChatSessionsProps> = ({
   setSpecificChatId,
   setStartNewChat,
   focusInputById,
+  activeChat,
+  setActiveChat,
 }) => {
   const [deleteChatSession] = useDeleteChatMutation();
   const [renameChatSessionName] = useRenameChatSessionMutation();
@@ -36,12 +40,12 @@ const ChatSessions: FC<ChatSessionsProps> = ({
   const [sessionChatDropDown, setSessionChatDropDown] = useState<number | null>(
     null
   );
-  const [activeChat, SetActiveChat] = useState<any>(null);
+  // const [activeChat, SetActiveChat] = useState<any>(null);
 
   useEffect(() => {
     const savedChatId = localStorage.getItem("myCustomChatId");
     if (savedChatId) {
-      SetActiveChat(Number(savedChatId));
+      setActiveChat(Number(savedChatId));
     }
   }, [localStorage]);
 
@@ -87,7 +91,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
             onClick={() => {
               setSpecificChatId(chat.id);
               setStartNewChat(false);
-              SetActiveChat(chat.id);
+              setActiveChat(chat.id);
             }}
           >
             <FiMessageSquare />

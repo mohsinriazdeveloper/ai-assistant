@@ -52,7 +52,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [searchChat, setSearchChat] = useState<string>("");
   const [newChatModal, setNewChatModal] = useState<boolean>(false);
-
+  const [activeChat, setActiveChat] = useState<number | null>(null);
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
   useEffect(() => {
@@ -181,6 +181,8 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                 setSpecificChatId={setSpecificChatId}
                 setStartNewChat={setStartNewChat}
                 focusInputById={focusInputById}
+                activeChat={activeChat} // Pass active chat
+                setActiveChat={setActiveChat}
               />
             </div>
           )}
@@ -192,6 +194,8 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                 setSpecificChatId={setSpecificChatId}
                 setStartNewChat={setStartNewChat}
                 focusInputById={focusInputById}
+                activeChat={activeChat} // Pass active chat
+                setActiveChat={setActiveChat}
               />
             </div>
           )}

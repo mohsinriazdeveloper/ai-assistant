@@ -2,7 +2,6 @@ import Image from "next/image";
 import { FC, useState } from "react";
 import LeftBar from "../LeftBar/LeftBar";
 import { connectionContent } from "./content";
-import Finance from "./Finance";
 
 interface ConnectProps {
   agentId: number;
@@ -47,7 +46,7 @@ const Connect: FC<ConnectProps> = ({ agentId }) => {
             ))}
           </div>
         )}
-        {checkOption === "finance" && <Finance agentId={agentId} />}
+        {/* {checkOption === "finance" && <Finance agentId={agentId} />} */}
       </div>
     </div>
   );

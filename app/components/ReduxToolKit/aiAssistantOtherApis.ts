@@ -4,6 +4,8 @@ import {
   AgentAllChatType,
   AgentChatType,
   AgentState,
+  ApiConnection,
+  GetExchangeRate,
   Organization,
   StateAgent,
   UserProfile,
@@ -151,6 +153,56 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    // 15 get source api connections
+    getSourceApiConnections: builder.query<ApiConnection[], void>({
+      query: () => `/accounts/agents/source_api_connections/`,
+      providesTags: ["AllPosts"],
+    }),
+
+    // 16 delete source api connections
+    disconnectApiConnection: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/source_api_connections/${id}/disconnect/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 17 connect source api connections
+    apiConnection: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/source_api_connections/${id}/connect/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 18 get recent exhange rates
+    getExchangeRate: builder.query<GetExchangeRate, number>({
+      query: (id) =>
+        `/accounts/agents/source_api_connections/${id}/exchange_rates/`,
+      providesTags: ["AllPosts"],
+    }),
+
+    // 19 update exchange rate by id
+    updateExchangeRateById: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/source_api_connections/exchange_rates/${id}/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 20 reset exchange rate
+    resetExchangeRate: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/source_api_connections/${id}/exchange_rates/reset/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -249,6 +301,12 @@ export const {
   useTrainByImagesMutation,
   useTrainByWebsiteMutation,
   useUpdateAgentMutation,
+  useGetSourceApiConnectionsQuery,
+  useDisconnectApiConnectionMutation,
+  useApiConnectionMutation,
+  useGetExchangeRateQuery,
+  useUpdateExchangeRateByIdMutation,
+  useResetExchangeRateMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,

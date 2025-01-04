@@ -1,6 +1,7 @@
 "use client";
 import Background from "@/app/components/Background/Background";
 // import { connectionContent } from "@/app/components/Connect/content";
+import ConnectionRawData from "@/app/components/Connect/ConnectionRawData";
 import Finance from "@/app/components/Connect/Finance";
 import SideBar from "@/app/components/LeftBar/SideBar";
 import NavBar from "@/app/components/NavBar/NavBar";
@@ -21,6 +22,8 @@ const Page: FC<PageProps> = ({ params }) => {
   const { id } = params;
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("finance");
+  const [isRawData, setIsRawData] = useState<boolean>(false);
+  const [getRawDataId, setGetRawDataId] = useState<number>(0);
 
   const content = getContent(id);
 
@@ -40,7 +43,7 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "hidden" : "block"
-          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide `}
+          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto primaryScroller `}
         >
           <SideBar
             agentId={id}
@@ -65,8 +68,27 @@ const Page: FC<PageProps> = ({ params }) => {
             <NavBar content={content.navBar} />
           </div>
 
-          <div className="my-5 px-10 h-[78vh] overflow-y-scroll scrollbar-hide">
-            {checkOption === "finance" && <Finance agentId={id} />}
+          <div>
+            {checkOption === "finance" && (
+              <>
+                {isRawData ? (
+                  <div className="my-5 px-10 h-[78vh] overflow-y-scroll primaryScroller mr-2">
+                    <ConnectionRawData
+                      setIsRawData={setIsRawData}
+                      getRawDataId={getRawDataId}
+                    />
+                  </div>
+                ) : (
+                  <div className="my-5 px-10 h-[78vh]">
+                    <Finance
+                      agentId={id}
+                      setIsRawData={setIsRawData}
+                      setGetRawDataId={setGetRawDataId}
+                    />
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>

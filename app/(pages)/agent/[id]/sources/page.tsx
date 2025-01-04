@@ -80,11 +80,8 @@ const Page: FC<PageProps> = ({ params }) => {
               )}
               <NavBar content={navContent.navBar} />
             </div>
-            <div className=" ">
-              <div className="my-5 px-10">
-                <UpdateTraining agentId={id} checkOption={checkOption} />
-              </div>
-            </div>
+
+            <UpdateTraining agentId={id} checkOption={checkOption} />
           </div>
         </div>
       </div>

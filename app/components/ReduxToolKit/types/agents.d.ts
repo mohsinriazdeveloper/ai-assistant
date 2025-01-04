@@ -6,6 +6,31 @@
 //   website_url?: string;
 // };
 
+export type ApiConnection = {
+  id: number;
+  name: string;
+  description: string;
+  image_url: string;
+  created_at: string;
+  updated_at: string;
+  is_connected: boolean;
+  agent_source_api_connection_id: number;
+};
+
+export type ExchangeRateType = {
+  id: number;
+  title: string;
+  base_currency: string;
+  target_currency: string;
+  value: number;
+  date: string;
+};
+
+export type GetExchangeRate = {
+  error_message: null;
+  recent_exchange_rates: ExchangeRateType[];
+};
+
 export type Files = {
   created_at: string;
   file_category: string;
