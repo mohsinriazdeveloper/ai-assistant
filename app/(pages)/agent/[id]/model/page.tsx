@@ -62,7 +62,7 @@ const Page: FC<PageProps> = ({ params }) => {
             <NavBar content={navContent.navBar} />
           </div>
 
-          <div className="my-5 px-10 h-[78vh] overflow-y-scroll scrollbar-hide">
+          <div className="my-5 px-10 h-[78vh] overflow-y-scroll primaryScroller mr-2">
             <AgentSettings agentId={id} checkOption={checkOption} />
           </div>
         </div>

@@ -1,23 +1,15 @@
 import DeleteIcon from "@/app/assets/icons/recyclebin.png";
 import Image from "next/image";
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-} from "react";
+import { Dispatch, FC, SetStateAction, useCallback, useMemo } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 
 interface QAInputProps {
   qaList: { question: string; answer: string }[];
   setQAList: Dispatch<SetStateAction<{ question: string; answer: string }[]>>;
-  setQaChar: Dispatch<SetStateAction<number>>;
 }
 
-const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
+const QAInput: FC<QAInputProps> = ({ qaList, setQAList }) => {
   const handleAddQA = useCallback(() => {
     // if (cantAddMore) {
     //   toast.error("You cannot add more questions or answers.");
@@ -66,13 +58,6 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList, setQaChar }) => {
   );
 
   // Update the qaChar whenever qaList changes
-  useEffect(() => {
-    const total = qaList.reduce(
-      (acc, qa) => acc + qa.question.length + qa.answer.length,
-      0
-    );
-    setQaChar(total);
-  }, [qaList, setQaChar]);
 
   const qaItems = useMemo(
     () =>

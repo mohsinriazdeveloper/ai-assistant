@@ -1,11 +1,3 @@
-// export type File = {
-//   file_url?: string;
-//   text_content?: string;
-//   id: number;
-//   file_name: string;
-//   website_url?: string;
-// };
-
 export type ApiConnection = {
   id: number;
   name: string;
@@ -15,6 +7,7 @@ export type ApiConnection = {
   updated_at: string;
   is_connected: boolean;
   agent_source_api_connection_id: number;
+  agent_graph_api_connection_id: number;
 };
 
 export type ExchangeRateType = {

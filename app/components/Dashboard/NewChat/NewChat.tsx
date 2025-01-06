@@ -19,16 +19,21 @@ interface NewChatProps {
 const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const { createAgentStatus } = useAppSelector(selectCreateAgent);
+
   return (
     <Background>
-      <div className="pt-8 px-5">
-        <NavBar
-          content={navBarContent}
-          // setCreateAgent={setCreateAgent}
-          // createAgent={createAgent}
-        />
+      <div className="py-8 px-5 bg-white rounded-[20px] h-full">
+        <div className="w-full mb-20">
+          <div className="w-full fixed">
+            <NavBar
+              content={navBarContent}
+              // setCreateAgent={setCreateAgent}
+              // createAgent={createAgent}
+            />
+          </div>
+        </div>
         {createAgentStatus ? (
-          <div className="flex items-center h-[70vh] pt-12">
+          <div className="flex items-center h-[70vh] mt-12">
             <NewAgent />
           </div>
         ) : (

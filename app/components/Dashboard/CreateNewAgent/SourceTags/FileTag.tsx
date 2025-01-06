@@ -80,29 +80,13 @@ const FileTag: FC<FileTagProps> = ({
   const handleDeleteFile = useCallback(
     (index: number, isExisting: boolean = false) => {
       setDeleteLoader(true);
-      // if (isExisting) {
-      //   const fileToRemove = existingFiles[index];
-      //   delExistingFile(fileToRemove.id)
-      //     .then(() => {
-      //       setExistingFiles((prevFiles) =>
-      //         prevFiles.filter((_, i) => i !== index)
-      //       );
-      //       toast.success("File successfully deleted.");
-      //     })
-      //     .catch((error) => {
-      //       console.error("Failed to delete file ", error);
-      //       toast.error("Failed to delete file");
-      //     });
-      // } else {
       if (files) {
         const fileToRemove = files[index];
 
         setFiles((prevFiles) => {
           const newFiles = prevFiles.filter((_, i) => i !== index);
 
-          // If there's only one file left, handle state correctly.
           if (newFiles.length < 1) {
-            // Additional logic if needed, for example, reset some state.
             setFiles([]);
           }
           return newFiles;

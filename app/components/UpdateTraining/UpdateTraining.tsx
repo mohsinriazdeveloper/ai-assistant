@@ -53,7 +53,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [existingFiles, setExistingFiles] = useState<Files[]>([]);
   const [existingImgs, setExistingImgs] = useState<Files[]>([]);
   const [existingWebsites, setExistingWebsites] = useState<Files[]>([]);
-  const [existingFilechar, setExistingFilechar] = useState<number>(0);
 
   const allowedFiles = [
     "application/pdf",
@@ -67,42 +66,15 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     );
 
   useEffect(() => {
-    if (agent?.text) {
-      setText(agent.text);
-    }
-    if (agent?.qa) {
-      setQaList(JSON.parse(agent?.qa));
-    }
-    if (agent?.files) {
-      const files = agent.files.filter((file) => file.file_category === "file");
-      const images = agent.files.filter(
-        (file) => file.file_category === "image"
-      );
-      const websites = agent.files.filter(
-        (file) => file.file_category === "website"
-      );
-      const filesChar = websites.reduce(
-        (sum, file) => sum + (file.file_characters || 0),
-        0
-      );
-      const imagesChar = websites.reduce(
-        (sum, file) => sum + (file.file_characters || 0),
-        0
-      );
-      const websiteChar = websites.reduce(
-        (sum, file) => sum + (file.file_characters || 0),
-        0
-      );
-
-      setExistingFiles(files);
-      setExistingImgs(images);
-      setExistingWebsites(websites);
-      setFileChar((prevValue) => prevValue + filesChar);
-      setImgChar((prevValue) => prevValue + imagesChar);
-      setWebsiteChar((prevValue) => prevValue + websiteChar);
-    }
+    updateCharCount();
   }, [agent]);
-
+  useEffect(() => {
+    const total = qaList.reduce(
+      (acc, qa) => acc + qa.question.length + qa.answer.length,
+      0
+    );
+    setQaChar(total);
+  }, [qaList, setQaChar]);
   useEffect(() => {
     uploadFiles([...uploadedFiles, ...UploadedImgs]);
   }, [uploadedFiles, UploadedImgs]);
@@ -147,242 +119,290 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
   };
 
-  // const handleUpdateAgent = async () => {
-  //   if (!agentId) {
-  //     toast.error("Agent not found");
-  //     return;
-  //   }
+  const updateCharCount = () => {
+    if (agent?.text) {
+      setText(agent.text);
+    }
+    if (agent?.qa) {
+      setQaList(JSON.parse(agent?.qa));
+    }
+    if (agent?.files) {
+      const files = agent.files.filter((file) => file.file_category === "file");
+      const images = agent.files.filter(
+        (file) => file.file_category === "image"
+      );
+      const websites = agent.files.filter(
+        (file) => file.file_category === "website"
+      );
+      const filesChar = files.reduce(
+        (sum, file) => sum + (file.file_characters || 0),
+        0
+      );
+      const imagesChar = images.reduce(
+        (sum, file) => sum + (file.file_characters || 0),
+        0
+      );
+      const websiteChar = websites.reduce(
+        (sum, file) => sum + (file.file_characters || 0),
+        0
+      );
+      setTimeout(() => {
+        setExistingFiles(files);
+        setExistingImgs(images);
+        setExistingWebsites(websites);
+        setFileChar((prevValue) => prevValue + filesChar);
+        setImgChar((prevValue) => prevValue + imagesChar);
+        setWebsiteChar((prevValue) => prevValue + websiteChar);
+      }, 1000);
+    }
+  };
 
-  //   // Flags to track changes
-  //   const fileChange = fileWithTags.length > 0;
-  //   const imgChange = imgWithTags.length > 0;
-  //   const textChange = !!text;
-  //   const qaListChange = qaList && qaList.length > 0;
-
-  //   // Handle file changes
-  //   if (fileChange) {
-  //     const fileData = new FormData();
-  //     let fileHasError = false;
-
-  //     fileWithTags.forEach((file) => {
-  //       if (!file.source_name) {
-  //         toast.error(
-  //           `Source Name for ${file.source_name || "file"} is required`
-  //         );
-  //         fileHasError = true;
-  //         return;
-  //       }
-  //       if (!file.source_context) {
-  //         toast.error(`Context for ${file.source_name || "file"} is required`);
-  //         fileHasError = true;
-  //         return;
-  //       }
-  //       if (!file.source_instructions) {
-  //         toast.error(
-  //           `Instructions for ${file.source_name || "file"} is required`
-  //         );
-  //         fileHasError = true;
-  //         return;
-  //       }
-  //       fileData.append("file", file.file);
-  //       fileData.append("source_name", file.source_name);
-  //       fileData.append("source_context", file.source_context);
-  //       fileData.append("source_instructions", file.source_instructions);
-  //     });
-
-  //     if (!fileHasError) {
-  //       try {
-  //         const fileRes = await trainByFiles({ id: agentId, data: fileData });
-  //         toast.success(fileRes.data.message);
-  //       } catch (error) {
-  //         toast.error("Error in file upload");
-  //       }
-  //     }
-  //   }
-
-  //   // Handle image changes
-  //   if (imgChange) {
-  //     const imageData = new FormData();
-  //     let imgHasError = false;
-
-  //     imgWithTags.forEach((image) => {
-  //       if (!image.source_name) {
-  //         toast.error(
-  //           `Source Name for ${image.source_name || "image"} is required`
-  //         );
-  //         imgHasError = true;
-  //         return;
-  //       }
-  //       if (!image.source_context) {
-  //         toast.error(
-  //           `Context for ${image.source_name || "image"} is required`
-  //         );
-  //         imgHasError = true;
-  //         return;
-  //       }
-  //       if (!image.source_instructions) {
-  //         toast.error(
-  //           `Instructions for ${image.source_name || "image"} is required`
-  //         );
-  //         imgHasError = true;
-  //         return;
-  //       }
-  //       imageData.append("image", image.file);
-  //       imageData.append("source_name", image.source_name);
-  //       imageData.append("source_context", image.source_context);
-  //       imageData.append("source_instructions", image.source_instructions);
-  //     });
-
-  //     if (!imgHasError) {
-  //       try {
-  //         const imgRes = await trainByImages({ id: agentId, data: imageData });
-  //         toast.success(imgRes.data.message);
-  //         toast.success("Successfully trained by image");
-  //       } catch (error) {
-  //         console.error("Error image training agent:", error);
-  //         toast.error("Error in image upload");
-  //       }
-  //     }
-  //   }
-
-  //   // Handle text changes
-  //   if (textChange || qaListChange) {
-  //     const textQAData = new FormData();
-  //     textQAData.append("id", agentId.toString());
-  //     if (textChange) textQAData.append("text", text);
-  //     if (qaListChange) textQAData.append("qa", JSON.stringify(qaList));
-
-  //     try {
-  //       const textQaRes = await trainByTextQa(textQAData).unwrap();
-  //       toast.success("Successfully trained by text");
-  //     } catch (error) {
-  //       console.error("Error text training agent:", error);
-  //       toast.error("Error in text upload");
-  //     }
-  //   }
-  // };
   const handleUpdateAgent = async () => {
     if (!agentId) {
       toast.error("Agent not found");
       return;
     }
 
-    const apiPromises: Promise<void>[] = [];
-    let hasSuccess = false;
-    let hasFailure = false;
-
-    // Helper function to handle success and failure flags
-    const trackApiResult = async (
-      apiCall: Promise<any>,
-      successMessage: string
-    ) => {
-      try {
-        const response = await apiCall;
-        if (response?.data?.message) {
-          hasSuccess = true;
-          setFileWithTags([]);
-          setImgWithTags([]);
-        }
-      } catch (error) {
-        hasFailure = true;
-        console.error(error);
-      }
-    };
+    // Flags to track changes
+    const fileChange = fileWithTags.length > 0;
+    const imgChange = imgWithTags.length > 0;
+    const textChange = !!text;
+    const qaListChange = qaList && qaList.length > 0;
 
     // Handle file changes
-    if (fileWithTags.length > 0) {
+    if (fileChange) {
       const fileData = new FormData();
       let fileHasError = false;
 
       fileWithTags.forEach((file) => {
-        if (
-          !file.source_name ||
-          !file.source_context ||
-          !file.source_instructions
-        ) {
+        if (!file.source_name) {
+          toast.error(`Source Name is required`);
           fileHasError = true;
-          toast.error(
-            `Missing required fields for ${file.source_name || "file"}`
-          );
-        } else {
-          fileData.append("file", file.file);
-          fileData.append("source_name", file.source_name);
-          fileData.append("source_context", file.source_context);
-          fileData.append("source_instructions", file.source_instructions);
+          return;
         }
+        if (file.source_name.length > 100) {
+          toast.error(`Ensure source name has no more than 100 characters`);
+          fileHasError = true;
+          return;
+        }
+        if (!file.source_context) {
+          toast.error(`Context is required`);
+          fileHasError = true;
+          return;
+        }
+        if (!file.source_instructions) {
+          toast.error(`Instructions is required`);
+          fileHasError = true;
+          return;
+        }
+        fileData.append("file", file.file);
+        fileData.append("source_name", file.source_name);
+        fileData.append("source_context", file.source_context);
+        fileData.append("source_instructions", file.source_instructions);
       });
 
       if (!fileHasError) {
-        apiPromises.push(
-          trackApiResult(
-            trainByFiles({ id: agentId, data: fileData }),
-            "Files uploaded successfully."
-          )
-        );
+        try {
+          const fileRes = await trainByFiles({ id: agentId, data: fileData });
+          updateCharCount();
+          setFileInfo([]);
+          setFileWithTags([]);
+          setUploadedFiles([]);
+
+          toast.success(fileRes.data.message);
+        } catch (error: any) {
+          toast.error("Failed to train due to an unknown error");
+        }
       }
     }
 
     // Handle image changes
-    if (imgWithTags.length > 0) {
+    if (imgChange) {
       const imageData = new FormData();
       let imgHasError = false;
 
       imgWithTags.forEach((image) => {
-        if (
-          !image.source_name ||
-          !image.source_context ||
-          !image.source_instructions
-        ) {
-          imgHasError = true;
+        if (!image.source_name) {
           toast.error(
-            `Missing required fields for ${image.source_name || "image"}`
+            `Source Name for ${image.source_name || "image"} is required`
           );
-        } else {
-          imageData.append("image", image.file);
-          imageData.append("source_name", image.source_name);
-          imageData.append("source_context", image.source_context);
-          imageData.append("source_instructions", image.source_instructions);
+          imgHasError = true;
+          return;
         }
+        if (!image.source_context) {
+          toast.error(
+            `Context for ${image.source_name || "image"} is required`
+          );
+          imgHasError = true;
+          return;
+        }
+        if (!image.source_instructions) {
+          toast.error(
+            `Instructions for ${image.source_name || "image"} is required`
+          );
+          imgHasError = true;
+          return;
+        }
+        imageData.append("image", image.file);
+        imageData.append("source_name", image.source_name);
+        imageData.append("source_context", image.source_context);
+        imageData.append("source_instructions", image.source_instructions);
       });
 
       if (!imgHasError) {
-        apiPromises.push(
-          trackApiResult(
-            trainByImages({ id: agentId, data: imageData }),
-            "Images uploaded successfully."
-          )
-        );
+        try {
+          const imgRes = await trainByImages({ id: agentId, data: imageData });
+          toast.success(imgRes.data.message);
+          toast.success("Successfully trained by image");
+          updateCharCount();
+          setImgWithTags([]);
+          setUploadedImgs([]);
+          setImageInfo([]);
+        } catch (error) {
+          console.error("Error image training agent:", error);
+          toast.error("Error in image upload");
+        }
       }
     }
 
     // Handle text changes
-    if (text || (qaList && qaList.length > 0)) {
+    if (textChange || qaListChange) {
       const textQAData = new FormData();
       textQAData.append("id", agentId.toString());
-      if (text) textQAData.append("text", text);
-      if (qaList && qaList.length > 0)
-        textQAData.append("qa", JSON.stringify(qaList));
+      if (textChange) textQAData.append("text", text);
+      if (qaListChange) textQAData.append("qa", JSON.stringify(qaList));
 
-      apiPromises.push(
-        trackApiResult(
-          trainByTextQa(textQAData),
-          "Text and QA uploaded successfully."
-        )
-      );
-    }
-
-    // Execute all API calls in parallel
-    await Promise.all(apiPromises);
-
-    // Display a single success or failure toast
-    if (hasSuccess && !hasFailure) {
-      toast.success("Agent update successfully.");
-    } else if (hasSuccess && hasFailure) {
-      toast("Some updates succeeded, but some failed.", { icon: "⚠️" });
-    } else if (!hasSuccess && hasFailure) {
-      toast.error("All updates failed.");
+      try {
+        const textQaRes = await trainByTextQa(textQAData).unwrap();
+        toast.success("Successfully trained by text");
+      } catch (error) {
+        console.error("Error text training agent:", error);
+        toast.error("Error in text upload");
+      }
     }
   };
+  // const handleUpdateAgent = async () => {
+  //   if (!agentId) {
+  //     toast.error("Agent not found");
+  //     return;
+  //   }
+
+  //   const apiPromises: Promise<void>[] = [];
+  //   let hasSuccess = false;
+  //   let hasFailure = false;
+
+  //   // Helper function to handle success and failure flags
+  //   const trackApiResult = async (
+  //     apiCall: Promise<any>,
+  //     successMessage: string
+  //   ) => {
+  //     try {
+  //       const response = await apiCall;
+  //       if (response?.data?.message) {
+  //         hasSuccess = true;
+  //         setFileWithTags([]);
+  //         setImgWithTags([]);
+  //       }
+  //     } catch (error) {
+  //       hasFailure = true;
+  //       console.error(error);
+  //     }
+  //   };
+
+  //   // Handle file changes
+  //   if (fileWithTags.length > 0) {
+  //     const fileData = new FormData();
+  //     let fileHasError = false;
+
+  //     fileWithTags.forEach((file) => {
+  //       if (
+  //         !file.source_name ||
+  //         !file.source_context ||
+  //         !file.source_instructions
+  //       ) {
+  //         fileHasError = true;
+  //         toast.error(
+  //           `Missing required fields`
+  //         );
+  //       } else {
+  //         fileData.append("file", file.file);
+  //         fileData.append("source_name", file.source_name);
+  //         fileData.append("source_context", file.source_context);
+  //         fileData.append("source_instructions", file.source_instructions);
+  //       }
+  //     });
+
+  //     if (!fileHasError) {
+  //       apiPromises.push(
+  //         trackApiResult(
+  //           trainByFiles({ id: agentId, data: fileData }),
+  //           "Files uploaded successfully."
+  //         )
+  //       );
+  //     }
+  //   }
+
+  //   // Handle image changes
+  //   if (imgWithTags.length > 0) {
+  //     const imageData = new FormData();
+  //     let imgHasError = false;
+
+  //     imgWithTags.forEach((image) => {
+  //       if (
+  //         !image.source_name ||
+  //         !image.source_context ||
+  //         !image.source_instructions
+  //       ) {
+  //         imgHasError = true;
+  //         toast.error(
+  //           `Missing required fields for ${image.source_name || "image"}`
+  //         );
+  //       } else {
+  //         imageData.append("image", image.file);
+  //         imageData.append("source_name", image.source_name);
+  //         imageData.append("source_context", image.source_context);
+  //         imageData.append("source_instructions", image.source_instructions);
+  //       }
+  //     });
+
+  //     if (!imgHasError) {
+  //       apiPromises.push(
+  //         trackApiResult(
+  //           trainByImages({ id: agentId, data: imageData }),
+  //           "Images uploaded successfully."
+  //         )
+  //       );
+  //     }
+  //   }
+
+  //   // Handle text changes
+  //   if (text || (qaList && qaList.length > 0)) {
+  //     const textQAData = new FormData();
+  //     textQAData.append("id", agentId.toString());
+  //     if (text) textQAData.append("text", text);
+  //     if (qaList && qaList.length > 0)
+  //       textQAData.append("qa", JSON.stringify(qaList));
+
+  //     apiPromises.push(
+  //       trackApiResult(
+  //         trainByTextQa(textQAData),
+  //         "Text and QA uploaded successfully."
+  //       )
+  //     );
+  //   }
+
+  //   // Execute all API calls in parallel
+  //   await Promise.all(apiPromises);
+
+  //   // Display a single success or failure toast
+  //   if (hasSuccess && !hasFailure) {
+  //     toast.success("Agent update successfully.");
+  //   } else if (hasSuccess && hasFailure) {
+  //     toast("Some updates succeeded, but some failed.", { icon: "⚠️" });
+  //   } else if (!hasSuccess && hasFailure) {
+  //     toast.error("All updates failed.");
+  //   }
+  // };
 
   return (
     <div className="h-[80vh] my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
@@ -466,11 +486,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
             )}
             {checkOption === "qa" && (
               <div>
-                <QAInput
-                  setQaChar={setQaChar}
-                  qaList={qaList}
-                  setQAList={setQaList}
-                />
+                <QAInput qaList={qaList} setQAList={setQaList} />
               </div>
             )}
             {checkOption === "imageTraining" && (

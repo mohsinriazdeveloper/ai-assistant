@@ -13,6 +13,10 @@ import { FC, useEffect, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { getContent, sideBarOptions } from "../content";
 
+// export type Connect = {
+//   index: number;
+//   is_connected: boolean;
+// };
 interface PageProps {
   params: { id: number };
 }
@@ -23,10 +27,10 @@ const Page: FC<PageProps> = ({ params }) => {
   const { id } = params;
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("dashboard");
-  const [isOverlayVisible, setIsOverlayVisible] = useState(true);
   const [isSetup, setIsSetup] = useState<string>("graph");
   const [aggregatorSetup, setAggregatorSetup] = useState<string>("summary");
   const [aggregatorOverlay, setAggregatorOverlay] = useState<boolean>(true);
+
   const navContent = getContent(id);
 
   useEffect(() => {
@@ -73,19 +77,9 @@ const Page: FC<PageProps> = ({ params }) => {
             {checkOption === "dashboard" && (
               <>
                 {isSetup === "graph" && (
-                  <ToolDashboardLayout
-                    agentId={id}
-                    isOverlayVisible={isOverlayVisible}
-                    setIsSetup={setIsSetup}
-                  />
+                  <ToolDashboardLayout setIsSetup={setIsSetup} />
                 )}
-                {isSetup === "setup" && (
-                  <SetupApi
-                    agentId={id}
-                    setIsSetup={setIsSetup}
-                    setIsOverlayVisible={setIsOverlayVisible}
-                  />
-                )}
+                {isSetup === "setup" && <SetupApi setIsSetup={setIsSetup} />}
               </>
             )}
             {checkOption === "aggregator" && (

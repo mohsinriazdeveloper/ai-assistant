@@ -203,6 +203,29 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    // 21 get all graphs
+    getAllGraphs: builder.query<ApiConnection[], void>({
+      query: () => `/accounts/agents/tools/dashboard/graph_api_connections/`,
+      providesTags: ["AllPosts"],
+    }),
+
+    // 22 connect graph
+    connectGraph: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/tools/dashboard/graph_api_connections/${id}/connect/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 18 get graph data by id
+    getGraphData: builder.query<GetExchangeRate, number>({
+      query: (id) =>
+        `/accounts/agents/tools/dashboard/graph_api_connections/data/${id}/`,
+      providesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -307,6 +330,9 @@ export const {
   useGetExchangeRateQuery,
   useUpdateExchangeRateByIdMutation,
   useResetExchangeRateMutation,
+  useGetAllGraphsQuery,
+  useConnectGraphMutation,
+  useGetGraphDataQuery,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,
