@@ -219,11 +219,29 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
-    // 18 get graph data by id
+    // 23 get graph data by id
     getGraphData: builder.query<GetExchangeRate, number>({
       query: (id) =>
         `/accounts/agents/tools/dashboard/graph_api_connections/data/${id}/`,
       providesTags: ["AllPosts"],
+    }),
+
+    // 24 disconnect graph
+    disConnectGraph: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/tools/dashboard/graph_api_connections/${id}/disconnect/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    // 25 reset graph data
+    resetGraph: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/tools/dashboard/graph_api_connections/${id}/reset/`,
+        method: "POST",
+      }),
+      invalidatesTags: ["AllPosts"],
     }),
 
     //agent voice
@@ -333,6 +351,8 @@ export const {
   useGetAllGraphsQuery,
   useConnectGraphMutation,
   useGetGraphDataQuery,
+  useDisConnectGraphMutation,
+  useResetGraphMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,
