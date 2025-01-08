@@ -174,10 +174,22 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     deletedFileId: number,
     deletedFileChar: number
   ) => {
-    setFileChar((prev) => prev - deletedFileChar); // Subtract the file's character count
-    setExistingFiles((prev) =>
-      prev.filter((file) => file.id !== deletedFileId)
-    ); // Remove the file from the list
+    if (checkOption === "files") {
+      setFileChar((prev) => prev - deletedFileChar); // Subtract the file's character count
+      setExistingFiles((prev) =>
+        prev.filter((file) => file.id !== deletedFileId)
+      ); // Remove the file from the list
+    } else if (checkOption === "imageTraining") {
+      setImgChar((prev) => prev - deletedFileChar); // Subtract the file's character count
+      setExistingImgs((prev) =>
+        prev.filter((file) => file.id !== deletedFileId)
+      ); // Remove the image from the list
+    } else if (checkOption === "website") {
+      setWebsiteChar((prev) => prev - deletedFileChar); // Subtract the file's character count
+      setExistingWebsites((prev) =>
+        prev.filter((file) => file.id !== deletedFileId)
+      ); // Remove the website from the list
+    }
   };
   const handleUpdateAgent = async () => {
     if (!agentId) {
@@ -286,7 +298,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         imageData.append("source_instructions", image.source_instructions);
 
         try {
-          const imageRes = await trainByFiles({ id: agentId, data: imageData });
+          const imageRes = await trainByImages({
+            id: agentId,
+            data: imageData,
+          });
           updateCharCount();
         } catch (error) {
           retrainErrors.push(error);
