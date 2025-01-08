@@ -85,7 +85,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
   const uploadFiles = async (files: File[]) => {
     const fd = new FormData();
-    if (files.length >= 0) {
+    if (files.length > 0) {
       files.forEach((file) => {
         if (allowedFiles.includes(file.type)) {
           fd.append("files", file);
@@ -113,10 +113,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         const imgCharSum = calculateCharCount(images);
         const docCharSum = calculateCharCount(documents);
 
-        setImageInfo(images);
-        setFileInfo(documents);
-        setImgChar(imgCharSum);
-        setFileChar(docCharSum);
+        // Add new character counts to the existing counts
+        setImgChar((prev) => prev + imgCharSum);
+        setFileChar((prev) => prev + docCharSum);
+
+        // Update the state with new files/images
+        setImageInfo((prev) => (prev ? [...prev, ...images] : images));
+        setFileInfo((prev) => (prev ? [...prev, ...documents] : documents));
       } catch (error) {
         console.error("Error uploading files:", error);
       }
@@ -130,7 +133,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     if (agent?.qa) {
       setQaList(JSON.parse(agent?.qa));
     }
-    if (agent?.files && flags) {
+    if (agent?.files) {
       const files = agent.files.filter((file) => file.file_category === "file");
       const images = agent.files.filter(
         (file) => file.file_category === "image"
@@ -138,6 +141,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       const websites = agent.files.filter(
         (file) => file.file_category === "website"
       );
+
       const filesChar = files.reduce(
         (sum, file) => sum + (file.file_characters || 0),
         0
@@ -150,26 +154,17 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         (sum, file) => sum + (file.file_characters || 0),
         0
       );
-      setTimeout(() => {
-        console.log("here");
-        setExistingFiles(files);
-        setExistingImgs(images);
-        setExistingWebsites(websites);
-        setFileChar((prevValue) => prevValue + filesChar);
-        setImgChar((prevValue) => prevValue + imagesChar);
-        setWebsiteChar((prevValue) => prevValue + websiteChar);
-      }, 1000);
+
+      // Reset counters and then add the new values
+      setFileChar(filesChar);
+      setImgChar(imagesChar);
+      setWebsiteChar(websiteChar);
+
+      setExistingFiles(files);
+      setExistingImgs(images);
+      setExistingWebsites(websites);
     }
   };
-  // const updateFileCharAfterDelete = (deletedFileId: number) => {
-  //   const deletedFile = existingFiles.find((file) => file.id === deletedFileId);
-  //   if (deletedFile?.file_characters) {
-  //     setFileChar((prev) => prev - deletedFile.file_characters);
-  //   }
-  //   setExistingFiles((prev) =>
-  //     prev.filter((file) => file.id !== deletedFileId)
-  //   );
-  // };
   const updateFileCharAfterDelete = (
     deletedFileId: number,
     deletedFileChar: number
@@ -242,7 +237,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
         try {
           const fileRes = await trainByFiles({ id: agentId, data: fileData });
-          updateCharCount();
         } catch (error) {
           retrainErrors.push(error);
         }
@@ -256,7 +250,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }
 
       // Reset file-related state
-      updateCharCount();
+
       setFileInfo([]);
       setFileWithTags([]);
       setUploadedFiles([]);
@@ -302,7 +296,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
             id: agentId,
             data: imageData,
           });
-          updateCharCount();
         } catch (error) {
           retrainErrors.push(error);
         }
@@ -315,7 +308,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         toast.success("All images successfully trained");
       }
 
-      updateCharCount();
       setImgWithTags([]);
       setUploadedImgs([]);
       setImageInfo([]);
@@ -337,129 +329,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }
     }
   };
-  // const handleUpdateAgent = async () => {
-  //   if (!agentId) {
-  //     toast.error("Agent not found");
-  //     return;
-  //   }
-
-  //   const apiPromises: Promise<void>[] = [];
-  //   let hasSuccess = false;
-  //   let hasFailure = false;
-
-  //   // Helper function to handle success and failure flags
-  //   const trackApiResult = async (
-  //     apiCall: Promise<any>,
-  //     successMessage: string
-  //   ) => {
-  //     try {
-  //       const response = await apiCall;
-  //       if (response?.data?.message) {
-  //         hasSuccess = true;
-  //         setFileWithTags([]);
-  //         setImgWithTags([]);
-  //       }
-  //     } catch (error) {
-  //       hasFailure = true;
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   // Handle file changes
-  //   if (fileWithTags.length > 0) {
-  //     const fileData = new FormData();
-  //     let fileHasError = false;
-
-  //     fileWithTags.forEach((file) => {
-  //       if (
-  //         !file.source_name ||
-  //         !file.source_context ||
-  //         !file.source_instructions
-  //       ) {
-  //         fileHasError = true;
-  //         toast.error(
-  //           `Missing required fields`
-  //         );
-  //       } else {
-  //         fileData.append("file", file.file);
-  //         fileData.append("source_name", file.source_name);
-  //         fileData.append("source_context", file.source_context);
-  //         fileData.append("source_instructions", file.source_instructions);
-  //       }
-  //     });
-
-  //     if (!fileHasError) {
-  //       apiPromises.push(
-  //         trackApiResult(
-  //           trainByFiles({ id: agentId, data: fileData }),
-  //           "Files uploaded successfully."
-  //         )
-  //       );
-  //     }
-  //   }
-
-  //   // Handle image changes
-  //   if (imgWithTags.length > 0) {
-  //     const imageData = new FormData();
-  //     let imgHasError = false;
-
-  //     imgWithTags.forEach((image) => {
-  //       if (
-  //         !image.source_name ||
-  //         !image.source_context ||
-  //         !image.source_instructions
-  //       ) {
-  //         imgHasError = true;
-  //         toast.error(
-  //           `Missing required fields for ${image.source_name || "image"}`
-  //         );
-  //       } else {
-  //         imageData.append("image", image.file);
-  //         imageData.append("source_name", image.source_name);
-  //         imageData.append("source_context", image.source_context);
-  //         imageData.append("source_instructions", image.source_instructions);
-  //       }
-  //     });
-
-  //     if (!imgHasError) {
-  //       apiPromises.push(
-  //         trackApiResult(
-  //           trainByImages({ id: agentId, data: imageData }),
-  //           "Images uploaded successfully."
-  //         )
-  //       );
-  //     }
-  //   }
-
-  //   // Handle text changes
-  //   if (text || (qaList && qaList.length > 0)) {
-  //     const textQAData = new FormData();
-  //     textQAData.append("id", agentId.toString());
-  //     if (text) textQAData.append("text", text);
-  //     if (qaList && qaList.length > 0)
-  //       textQAData.append("qa", JSON.stringify(qaList));
-
-  //     apiPromises.push(
-  //       trackApiResult(
-  //         trainByTextQa(textQAData),
-  //         "Text and QA uploaded successfully."
-  //       )
-  //     );
-  //   }
-
-  //   // Execute all API calls in parallel
-  //   await Promise.all(apiPromises);
-
-  //   // Display a single success or failure toast
-  //   if (hasSuccess && !hasFailure) {
-  //     toast.success("Agent update successfully.");
-  //   } else if (hasSuccess && hasFailure) {
-  //     toast("Some updates succeeded, but some failed.", { icon: "⚠️" });
-  //   } else if (!hasSuccess && hasFailure) {
-  //     toast.error("All updates failed.");
-  //   }
-  // };
-
   return (
     <div className="h-[80vh] my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
       <div className="mt-10 ">

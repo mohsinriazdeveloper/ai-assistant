@@ -13,18 +13,6 @@ interface RightBarProps {
   filesLoader: boolean;
   imagesLoader: boolean;
   textQaLoader: boolean;
-  // charCount: number;
-  // fileCount: number;
-  // existingFiles?: FileUrl[];
-  // textChar: any;
-  // checkOption: string;
-  // qaChar: number;
-  // loading: boolean;
-  // totalImages?: number;
-  // cantAddMore: boolean;
-  // totalCharCount: number;
-  // totalFileLength?: number;
-  // websiteContentLength?: number;
 }
 
 const RightBar: FC<RightBarProps> = ({
@@ -38,24 +26,8 @@ const RightBar: FC<RightBarProps> = ({
   imagesLoader,
   textQaLoader,
   checkOption,
-  // loading,
-  // qaChar,
-  // charCount,
-  // fileCount,
-  // existingFiles,
-  // textChar,
-  // checkOption,
-  // totalImages,
-  // cantAddMore,
-  // totalCharCount,
-  // totalFileLength,
-  // websiteContentLength,
 }) => {
   const totalCharCount = fileChar + imgChar + websiteChar + textChar + qaChar;
-  // const totalFiles = fileCount + (existingFiles?.length || 0);
-  // const fileCharacterCount = charCount + (totalFileLength || 0);
-  // const websiteCharCount = websiteContentLength || 0;
-
   return (
     <div className="border border-gray-200 rounded-lg py-5 px-4 text-xs step-3">
       <p className="text-base font-medium text-center">Sources</p>
