@@ -83,46 +83,101 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     uploadFiles([...uploadedFiles, ...UploadedImgs]);
   }, [uploadedFiles, UploadedImgs]);
 
+  // const uploadFiles = async (files: File[]) => {
+  //   const fd = new FormData();
+  //   if (files.length > 0) {
+  //     files.forEach((file) => {
+  //       if (allowedFiles.includes(file.type)) {
+  //         fd.append("files", file);
+  //       } else if (allowedImgs.includes(file.type)) {
+  //         fd.append("images", file);
+  //       }
+  //     });
+
+  //     try {
+  //       const fileUploadRes = await postGetFileImgChar({
+  //         id: agentId,
+  //         data: fd,
+  //       }).unwrap();
+
+  //       const images = filterByExtension(fileUploadRes, ["png", "jpg", "jpeg"]);
+  //       const documents = filterByExtension(fileUploadRes, [
+  //         "pdf",
+  //         "txt",
+  //         "docx",
+  //       ]);
+
+  //       const calculateCharCount = (list: FileInfo[]) =>
+  //         list.reduce((sum, file) => sum + file.characters_count, 0);
+
+  //       const imgCharSum = calculateCharCount(images);
+  //       const docCharSum = calculateCharCount(documents);
+
+  //       // Add new character counts to the existing counts
+  //       setImgChar((prev) => prev + imgCharSum);
+  //       setFileChar((prev) => prev + docCharSum);
+
+  //       // Update the state with new files/images
+  //       setImageInfo((prev) => (prev ? [...prev, ...images] : images));
+  //       setFileInfo((prev) => (prev ? [...prev, ...documents] : documents));
+  //     } catch (error) {
+  //       console.error("Error uploading files:", error);
+  //     }
+  //   }
+  // };
   const uploadFiles = async (files: File[]) => {
+    if (!files || files.length === 0) return; // Prevent unintended calls
+
     const fd = new FormData();
-    if (files.length > 0) {
-      files.forEach((file) => {
-        if (allowedFiles.includes(file.type)) {
-          fd.append("files", file);
-        } else if (allowedImgs.includes(file.type)) {
-          fd.append("images", file);
-        }
-      });
+    const hasFiles = files.some((file) => allowedFiles.includes(file.type));
+    const hasImages = files.some((file) => allowedImgs.includes(file.type));
 
-      try {
-        const fileUploadRes = await postGetFileImgChar({
-          id: agentId,
-          data: fd,
-        }).unwrap();
+    // if (hasFiles) {
+    //   setImgChar(0); // Reset image char count
+    //   setImageInfo([]); // Clear previous images
+    // }
+    // if (hasImages) {
+    //   setFileChar(0); // Reset file char count
+    //   setFileInfo([]); // Clear previous files
+    // }
 
-        const images = filterByExtension(fileUploadRes, ["png", "jpg", "jpeg"]);
-        const documents = filterByExtension(fileUploadRes, [
-          "pdf",
-          "txt",
-          "docx",
-        ]);
-
-        const calculateCharCount = (list: FileInfo[]) =>
-          list.reduce((sum, file) => sum + file.characters_count, 0);
-
-        const imgCharSum = calculateCharCount(images);
-        const docCharSum = calculateCharCount(documents);
-
-        // Add new character counts to the existing counts
-        setImgChar((prev) => prev + imgCharSum);
-        setFileChar((prev) => prev + docCharSum);
-
-        // Update the state with new files/images
-        setImageInfo((prev) => (prev ? [...prev, ...images] : images));
-        setFileInfo((prev) => (prev ? [...prev, ...documents] : documents));
-      } catch (error) {
-        console.error("Error uploading files:", error);
+    files.forEach((file) => {
+      if (allowedFiles.includes(file.type)) {
+        fd.append("files", file);
+      } else if (allowedImgs.includes(file.type)) {
+        fd.append("images", file);
       }
+    });
+
+    try {
+      const fileUploadRes = await postGetFileImgChar({
+        id: agentId,
+        data: fd,
+      }).unwrap();
+
+      const images = filterByExtension(fileUploadRes, ["png", "jpg", "jpeg"]);
+      const documents = filterByExtension(fileUploadRes, [
+        "pdf",
+        "txt",
+        "docx",
+      ]);
+
+      const calculateCharCount = (list: FileInfo[]) =>
+        list.reduce((sum, file) => sum + file.characters_count, 0);
+
+      const imgCharSum = calculateCharCount(images);
+      const docCharSum = calculateCharCount(documents);
+
+      if (hasFiles) {
+        setFileChar((prev) => prev + docCharSum);
+        setFileInfo((prev) => (prev ? [...prev, ...documents] : documents));
+      }
+      if (hasImages) {
+        setImgChar((prev) => prev + imgCharSum);
+        setImageInfo((prev) => (prev ? [...prev, ...images] : images));
+      }
+    } catch (error) {
+      console.error("Error uploading files:", error);
     }
   };
 
