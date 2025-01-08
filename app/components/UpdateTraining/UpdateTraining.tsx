@@ -33,10 +33,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [trainByImages, { isLoading: imagesLoader }] =
     useTrainByImagesMutation();
   const [trainByTextQa, { isLoading: textQaLoader }] = useUpdateAgentMutation();
-  const { data: agent, isLoading: agentDataoading } =
-    useGetAgentByIdQuery(agentId);
+  const {
+    data: agent,
+    refetch,
+    isLoading: agentDataoading,
+  } = useGetAgentByIdQuery(agentId);
 
-  const [filesToGetInfo, setFilesToGetInfo] = useState<File[]>([]);
   const [fileInfo, setFileInfo] = useState<FileInfo[] | null>([]);
   const [imageInfo, setImageInfo] = useState<FileInfo[] | null>([]);
   const [fileChar, setFileChar] = useState<number>(0);
@@ -53,6 +55,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [existingFiles, setExistingFiles] = useState<Files[]>([]);
   const [existingImgs, setExistingImgs] = useState<Files[]>([]);
   const [existingWebsites, setExistingWebsites] = useState<Files[]>([]);
+  const [flags, setFlags] = useState<boolean>(true);
 
   const allowedFiles = [
     "application/pdf",
@@ -67,6 +70,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
   useEffect(() => {
     updateCharCount();
+    console.log("here");
   }, [agent]);
   useEffect(() => {
     const total = qaList.reduce(
@@ -126,7 +130,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     if (agent?.qa) {
       setQaList(JSON.parse(agent?.qa));
     }
-    if (agent?.files) {
+    if (agent?.files && flags) {
       const files = agent.files.filter((file) => file.file_category === "file");
       const images = agent.files.filter(
         (file) => file.file_category === "image"
@@ -147,6 +151,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         0
       );
       setTimeout(() => {
+        console.log("here");
         setExistingFiles(files);
         setExistingImgs(images);
         setExistingWebsites(websites);
@@ -156,7 +161,24 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }, 1000);
     }
   };
-
+  // const updateFileCharAfterDelete = (deletedFileId: number) => {
+  //   const deletedFile = existingFiles.find((file) => file.id === deletedFileId);
+  //   if (deletedFile?.file_characters) {
+  //     setFileChar((prev) => prev - deletedFile.file_characters);
+  //   }
+  //   setExistingFiles((prev) =>
+  //     prev.filter((file) => file.id !== deletedFileId)
+  //   );
+  // };
+  const updateFileCharAfterDelete = (
+    deletedFileId: number,
+    deletedFileChar: number
+  ) => {
+    setFileChar((prev) => prev - deletedFileChar); // Subtract the file's character count
+    setExistingFiles((prev) =>
+      prev.filter((file) => file.id !== deletedFileId)
+    ); // Remove the file from the list
+  };
   const handleUpdateAgent = async () => {
     if (!agentId) {
       toast.error("Agent not found");
@@ -171,98 +193,117 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
     // Handle file changes
     if (fileChange) {
-      const fileData = new FormData();
-      let fileHasError = false;
-
-      fileWithTags.forEach((file) => {
+      // Validate all files first
+      const validationErrors = fileWithTags.some((file) => {
         if (!file.source_name) {
-          toast.error(`Source Name is required`);
-          fileHasError = true;
-          return;
+          toast.error("Source Name is required");
+          return true;
         }
         if (file.source_name.length > 100) {
-          toast.error(`Ensure source name has no more than 100 characters`);
-          fileHasError = true;
-          return;
+          toast.error("Ensure source name has no more than 100 characters");
+          return true;
         }
         if (!file.source_context) {
-          toast.error(`Context is required`);
-          fileHasError = true;
-          return;
+          toast.error("Context is required");
+          return true;
         }
         if (!file.source_instructions) {
-          toast.error(`Instructions is required`);
-          fileHasError = true;
-          return;
+          toast.error("Instructions is required");
+          return true;
         }
+        return false;
+      });
+
+      if (validationErrors) {
+        return;
+      }
+
+      const retrainErrors: any[] = [];
+
+      // Call the API for each valid file
+      for (const file of fileWithTags) {
+        const fileData = new FormData();
         fileData.append("file", file.file);
         fileData.append("source_name", file.source_name);
         fileData.append("source_context", file.source_context);
         fileData.append("source_instructions", file.source_instructions);
-      });
 
-      if (!fileHasError) {
         try {
           const fileRes = await trainByFiles({ id: agentId, data: fileData });
           updateCharCount();
-          setFileInfo([]);
-          setFileWithTags([]);
-          setUploadedFiles([]);
-
-          toast.success(fileRes.data.message);
-        } catch (error: any) {
-          toast.error("Failed to train due to an unknown error");
+        } catch (error) {
+          retrainErrors.push(error);
         }
       }
+
+      // Show appropriate success or error messages
+      if (retrainErrors.length) {
+        toast.error("Error in training one or more files");
+      } else {
+        toast.success("All files successfully trained");
+      }
+
+      // Reset file-related state
+      updateCharCount();
+      setFileInfo([]);
+      setFileWithTags([]);
+      setUploadedFiles([]);
     }
-
-    // Handle image changes
     if (imgChange) {
-      const imageData = new FormData();
-      let imgHasError = false;
-
-      imgWithTags.forEach((image) => {
+      // Validate all images first
+      const validationErrors = imgWithTags.some((image) => {
         if (!image.source_name) {
-          toast.error(
-            `Source Name for ${image.source_name || "image"} is required`
-          );
-          imgHasError = true;
-          return;
+          toast.error("Source Name is required");
+          return true;
+        }
+        if (image.source_name.length > 100) {
+          toast.error("Ensure source name has no more than 100 characters");
+          return true;
         }
         if (!image.source_context) {
-          toast.error(
-            `Context for ${image.source_name || "image"} is required`
-          );
-          imgHasError = true;
-          return;
+          toast.error("Context is required");
+          return true;
         }
         if (!image.source_instructions) {
-          toast.error(
-            `Instructions for ${image.source_name || "image"} is required`
-          );
-          imgHasError = true;
-          return;
+          toast.error("Instructions is required");
+          return true;
         }
+        return false;
+      });
+
+      if (validationErrors) {
+        return;
+      }
+
+      const retrainErrors: any[] = [];
+
+      // Call the API for each valid image
+      for (const image of imgWithTags) {
+        const imageData = new FormData();
         imageData.append("image", image.file);
         imageData.append("source_name", image.source_name);
         imageData.append("source_context", image.source_context);
         imageData.append("source_instructions", image.source_instructions);
-      });
 
-      if (!imgHasError) {
         try {
-          const imgRes = await trainByImages({ id: agentId, data: imageData });
-          toast.success(imgRes.data.message);
-          toast.success("Successfully trained by image");
+          const imageRes = await trainByFiles({ id: agentId, data: imageData });
           updateCharCount();
-          setImgWithTags([]);
-          setUploadedImgs([]);
-          setImageInfo([]);
         } catch (error) {
-          console.error("Error image training agent:", error);
-          toast.error("Error in image upload");
+          retrainErrors.push(error);
         }
       }
+
+      // Show appropriate success or error messages
+      if (retrainErrors.length) {
+        toast.error("Error in training one or more images");
+      } else {
+        toast.success("All images successfully trained");
+      }
+
+      updateCharCount();
+      setImgWithTags([]);
+      setUploadedImgs([]);
+      setImageInfo([]);
     }
 
     // Handle text changes
@@ -418,6 +459,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                         files={uploadedFiles}
                         setFiles={setUploadedFiles}
                         fileCharLoading={fileCharLoading}
+                        setFlags={setFlags}
                       />
                     </div>
                     <p className="text-xs text-gray-500 text-center">
@@ -455,12 +497,15 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingFiles.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
+                          setFlags={setFlags}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
+                          updateFileCharAfterDelete={updateFileCharAfterDelete}
+                          fileChar={item.file_characters}
                         />
                       </div>
                     ))}
@@ -498,6 +543,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                         setImagesFile={setUploadedImgs}
                         imageFiles={UploadedImgs}
                         fileCharLoading={fileCharLoading}
+                        setFlags={setFlags}
                       />
                     </div>
                     <p className="text-xs text-gray-500 text-center">
@@ -535,12 +581,15 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingImgs.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
+                          setFlags={setFlags}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
+                          updateFileCharAfterDelete={updateFileCharAfterDelete}
+                          fileChar={item.file_characters}
                         />
                       </div>
                     ))}
@@ -564,12 +613,15 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingWebsites.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
+                          setFlags={setFlags}
                           id={item.id}
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
                           website_auto_update={item.website_auto_update}
                           website_url={item.website_url}
+                          updateFileCharAfterDelete={updateFileCharAfterDelete}
+                          fileChar={item.file_characters}
                         />
                       </div>
                     ))}
