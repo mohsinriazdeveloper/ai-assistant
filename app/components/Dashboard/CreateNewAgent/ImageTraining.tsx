@@ -11,7 +11,6 @@ interface ImageTrainingProps {
   setImagesFile: Dispatch<SetStateAction<File[]>>;
   imageFiles: File[];
   fileCharLoading: boolean;
-  setFlags: Dispatch<SetStateAction<boolean>>;
 }
 
 const ImageTraining: FC<ImageTrainingProps> = ({
@@ -21,7 +20,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   setImagesFile,
   imageFiles,
   fileCharLoading,
-  setFlags,
 }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +35,6 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     if (imageFiles.some((img) => img.name === file.name)) {
       setErrorMessage("Image Already Added");
     } else {
-      setFlags(true);
       setImagesFile((prevImages) => [...prevImages, file]);
     }
   };

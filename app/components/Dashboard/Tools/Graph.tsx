@@ -10,8 +10,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-// import { graphData } from "./content";
 import { useGetGraphDataQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
+// import { graphData } from "./content";
 
 type Data = {
   name: string;
@@ -53,21 +53,27 @@ const Graph: FC<GraphProps> = ({
   useEffect(() => {
     if (!dataLoading) {
       if (showDataBy === "spot") {
-        // Get the current time and calculate 24 hours ago
-        const now = new Date();
-        const twentyFourHoursAgo = new Date(
-          now.getTime() - 24 * 60 * 60 * 1000
-        );
+        if (!graphData?.recent_exchange_rates?.length) return;
 
-        // Filter data from the past 24 hours
-        const filteredData = graphData?.recent_exchange_rates.filter((item) => {
-          const itemDate = new Date(item.date);
-          return itemDate >= twentyFourHoursAgo && itemDate <= now;
+        // Find the latest date from the dataset
+        const latestDate = graphData.recent_exchange_rates.reduce(
+          (latest, item) => {
+            const itemDate = new Date(item.date);
+            return itemDate > latest ? itemDate : latest;
+          },
+          new Date(0)
+        ); // Initialize with a very old date
+
+        // Filter data for the latest date
+        const filteredData = graphData.recent_exchange_rates.filter((item) => {
+          const itemDate = new Date(item.date).toISOString().split("T")[0];
+          const latestDateString = latestDate.toISOString().split("T")[0];
+          return itemDate === latestDateString;
         });
 
         // Map filtered data to match the `Data` structure
         setData(
-          (filteredData ?? []).map((item) => {
+          filteredData.map((item) => {
             const date = new Date(item.date);
             const formattedDate = date.toLocaleTimeString("en-US", {
               hour: "2-digit",

@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { setAgentName } from "../ReduxToolKit/agentNameSlice";
 import { useLazyGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
-import { userLogoutSuccess } from "../ReduxToolKit/authSlice";
+import { userLoginSuccess, userLogoutSuccess } from "../ReduxToolKit/authSlice";
 import {
   selectCreateAgent,
   setCreateAgent,
@@ -22,12 +22,43 @@ interface NavBarProps {
 }
 
 const NavBar: FC<NavBarProps> = ({ content }) => {
-  const [trigger, { data: allAgents }] = useLazyGetAllAgentsQuery();
+  const [trigger, { data: allAgents, error }] = useLazyGetAllAgentsQuery();
+  const currentRoute = usePathname();
+  const route = useRouter();
+
+  useEffect(() => {
+    const fetchAgents = async () => {
+      const result = await trigger();
+      console.log(result);
+
+      if (
+        // @ts-ignore
+        (result?.error?.data?.code as any) === "token_not_valid" &&
+        // @ts-ignore
+        (result?.error?.status as any) === 401
+      ) {
+        toast.error("Token expired, please login again");
+        dispatch(
+          userLoginSuccess({
+            refresh: "",
+            access: "",
+          })
+        );
+        route.push("/");
+        // Handle the 401 error
+      } else if (result.error) {
+        console.error("An error occurred:", result.error);
+      } else {
+        console.log("Agents fetched successfully:", result.data);
+      }
+    };
+
+    fetchAgents();
+  }, []);
   useEffect(() => {
     trigger();
   }, []);
-  const currentRoute = usePathname();
-  const route = useRouter();
+
   const { createAgentStatus } = useAppSelector(selectCreateAgent);
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState<number | null>(null);

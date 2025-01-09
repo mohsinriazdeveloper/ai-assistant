@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { MdCheck } from "react-icons/md";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Loader from "../Loader/Loader";
+import Loader2 from "../Loader/Loader2";
 import {
   useApiConnectionMutation,
   useDisconnectApiConnectionMutation,
@@ -53,6 +54,7 @@ const Finance: FC<FinanceProps> = ({
   return (
     <div className="w-full pt-10">
       <p className="text-2xl font-black">Connetions</p>
+      {getDataLoading && <Loader2 />}
       <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mt-10">
         {apiConnectionData?.map((bank, index) => (
           <div

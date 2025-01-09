@@ -38,6 +38,22 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   const [loadingRowId, setLoadingRowId] = useState<number | null>(null);
 
   const handleEditData = async (id: number) => {
+    if (editData?.title.trim() === "") {
+      toast.error("Title cannot be empty");
+      return;
+    }
+    if (editData?.base_currency.trim() === "") {
+      toast.error("Base Currency cannot be empty");
+      return;
+    }
+    if (editData?.target_currency.trim() === "") {
+      toast.error("Target Currency cannot be empty");
+      return;
+    }
+    if (editData?.value.trim() === "") {
+      toast.error("Value cannot be empty");
+      return;
+    }
     setLoadingRowId(id);
     try {
       const res = updateExchangeData({ id, data: editData }).unwrap();
@@ -54,16 +70,24 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
     e: React.ChangeEvent<HTMLInputElement>,
     field: keyof EditData
   ) => {
+    const inputValue = e.target.value;
+
+    if (field === "value" && isNaN(Number(inputValue))) {
+      toast.error("Value must be numeric");
+      return;
+    }
+
     if (editData) {
       setEditData({
         ...editData,
-        [field]: e.target.value,
+        [field]: inputValue,
       });
     }
   };
 
   const handleEditClick = (index: number) => {
     setEditableRow(index);
+
     const rate = getExchangeRate?.recent_exchange_rates[index];
     if (rate) {
       setEditData({

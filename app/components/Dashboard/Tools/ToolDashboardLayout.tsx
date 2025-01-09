@@ -67,8 +67,10 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({ setIsSetup }) => {
                   <div className="flex items-start">
                     <div
                       onClick={() => setShowDataBy("spot")}
-                      className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] text-[#A9ABB0] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                        showDataBy === "spot" && "bg-[#F5F7FB] text-[#017EFA]"
+                      className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                        showDataBy === "spot"
+                          ? "bg-[#F5F7FB] text-[#017EFA]"
+                          : "text-[#A9ABB0]"
                       }`}
                     >
                       <p>Spot</p>
@@ -76,8 +78,10 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({ setIsSetup }) => {
                     {showWeek && (
                       <div
                         onClick={() => setShowDataBy("week")}
-                        className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] text-[#A9ABB0] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                          showDataBy === "week" && "bg-[#F5F7FB] text-[#017EFA]"
+                        className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                          showDataBy === "week"
+                            ? "bg-[#F5F7FB] text-[#017EFA]"
+                            : "text-[#A9ABB0]"
                         }`}
                       >
                         <p>Week</p>
@@ -86,9 +90,10 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({ setIsSetup }) => {
                     {showMonth && (
                       <div
                         onClick={() => setShowDataBy("month")}
-                        className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] text-[#A9ABB0] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                          showDataBy === "Month" &&
-                          "bg-[#F5F7FB] text-[#017EFA]"
+                        className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                          showDataBy === "Month"
+                            ? "bg-[#F5F7FB] text-[#017EFA]"
+                            : "text-[#A9ABB0]"
                         }`}
                       >
                         <p>Month</p>

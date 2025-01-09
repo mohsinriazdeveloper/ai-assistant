@@ -33,12 +33,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [trainByImages, { isLoading: imagesLoader }] =
     useTrainByImagesMutation();
   const [trainByTextQa, { isLoading: textQaLoader }] = useUpdateAgentMutation();
-  const {
-    data: agent,
-    refetch,
-    isLoading: agentDataoading,
-  } = useGetAgentByIdQuery(agentId);
+  const { data: agent, isLoading: agentDataoading } =
+    useGetAgentByIdQuery(agentId);
 
+  const [filesToGetInfo, setFilesToGetInfo] = useState<File[]>([]);
   const [fileInfo, setFileInfo] = useState<FileInfo[] | null>([]);
   const [imageInfo, setImageInfo] = useState<FileInfo[] | null>([]);
   const [fileChar, setFileChar] = useState<number>(0);
@@ -55,7 +53,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [existingFiles, setExistingFiles] = useState<Files[]>([]);
   const [existingImgs, setExistingImgs] = useState<Files[]>([]);
   const [existingWebsites, setExistingWebsites] = useState<Files[]>([]);
-  const [flags, setFlags] = useState<boolean>(true);
 
   const allowedFiles = [
     "application/pdf",
@@ -70,7 +67,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
   useEffect(() => {
     updateCharCount();
-    console.log("here");
   }, [agent]);
   useEffect(() => {
     const total = qaList.reduce(
@@ -83,101 +79,43 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     uploadFiles([...uploadedFiles, ...UploadedImgs]);
   }, [uploadedFiles, UploadedImgs]);
 
-  // const uploadFiles = async (files: File[]) => {
-  //   const fd = new FormData();
-  //   if (files.length > 0) {
-  //     files.forEach((file) => {
-  //       if (allowedFiles.includes(file.type)) {
-  //         fd.append("files", file);
-  //       } else if (allowedImgs.includes(file.type)) {
-  //         fd.append("images", file);
-  //       }
-  //     });
-
-  //     try {
-  //       const fileUploadRes = await postGetFileImgChar({
-  //         id: agentId,
-  //         data: fd,
-  //       }).unwrap();
-
-  //       const images = filterByExtension(fileUploadRes, ["png", "jpg", "jpeg"]);
-  //       const documents = filterByExtension(fileUploadRes, [
-  //         "pdf",
-  //         "txt",
-  //         "docx",
-  //       ]);
-
-  //       const calculateCharCount = (list: FileInfo[]) =>
-  //         list.reduce((sum, file) => sum + file.characters_count, 0);
-
-  //       const imgCharSum = calculateCharCount(images);
-  //       const docCharSum = calculateCharCount(documents);
-
-  //       // Add new character counts to the existing counts
-  //       setImgChar((prev) => prev + imgCharSum);
-  //       setFileChar((prev) => prev + docCharSum);
-
-  //       // Update the state with new files/images
-  //       setImageInfo((prev) => (prev ? [...prev, ...images] : images));
-  //       setFileInfo((prev) => (prev ? [...prev, ...documents] : documents));
-  //     } catch (error) {
-  //       console.error("Error uploading files:", error);
-  //     }
-  //   }
-  // };
   const uploadFiles = async (files: File[]) => {
-    if (!files || files.length === 0) return; // Prevent unintended calls
-
     const fd = new FormData();
-    const hasFiles = files.some((file) => allowedFiles.includes(file.type));
-    const hasImages = files.some((file) => allowedImgs.includes(file.type));
+    if (files.length >= 0) {
+      files.forEach((file) => {
+        if (allowedFiles.includes(file.type)) {
+          fd.append("files", file);
+        } else if (allowedImgs.includes(file.type)) {
+          fd.append("images", file);
+        }
+      });
 
-    // if (hasFiles) {
-    //   setImgChar(0); // Reset image char count
-    //   setImageInfo([]); // Clear previous images
-    // }
-    // if (hasImages) {
-    //   setFileChar(0); // Reset file char count
-    //   setFileInfo([]); // Clear previous files
-    // }
+      try {
+        const fileUploadRes = await postGetFileImgChar({
+          id: agentId,
+          data: fd,
+        }).unwrap();
 
-    files.forEach((file) => {
-      if (allowedFiles.includes(file.type)) {
-        fd.append("files", file);
-      } else if (allowedImgs.includes(file.type)) {
-        fd.append("images", file);
+        const images = filterByExtension(fileUploadRes, ["png", "jpg", "jpeg"]);
+        const documents = filterByExtension(fileUploadRes, [
+          "pdf",
+          "txt",
+          "docx",
+        ]);
+
+        const calculateCharCount = (list: FileInfo[]) =>
+          list.reduce((sum, file) => sum + file.characters_count, 0);
+
+        const imgCharSum = calculateCharCount(images);
+        const docCharSum = calculateCharCount(documents);
+
+        setImageInfo(images);
+        setFileInfo(documents);
+        setImgChar(imgCharSum);
+        setFileChar(docCharSum);
+      } catch (error) {
+        console.error("Error uploading files:", error);
       }
-    });
-
-    try {
-      const fileUploadRes = await postGetFileImgChar({
-        id: agentId,
-        data: fd,
-      }).unwrap();
-
-      const images = filterByExtension(fileUploadRes, ["png", "jpg", "jpeg"]);
-      const documents = filterByExtension(fileUploadRes, [
-        "pdf",
-        "txt",
-        "docx",
-      ]);
-
-      const calculateCharCount = (list: FileInfo[]) =>
-        list.reduce((sum, file) => sum + file.characters_count, 0);
-
-      const imgCharSum = calculateCharCount(images);
-      const docCharSum = calculateCharCount(documents);
-
-      if (hasFiles) {
-        setFileChar((prev) => prev + docCharSum);
-        setFileInfo((prev) => (prev ? [...prev, ...documents] : documents));
-      }
-      if (hasImages) {
-        setImgChar((prev) => prev + imgCharSum);
-        setImageInfo((prev) => (prev ? [...prev, ...images] : images));
-      }
-    } catch (error) {
-      console.error("Error uploading files:", error);
     }
   };
 
@@ -196,7 +134,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       const websites = agent.files.filter(
         (file) => file.file_category === "website"
       );
-
       const filesChar = files.reduce(
         (sum, file) => sum + (file.file_characters || 0),
         0
@@ -209,38 +146,17 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         (sum, file) => sum + (file.file_characters || 0),
         0
       );
-
-      // Reset counters and then add the new values
-      setFileChar(filesChar);
-      setImgChar(imagesChar);
-      setWebsiteChar(websiteChar);
-
-      setExistingFiles(files);
-      setExistingImgs(images);
-      setExistingWebsites(websites);
+      setTimeout(() => {
+        setExistingFiles(files);
+        setExistingImgs(images);
+        setExistingWebsites(websites);
+        setFileChar((prevValue) => prevValue + filesChar);
+        setImgChar((prevValue) => prevValue + imagesChar);
+        setWebsiteChar((prevValue) => prevValue + websiteChar);
+      }, 1000);
     }
   };
-  const updateFileCharAfterDelete = (
-    deletedFileId: number,
-    deletedFileChar: number
-  ) => {
-    if (checkOption === "files") {
-      setFileChar((prev) => prev - deletedFileChar); // Subtract the file's character count
-      setExistingFiles((prev) =>
-        prev.filter((file) => file.id !== deletedFileId)
-      ); // Remove the file from the list
-    } else if (checkOption === "imageTraining") {
-      setImgChar((prev) => prev - deletedFileChar); // Subtract the file's character count
-      setExistingImgs((prev) =>
-        prev.filter((file) => file.id !== deletedFileId)
-      ); // Remove the image from the list
-    } else if (checkOption === "website") {
-      setWebsiteChar((prev) => prev - deletedFileChar); // Subtract the file's character count
-      setExistingWebsites((prev) =>
-        prev.filter((file) => file.id !== deletedFileId)
-      ); // Remove the website from the list
-    }
-  };
+
   const handleUpdateAgent = async () => {
     if (!agentId) {
       toast.error("Agent not found");
@@ -398,7 +314,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                         files={uploadedFiles}
                         setFiles={setUploadedFiles}
                         fileCharLoading={fileCharLoading}
-                        setFlags={setFlags}
                       />
                     </div>
                     <p className="text-xs text-gray-500 text-center">
@@ -436,15 +351,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingFiles.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
-                          setFlags={setFlags}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
-                          updateFileCharAfterDelete={updateFileCharAfterDelete}
-                          fileChar={item.file_characters}
                         />
                       </div>
                     ))}
@@ -482,7 +394,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                         setImagesFile={setUploadedImgs}
                         imageFiles={UploadedImgs}
                         fileCharLoading={fileCharLoading}
-                        setFlags={setFlags}
                       />
                     </div>
                     <p className="text-xs text-gray-500 text-center">
@@ -520,15 +431,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingImgs.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
-                          setFlags={setFlags}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
-                          updateFileCharAfterDelete={updateFileCharAfterDelete}
-                          fileChar={item.file_characters}
                         />
                       </div>
                     ))}
@@ -552,15 +460,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingWebsites.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
-                          setFlags={setFlags}
                           id={item.id}
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
                           website_auto_update={item.website_auto_update}
                           website_url={item.website_url}
-                          updateFileCharAfterDelete={updateFileCharAfterDelete}
-                          fileChar={item.file_characters}
                         />
                       </div>
                     ))}

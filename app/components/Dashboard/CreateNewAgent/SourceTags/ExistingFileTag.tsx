@@ -1,6 +1,6 @@
 import Loader from "@/app/components/Loader/Loader";
 import { useDeleteFileMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiDeleteBinLine } from "react-icons/ri";
 
@@ -13,12 +13,6 @@ interface ExistingFileTagProps {
   source_Instructions: string;
   website_auto_update?: string | null;
   website_url?: string | null;
-  updateFileCharAfterDelete: (
-    deletedFileId: number,
-    deletedFileChar: number
-  ) => void;
-  fileChar: number;
-  setFlags: Dispatch<SetStateAction<boolean>>;
 }
 
 const ExistingFileTag: FC<ExistingFileTagProps> = ({
@@ -30,15 +24,13 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   source_Instructions,
   website_auto_update,
   website_url,
-  fileChar,
-  updateFileCharAfterDelete,
-  setFlags,
 }) => {
   const [delExistingFile, { isLoading: deleteLoading }] =
     useDeleteFileMutation();
   const [sourceName, setSourceName] = useState<string>("");
   const [sourceContext, setSourceContext] = useState<string>("");
   const [sourceInstructions, setSourceInstructions] = useState<string>("");
+
   useEffect(() => {
     if (source_Name) {
       setSourceName(source_Name);
@@ -51,26 +43,15 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     }
   }, [source_Name, source_Context, source_Instructions]);
 
-  // const handleDeleteFile = async () => {
-  //   try {
-  //     const res = await delExistingFile(id);
-  //     updateFileCharAfterDelete(id);
-  //     toast.success(`${fileName} file deleted successfully`);
-  //   } catch (error) {
-  //     toast.error(`Unable to delete ${fileName} file`);
-  //   }
-  // };
   const handleDeleteFile = async () => {
-    setFlags(false);
     try {
-      await delExistingFile(id); // Perform the delete operation
-      // const fileChar = source_Context.length; // Use the length of `source_Context` or another appropriate field
-      updateFileCharAfterDelete(id, fileChar); // Pass the character count to the update function
+      const res = await delExistingFile(id);
       toast.success(`${fileName} file deleted successfully`);
     } catch (error) {
       toast.error(`Unable to delete ${fileName} file`);
     }
   };
+
   const handleOpenFile = (url: string | undefined) => {
     window.open(url, "_blank");
   };

@@ -179,7 +179,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
   };
 
   return (
-    <div className="h-full overflow-auto scrollbar-hide py-12 bg-white">
+    <div className="h-full overflow-auto scrollbar-hide py-12 bg-white rounded-[20px]">
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>

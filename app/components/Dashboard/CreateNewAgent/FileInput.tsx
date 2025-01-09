@@ -1,14 +1,13 @@
 import UploadIcon from "@/app/assets/icons/uploadIcon.png";
 import Image from "next/image";
-import { Dispatch, FC, SetStateAction, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import Loader from "../../Loader/Loader";
 
 interface FileInputProps {
   files: File[];
-  setFiles: Dispatch<SetStateAction<File[]>>;
+  setFiles: React.Dispatch<React.SetStateAction<File[]>>;
   fileCharLoading: boolean;
-  setFlags: Dispatch<SetStateAction<boolean>>;
   // setCharCount: React.Dispatch<React.SetStateAction<number>>; // can be unused, left here for compatibility
   // setFileCount: React.Dispatch<React.SetStateAction<number>>; // can be unused, left here for compatibility
   // setFileUrls: React.Dispatch<React.SetStateAction<string[]>>; // can be unused, left here for compatibility
@@ -18,7 +17,6 @@ const FileInput: FC<FileInputProps> = ({
   files,
   setFiles,
   fileCharLoading,
-  setFlags,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -45,7 +43,6 @@ const FileInput: FC<FileInputProps> = ({
     }
 
     setErrorMessage("");
-    setFlags(true);
     setFiles([...files, ...selectedFiles]); // Update the files array
   };
 
@@ -65,7 +62,7 @@ const FileInput: FC<FileInputProps> = ({
     }
 
     setErrorMessage("");
-    setFlags(true);
+
     setFiles([...files, ...selectedFiles]); // Update the files array
   };
 
