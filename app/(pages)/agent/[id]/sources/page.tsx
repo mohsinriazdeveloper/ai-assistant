@@ -46,7 +46,7 @@ const Page: FC<PageProps> = ({ params }) => {
   };
   return (
     <Background>
-      <div className=" w-full bg-white rounded-[20px]">
+      <div className="w-full bg-white rounded-[20px]">
         <TourGuide
           start={startTour}
           setStartTour={setStartTour}

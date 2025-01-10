@@ -2,7 +2,7 @@ export const content = {
   navBar: [
     {
       id: 1,
-      title: "My AI Agent",
+      title: "My AI Agents",
       url: "/dashboard/agents",
     },
     {

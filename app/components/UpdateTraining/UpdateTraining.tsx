@@ -233,6 +233,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
   };
   const handleUpdateAgent = async () => {
+    const isError: any[] = [];
+    const isSuccess: any[] = [];
     const fileChange = fileWithTags.length > 0;
     const imgChange = imgWithTags.length > 0;
     const textChange = text && text !== prevText;
@@ -270,7 +272,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         setFileChar(0);
         setWebsiteChar(0);
         setImgChar(0);
-      } catch (error) {}
+        isSuccess.push("success");
+      } catch (error) {
+        isError.push({ error, msg: ", files" });
+      }
     }
     if (imgChange) {
       const validationErrors = imgWithTags.some((image) => {
@@ -303,7 +308,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         setFileChar(0);
         setWebsiteChar(0);
         setImgChar(0);
-      } catch (error) {}
+        isSuccess.push("success");
+      } catch (error) {
+        isError.push({ error, msg: ", images" });
+      }
     }
     if (textChange || qaListChange) {
       const textQAData = new FormData();
@@ -321,10 +329,20 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         // Update previous states
         setPrevText(text);
         setPrevQaList(qaList);
+        isSuccess.push("success");
       } catch (error) {
         console.error("Error text training agent:", error);
         toast.error("Error in text upload");
+        isError.push({ error, msg: ", text or QA" });
       }
+    }
+    if (isSuccess.length > 0) {
+      toast.success("Agent trained successfully");
+    }
+    if (isError.length > 0) {
+      toast.error(
+        `Failed to train agent: ${isError.map((err) => err.msg).join(", ")}`
+      );
     }
   };
 

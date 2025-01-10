@@ -107,7 +107,7 @@ const SideBar: FC<SideBarProps> = ({
   });
   return (
     <div className=" text-white pr-5 h-full flex flex-col justify-between relative z-50">
-      <div className="h-full flex flex-col justify-between">
+      <div className="h-full space-y-6">
         <div>
           <HiOutlineDotsHorizontal
             className={`text-2xl cursor-pointer text-white ml-auto`}
@@ -117,20 +117,22 @@ const SideBar: FC<SideBarProps> = ({
             <Image src={MhsLogo} alt="" className="max-w-[170px] h-auto mt-4" />
           )}
         </div>
-        <div>
-          <p className="text-white font-medium mb-5">{tab.heading}</p>
-          <div id="step-1" className="w-full space-y-1 mb-10">
-            {tab.tabs.map((option, index) => (
-              <div
-                key={index}
-                className={`${
-                  checkOption === option.url && "bg-[#424242]"
-                } hover:bg-[#424242] text-white py-4 px-12 rounded-[10px] cursor-pointer duration-300 transition-colors`}
-                onClick={() => setCheckOption(option.url)}
-              >
-                <p>{option.title}</p>
-              </div>
-            ))}
+        <div className="">
+          <div>
+            <p className="text-white font-medium mb-5">{tab.heading}</p>
+            <div id="step-1" className="w-full space-y-1 mb-10">
+              {tab.tabs.map((option, index) => (
+                <div
+                  key={index}
+                  className={`${
+                    checkOption === option.url && "bg-[#424242]"
+                  } hover:bg-[#424242] text-white py-4 px-12 rounded-[10px] cursor-pointer duration-300 transition-colors`}
+                  onClick={() => setCheckOption(option.url)}
+                >
+                  <p>{option.title}</p>
+                </div>
+              ))}
+            </div>
           </div>
           {currentRoute.includes("tools") ||
             (currentRoute.includes("model") && (
