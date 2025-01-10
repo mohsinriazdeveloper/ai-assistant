@@ -348,7 +348,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
   console.log("filechar: ", fileChar);
   console.log("imagechar: ", imgChar);
-
   return (
     <div className="h-[80vh] my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
       <div className="mt-10 ">
@@ -526,6 +525,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
                           setChar={setWebsiteChar}
+                          website_url={item.website_url}
                         />
                       </div>
                     ))}

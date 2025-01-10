@@ -1,5 +1,6 @@
 import Loader from "@/app/components/Loader/Loader";
 import { useDeleteFileMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
+import Link from "next/link";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -66,30 +67,32 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     <div className="w-full border border-gray-200 py-4 px-6 rounded-lg text-sm mb-4">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-10 pt-1">
-          <p
-            className="text-blue-500 mb-5 underline cursor-pointer"
-            onClick={() => handleOpenFile(fileUrl)}
-          >
-            {fileName && (
-              <>
-                {fileName?.length > 30 ? (
-                  <>{fileName.slice(0, 30) + " ..."}</>
-                ) : (
-                  <>{fileName}</>
-                )}
-              </>
-            )}
-            {website_url && (
-              <>
-                {website_url?.length > 30 ? (
-                  <>{website_url.slice(0, 30) + " ..."}</>
-                ) : (
-                  <>{website_url}</>
-                )}
-              </>
-            )}
-          </p>
-          <div className="space-y-4">
+          {fileName && (
+            <p
+              className="text-blue-500 underline cursor-pointer"
+              onClick={() => handleOpenFile(fileUrl)}
+            >
+              {fileName?.length > 30 ? (
+                <>{fileName.slice(0, 30) + " ..."}</>
+              ) : (
+                <>{fileName}</>
+              )}
+            </p>
+          )}
+          {website_url && (
+            <Link
+              target="_blank"
+              href={website_url}
+              className="text-blue-500 underline cursor-pointer"
+            >
+              {website_url?.length > 30 ? (
+                <>{website_url.slice(0, 30) + " ..."}</>
+              ) : (
+                <>{website_url}</>
+              )}
+            </Link>
+          )}
+          <div className="space-y-4 mt-5">
             {sourceName && (
               <div className="">
                 <p>Source Name</p>
