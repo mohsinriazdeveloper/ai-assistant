@@ -5,21 +5,17 @@ import { FaPlus } from "react-icons/fa";
 import Loader from "../../Loader/Loader";
 
 interface ImageTrainingProps {
-  // setTotalImage: Dispatch<SetStateAction<number>>;
-  // agentId?: any;
-  // agent?: AgentState | undefined;
   setImagesFile: Dispatch<SetStateAction<File[]>>;
   imageFiles: File[];
   fileCharLoading: boolean;
+  setUploadFlag: Dispatch<SetStateAction<boolean>>;
 }
 
 const ImageTraining: FC<ImageTrainingProps> = ({
-  // setTotalImage,
-  // agentId,
-  // agent,
   setImagesFile,
   imageFiles,
   fileCharLoading,
+  setUploadFlag,
 }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -35,6 +31,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     if (imageFiles.some((img) => img.name === file.name)) {
       setErrorMessage("Image Already Added");
     } else {
+      setUploadFlag(true);
       setImagesFile((prevImages) => [...prevImages, file]);
     }
   };

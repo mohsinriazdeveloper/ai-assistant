@@ -1,4 +1,5 @@
 export type FileInfo = {
+  file_id: number;
   file_name: string;
   file_url: string;
   characters_count: number;
@@ -6,7 +7,7 @@ export type FileInfo = {
 };
 
 export type FileTags = {
-  file: File | string;
+  file_id: number;
   source_name: string;
   source_context: string;
   source_instructions: string;

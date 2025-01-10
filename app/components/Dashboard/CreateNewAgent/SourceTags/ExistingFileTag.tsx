@@ -1,6 +1,6 @@
 import Loader from "@/app/components/Loader/Loader";
 import { useDeleteFileMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiDeleteBinLine } from "react-icons/ri";
 
@@ -13,6 +13,7 @@ interface ExistingFileTagProps {
   source_Instructions: string;
   website_auto_update?: string | null;
   website_url?: string | null;
+  setChar: Dispatch<SetStateAction<number>>;
 }
 
 const ExistingFileTag: FC<ExistingFileTagProps> = ({
@@ -24,6 +25,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   source_Instructions,
   website_auto_update,
   website_url,
+  setChar,
 }) => {
   const [delExistingFile, { isLoading: deleteLoading }] =
     useDeleteFileMutation();
@@ -47,6 +49,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     try {
       const res = await delExistingFile(id);
       toast.success(`${fileName} file deleted successfully`);
+      setChar(0);
     } catch (error) {
       toast.error(`Unable to delete ${fileName} file`);
     }

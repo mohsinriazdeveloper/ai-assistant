@@ -115,8 +115,8 @@ export const userApi = createApi({
 
     // 11 train agent by files
     trainByFiles: builder.mutation({
-      query: ({ id, data }: { id: number; data: any }) => ({
-        url: `/accounts/agents/${id}/train_files/`,
+      query: (data) => ({
+        url: `/accounts/agents/train_files/`,
         method: "POST",
         body: data,
       }),
@@ -125,8 +125,8 @@ export const userApi = createApi({
 
     // 12 train agent by images
     trainByImages: builder.mutation({
-      query: ({ id, data }: { id: number; data: any }) => ({
-        url: `/accounts/agents/${id}/train_images/`,
+      query: (data) => ({
+        url: `/accounts/agents/train_images/`,
         method: "POST",
         body: data,
       }),

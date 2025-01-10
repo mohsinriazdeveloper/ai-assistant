@@ -1,48 +1,36 @@
-import Loader from "@/app/components/Loader/Loader";
-import { useDeleteFileMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
-import { FileTags } from "@/app/components/UpdateTraining/trainingTypes";
 import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+  FileInfo,
+  FileTags,
+} from "@/app/components/UpdateTraining/trainingTypes";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiDeleteBinLine } from "react-icons/ri";
 
 interface FileTagProps {
+  fileId: number;
   fileName: string;
   fileUrl: string | undefined;
   fileError: string | null;
-  isNew: boolean;
-  index: number;
-  files: File[];
-  setFiles: Dispatch<SetStateAction<File[]>>;
   fileWithTags: FileTags[];
   setFileWithTags: Dispatch<SetStateAction<FileTags[]>>;
-
-  // existingFiles: FileUrl[];
-  // setExistingFiles: Dispatch<SetStateAction<FileUrl[]>>;
-
-  // setfileCharCount: Dispatch<SetStateAction<number>>;
-  // setFileCount: Dispatch<SetStateAction<number>>;
+  fileInfo: FileInfo[];
+  setFileInfo: Dispatch<SetStateAction<FileInfo[] | null>>;
+  index: number;
+  setFileChar: Dispatch<SetStateAction<number>>;
 }
 
 const FileTag: FC<FileTagProps> = ({
+  fileId,
   fileName,
   fileUrl,
   fileError,
-  isNew,
-  index,
-  files,
-  setFiles,
   setFileWithTags,
   fileWithTags,
+  fileInfo,
+  setFileInfo,
+  index,
+  setFileChar,
 }) => {
-  const [delExistingFile] = useDeleteFileMutation();
-  const [deleteLoader, setDeleteLoader] = useState<boolean>(false);
   const [sourceName, setSourceName] = useState<string>(
     fileWithTags[index]?.source_name || ""
   );
@@ -56,52 +44,30 @@ const FileTag: FC<FileTagProps> = ({
   useEffect(() => {
     setFileWithTags((prev) => {
       const updatedFiles = [...prev];
-      if (files?.[index]) {
-        // Update existing file with the new source details
-        updatedFiles[index] = {
-          ...updatedFiles[index],
-          file: files[index],
-          source_name: sourceName,
-          source_context: sourceContext,
-          source_instructions: sourceInstructions,
-        };
-      }
+      updatedFiles[index] = {
+        ...updatedFiles[index],
+        file_id: fileId,
+        source_name: sourceName,
+        source_context: sourceContext,
+        source_instructions: sourceInstructions,
+      };
       return updatedFiles;
     });
-  }, [
-    sourceName,
-    sourceContext,
-    sourceInstructions,
-    files,
-    index,
-    setFileWithTags,
-  ]);
+  }, [sourceName, sourceContext, sourceInstructions, fileId, setFileWithTags]);
 
-  const handleDeleteFile = useCallback(
-    (index: number, isExisting: boolean = false) => {
-      setDeleteLoader(true);
-      if (files) {
-        const fileToRemove = files[index];
-
-        setFiles((prevFiles) => {
-          const newFiles = prevFiles.filter((_, i) => i !== index);
-
-          if (newFiles.length < 1) {
-            setFiles([]);
-          }
-          return newFiles;
-        });
-        setFileWithTags((prevTags) => prevTags.filter((_, i) => i !== index));
-        setTimeout(() => {
-          toast.success("File successfully deleted.");
-          setDeleteLoader(false);
-        }, 2000);
-      }
-      // }
-    },
-    // [existingFiles, files, delExistingFile]
-    [files, delExistingFile]
-  );
+  const handleDeleteFile = (id: number) => {
+    const fileToDelete = fileInfo.find((item) => item.file_id === id);
+    if (fileToDelete) {
+      setFileChar(
+        (prevCharCount) => prevCharCount - fileToDelete.characters_count
+      );
+      const updatedItems = fileInfo.filter((item) => item.file_id !== id);
+      setFileInfo(updatedItems);
+      toast.success("File deleted successfully");
+    } else {
+      toast.error("File not found");
+    }
+  };
 
   const handleOpenFile = (url: string | undefined) => {
     window.open(url, "_blank");
@@ -198,23 +164,10 @@ const FileTag: FC<FileTagProps> = ({
           Save
         </button> */}
 
-        {deleteLoader ? (
-          <Loader />
-        ) : (
-          <>
-            {isNew ? (
-              <RiDeleteBinLine
-                className="mb-1 cursor-pointer"
-                onClick={() => handleDeleteFile(index)}
-              />
-            ) : (
-              <RiDeleteBinLine
-                className="mb-1 cursor-pointer"
-                // onClick={() => handleDeleteFile(index, true)}
-              />
-            )}
-          </>
-        )}
+        <RiDeleteBinLine
+          className="mb-1 cursor-pointer"
+          onClick={() => handleDeleteFile(fileId)}
+        />
       </div>
     </div>
   );

@@ -29,7 +29,6 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
   useEffect(() => {
     const fetchAgents = async () => {
       const result = await trigger();
-      console.log(result);
 
       if (
         // @ts-ignore
@@ -49,7 +48,7 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
       } else if (result.error) {
         console.error("An error occurred:", result.error);
       } else {
-        console.log("Agents fetched successfully:", result.data);
+        // console.log("Agents fetched successfully:", result.data);
       }
     };
 
