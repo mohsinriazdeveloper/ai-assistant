@@ -100,11 +100,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   useEffect(() => {
     updateCharCount();
   }, [agent]);
-  // useEffect(() => {
-  //   if (uploadFlag) {
-  //     uploadFiles([...uploadedFiles, ...UploadedImgs]);
-  //   }
-  // }, [uploadedFiles, UploadedImgs]);
   useEffect(() => {
     if (uploadFlag) {
       uploadFiles(uploadedFiles);
@@ -148,8 +143,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       setExistingImgs(images);
       setExistingWebsites(websites);
       setFileChar((prevValue) => prevValue + filesChar);
-      // setImgChar((prevValue) => prevValue + imagesChar);
-      // setWebsiteChar((prevValue) => prevValue + websiteChar);
+      setImgChar((prevValue) => prevValue + imagesChar);
+      setWebsiteChar((prevValue) => prevValue + websiteChar);
       // }, 1000);
     }
   };
@@ -389,6 +384,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingFiles.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
+                          setUploadFlag={setUploadFlag}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}
@@ -451,6 +447,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingImgs.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
+                          setUploadFlag={setUploadFlag}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}
@@ -503,6 +500,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                     {existingWebsites.map((item, index) => (
                       <div key={index}>
                         <ExistingFileTag
+                          setUploadFlag={setUploadFlag}
                           id={item.id}
                           fileName={item.file_name}
                           fileUrl={item.file_url}

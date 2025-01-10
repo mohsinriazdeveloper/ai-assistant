@@ -6,7 +6,7 @@ export interface CreateAgentType {
 }
 
 const initialState: CreateAgentType = {
-  createAgentStatus: true,
+  createAgentStatus: false,
 };
 
 export const createAgentState = createSlice({

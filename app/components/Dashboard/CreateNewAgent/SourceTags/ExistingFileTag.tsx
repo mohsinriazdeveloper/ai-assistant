@@ -14,6 +14,7 @@ interface ExistingFileTagProps {
   website_auto_update?: string | null;
   website_url?: string | null;
   setChar: Dispatch<SetStateAction<number>>;
+  setUploadFlag: Dispatch<SetStateAction<boolean>>;
 }
 
 const ExistingFileTag: FC<ExistingFileTagProps> = ({
@@ -26,6 +27,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   website_auto_update,
   website_url,
   setChar,
+  setUploadFlag,
 }) => {
   const [delExistingFile, { isLoading: deleteLoading }] =
     useDeleteFileMutation();
@@ -48,6 +50,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   const handleDeleteFile = async () => {
     try {
       const res = await delExistingFile(id);
+      setUploadFlag(false);
       toast.success(`${fileName} file deleted successfully`);
       setChar(0);
     } catch (error) {
