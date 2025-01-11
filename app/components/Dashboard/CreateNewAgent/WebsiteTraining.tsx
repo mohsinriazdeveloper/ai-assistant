@@ -2,27 +2,18 @@ import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
-import Loader from "../../Loader/Loader";
-import {
-  useDeleteFileMutation,
-  useTrainByWebsiteMutation,
-} from "../../ReduxToolKit/aiAssistantOtherApis";
 import { WebsiteTags } from "../../UpdateTraining/trainingTypes.d";
 
 interface WebsiteTrainingProps {
-  agentId: number;
-  setWebsiteChar: Dispatch<SetStateAction<number>>;
+  // need to remove
+  webWithTags: WebsiteTags[];
+  setWebWithTags: Dispatch<SetStateAction<WebsiteTags[]>>;
 }
 
 const WebsiteTraining: FC<WebsiteTrainingProps> = ({
-  agentId,
-  setWebsiteChar,
+  webWithTags,
+  setWebWithTags,
 }) => {
-  const [trainByWebsite, { isLoading: trainLoading }] =
-    useTrainByWebsiteMutation();
-  const [delExistingFile] = useDeleteFileMutation();
-
-  const [newLinks, setNewLinks] = useState<WebsiteTags[]>([]);
   const urlRegex =
     /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
 
@@ -34,7 +25,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
 
   // Function to handle adding a new input row
   const handleCreateNewInput = () => {
-    setNewLinks((prev) => [
+    setWebWithTags((prev) => [
       ...prev,
       {
         website_url: "",
@@ -53,7 +44,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
     } else {
       setWebsiteError(""); // Clear error if valid
     }
-    setNewLinks((prev) =>
+    setWebWithTags((prev) =>
       prev.map((item, i) =>
         i === index ? { ...item, website_url: value } : item
       )
@@ -66,67 +57,20 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
     field: keyof WebsiteTags,
     value: string
   ) => {
-    setNewLinks((prev) =>
+    setWebWithTags((prev) =>
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
   };
   const handleUpdateOption = (index: number, option: string) => {
-    setNewLinks((prev) =>
+    setWebWithTags((prev) =>
       prev.map((item, i) =>
         i === index ? { ...item, website_auto_update: option } : item
       )
     );
   };
-  const handleUpdateAgentWebsite = async (index: number) => {
-    const currentItem = newLinks[index];
-    const { website_url, source_name, source_context, source_instructions } =
-      currentItem;
-
-    if (
-      !website_url &&
-      !source_name &&
-      !source_context &&
-      !source_instructions
-    ) {
-      toast.error("Please fill in all required fields before retrain agent");
-      return;
-    }
-    if (!website_url) {
-      setWebsiteError("Please add a website");
-      return;
-    }
-    if (!source_name) {
-      setSourceNameError("Please add a source name");
-      return;
-    }
-    if (!source_context) {
-      setSourceContextError("Please add a source context");
-      return;
-    }
-    if (!source_instructions) {
-      setSourceInstructionsError("Please add instructions");
-      return;
-    }
-    const fd = new FormData();
-    fd.append("website_url", currentItem.website_url);
-    fd.append("source_name", currentItem.source_name);
-    fd.append("source_context", currentItem.source_context);
-    fd.append("source_instructions", currentItem.source_instructions);
-    fd.append("website_auto_update", currentItem.website_auto_update);
-
-    try {
-      // For example, you can call an API here
-      const response = await trainByWebsite({ id: agentId, data: fd }).unwrap();
-
-      if (response.error_message === null) {
-        setWebsiteChar(response.characters_count);
-        toast.success("Data saved successfully!");
-        setNewLinks([]);
-      }
-    } catch (error) {
-      console.error("Error saving data:", error);
-      toast.error("An error occurred while saving. Please try again.");
-    }
+  const handleDelete = (index: number) => {
+    setWebWithTags((prev) => prev.filter((_, i) => i !== index));
+    toast.success("Website deleted successfully");
   };
   return (
     <div>
@@ -142,7 +86,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
         </div>
       </div>
 
-      {newLinks.map((item, index) => (
+      {webWithTags.map((item, index) => (
         <div key={index} className="border rounded-lg p-4 text-sm mb-5">
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-10 gap-3">
@@ -286,31 +230,10 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
           </div>
 
           <div className="flex justify-end items-end gap-3 mt-8">
-            <button className="py-1 px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max">
-              Raw data
-            </button>
-            <button
-              onClick={() => handleUpdateAgentWebsite(index)}
-              disabled={
-                !item.website_url ||
-                !item.source_name ||
-                !item.source_context ||
-                !item.source_instructions ||
-                trainLoading
-              }
-              className={`py-2 w-[120px] border border-[#0790FF] bg-[#0790FF] text-white hover:bg-transparent hover:text-[#0790FF] font-medium text-sm rounded-full duration-300 transition-colors ${
-                !item.website_url ||
-                !item.source_name ||
-                !item.source_context ||
-                !item.source_instructions ||
-                trainLoading
-                  ? "cursor-not-allowed"
-                  : "cursor-pointer"
-              }`}
-            >
-              {trainLoading ? <Loader /> : "Save"}
-            </button>
-            <RiDeleteBinLine className="mb-1 cursor-pointer" />
+            <RiDeleteBinLine
+              onClick={() => handleDelete(index)}
+              className="mb-1 cursor-pointer"
+            />
           </div>
         </div>
       ))}

@@ -12,6 +12,12 @@ export type FileTags = {
   source_context: string;
   source_instructions: string;
 };
+export type FileTags = {
+  file_id: number;
+  source_name: string;
+  source_context: string;
+  source_instructions: string;
+};
 
 export type ExistingFile = {
   file: string;

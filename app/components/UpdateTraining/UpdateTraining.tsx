@@ -12,11 +12,12 @@ import {
   useGetAgentByIdQuery,
   useTrainByFilesMutation,
   useTrainByImagesMutation,
+  useTrainByWebsiteMutation,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { Files } from "../ReduxToolKit/types/agents";
 import RightBar from "./RightBar";
-import { FileInfo, FileTags, QATypes } from "./trainingTypes";
+import { FileInfo, FileTags, QATypes, WebsiteTags } from "./trainingTypes";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -33,6 +34,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [trainByImages, { isLoading: imagesLoader }] =
     useTrainByImagesMutation();
   const [trainByTextQa, { isLoading: textQaLoader }] = useUpdateAgentMutation();
+  const [trainByWebsite, { isLoading: webLoader }] =
+    useTrainByWebsiteMutation();
 
   const [fileInfo, setFileInfo] = useState<FileInfo[] | null>([]);
   const [imageInfo, setImageInfo] = useState<FileInfo[] | null>([]);
@@ -46,6 +49,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
   const [fileWithTags, setFileWithTags] = useState<FileTags[]>([]);
   const [imgWithTags, setImgWithTags] = useState<FileTags[]>([]);
+  const [webWithTags, setWebWithTags] = useState<WebsiteTags[]>([]);
 
   const [existingFiles, setExistingFiles] = useState<Files[]>([]);
   const [existingImgs, setExistingImgs] = useState<Files[]>([]);
@@ -238,6 +242,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     const fileChange = fileWithTags.length > 0;
     const imgChange = imgWithTags.length > 0;
     const textChange = text && text !== prevText;
+    const webChange = webWithTags.length > 0;
     const qaListChange =
       qaList && JSON.stringify(qaList) !== JSON.stringify(prevQaList);
 
@@ -321,7 +326,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
       try {
         const textQaRes = await trainByTextQa(textQAData).unwrap();
-        toast.success("Successfully trained by text");
         setFileChar(0);
         setWebsiteChar(0);
         setImgChar(0);
@@ -332,10 +336,55 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         isSuccess.push("success");
       } catch (error) {
         console.error("Error text training agent:", error);
-        toast.error("Error in text upload");
         isError.push({ error, msg: ", text or QA" });
       }
     }
+    if (webChange) {
+      const validationErrors = webWithTags.some((item) => {
+        if (!item.source_name) {
+          toast.error("Source Name is required");
+          return true;
+        }
+        if (item.source_name.length > 100) {
+          toast.error("Ensure source name has no more than 100 characters");
+          return true;
+        }
+        if (!item.source_context) {
+          toast.error("Context is required");
+          return true;
+        }
+        if (!item.source_instructions) {
+          toast.error("Instructions is required");
+          return true;
+        }
+        return false;
+      });
+
+      if (validationErrors) {
+        return;
+      }
+
+      for (const web of webWithTags) {
+        const webData = new FormData();
+        webData.append("website_url", web.website_url);
+        webData.append("source_name", web.source_name);
+        webData.append("source_context", web.source_context);
+        webData.append("source_instructions", web.source_instructions);
+        webData.append("website_auto_update", web.website_auto_update);
+        try {
+          const fileRes = await trainByWebsite({ id: agentId, data: webData });
+          setWebWithTags([]);
+          console.log(fileRes);
+          setFileChar(0);
+          setWebsiteChar(0);
+          setImgChar(0);
+          isSuccess.push("success");
+        } catch (error) {
+          isError.push({ error, msg: ", web scrapping" });
+        }
+      }
+    }
+
     if (isSuccess.length > 0) {
       toast.success("Agent trained successfully");
     }
@@ -408,7 +457,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
-                          setChar={setFileChar}
+                          setWebChar={setWebsiteChar}
+                          setFileChar={setFileChar}
+                          setImgChar={setImgChar}
                         />
                       </div>
                     ))}
@@ -471,7 +522,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
-                          setChar={setImgChar}
+                          setWebChar={setWebsiteChar}
+                          setFileChar={setFileChar}
+                          setImgChar={setImgChar}
                         />
                       </div>
                     ))}
@@ -504,8 +557,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
             {checkOption === "website" && (
               <div>
                 <WebsiteTraining
-                  agentId={agentId}
-                  setWebsiteChar={setWebsiteChar}
+                  webWithTags={webWithTags}
+                  setWebWithTags={setWebWithTags}
                 />
                 {existingWebsites.length > 0 && (
                   <div>
@@ -524,7 +577,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           source_Name={item.source_name}
                           source_Context={item.source_context}
                           source_Instructions={item.source_instructions}
-                          setChar={setWebsiteChar}
+                          setWebChar={setWebsiteChar}
+                          setFileChar={setFileChar}
+                          setImgChar={setImgChar}
                           website_url={item.website_url}
                         />
                       </div>

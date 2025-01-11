@@ -46,23 +46,21 @@ const RightBar: FC<RightBarProps> = ({
         </p>
       </div>
       <div className="mt-2">
-        {checkOption != "website" && (
-          <button
-            id="step-2"
-            className={`py-2 px-3 hover:bg-[#3C3C3F] text-white font-medium rounded-md w-full ${
-              filesLoader || imagesLoader || textQaLoader
-                ? "bg-[#3C3C3F] cursor-wait"
-                : "bg-[#18181b] cursor-pointer"
-            }`}
-            onClick={agentCreateFunc}
-          >
-            {filesLoader || imagesLoader || textQaLoader ? (
-              <Loader />
-            ) : (
-              "Retrain Agent"
-            )}
-          </button>
-        )}
+        <button
+          id="step-2"
+          className={`py-2 px-3 hover:bg-[#3C3C3F] text-white font-medium rounded-md w-full ${
+            filesLoader || imagesLoader || textQaLoader
+              ? "bg-[#3C3C3F] cursor-wait"
+              : "bg-[#18181b] cursor-pointer"
+          }`}
+          onClick={agentCreateFunc}
+        >
+          {filesLoader || imagesLoader || textQaLoader ? (
+            <Loader />
+          ) : (
+            "Retrain Agent"
+          )}
+        </button>
       </div>
       {totalCharCount >= 400000 && (
         <p className="mt-2 text-xs text-red-500">Characters exceed the limit</p>

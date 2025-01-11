@@ -162,9 +162,9 @@ const SetupApi: FC<SetupApiProps> = ({ setIsSetup }) => {
           )}{" "}
         </div>
         <div className="flex justify-end items-end gap-3 pt-7">
-          <button className="py-1 px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max">
+          {/* <button className="py-1 px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max">
             Raw data
-          </button>
+          </button> */}
           <button
             onClick={handleSetupGraph}
             disabled={connectionLoading}
@@ -174,7 +174,7 @@ const SetupApi: FC<SetupApiProps> = ({ setIsSetup }) => {
           >
             {connectionLoading ? <Loader /> : "Connect"}
           </button>
-          <p className="text-[#AE1616]">Reset</p>
+          {/* <p className="text-[#AE1616]">Reset</p> */}
         </div>
       </div>
     </div>
