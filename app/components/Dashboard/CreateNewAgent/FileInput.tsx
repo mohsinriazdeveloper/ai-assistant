@@ -30,6 +30,24 @@ const FileInput: FC<FileInputProps> = ({
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
 
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (!event.target.files) return;
+
+  //   const selectedFiles = Array.from(event.target.files).filter((file) =>
+  //     allowedFileTypes.includes(file.type)
+  //   );
+
+  //   if (selectedFiles.length === 0) {
+  //     setErrorMessage(
+  //       "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
+  //     );
+  //     return;
+  //   }
+
+  //   setErrorMessage("");
+  //   setUploadFlag(true);
+  //   setFiles([...files, ...selectedFiles]); // Update the files array
+  // };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
 
@@ -41,12 +59,14 @@ const FileInput: FC<FileInputProps> = ({
       setErrorMessage(
         "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
       );
+      event.target.value = ""; // Reset the input value
       return;
     }
 
     setErrorMessage("");
     setUploadFlag(true);
     setFiles([...files, ...selectedFiles]); // Update the files array
+    event.target.value = ""; // Reset the input value to allow re-uploading the same file
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {

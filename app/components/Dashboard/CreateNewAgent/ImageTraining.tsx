@@ -33,12 +33,14 @@ const ImageTraining: FC<ImageTrainingProps> = ({
     } else {
       setUploadFlag(true);
       setImagesFile((prevImages) => [...prevImages, file]);
+      setErrorMessage("");
     }
   };
 
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) processImage(file);
+    event.target.value = "";
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {

@@ -1,27 +1,24 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { WebsiteTags } from "../../UpdateTraining/trainingTypes.d";
+import { Validation, WebsiteTags } from "../../UpdateTraining/trainingTypes.d";
 
 interface WebsiteTrainingProps {
-  // need to remove
   webWithTags: WebsiteTags[];
   setWebWithTags: Dispatch<SetStateAction<WebsiteTags[]>>;
+  setWebValidations: Dispatch<SetStateAction<Validation[]>>;
+  webValidations: Validation[];
 }
 
 const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   webWithTags,
   setWebWithTags,
+  setWebValidations,
+  webValidations,
 }) => {
   const urlRegex =
     /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
-
-  const [websiteError, setWebsiteError] = useState<string>("");
-  const [sourceNameError, setSourceNameError] = useState<string>("");
-  const [sourceContextError, setSourceContextError] = useState<string>("");
-  const [sourceInstructionsError, setSourceInstructionsError] =
-    useState<string>("");
 
   // Function to handle adding a new input row
   const handleCreateNewInput = () => {
@@ -35,15 +32,36 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
         website_auto_update: "manually",
       },
     ]);
+
+    setWebValidations((prev) => [
+      ...prev,
+      {
+        sourceName: false,
+        sourceContext: false,
+        sourceInstructions: false,
+      },
+    ]);
+  };
+
+  // Utility function to update validation
+  const updateValidation = (
+    index: number,
+    field: keyof Validation,
+    isValid: boolean
+  ) => {
+    setWebValidations((prev) => {
+      const updatedValidations = [...prev];
+      if (updatedValidations[index]) {
+        updatedValidations[index][field] = !isValid;
+      }
+      return updatedValidations;
+    });
   };
 
   // Function to handle changes in the URL input field
   const handleUrlChange = (index: number, value: string) => {
-    if (!urlRegex.test(value)) {
-      setWebsiteError("Invalid URL format. Please enter a valid website URL.");
-    } else {
-      setWebsiteError(""); // Clear error if valid
-    }
+    const isValid = urlRegex.test(value);
+    updateValidation(index, "sourceName", isValid);
     setWebWithTags((prev) =>
       prev.map((item, i) =>
         i === index ? { ...item, website_url: value } : item
@@ -51,16 +69,20 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
     );
   };
 
-  // Function to handle changes in the other fields
+  // Function to handle changes in other fields
   const handleFieldChange = (
     index: number,
     field: keyof WebsiteTags,
-    value: string
+    value: string,
+    validationField: keyof Validation
   ) => {
+    const isValid = value.trim().length > 0;
+    updateValidation(index, validationField, isValid);
     setWebWithTags((prev) =>
       prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
   };
+
   const handleUpdateOption = (index: number, option: string) => {
     setWebWithTags((prev) =>
       prev.map((item, i) =>
@@ -68,10 +90,13 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
       )
     );
   };
+
   const handleDelete = (index: number) => {
     setWebWithTags((prev) => prev.filter((_, i) => i !== index));
+    setWebValidations((prev) => prev.filter((_, i) => i !== index));
     toast.success("Website deleted successfully");
   };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -96,126 +121,100 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                     type="text"
                     placeholder="https://www.example.com/"
                     value={item.website_url}
-                    onChange={(e) => {
-                      handleUrlChange(index, e.target.value);
-                      // setWebsiteError("");
-                    }}
-                    className={`text-sm border border-[#c4c4c4] rounded-md px-3 py-[6px] focus:outline-none w-full`}
+                    onChange={(e) => handleUrlChange(index, e.target.value)}
+                    className={`text-sm border rounded-md px-3 py-[6px] focus:outline-none w-full ${
+                      webValidations[index]?.sourceName
+                        ? "border-red-600"
+                        : "border-[#c4c4c4]"
+                    }`}
                   />
                 </label>
-                <p className="text-xs text-red-600">{websiteError}</p>
               </div>
               <div className="space-y-4 mt-5">
                 <div>
                   <p>Source Name *</p>
-                  <div>
-                    <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
-                      <input
-                        type="text"
-                        placeholder="Source Unique Label"
-                        value={item.source_name}
-                        onChange={(e) => {
-                          handleFieldChange(
-                            index,
-                            "source_name",
-                            e.target.value
-                          );
-                          setSourceNameError("");
-                        }}
-                        className="font-light focus:outline-none w-full"
-                      />
-                    </div>
-                    <p className="text-xs text-red-600">{sourceNameError}</p>
+                  <div
+                    className={`py-2 px-2 border rounded mt-1 ${
+                      webValidations[index]?.sourceName
+                        ? "border-red-600"
+                        : "border-[#c4c4c4]"
+                    }`}
+                  >
+                    <input
+                      type="text"
+                      placeholder="Source Unique Label"
+                      value={item.source_name}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "source_name",
+                          e.target.value,
+                          "sourceName"
+                        )
+                      }
+                      className="font-light focus:outline-none w-full"
+                    />
                   </div>
                 </div>
                 <div>
                   <div className="w-full flex justify-between items-end">
                     <p>Context/clarifications *</p>
                     <p className="text-xs max-w-[345px]">
-                      Give more information and context to your AI about this
-                      data source. This will help the AI to fetch this data
-                      appropriately
+                      Provide context to your AI about this data source.
                     </p>
                   </div>
-                  <div>
-                    <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
-                      <textarea
-                        rows={2}
-                        placeholder="Enter Context"
-                        value={item.source_context}
-                        onChange={(e) => {
-                          handleFieldChange(
-                            index,
-                            "source_context",
-                            e.target.value
-                          );
-                          setSourceContextError("");
-                        }}
-                        className="focus:outline-none font-light w-full resize-none"
-                      />
-                    </div>
-                    <p className="text-xs text-red-600">{sourceContextError}</p>
+                  <div
+                    className={`py-2 px-2 border rounded mt-1 ${
+                      webValidations[index]?.sourceContext
+                        ? "border-red-600"
+                        : "border-[#c4c4c4]"
+                    }`}
+                  >
+                    <textarea
+                      rows={2}
+                      placeholder="Enter Context"
+                      value={item.source_context}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "source_context",
+                          e.target.value,
+                          "sourceContext"
+                        )
+                      }
+                      className="focus:outline-none font-light w-full resize-none"
+                    />
                   </div>
                 </div>
                 <div>
                   <div className="w-full flex justify-between items-end">
                     <p>Instructions *</p>
                     <p className="text-xs max-w-[345px]">
-                      Give instructions to your AI to help him understand how to
-                      use your data source.
+                      Provide instructions to your AI about how to use this data
+                      source.
                     </p>
                   </div>
-                  <div>
-                    <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
-                      <textarea
-                        rows={2}
-                        placeholder="Enter Instructions"
-                        value={item.source_instructions}
-                        onChange={(e) => {
-                          handleFieldChange(
-                            index,
-                            "source_instructions",
-                            e.target.value
-                          );
-                          setSourceInstructionsError("");
-                        }}
-                        className="focus:outline-none font-light w-full resize-none"
-                      />
-                    </div>
-                    <p className="text-xs text-red-600">
-                      {sourceInstructionsError}
-                    </p>
-                  </div>
-                </div>
-                <div>
-                  <div className="w-full flex justify-between items-end">
-                    <p>Daily Auto-Updates *</p>
-                    <p className="text-xs max-w-[345px]">
-                      If your data source updates at regular intervals, select
-                      the appropriate update frequency to update automatically.
-                    </p>
-                  </div>
-                  <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
-                    {[
-                      "manually",
-                      "maily",
-                      "weekly",
-                      "monthly",
-                      "quarterly",
-                    ].map((option) => (
-                      <div
-                        key={option}
-                        className="flex items-center gap-2 cursor-pointer"
-                        onClick={() => handleUpdateOption(index, option)}
-                      >
-                        <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">
-                          <p className="pb-1">
-                            {item.website_auto_update === option ? "x" : ""}
-                          </p>
-                        </div>
-                        <p className="capitalize">{option}</p>
-                      </div>
-                    ))}
+                  <div
+                    className={`py-2 px-2 border rounded mt-1 ${
+                      webValidations[index]?.sourceInstructions
+                        ? "border-red-600"
+                        : "border-[#c4c4c4]"
+                    }`}
+                  >
+                    <textarea
+                      rows={2}
+                      placeholder="Enter Instructions"
+                      value={item.source_instructions}
+                      onChange={(e) =>
+                        handleFieldChange(
+                          index,
+                          "source_instructions",
+                          e.target.value,
+                          "sourceInstructions"
+                        )
+                      }
+                      className="focus:outline-none font-light w-full resize-none"
+                    />
                   </div>
                 </div>
               </div>

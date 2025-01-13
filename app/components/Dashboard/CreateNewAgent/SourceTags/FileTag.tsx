@@ -1,6 +1,7 @@
 import {
   FileInfo,
   FileTags,
+  Validation,
 } from "@/app/components/UpdateTraining/trainingTypes";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -17,6 +18,8 @@ interface FileTagProps {
   setFileInfo: Dispatch<SetStateAction<FileInfo[] | null>>;
   index: number;
   setFileChar: Dispatch<SetStateAction<number>>;
+  setValidations: Dispatch<SetStateAction<Validation[]>>;
+  validations: Validation[];
 }
 
 const FileTag: FC<FileTagProps> = ({
@@ -30,6 +33,8 @@ const FileTag: FC<FileTagProps> = ({
   setFileInfo,
   index,
   setFileChar,
+  setValidations,
+  validations,
 }) => {
   const [sourceName, setSourceName] = useState<string>(
     fileWithTags[index]?.source_name || ""
@@ -68,11 +73,36 @@ const FileTag: FC<FileTagProps> = ({
       toast.error("File not found");
     }
   };
+  const updateValidation = (field: keyof Validation, isValid: boolean) => {
+    setValidations((prev) => {
+      const updatedValidations = [...prev];
+      if (updatedValidations[index]) {
+        updatedValidations[index][field] = !isValid;
+      }
+      return updatedValidations;
+    });
+  };
 
+  const handleSourceNameChange = (value: string) => {
+    setSourceName(value);
+    updateValidation(
+      "sourceName",
+      value.trim().length > 0 && value.length <= 100
+    );
+  };
+
+  const handleSourceContextChange = (value: string) => {
+    setSourceContext(value);
+    updateValidation("sourceContext", value.trim().length > 0);
+  };
+
+  const handleSourceInstructionsChange = (value: string) => {
+    setSourceInstructions(value);
+    updateValidation("sourceInstructions", value.trim().length > 0);
+  };
   const handleOpenFile = (url: string | undefined) => {
     window.open(url, "_blank");
   };
-
   return (
     <div className="w-full border border-gray-200 py-4 px-6 rounded-lg text-sm mb-4">
       <div className="grid grid-cols-12 gap-3">
@@ -90,13 +120,17 @@ const FileTag: FC<FileTagProps> = ({
           <div className="space-y-4">
             <div className="">
               <p>Source Name *</p>
-              <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
+              <div
+                className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
+                  validations[index]?.sourceName && "border-red-600"
+                }`}
+              >
                 <input
                   type="text"
                   placeholder="Source Unique Label"
                   className="font-light focus:outline-none w-full"
                   value={sourceName}
-                  onChange={(e) => setSourceName(e.target.value)}
+                  onChange={(e) => handleSourceNameChange(e.target.value)}
                 />
               </div>
             </div>
@@ -109,13 +143,17 @@ const FileTag: FC<FileTagProps> = ({
                 </p>
               </div>
 
-              <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
+              <div
+                className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
+                  validations[index]?.sourceContext && "border-red-600"
+                }`}
+              >
                 <textarea
                   rows={2}
                   placeholder="Enter Context"
                   className=" focus:outline-none font-light w-full resize-none"
                   value={sourceContext}
-                  onChange={(e) => setSourceContext(e.target.value)}
+                  onChange={(e) => handleSourceContextChange(e.target.value)}
                 />
               </div>
             </div>
@@ -128,13 +166,19 @@ const FileTag: FC<FileTagProps> = ({
                 </p>
               </div>
 
-              <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
+              <div
+                className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
+                  validations[index]?.sourceInstructions && "border-red-600"
+                }`}
+              >
                 <textarea
                   rows={2}
                   placeholder="Enter Instructions"
                   className=" focus:outline-none font-light w-full resize-none"
                   value={sourceInstructions}
-                  onChange={(e) => setSourceInstructions(e.target.value)}
+                  onChange={(e) =>
+                    handleSourceInstructionsChange(e.target.value)
+                  }
                 />
               </div>
             </div>

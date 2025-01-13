@@ -1,3 +1,9 @@
+export type Validation = {
+  sourceName: boolean;
+  sourceContext: boolean;
+  sourceInstructions: boolean;
+};
+
 export type FileInfo = {
   file_id: number;
   file_name: string;

@@ -17,7 +17,13 @@ import {
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { Files } from "../ReduxToolKit/types/agents";
 import RightBar from "./RightBar";
-import { FileInfo, FileTags, QATypes, WebsiteTags } from "./trainingTypes";
+import {
+  FileInfo,
+  FileTags,
+  QATypes,
+  Validation,
+  WebsiteTags,
+} from "./trainingTypes";
 
 interface UpdateTrainingProps {
   agentId: number;
@@ -63,6 +69,28 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [prevText, setPrevText] = useState<string | null>(null);
   const [prevQaList, setPrevQaList] = useState<QATypes[] | null>(null);
 
+  const [fileValidations, setFileValidations] = useState<Validation[]>(
+    fileWithTags.map(() => ({
+      sourceName: false,
+      sourceContext: false,
+      sourceInstructions: false,
+    }))
+  );
+  const [imageValidations, setImageValidations] = useState<Validation[]>(
+    imgWithTags.map(() => ({
+      sourceName: false,
+      sourceContext: false,
+      sourceInstructions: false,
+    }))
+  );
+  const [webValidations, setWebValidations] = useState<Validation[]>(
+    webWithTags.map(() => ({
+      sourceName: false,
+      sourceContext: false,
+      sourceInstructions: false,
+    }))
+  );
+
   const allowedFiles = [
     "application/pdf",
     "text/plain",
@@ -73,6 +101,15 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     list.filter((file) =>
       extensions.includes(file.file_name.split(".").pop()?.toLowerCase() || "")
     );
+  // useEffect(() => {
+  //   setFileValidations(
+  //     fileWithTags.map(() => ({
+  //       sourceName: false,
+  //       sourceContext: false,
+  //       sourceInstructions: false,
+  //     }))
+  //   );
+  // }, [fileWithTags]);
   useEffect(() => {
     const total = qaList.reduce(
       (acc, qa) => acc + qa.question.length + qa.answer.length,
@@ -241,15 +278,25 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     const isSuccess: any[] = [];
     const fileChange = fileWithTags.length > 0;
     const imgChange = imgWithTags.length > 0;
-    const textChange = text && text !== prevText;
+    const textChange = text || text === "" || text !== prevText;
+    console.log(textChange);
+    console.log(text);
     const webChange = webWithTags.length > 0;
     const qaListChange =
       qaList && JSON.stringify(qaList) !== JSON.stringify(prevQaList);
 
     if (fileChange) {
-      const validationErrors = fileWithTags.some((file) => {
+      setFileValidations(
+        fileWithTags.map((file) => ({
+          sourceName: !file.source_name || file.source_name.length > 100,
+          sourceContext: !file.source_context,
+          sourceInstructions: !file.source_instructions,
+        }))
+      );
+      const validationErrors = fileWithTags.some((file, index) => {
         if (!file.source_name) {
           toast.error("Source Name is required");
+
           return true;
         }
         if (file.source_name.length > 100) {
@@ -283,6 +330,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }
     }
     if (imgChange) {
+      setImageValidations(
+        imgWithTags.map((img) => ({
+          sourceName: !img.source_name || img.source_name.length > 100,
+          sourceContext: !img.source_context,
+          sourceInstructions: !img.source_instructions,
+        }))
+      );
       const validationErrors = imgWithTags.some((image) => {
         if (!image.source_name) {
           toast.error("Source Name is required");
@@ -340,6 +394,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }
     }
     if (webChange) {
+      setWebValidations(
+        webWithTags.map((file) => ({
+          sourceName: !file.source_name || file.source_name.length > 100,
+          sourceContext: !file.source_context,
+          sourceInstructions: !file.source_instructions,
+        }))
+      );
       const validationErrors = webWithTags.some((item) => {
         if (!item.source_name) {
           toast.error("Source Name is required");
@@ -435,6 +496,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           setFileInfo={setFileInfo}
                           index={index}
                           setFileChar={setFileChar}
+                          setValidations={setFileValidations}
+                          validations={fileValidations}
                         />
                       </div>
                     ))}
@@ -500,6 +563,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           setFileInfo={setImageInfo}
                           index={index}
                           setFileChar={setImgChar}
+                          setValidations={setImageValidations}
+                          validations={imageValidations}
                         />
                       </div>
                     ))}
@@ -559,6 +624,8 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                 <WebsiteTraining
                   webWithTags={webWithTags}
                   setWebWithTags={setWebWithTags}
+                  setWebValidations={setWebValidations}
+                  webValidations={webValidations}
                 />
                 {existingWebsites.length > 0 && (
                   <div>
