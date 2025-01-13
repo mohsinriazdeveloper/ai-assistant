@@ -141,7 +141,7 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
               type="submit"
               className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
             >
-              {loading ? <Loader /> : <>save</>}
+              {loading ? <Loader /> : <>Save</>}
             </button>
           </div>
         </form>

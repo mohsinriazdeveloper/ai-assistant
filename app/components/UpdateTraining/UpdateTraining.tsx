@@ -69,6 +69,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [prevText, setPrevText] = useState<string | null>(null);
   const [prevQaList, setPrevQaList] = useState<QATypes[] | null>(null);
 
+  const [uploadFileImgError, setUploadFileImgError] = useState<string | null>(
+    null
+  );
+
   const [fileValidations, setFileValidations] = useState<Validation[]>(
     fileWithTags.map(() => ({
       sourceName: false,
@@ -101,15 +105,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     list.filter((file) =>
       extensions.includes(file.file_name.split(".").pop()?.toLowerCase() || "")
     );
-  // useEffect(() => {
-  //   setFileValidations(
-  //     fileWithTags.map(() => ({
-  //       sourceName: false,
-  //       sourceContext: false,
-  //       sourceInstructions: false,
-  //     }))
-  //   );
-  // }, [fileWithTags]);
+
   useEffect(() => {
     const total = qaList.reduce(
       (acc, qa) => acc + qa.question.length + qa.answer.length,
@@ -252,7 +248,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           id: agentId,
           data: fd,
         }).unwrap();
-
+        fileUploadRes.forEach((item: any) => {
+          if (item.error_message) {
+            toast.error(` ${item.error_message}`);
+          }
+        });
         const documents = filterByExtension(fileUploadRes, [
           "pdf",
           "txt",
@@ -278,7 +278,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     const isSuccess: any[] = [];
     const fileChange = fileWithTags.length > 0;
     const imgChange = imgWithTags.length > 0;
-    const textChange = text || text === "" || text !== prevText;
+    const textChange = text && text !== prevText;
     console.log(textChange);
     console.log(text);
     const webChange = webWithTags.length > 0;
@@ -295,20 +295,22 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       );
       const validationErrors = fileWithTags.some((file, index) => {
         if (!file.source_name) {
-          toast.error("Source Name is required");
+          toast.error("Source Name is required in file");
 
           return true;
         }
         if (file.source_name.length > 100) {
-          toast.error("Ensure source name has no more than 100 characters");
+          toast.error(
+            "Ensure source name has no more than 100 characters in file"
+          );
           return true;
         }
         if (!file.source_context) {
-          toast.error("Context is required");
+          toast.error("Context is required in file");
           return true;
         }
         if (!file.source_instructions) {
-          toast.error("Instructions is required");
+          toast.error("Instructions is required in file");
           return true;
         }
         return false;
@@ -339,19 +341,21 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       );
       const validationErrors = imgWithTags.some((image) => {
         if (!image.source_name) {
-          toast.error("Source Name is required");
+          toast.error("Source Name is required in image");
           return true;
         }
         if (image.source_name.length > 100) {
-          toast.error("Ensure source name has no more than 100 characters");
+          toast.error(
+            "Ensure source name has no more than 100 characters in image"
+          );
           return true;
         }
         if (!image.source_context) {
-          toast.error("Context is required");
+          toast.error("Context is required in image");
           return true;
         }
         if (!image.source_instructions) {
-          toast.error("Instructions is required");
+          toast.error("Instructions is required in image");
           return true;
         }
         return false;
@@ -375,7 +379,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     if (textChange || qaListChange) {
       const textQAData = new FormData();
       textQAData.append("id", agentId.toString());
-      if (textChange) textQAData.append("text", text);
+
+      if (textChange && text === "") textQAData.append("text", `""`);
+      if (textChange && text !== "") textQAData.append("text", text);
       if (qaListChange) textQAData.append("qa", JSON.stringify(qaList));
 
       try {
@@ -403,19 +409,21 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       );
       const validationErrors = webWithTags.some((item) => {
         if (!item.source_name) {
-          toast.error("Source Name is required");
+          toast.error("Source Name is required in website");
           return true;
         }
         if (item.source_name.length > 100) {
-          toast.error("Ensure source name has no more than 100 characters");
+          toast.error(
+            "Ensure source name has no more than 100 characters in website"
+          );
           return true;
         }
         if (!item.source_context) {
-          toast.error("Context is required");
+          toast.error("Context is required in website");
           return true;
         }
         if (!item.source_instructions) {
-          toast.error("Instructions is required");
+          toast.error("Instructions is required in website");
           return true;
         }
         return false;
@@ -618,7 +626,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                 <QAInput qaList={qaList} setQAList={setQaList} />
               </div>
             )}
-
             {checkOption === "website" && (
               <div>
                 <WebsiteTraining

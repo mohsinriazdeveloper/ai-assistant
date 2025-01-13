@@ -48,12 +48,13 @@ const RightBar: FC<RightBarProps> = ({
       <div className="mt-2">
         <button
           id="step-2"
-          className={`py-2 px-3 hover:bg-[#3C3C3F] text-white font-medium rounded-md w-full ${
+          className={`py-2 px-3 hover:bg-[#3C3C3F] text-white border border-transparent font-medium rounded-md w-full  ${
             filesLoader || imagesLoader || textQaLoader
               ? "bg-[#3C3C3F] cursor-wait"
               : "bg-[#18181b] cursor-pointer"
           }`}
           onClick={agentCreateFunc}
+          disabled={totalCharCount > 400000}
         >
           {filesLoader || imagesLoader || textQaLoader ? (
             <Loader />
