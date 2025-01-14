@@ -14,7 +14,7 @@ type GraphData = {
   auto_call: string;
 };
 interface SetupApiProps {
-  setIsSetup: Dispatch<SetStateAction<string>>;
+  setIsSetup: Dispatch<SetStateAction<string | boolean>>;
 }
 
 const SetupApi: FC<SetupApiProps> = ({ setIsSetup }) => {

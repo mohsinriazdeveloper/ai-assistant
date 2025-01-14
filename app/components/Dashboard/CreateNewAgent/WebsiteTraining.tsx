@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 import { FaPlus } from "react-icons/fa";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -9,6 +9,7 @@ interface WebsiteTrainingProps {
   setWebWithTags: Dispatch<SetStateAction<WebsiteTags[]>>;
   setWebValidations: Dispatch<SetStateAction<Validation[]>>;
   webValidations: Validation[];
+  setWebLinkError: Dispatch<SetStateAction<boolean>>;
 }
 
 const WebsiteTraining: FC<WebsiteTrainingProps> = ({
@@ -16,7 +17,9 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   setWebWithTags,
   setWebValidations,
   webValidations,
+  setWebLinkError,
 }) => {
+  const [urlError, setUrlError] = useState<string>("");
   const urlRegex =
     /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/;
 
@@ -61,7 +64,14 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   // Function to handle changes in the URL input field
   const handleUrlChange = (index: number, value: string) => {
     const isValid = urlRegex.test(value);
-    updateValidation(index, "sourceName", isValid);
+    if (isValid) {
+      setUrlError("");
+      setWebLinkError(false);
+    } else {
+      setUrlError("Invalid URL");
+      setWebLinkError(true);
+    }
+    updateValidation(index, "webUrl", isValid);
     setWebWithTags((prev) =>
       prev.map((item, i) =>
         i === index ? { ...item, website_url: value } : item
@@ -123,12 +133,13 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                     value={item.website_url}
                     onChange={(e) => handleUrlChange(index, e.target.value)}
                     className={`text-sm border rounded-md px-3 py-[6px] focus:outline-none w-full ${
-                      webValidations[index]?.sourceName
+                      webValidations[index]?.webUrl
                         ? "border-red-600"
                         : "border-[#c4c4c4]"
                     }`}
                   />
                 </label>
+                {urlError && <p className="text-xs text-red-500">{urlError}</p>}
               </div>
               <div className="space-y-4 mt-5">
                 <div>
@@ -215,6 +226,37 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                       }
                       className="focus:outline-none font-light w-full resize-none"
                     />
+                  </div>
+                </div>
+                <div>
+                  <div className="w-full flex justify-between items-end">
+                    <p>Daily Auto-Updates *</p>
+                    <p className="text-xs max-w-[345px]">
+                      If your data source updates at regular intervals, select
+                      the appropriate update frequency to update automatically.
+                    </p>
+                  </div>
+                  <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
+                    {[
+                      "manually",
+                      "daily",
+                      "weekly",
+                      "monthly",
+                      "quarterly",
+                    ].map((option) => (
+                      <div
+                        key={option}
+                        className="flex items-center gap-2 cursor-pointer"
+                        onClick={() => handleUpdateOption(index, option)}
+                      >
+                        <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">
+                          <p className="pb-1">
+                            {item.website_auto_update === option ? "x" : ""}
+                          </p>
+                        </div>
+                        <p className="capitalize">{option}</p>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

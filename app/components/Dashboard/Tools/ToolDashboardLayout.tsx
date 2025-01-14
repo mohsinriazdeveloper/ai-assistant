@@ -11,10 +11,14 @@ import {
 import Graph from "./Graph";
 
 interface ToolDashboardLayoutProps {
-  setIsSetup: Dispatch<SetStateAction<string>>;
+  setIsSetup: Dispatch<SetStateAction<string | boolean>>;
+  setGetRawDataId: Dispatch<SetStateAction<number>>;
 }
 
-const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({ setIsSetup }) => {
+const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
+  setIsSetup,
+  setGetRawDataId,
+}) => {
   const { data: getGraphs, isLoading } = useGetAllGraphsQuery();
   const [disconnectGraph, { isLoading: disconnectLoading }] =
     useDisConnectGraphMutation();
@@ -52,6 +56,10 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({ setIsSetup }) => {
       setDropDown(false);
       toast.error("Failed to reset graph");
     }
+  };
+  const handleRawData = (id: number) => {
+    setIsSetup("rawData");
+    setGetRawDataId(id);
   };
   return (
     <div>
@@ -108,24 +116,29 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({ setIsSetup }) => {
                   className={`text-3xl cursor-pointer rotate-90 ml-5`}
                 />
                 {dropDown && (
-                  <div className="absolute border rounded-md bg-white p-1 text-xs mt-1">
-                    <p
+                  <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50">
+                    <div
                       onClick={() => handleDisConnect(graph.id)}
                       className="hover:bg-gray-200 cursor-pointer py-1 px-3"
                     >
                       {disconnectLoading ? <Loader /> : "Disconnect"}
-                    </p>
-                    <p
+                    </div>
+                    <div
                       onClick={() =>
                         handleReset(graph.agent_graph_api_connection_id)
                       }
                       className="hover:bg-gray-200 cursor-pointer py-1 px-3"
                     >
                       {resetLoading ? <Loader /> : "Reset"}
-                    </p>
-                    <p className="hover:bg-gray-200 cursor-pointer py-1 px-3">
+                    </div>
+                    <div
+                      onClick={() =>
+                        handleRawData(graph.agent_graph_api_connection_id)
+                      }
+                      className="hover:bg-gray-200 cursor-pointer py-1 px-3"
+                    >
                       Raw Data
-                    </p>
+                    </div>
                   </div>
                 )}
               </div>

@@ -1,5 +1,6 @@
 "use client";
 import Background from "@/app/components/Background/Background";
+import ConnectionRawData from "@/app/components/Connect/ConnectionRawData";
 import Aggregator from "@/app/components/Dashboard/Tools/Aggregator";
 import SetupAggregrator from "@/app/components/Dashboard/Tools/SetupAggregrator";
 import SetupApi from "@/app/components/Dashboard/Tools/SetupApi";
@@ -27,9 +28,10 @@ const Page: FC<PageProps> = ({ params }) => {
   const { id } = params;
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("dashboard");
-  const [isSetup, setIsSetup] = useState<string>("graph");
+  const [isSetup, setIsSetup] = useState<string | boolean>("graph");
   const [aggregatorSetup, setAggregatorSetup] = useState<string>("summary");
   const [aggregatorOverlay, setAggregatorOverlay] = useState<boolean>(true);
+  const [getRawDataId, setGetRawDataId] = useState<number>(0);
 
   const navContent = getContent(id);
 
@@ -77,9 +79,18 @@ const Page: FC<PageProps> = ({ params }) => {
             {checkOption === "dashboard" && (
               <>
                 {isSetup === "graph" && (
-                  <ToolDashboardLayout setIsSetup={setIsSetup} />
+                  <ToolDashboardLayout
+                    setIsSetup={setIsSetup}
+                    setGetRawDataId={setGetRawDataId}
+                  />
                 )}
                 {isSetup === "setup" && <SetupApi setIsSetup={setIsSetup} />}
+                {isSetup === "rawData" && (
+                  <ConnectionRawData
+                    setIsRawData={setIsSetup}
+                    getRawDataId={getRawDataId}
+                  />
+                )}
               </>
             )}
             {checkOption === "aggregator" && (

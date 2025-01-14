@@ -1,4 +1,5 @@
 export type Validation = {
+  webUrl?: boolean;
   sourceName: boolean;
   sourceContext: boolean;
   sourceInstructions: boolean;

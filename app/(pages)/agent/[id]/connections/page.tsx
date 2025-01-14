@@ -22,7 +22,7 @@ const Page: FC<PageProps> = ({ params }) => {
   const { id } = params;
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("finance");
-  const [isRawData, setIsRawData] = useState<boolean>(false);
+  const [isRawData, setIsRawData] = useState<boolean | string>(false);
   const [getRawDataId, setGetRawDataId] = useState<number>(0);
 
   const content = getContent(id);

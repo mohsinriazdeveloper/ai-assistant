@@ -69,9 +69,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   const [prevText, setPrevText] = useState<string | null>(null);
   const [prevQaList, setPrevQaList] = useState<QATypes[] | null>(null);
 
-  const [uploadFileImgError, setUploadFileImgError] = useState<string | null>(
-    null
-  );
+  const [webLinkError, setWebLinkError] = useState<boolean>(true);
 
   const [fileValidations, setFileValidations] = useState<Validation[]>(
     fileWithTags.map(() => ({
@@ -89,6 +87,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   );
   const [webValidations, setWebValidations] = useState<Validation[]>(
     webWithTags.map(() => ({
+      webUrl: false,
       sourceName: false,
       sourceContext: false,
       sourceInstructions: false,
@@ -274,6 +273,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
   };
   const handleUpdateAgent = async () => {
+    if (webLinkError) {
+      toast.error("Please enter a valid web url");
+      return;
+    }
     const isError: any[] = [];
     const isSuccess: any[] = [];
     const fileChange = fileWithTags.length > 0;
@@ -447,6 +450,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           setFileChar(0);
           setWebsiteChar(0);
           setImgChar(0);
+          if (fileRes.error) {
+            toast.error(
+              //@ts-ignore
+              `${fileRes.error.data.error_message}, ${fileRes.error.data.website_url}`
+            );
+          }
+          console.log(fileRes);
           isSuccess.push("success");
         } catch (error) {
           isError.push({ error, msg: ", web scrapping" });
@@ -633,6 +643,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                   setWebWithTags={setWebWithTags}
                   setWebValidations={setWebValidations}
                   webValidations={webValidations}
+                  setWebLinkError={setWebLinkError}
                 />
                 {existingWebsites.length > 0 && (
                   <div>
@@ -655,6 +666,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           setFileChar={setFileChar}
                           setImgChar={setImgChar}
                           website_url={item.website_url}
+                          website_auto_update={item.website_auto_update}
                         />
                       </div>
                     ))}

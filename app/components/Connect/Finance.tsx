@@ -14,7 +14,7 @@ import {
 
 interface FinanceProps {
   agentId: number;
-  setIsRawData: Dispatch<SetStateAction<boolean>>;
+  setIsRawData: Dispatch<SetStateAction<boolean | string>>;
   setGetRawDataId: Dispatch<SetStateAction<number>>;
 }
 

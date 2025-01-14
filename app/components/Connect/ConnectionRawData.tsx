@@ -1,4 +1,5 @@
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { usePathname } from "next/navigation";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoIosArrowBack, IoMdSave } from "react-icons/io";
 import { RiEdit2Fill } from "react-icons/ri";
@@ -6,9 +7,12 @@ import Loader from "../Loader/Loader";
 import Loader2 from "../Loader/Loader2";
 import {
   useGetExchangeRateQuery,
+  useGetGraphDataQuery,
   useResetExchangeRateMutation,
+  useResetGraphMutation,
   useUpdateExchangeRateByIdMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
+import { ExchangeRateType } from "../ReduxToolKit/types/agents";
 
 type EditData = {
   title: string;
@@ -18,7 +22,7 @@ type EditData = {
 };
 
 interface ConnectionRawDataProps {
-  setIsRawData: Dispatch<SetStateAction<boolean>>;
+  setIsRawData: Dispatch<SetStateAction<boolean | string>>;
   getRawDataId: number;
 }
 
@@ -26,16 +30,44 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   setIsRawData,
   getRawDataId,
 }) => {
+  const currentRoute = usePathname();
+
+  const { data: graphData, isLoading: dataLoading } = useGetGraphDataQuery(
+    getRawDataId,
+    {
+      skip: !currentRoute.includes("tools"),
+    }
+  );
+
   const { data: getExchangeRate, isLoading: getDataLoading } =
-    useGetExchangeRateQuery(getRawDataId);
+    useGetExchangeRateQuery(getRawDataId, {
+      skip: !currentRoute.includes("connections"),
+    });
   const [updateExchangeData, { isLoading: updateLoading }] =
     useUpdateExchangeRateByIdMutation();
   const [resetExchangeData, { isLoading: resetLoading }] =
     useResetExchangeRateMutation();
+  const [resetGraph, { isLoading: graphResetLoading }] =
+    useResetGraphMutation();
 
   const [editableRow, setEditableRow] = useState<number | null>(null);
   const [editData, setEditData] = useState<EditData | null>(null);
   const [loadingRowId, setLoadingRowId] = useState<number | null>(null);
+
+  const [showData, setShowData] = useState<ExchangeRateType[]>([]);
+  useEffect(() => {
+    if (graphData) {
+      if (currentRoute.includes("tools")) {
+        setShowData(graphData.recent_exchange_rates);
+      }
+    } else if (getExchangeRate) {
+      if (currentRoute.includes("connections")) {
+        setShowData(getExchangeRate.recent_exchange_rates);
+      }
+    } else {
+      setShowData([]);
+    }
+  }, [graphData, getExchangeRate]);
 
   const handleEditData = async (id: number) => {
     if (editData?.title.trim() === "") {
@@ -100,11 +132,20 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   };
 
   const handleReset = async () => {
-    try {
-      const res = await resetExchangeData(getRawDataId);
-      toast.success(res.data.message);
-    } catch (error) {
-      toast.error("Failed to reset exchange rates");
+    if (currentRoute.includes("connections")) {
+      try {
+        const res = await resetExchangeData(getRawDataId);
+        toast.success(res.data.message);
+      } catch (error) {
+        toast.error("Failed to reset exchange rates");
+      }
+    } else if (currentRoute.includes("tools")) {
+      try {
+        await resetGraph(getRawDataId).unwrap();
+        toast.success("Graph Reset Successfully");
+      } catch (error) {
+        toast.error("Failed to reset graph");
+      }
     }
   };
   return (
@@ -120,7 +161,7 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
         <div className="flex justify-between items-center mb-4">
           <p className="text-2xl font-bold text-gray-800">Data</p>
 
-          {resetLoading ? (
+          {resetLoading || graphResetLoading ? (
             <Loader />
           ) : (
             <p
@@ -143,7 +184,7 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
                 <th className="py-2 px-2 border-b">Action</th>
               </tr>
             </thead>
-            {getDataLoading ? (
+            {getDataLoading || dataLoading ? (
               <tbody className="pt-10">
                 <tr>
                   <td colSpan={5}>
@@ -153,7 +194,7 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
               </tbody>
             ) : (
               <tbody>
-                {getExchangeRate?.recent_exchange_rates.map((rate, index) => (
+                {showData.map((rate, index) => (
                   <tr
                     key={index}
                     className={`hover:bg-gray-100 text-xs border-b ${
