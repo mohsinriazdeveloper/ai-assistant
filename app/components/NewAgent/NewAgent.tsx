@@ -56,7 +56,7 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
           );
           return;
         } else if (error.status === 400) {
-          toast.error(error.data);
+          toast.error(error.data.message);
         } else {
           const errorMessage = error.data.message;
           toast.error(errorMessage);
@@ -73,7 +73,7 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
       </div>
       <div className="pl-2">
         <p className="text-[#8692A6] text-lg mb-7">
-          For the purpose of industry regulation, your details are required.
+          Start building your first AI agents with your own unique data sources.
         </p>
         <form onSubmit={handleRedirectNewAgent}>
           <p className="text-[#696F79] font-medium mb-3">

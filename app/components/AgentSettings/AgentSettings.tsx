@@ -62,17 +62,32 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
 
     try {
       const res = await updating(formData);
-      //@ts-ignore
-      if (res.error?.status === "FETCH_ERROR") {
+
+      // Handling success response
+      if (res?.data === null) {
+        toast.success("Successfully Updated");
+        //@ts-ignore
+      } else if (res?.error?.status === 400) {
+        //@ts-ignore
+        toast.error(res?.error?.data?.error_message || "Bad Request");
+        //@ts-ignore
+      } else if (res?.error?.status === "FETCH_ERROR") {
         toast.error("Image size is too large");
       } else {
-        toast.success("Successfully Updated");
+        toast.error("Failed to update");
       }
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      toast.error("Failed to update");
+    } catch (error: any) {
+      // Handling failure response
+      if (error?.error?.status === 400) {
+        toast.error(error.error.data.error_message || "Bad Request");
+      } else if (error?.error?.status === "FETCH_ERROR") {
+        toast.error("Image size is too large");
+      } else {
+        toast.error("Failed to update");
+      }
       console.error("Failed to update", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -172,7 +187,7 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
                     type="submit"
                     className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
                   >
-                    {loading ? <Loader /> : <>save</>}
+                    {loading ? <Loader /> : <>Save</>}
                   </button>
                 </div>
               </form>

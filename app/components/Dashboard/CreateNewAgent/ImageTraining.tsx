@@ -22,29 +22,44 @@ const ImageTraining: FC<ImageTrainingProps> = ({
 
   const allowedExtensions = /(\.png|\.jpg|\.jpeg)$/i;
 
-  const processImage = (file: File) => {
-    if (!allowedExtensions.test(file.name)) {
-      setErrorMessage("Only .png, .jpg, .jpeg images are allowed");
+  const processImages = (files: File[]) => {
+    // Check for invalid file extensions
+    const invalidFiles = files.filter(
+      (file) => !allowedExtensions.test(file.name)
+    );
+
+    if (invalidFiles.length > 0) {
+      setErrorMessage("Only .png, .jpg, .jpeg images are allowed.");
       return;
     }
-    // Assuming imageFiles and setImagesFile are passed as props
-    if (imageFiles.some((img) => img.name === file.name)) {
-      setErrorMessage("Image Already Added");
-    } else {
-      setUploadFlag(true);
-      setImagesFile((prevImages) => [...prevImages, file]);
+
+    // Check for duplicate files
+    const duplicateFiles = files.filter((file) =>
+      imageFiles.some((img) => img.name === file.name)
+    );
+
+    if (duplicateFiles.length > 0) {
+      setErrorMessage("Some images are already added.");
+      return;
     }
+
+    setErrorMessage(""); // Clear any previous errors
+    setUploadFlag(true);
+    setImagesFile((prevImages) => [...prevImages, ...files]); // Add all valid files
   };
 
   const handleAddImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) processImage(file);
+    if (!event.target.files) return;
+
+    const selectedFiles = Array.from(event.target.files); // Convert FileList to Array
+    processImages(selectedFiles);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    const file = event.dataTransfer.files?.[0];
-    if (file) processImage(file);
+
+    const droppedFiles = Array.from(event.dataTransfer.files); // Convert FileList to Array
+    processImages(droppedFiles);
   };
 
   const triggerFileInput = () => {

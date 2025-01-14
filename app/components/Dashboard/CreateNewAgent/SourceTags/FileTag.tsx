@@ -67,7 +67,11 @@ const FileTag: FC<FileTagProps> = ({
         (prevCharCount) => prevCharCount - fileToDelete.characters_count
       );
       const updatedItems = fileInfo.filter((item) => item.file_id !== id);
+      const updatedFileTags = fileWithTags.filter(
+        (item) => item.file_id !== id
+      );
       setFileInfo(updatedItems);
+      setFileWithTags(updatedFileTags);
       toast.success("File deleted successfully");
     } else {
       toast.error("File not found");

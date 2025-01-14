@@ -30,21 +30,63 @@ const FileInput: FC<FileInputProps> = ({
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   ];
 
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (!event.target.files) return;
+
+  //   const selectedFiles = Array.from(event.target.files).filter((file) =>
+  //     allowedFileTypes.includes(file.type)
+  //   );
+
+  //   if (selectedFiles.length === 0) {
+  //     setErrorMessage(
+  //       "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
+  //     );
+  //     return;
+  //   }
+
+  //   setErrorMessage("");
+  //   setUploadFlag(true);
+  //   setFiles([...files, ...selectedFiles]); // Update the files array
+  // };
+
+  // const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+  //   event.preventDefault();
+  //   setIsDragging(false);
+
+  //   const selectedFiles = Array.from(event.dataTransfer.files).filter((file) =>
+  //     allowedFileTypes.includes(file.type)
+  //   );
+
+  //   if (selectedFiles.length === 0) {
+  //     setErrorMessage(
+  //       "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
+  //     );
+  //     return;
+  //   }
+
+  //   setErrorMessage("");
+  //   setUploadFlag(true);
+
+  //   setFiles([...files, ...selectedFiles]); // Update the files array
+  // };
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
 
-    const selectedFiles = Array.from(event.target.files).filter((file) =>
-      allowedFileTypes.includes(file.type)
+    const selectedFiles = Array.from(event.target.files);
+
+    // Check if all files are of allowed types
+    const invalidFiles = selectedFiles.some(
+      (file) => !allowedFileTypes.includes(file.type)
     );
 
-    if (selectedFiles.length === 0) {
+    if (invalidFiles) {
       setErrorMessage(
         "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
       );
       return;
     }
 
-    setErrorMessage("");
+    setErrorMessage(""); // Clear error message if all files are valid
     setUploadFlag(true);
     setFiles([...files, ...selectedFiles]); // Update the files array
   };
@@ -53,20 +95,22 @@ const FileInput: FC<FileInputProps> = ({
     event.preventDefault();
     setIsDragging(false);
 
-    const selectedFiles = Array.from(event.dataTransfer.files).filter((file) =>
-      allowedFileTypes.includes(file.type)
+    const selectedFiles = Array.from(event.dataTransfer.files);
+
+    // Check if all files are of allowed types
+    const invalidFiles = selectedFiles.some(
+      (file) => !allowedFileTypes.includes(file.type)
     );
 
-    if (selectedFiles.length === 0) {
+    if (invalidFiles) {
       setErrorMessage(
         "Invalid file type. Only .pdf, .docx, and .txt files are allowed."
       );
       return;
     }
 
-    setErrorMessage("");
+    setErrorMessage(""); // Clear error message if all files are valid
     setUploadFlag(true);
-
     setFiles([...files, ...selectedFiles]); // Update the files array
   };
 

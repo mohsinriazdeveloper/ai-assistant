@@ -278,7 +278,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     const isSuccess: any[] = [];
     const fileChange = fileWithTags.length > 0;
     const imgChange = imgWithTags.length > 0;
-    const textChange = text && text !== prevText;
+    const textChange = text !== prevText;
     console.log(textChange);
     console.log(text);
     const webChange = webWithTags.length > 0;
@@ -380,7 +380,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       const textQAData = new FormData();
       textQAData.append("id", agentId.toString());
 
-      if (textChange && text === "") textQAData.append("text", `""`);
+      if (text === "") textQAData.append("text", `""`);
       if (textChange && text !== "") textQAData.append("text", text);
       if (qaListChange) textQAData.append("qa", JSON.stringify(qaList));
 
