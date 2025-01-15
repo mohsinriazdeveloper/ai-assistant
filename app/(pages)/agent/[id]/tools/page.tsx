@@ -85,9 +85,12 @@ const Page: FC<PageProps> = ({ params }) => {
                     setGetRawDataId={setGetRawDataId}
                   />
                 )}
-                {isSetup === "setup" && <SetupApi setIsSetup={setIsSetup} />}
+                {isSetup === "setup" && (
+                  <SetupApi agentId={id} setIsSetup={setIsSetup} />
+                )}
                 {isSetup === "rawData" && (
                   <ConnectionRawData
+                    agentId={id}
                     setIsRawData={setIsSetup}
                     getRawDataId={getRawDataId}
                   />

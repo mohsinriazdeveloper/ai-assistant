@@ -14,6 +14,11 @@ import {
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { ExchangeRateType } from "../ReduxToolKit/types/agents";
 
+export type Ids = {
+  id: number;
+  agentId: number;
+};
+
 type EditData = {
   title: string;
   base_currency: string;
@@ -22,25 +27,30 @@ type EditData = {
 };
 
 interface ConnectionRawDataProps {
+  agentId: number;
   setIsRawData: Dispatch<SetStateAction<boolean | string>>;
   getRawDataId: number;
 }
 
 const ConnectionRawData: FC<ConnectionRawDataProps> = ({
+  agentId,
   setIsRawData,
   getRawDataId,
 }) => {
   const currentRoute = usePathname();
-
+  const ids: Ids = {
+    id: getRawDataId,
+    agentId: agentId,
+  };
   const { data: graphData, isLoading: dataLoading } = useGetGraphDataQuery(
-    getRawDataId,
+    ids,
     {
       skip: !currentRoute.includes("tools"),
     }
   );
 
   const { data: getExchangeRate, isLoading: getDataLoading } =
-    useGetExchangeRateQuery(getRawDataId, {
+    useGetExchangeRateQuery(ids, {
       skip: !currentRoute.includes("connections"),
     });
   const [updateExchangeData, { isLoading: updateLoading }] =
@@ -134,14 +144,14 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   const handleReset = async () => {
     if (currentRoute.includes("connections")) {
       try {
-        const res = await resetExchangeData(getRawDataId);
+        const res = await resetExchangeData({ id: getRawDataId, agentId });
         toast.success(res.data.message);
       } catch (error) {
         toast.error("Failed to reset exchange rates");
       }
     } else if (currentRoute.includes("tools")) {
       try {
-        await resetGraph(getRawDataId).unwrap();
+        await resetGraph({ id: getRawDataId, agentId }).unwrap();
         toast.success("Graph Reset Successfully");
       } catch (error) {
         toast.error("Failed to reset graph");

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { Ids } from "../Connect/ConnectionRawData";
 import { RootState } from "./store";
 import {
   AgentAllChatType,
@@ -154,15 +155,15 @@ export const userApi = createApi({
     }),
 
     // 15 get source api connections
-    getSourceApiConnections: builder.query<ApiConnection[], void>({
-      query: () => `/accounts/agents/source_api_connections/`,
+    getSourceApiConnections: builder.query<ApiConnection[], number>({
+      query: (id) => `/accounts/agents/${id}/source_api_connections/`,
       providesTags: ["AllPosts"],
     }),
 
     // 16 delete source api connections
     disconnectApiConnection: builder.mutation({
-      query: (id) => ({
-        url: `/accounts/agents/source_api_connections/${id}/disconnect/`,
+      query: ({ id, agentId }: { id: number; agentId: number }) => ({
+        url: `/accounts/agents/${agentId}/source_api_connections/${id}/disconnect/`,
         method: "POST",
       }),
       invalidatesTags: ["AllPosts"],
@@ -170,17 +171,17 @@ export const userApi = createApi({
 
     // 17 connect source api connections
     apiConnection: builder.mutation({
-      query: (id) => ({
-        url: `/accounts/agents/source_api_connections/${id}/connect/`,
+      query: ({ id, agentId }: { id: number; agentId: number }) => ({
+        url: `/accounts/agents/${agentId}/source_api_connections/${id}/connect/`,
         method: "POST",
       }),
       invalidatesTags: ["AllPosts"],
     }),
 
     // 18 get recent exhange rates
-    getExchangeRate: builder.query<GetExchangeRate, number>({
-      query: (id) =>
-        `/accounts/agents/source_api_connections/${id}/exchange_rates/`,
+    getExchangeRate: builder.query<GetExchangeRate, Ids>({
+      query: (ids) =>
+        `/accounts/agents/${ids.agentId}/source_api_connections/${ids.id}/exchange_rates/`,
       providesTags: ["AllPosts"],
     }),
 
@@ -196,23 +197,32 @@ export const userApi = createApi({
 
     // 20 reset exchange rate
     resetExchangeRate: builder.mutation({
-      query: (id) => ({
-        url: `/accounts/agents/source_api_connections/${id}/exchange_rates/reset/`,
+      query: ({ id, agentId }: { id: number; agentId: number }) => ({
+        url: `/accounts/agents/${agentId}/source_api_connections/${id}/exchange_rates/reset/`,
         method: "POST",
       }),
       invalidatesTags: ["AllPosts"],
     }),
 
     // 21 get all graphs
-    getAllGraphs: builder.query<ApiConnection[], void>({
-      query: () => `/accounts/agents/tools/dashboard/graph_api_connections/`,
+    getAllGraphs: builder.query<ApiConnection[], number>({
+      query: (id) =>
+        `/accounts/agents/${id}/tools/dashboard/graph_api_connections/`,
       providesTags: ["AllPosts"],
     }),
 
     // 22 connect graph
     connectGraph: builder.mutation({
-      query: ({ id, data }: { id: number; data: any }) => ({
-        url: `/accounts/agents/tools/dashboard/graph_api_connections/${id}/connect/`,
+      query: ({
+        id,
+        agentId,
+        data,
+      }: {
+        id: number;
+        agentId: number;
+        data: any;
+      }) => ({
+        url: `/accounts/agents/${agentId}/tools/dashboard/graph_api_connections/${id}/connect/`,
         method: "POST",
         body: data,
       }),
@@ -220,16 +230,16 @@ export const userApi = createApi({
     }),
 
     // 23 get graph data by id
-    getGraphData: builder.query<GetExchangeRate, number>({
-      query: (id) =>
-        `/accounts/agents/tools/dashboard/graph_api_connections/data/${id}/`,
+    getGraphData: builder.query<GetExchangeRate, Ids>({
+      query: (ids) =>
+        `/accounts/agents/${ids.agentId}/tools/dashboard/graph_api_connections/data/${ids.id}/`,
       providesTags: ["AllPosts"],
     }),
 
     // 24 disconnect graph
     disConnectGraph: builder.mutation({
-      query: (id) => ({
-        url: `/accounts/agents/tools/dashboard/graph_api_connections/${id}/disconnect/`,
+      query: ({ id, agentId }: { id: number; agentId: number }) => ({
+        url: `/accounts/agents/${agentId}/tools/dashboard/graph_api_connections/${id}/disconnect/`,
         method: "POST",
       }),
       invalidatesTags: ["AllPosts"],
@@ -237,8 +247,8 @@ export const userApi = createApi({
 
     // 25 reset graph data
     resetGraph: builder.mutation({
-      query: (id) => ({
-        url: `/accounts/agents/tools/dashboard/graph_api_connections/${id}/reset/`,
+      query: ({ id, agentId }: { id: number; agentId: number }) => ({
+        url: `/accounts/agents/${agentId}/tools/dashboard/graph_api_connections/${id}/reset/`,
         method: "POST",
       }),
       invalidatesTags: ["AllPosts"],

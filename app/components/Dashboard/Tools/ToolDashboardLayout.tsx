@@ -21,7 +21,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   setIsSetup,
   setGetRawDataId,
 }) => {
-  const { data: getGraphs, isLoading } = useGetAllGraphsQuery();
+  const { data: getGraphs, isLoading } = useGetAllGraphsQuery(agentId);
   const [disconnectGraph, { isLoading: disconnectLoading }] =
     useDisConnectGraphMutation();
   const [resetGraph, { isLoading: resetLoading }] = useResetGraphMutation();
@@ -36,7 +36,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
       return;
     }
     try {
-      await disconnectGraph(id).unwrap();
+      await disconnectGraph({ id, agentId }).unwrap();
       setDropDown(false);
       toast.success("Graph Disconnected Successfully");
     } catch (error) {
@@ -51,7 +51,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
       return;
     }
     try {
-      await resetGraph(id).unwrap();
+      await resetGraph({ id, agentId }).unwrap();
       setDropDown(false);
       toast.success("Graph Reset Successfully");
     } catch (error) {
@@ -151,6 +151,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
           <div className="px-5 ">
             <div className="col-span-9 py-5">
               <Graph
+                agentId={agentId}
                 graphId={graph.agent_graph_api_connection_id}
                 showDataBy={showDataBy}
                 setShowWeek={setShowWeek}

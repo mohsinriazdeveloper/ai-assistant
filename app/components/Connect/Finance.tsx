@@ -25,7 +25,7 @@ const Finance: FC<FinanceProps> = ({
 }) => {
   // const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
   const { data: apiConnectionData, isLoading: getDataLoading } =
-    useGetSourceApiConnectionsQuery();
+    useGetSourceApiConnectionsQuery(agentId);
 
   const [disconnect, { isLoading: disconnectLoading }] =
     useDisconnectApiConnectionMutation();
@@ -33,7 +33,7 @@ const Finance: FC<FinanceProps> = ({
 
   const handleDisconnect = async (id: number) => {
     try {
-      const res = await disconnect(id);
+      const res = await disconnect({ id, agentId });
       toast.success("Disconnected successfully");
     } catch (error) {
       toast.error("Failed to disconnect");
@@ -44,7 +44,7 @@ const Finance: FC<FinanceProps> = ({
       return;
     }
     try {
-      const res = await connect(id);
+      const res = await connect({ id, agentId });
       toast.success("Connected successfully");
     } catch (error) {
       toast.error("Failed to connect");

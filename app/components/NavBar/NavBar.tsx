@@ -170,8 +170,8 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
       <div
         className={`tab:col-span-3 col-span-12 tab:order-2 order-1 font-medium rounded-md text-sm text-[#8A8A8A] flex duration-300 transition-all ${
           !currentRoute.includes("/dashboard") &&
-          "tab:justify-center justify-between tab:mb-0 mb-2 tab:pr-0 pr-2 "
-        } items-center lg:gap-2 gap-1 cursor-pointer`}
+          "tab:justify-center justify-between tab:mb-0 tab:pr-0 pr-2 "
+        } items-center lg:gap-2 gap-1 cursor-pointer mb-2`}
       >
         {!currentRoute.includes("/dashboard") && (
           <button

@@ -74,6 +74,7 @@ const Page: FC<PageProps> = ({ params }) => {
                 {isRawData ? (
                   <div className="my-5 px-10 h-[78vh] overflow-y-scroll primaryScroller mr-2">
                     <ConnectionRawData
+                      agentId={id}
                       setIsRawData={setIsRawData}
                       getRawDataId={getRawDataId}
                     />

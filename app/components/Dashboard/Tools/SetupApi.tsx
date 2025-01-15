@@ -14,11 +14,12 @@ type GraphData = {
   auto_call: string;
 };
 interface SetupApiProps {
+  agentId: number;
   setIsSetup: Dispatch<SetStateAction<string | boolean>>;
 }
 
-const SetupApi: FC<SetupApiProps> = ({ setIsSetup }) => {
-  const { data: getGraphs, isLoading } = useGetAllGraphsQuery();
+const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
+  const { data: getGraphs, isLoading } = useGetAllGraphsQuery(agentId);
   const [connectGraph, { isLoading: connectionLoading }] =
     useConnectGraphMutation();
   const [sourceDropDown, setSourceDropDown] = useState<boolean>(false);
@@ -63,7 +64,7 @@ const SetupApi: FC<SetupApiProps> = ({ setIsSetup }) => {
     };
 
     try {
-      const res = await connectGraph({ id: graphData.id, data });
+      const res = await connectGraph({ id: graphData.id, agentId, data });
       toast.success("Api successfully connected");
       setIsSetup("graph");
     } catch (error) {

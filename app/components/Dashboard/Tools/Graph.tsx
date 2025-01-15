@@ -10,6 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Ids } from "../../Connect/ConnectionRawData";
 import { useGetGraphDataQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 // import { graphData } from "./content";
 
@@ -20,6 +21,7 @@ type Data = {
 };
 
 interface GraphProps {
+  agentId: number;
   graphId: number;
   showDataBy: string;
   setShowWeek: Dispatch<SetStateAction<boolean>>;
@@ -27,13 +29,17 @@ interface GraphProps {
 }
 
 const Graph: FC<GraphProps> = ({
+  agentId,
   graphId,
   showDataBy,
   setShowWeek,
   setShowMonth,
 }) => {
-  const { data: graphData, isLoading: dataLoading } =
-    useGetGraphDataQuery(graphId);
+  const ids: Ids = {
+    id: graphId,
+    agentId: agentId,
+  };
+  const { data: graphData, isLoading: dataLoading } = useGetGraphDataQuery(ids);
 
   // check if there are multiple dates then show week tab
   const isWeek = graphData?.recent_exchange_rates.map(

@@ -7,9 +7,11 @@ import {
   useUpdateOrgImgMutation,
 } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { FC, useEffect, useState } from "react";
+import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { content } from "./content";
 import ProfileInfo from "./ProfileInfo";
+import "./style.css";
 
 interface SettingsProps {}
 
@@ -17,11 +19,12 @@ const Settings: FC<SettingsProps> = ({}) => {
   const { data: getOrg, isLoading } = useGetOrganizationQuery();
   const [updateOrgImg] = useUpdateOrgImgMutation();
   const [delImg] = useDeleteOrgImgMutation();
-
   const [checkOption, setCheckOption] = useState<string>("setting");
   const [imgLoading, setImgLoading] = useState<boolean>(false);
   const [imgError, setImgError] = useState<string>("");
   const [preview, setPreview] = useState<string>("");
+
+  const [showSideBar, setShowSideBar] = useState<boolean>(true);
 
   useEffect(() => {
     if (getOrg?.image) {
@@ -77,10 +80,16 @@ const Settings: FC<SettingsProps> = ({}) => {
 
   return (
     <div className="dashboardSetting">
-      <div className="my-10">
-        <div className="grid grid-cols-12 gap-8">
-          <div className="md:col-span-2 col-span-12">
-            <p className="text-3xl font-bold mb-10">Settings</p>
+      <div className="md:container md:mx-auto mx-5 my-10">
+        <div className="">
+          <p className="text-3xl font-bold">Settings</p>
+          <HiOutlineDotsHorizontal
+            className={`text-2xl cursor-pointer md:hidden block`}
+            onClick={() => setShowSideBar(!showSideBar)}
+          />
+        </div>
+        <div className={`grid grid-cols-12 gap-8`}>
+          <div className={`md:col-span-2 mt-5 bg-white`}>
             <LeftBar
               setCheckOption={setCheckOption}
               checkOption={checkOption}
