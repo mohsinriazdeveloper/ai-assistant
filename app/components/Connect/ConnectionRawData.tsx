@@ -162,7 +162,7 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
     <div className="min-h-screen">
       <div
         className="flex items-center cursor-pointer w-fit"
-        onClick={() => setIsRawData(false)}
+        onClick={() => setIsRawData("graph")}
       >
         <IoIosArrowBack className="text-3xl" />
         <p className="font-bold">Back</p>

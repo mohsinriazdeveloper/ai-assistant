@@ -67,27 +67,27 @@ const Agents: FC<AgentsProps> = () => {
   return (
     <div
       ref={gridRef}
-      className={`${isOverflow ? "primaryScroller" : ""}`}
+      className={`${isOverflow ? "primaryScroller pr-3" : ""}`}
       style={{ maxHeight: "75vh", overflowY: "auto" }}
     >
-      <div className="md:w-[795px] md:mx-auto mx-5 ">
+      <div className="tab:w-[795px] mx-auto">
         {sortedAgents.length > 0 ? (
           <div className="mt-11">
             <div className="flex justify-between items-center">
-              <p className="text-3xl font-bold">My Agents</p>
+              <p className="tab:text-3xl text-2xl font-bold">My Agents</p>
             </div>
 
-            <div className="grid sm:grid-cols-3 grid-cols-2 mt-10 gap-10 w-[90%]">
+            <div className="grid sm:grid-cols-3 xxs:grid-cols-2 grid-cols-1 mt-10 xs:gap-10 gap-5 tab:w-[90%]">
               {sortedAgents.map((agent, index) => (
                 <div key={index} className="col-span-1 cursor-pointer">
                   <div onClick={() => hanldeChat(agent.id)}>
                     {loadingAgent === agent.id ? (
-                      <div className="bg-no-repeat bg-cover bg-center h-[210px] mb-6 rounded-lg border border-[#bbbbbb] flex justify-center items-center">
+                      <div className="bg-no-repeat bg-cover bg-center tab:h-[210px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb] flex justify-center items-center">
                         <Loader2 />
                       </div>
                     ) : (
                       <div
-                        className="bg-no-repeat bg-cover bg-center h-[210px] mb-6 rounded-lg border border-[#bbbbbb]"
+                        className="bg-no-repeat bg-cover bg-center tab:h-[210px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb]"
                         style={{
                           backgroundImage: `url(${
                             agent.image_url || AiImg.src

@@ -69,10 +69,10 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
     <div className="max-w-[426px] mx-auto">
       <div className="flex items-center gap-4 mb-4">
         <Image src={AiStar} alt="" />
-        <p className="text-3xl font-bold">Enter Agent Name</p>
+        <p className="sm:text-3xl text-2xl font-bold">Enter Agent Name</p>
       </div>
       <div className="pl-2">
-        <p className="text-[#8692A6] text-lg mb-7">
+        <p className="text-[#8692A6] sm:text-lg mb-7">
           Start building your first AI agents with your own unique data sources.
         </p>
         <form onSubmit={handleRedirectNewAgent}>

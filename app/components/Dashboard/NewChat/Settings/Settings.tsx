@@ -80,16 +80,20 @@ const Settings: FC<SettingsProps> = ({}) => {
 
   return (
     <div className="dashboardSetting">
-      <div className="md:container md:mx-auto mx-5 my-10">
+      <div className="md:container md:mx-auto my-10">
         <div className="">
-          <p className="text-3xl font-bold">Settings</p>
+          <p className="md:text-3xl text-2xl font-bold">Settings</p>
           <HiOutlineDotsHorizontal
             className={`text-2xl cursor-pointer md:hidden block`}
             onClick={() => setShowSideBar(!showSideBar)}
           />
         </div>
         <div className={`grid grid-cols-12 gap-8`}>
-          <div className={`md:col-span-2 mt-5 bg-white`}>
+          <div
+            className={`md:col-span-2 md:w-full w-[200px] md:relative absolute pt-5 h-full bg-white md:border-none border ${
+              showSideBar ? "block" : "hidden"
+            }`}
+          >
             <LeftBar
               setCheckOption={setCheckOption}
               checkOption={checkOption}
@@ -102,7 +106,9 @@ const Settings: FC<SettingsProps> = ({}) => {
                 <div>
                   <form className="mb-10">
                     <div className="w-full border border-gray-200 py-7 px-6 rounded-lg flex flex-col gap-6">
-                      <p className="text-2xl font-semibold">General</p>
+                      <p className="md:text-2xl text-xl font-semibold">
+                        General
+                      </p>
                       <div>
                         <p className="text-sm font-medium">Organization ID</p>
                         <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
@@ -117,15 +123,15 @@ const Settings: FC<SettingsProps> = ({}) => {
                       </div>
                     </div>
                   </form>
-                  <div className="flex gap-5">
+                  <div className="sm:flex gap-5">
                     <div>
                       {preview ? (
                         <div
-                          className="w-[150px] h-[146px] border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
+                          className="md:w-[150px] w-[120px] md:h-[146px] h-[116px] border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
                           style={{ backgroundImage: `url(${preview})` }}
                         ></div>
                       ) : (
-                        <div className="w-[150px] h-[146px] border border-[#bfbfbf] rounded-lg bg-gradient-to-br from-[#f9f9f9] to-[#ffffff] flex justify-center items-center">
+                        <div className="md:w-[150px] w-[120px] md:h-[146px] h-[116px] border border-[#bfbfbf] rounded-lg bg-gradient-to-br from-[#f9f9f9] to-[#ffffff] flex justify-center items-center">
                           <p className="font-medium text-lg text-[#BDBDBD]">
                             No Logo
                           </p>
@@ -133,8 +139,8 @@ const Settings: FC<SettingsProps> = ({}) => {
                       )}
                       <p className="text-sm text-red-600">{imgError}</p>
                     </div>
-                    <div className="h-full flex flex-col justify-between pt-3">
-                      <div className="mb-6">
+                    <div className="h-full flex flex-col justify-between md:pt-3 sm:pt-0 pt-3">
+                      <div className="md:mb-6">
                         <p className="text-lg font-medium">
                           Account / Organization Logo
                         </p>

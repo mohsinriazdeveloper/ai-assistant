@@ -5,3 +5,10 @@
     margin-right: auto;
   }
 }
+
+@media (max-width: 768px) {
+  .dashboardSetting {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}

@@ -117,10 +117,10 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
   };
 
   return (
-    <div className="pt-16">
-      <p className="text-xl font-bold">Profile Info</p>
-      <div className="mt-8 pb-10 border-b">
-        <div className="grid grid-cols-2 gap-5">
+    <div className="sm:pt-16 pt-10">
+      <p className="md:text-xl text-lg font-bold">Profile Info</p>
+      <div className="sm:mt-8 mt-2 pb-10 border-b">
+        <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-5 ">
           <div>
             <p className="text-[#222529] text-xs font-medium mt-5">NAME</p>
             <div className="border border-[#e4e7eb] rounded mt-2 py-3 px-4 text-sm">
@@ -133,7 +133,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
             </div>
           </div>
           <div>
-            <p className="text-[#222529] text-xs font-medium mt-5">Email</p>
+            <p className="text-[#222529] text-xs font-medium mt-5">EMAIL</p>
             <div className="border border-[#e4e7eb] rounded mt-2 py-3 px-4 text-sm">
               <input
                 type="text"
@@ -156,9 +156,9 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
       </div>
 
       <div className="pt-10">
-        <p className="text-xl font-bold">Change Password</p>
-        <div className="mt-8 pb-10">
-          <div className="grid grid-cols-2 gap-5">
+        <p className="md:text-xl text-lg font-bold">Change Password</p>
+        <div className="sm:mt-8 mt-2 pb-10">
+          <div className="grid sm:grid-cols-2 grid-cols-1 gap-5">
             <div>
               <p className="text-[#222529] text-xs font-medium mt-5">
                 CURRENT PASSWORD
@@ -178,7 +178,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-5">
             <div>
               <p className="text-[#222529] text-xs font-medium mt-5">
                 NEW PASSWORD

@@ -83,7 +83,7 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
     <div
       className={`${
         currentRoute.includes("/dashboard")
-          ? "tab:w-[80%] ml-auto"
+          ? "tab:w-[80%] w-[90%] tab:ml-auto"
           : "w-full pl-10"
       } grid grid-cols-12 overflow-x-scroll scrollbar-hide`}
     >
@@ -97,22 +97,6 @@ const NavBar: FC<NavBarProps> = ({ content }) => {
                 : "grid-cols-2"
             }`}
           >
-            {/* {content.map((item, index) => (
-              <div
-                onClick={() => handleRedirect(item.url, item.id)}
-                // href={item.url}
-                key={index}
-                className={`col-span-1 rounded-full py-2 px-6 cursor-pointer hover:bg-[#424242] hover:text-white ${
-                  loading === item.id && "bg-[#c2c2c2]"
-                } ${
-                  currentRoute === item.url
-                    ? "bg-[#424242] text-white"
-                    : "bg-transparent text-[#8A8A8A]"
-                }`}
-              >
-                <p>{item.title}</p>
-              </div>
-            ))} */}
             {content.map((item, index) => (
               <div
                 onClick={() => handleRedirect(item.url, item.id)}
