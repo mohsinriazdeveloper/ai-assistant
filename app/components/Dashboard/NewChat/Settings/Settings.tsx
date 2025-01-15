@@ -76,8 +76,8 @@ const Settings: FC<SettingsProps> = ({}) => {
   };
 
   return (
-    <div>
-      <div className="md:container md:mx-auto mx-5 my-10">
+    <div className="dashboardSetting">
+      <div className="my-10">
         <div className="grid grid-cols-12 gap-8">
           <div className="md:col-span-2 col-span-12">
             <p className="text-3xl font-bold mb-10">Settings</p>

@@ -11,11 +11,13 @@ import {
 import Graph from "./Graph";
 
 interface ToolDashboardLayoutProps {
+  agentId: number;
   setIsSetup: Dispatch<SetStateAction<string | boolean>>;
   setGetRawDataId: Dispatch<SetStateAction<number>>;
 }
 
 const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
+  agentId,
   setIsSetup,
   setGetRawDataId,
 }) => {

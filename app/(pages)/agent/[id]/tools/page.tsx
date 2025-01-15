@@ -80,6 +80,7 @@ const Page: FC<PageProps> = ({ params }) => {
               <>
                 {isSetup === "graph" && (
                   <ToolDashboardLayout
+                    agentId={id}
                     setIsSetup={setIsSetup}
                     setGetRawDataId={setGetRawDataId}
                   />

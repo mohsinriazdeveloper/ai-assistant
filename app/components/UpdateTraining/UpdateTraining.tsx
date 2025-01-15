@@ -273,10 +273,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
   };
   const handleUpdateAgent = async () => {
-    if (webLinkError) {
-      toast.error("Please enter a valid web url");
-      return;
-    }
     const isError: any[] = [];
     const isSuccess: any[] = [];
     const fileChange = fileWithTags.length > 0;
@@ -403,6 +399,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }
     }
     if (webChange) {
+      if (webLinkError) {
+        toast.error("Please enter a valid web url");
+        return;
+      }
       setWebValidations(
         webWithTags.map((file) => ({
           sourceName: !file.source_name || file.source_name.length > 100,
