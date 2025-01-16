@@ -102,72 +102,32 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             {sourceName && (
               <div className="">
                 <p>Source Name</p>
-                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 text-gray-700">
-                  <input
-                    type="text"
-                    placeholder="Source Unique Label"
-                    className="font-light focus:outline-none w-full"
-                    value={sourceName}
-                    onChange={(e) => setSourceName(e.target.value)}
-                    readOnly
-                  />
+                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 text-gray-700 font-light">
+                  <p>{sourceName}</p>
                 </div>
               </div>
             )}
             {sourceContext && (
               <div className="">
-                <div className="w-full flex justify-between items-end">
-                  <p>Context/clarifications</p>
-                  <p className="text-xs max-w-[345px]">
-                    Give more information and context to your AI about this data
-                    source. This will help the AI to fetch this data
-                    appropriately
-                  </p>
-                </div>
+                <p>Context/clarifications</p>
 
-                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
-                  <textarea
-                    rows={2}
-                    placeholder="Enter Context"
-                    className=" focus:outline-none font-light w-full resize-none"
-                    value={sourceContext}
-                    onChange={(e) => setSourceContext(e.target.value)}
-                    readOnly
-                  />
+                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 font-light">
+                  <p>{sourceContext}</p>
                 </div>
               </div>
             )}
             {sourceInstructions && (
               <div className="">
-                <div className="w-full flex justify-between items-end">
-                  <p>Instructions</p>
-                  <p className="text-xs max-w-[345px]">
-                    Give instructions to your AI to help him understand how to
-                    use your data source.
-                  </p>
-                </div>
+                <p>Instructions</p>
 
-                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1">
-                  <textarea
-                    rows={2}
-                    placeholder="Enter Instructions"
-                    className=" focus:outline-none font-light w-full resize-none"
-                    value={sourceInstructions}
-                    onChange={(e) => setSourceInstructions(e.target.value)}
-                    readOnly
-                  />
+                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 font-light">
+                  <p>{sourceInstructions}</p>
                 </div>
               </div>
             )}
             {website_auto_update && (
               <div>
-                <div className="w-full flex justify-between items-end">
-                  <p>Daily Auto-Updates *</p>
-                  <p className="text-xs max-w-[345px]">
-                    If your data source updates at regular intervals, select the
-                    appropriate update frequency to update automatically.
-                  </p>
-                </div>
+                <p>Daily Auto-Updates</p>
                 <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
                   <div className="flex items-center gap-2 cursor-pointer">
                     <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">

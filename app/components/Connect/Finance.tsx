@@ -11,7 +11,7 @@ import {
   useDisconnectApiConnectionMutation,
   useGetSourceApiConnectionsQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-
+import "./style.css";
 interface FinanceProps {
   agentId: number;
   setIsRawData: Dispatch<SetStateAction<boolean | string>>;
@@ -53,7 +53,7 @@ const Finance: FC<FinanceProps> = ({
 
   return (
     <div className="w-full pt-10">
-      <p className="text-2xl font-black">Connetions</p>
+      <p className="tab:text-2xl text-xl font-black">Connetions</p>
       {getDataLoading && <Loader2 />}
       <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mt-10">
         {apiConnectionData?.map((bank, index) => (
@@ -66,9 +66,9 @@ const Finance: FC<FinanceProps> = ({
               style={{ backgroundImage: `url(${bank.image_url})` }}
             ></div>
             <Image src={BankOfCanadaImg} alt="" className="w-20 mb-5" />
-            <p className="font-black text-lg mb-2">{bank.name}</p>
+            <p className="font-black tab:text-lg mb-2">{bank.name}</p>
             <p className="text-sm font-light">{bank.description}</p>
-            <div className="flex items-center gap-1 mt-8">
+            <div className="xl:flex lg:flex-none flex items-center gap-1 mt-8">
               <div
                 onClick={() => handleConnect(bank.id, bank.is_connected)}
                 className={`cursor-pointer w-full border border-black rounded-md py-1 text-lg hover:bg-black hover:text-white duration-300 transition-colors ${
@@ -80,7 +80,7 @@ const Finance: FC<FinanceProps> = ({
                 ) : (
                   <>
                     {bank.is_connected ? (
-                      <div className="grid grid-cols-12 items-center px-3">
+                      <div className="grid grid-cols-12 items-center px-3 connectBtn">
                         <div className="col-span-3">
                           <div className="text-white text-sm p-1 w-fit rounded-full bg-[#08AD36]">
                             <MdCheck />
@@ -95,13 +95,13 @@ const Finance: FC<FinanceProps> = ({
                 )}
               </div>
               {bank.is_connected && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 xl:mt-0 lg:mt-2 mt-0">
                   <button
                     onClick={() => {
                       setIsRawData(true);
                       setGetRawDataId(bank.agent_source_api_connection_id);
                     }}
-                    className="py-[10px] px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max"
+                    className=" grow py-[10px] px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max"
                   >
                     Raw data
                   </button>

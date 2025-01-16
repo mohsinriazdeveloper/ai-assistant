@@ -185,7 +185,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
   };
   const mergeFileInfo = (newFiles: FileInfo[]) => {
-    console.log("here we go again");
     setFileInfo((prevFiles) => {
       // If `prevFiles` is null or empty, initialize with new files
       if (!prevFiles || prevFiles.length === 0) {
@@ -278,8 +277,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     const fileChange = fileWithTags.length > 0;
     const imgChange = imgWithTags.length > 0;
     const textChange = text !== prevText;
-    console.log(textChange);
-    console.log(text);
     const webChange = webWithTags.length > 0;
     const qaListChange =
       qaList && JSON.stringify(qaList) !== JSON.stringify(prevQaList);
@@ -446,7 +443,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         try {
           const fileRes = await trainByWebsite({ id: agentId, data: webData });
           setWebWithTags([]);
-          console.log(fileRes);
           setFileChar(0);
           setWebsiteChar(0);
           setImgChar(0);
@@ -456,7 +452,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
               `${fileRes.error.data.error_message}, ${fileRes.error.data.website_url}`
             );
           }
-          console.log(fileRes);
           isSuccess.push("success");
         } catch (error) {
           isError.push({ error, msg: ", web scrapping" });
@@ -474,13 +469,11 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
   };
 
-  console.log("filechar: ", fileChar);
-  console.log("imagechar: ", imgChar);
   return (
     <div className="h-[80vh] my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
       <div className="mt-10 ">
         <div className="grid grid-cols-12 gap-4">
-          <div className="md:col-span-9 col-span-12">
+          <div className="tab:col-span-9 md:col-span-8 col-span-12">
             {checkOption === "files" && (
               <>
                 <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-5">
@@ -675,7 +668,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
               </div>
             )}
           </div>
-          <div className="md:col-span-3 col-span-12">
+          <div className="tab:col-span-3 md:col-span-4 col-span-12">
             <RightBar
               fileChar={fileChar}
               imgChar={imgChar}

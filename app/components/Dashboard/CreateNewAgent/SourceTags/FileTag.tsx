@@ -123,7 +123,7 @@ const FileTag: FC<FileTagProps> = ({
           </p>
           <div className="space-y-4">
             <div className="">
-              <p>Source Name *</p>
+              <p>Source Name*</p>
               <div
                 className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
                   validations[index]?.sourceName && "border-red-600"
@@ -139,9 +139,9 @@ const FileTag: FC<FileTagProps> = ({
               </div>
             </div>
             <div className="">
-              <div className="w-full flex justify-between items-end">
-                <p>Context/clarifications *</p>
-                <p className="text-xs max-w-[345px]">
+              <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
+                <p className="col-span-5">Context/ Clarifications*</p>
+                <p className="text-xs col-span-7">
                   Give more information and context to your AI about this data
                   source. This will help the AI to fetch this data appropriately
                 </p>
@@ -162,9 +162,9 @@ const FileTag: FC<FileTagProps> = ({
               </div>
             </div>
             <div className="">
-              <div className="w-full flex justify-between items-end">
-                <p>Instructions *</p>
-                <p className="text-xs max-w-[345px]">
+              <div className="w-full  grid grid-cols-12 gap-2 justify-between items-end">
+                <p className="col-span-5">Instructions*</p>
+                <p className="text-xs col-span-7">
                   Give instructions to your AI to help him understand how to use
                   your data source.
                 </p>

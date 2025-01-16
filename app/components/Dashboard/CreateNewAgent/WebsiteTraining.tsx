@@ -143,7 +143,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
               </div>
               <div className="space-y-4 mt-5">
                 <div>
-                  <p>Source Name *</p>
+                  <p>Source Name*</p>
                   <div
                     className={`py-2 px-2 border rounded mt-1 ${
                       webValidations[index]?.sourceName
@@ -168,9 +168,9 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="w-full flex justify-between items-end">
-                    <p>Context/clarifications *</p>
-                    <p className="text-xs max-w-[345px]">
+                  <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
+                    <p className="col-span-5">Context/ Clarifications*</p>
+                    <p className="text-xs col-span-7">
                       Provide context to your AI about this data source.
                     </p>
                   </div>
@@ -198,9 +198,9 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="w-full flex justify-between items-end">
-                    <p>Instructions *</p>
-                    <p className="text-xs max-w-[345px]">
+                  <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
+                    <p className="col-span-5">Instructions*</p>
+                    <p className="text-xs col-span-7">
                       Provide instructions to your AI about how to use this data
                       source.
                     </p>
@@ -229,9 +229,9 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="w-full flex justify-between items-end">
-                    <p>Daily Auto-Updates *</p>
-                    <p className="text-xs max-w-[345px]">
+                  <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
+                    <p className="col-span-5">Daily Auto-Updates *</p>
+                    <p className="text-xs col-span-7">
                       If your data source updates at regular intervals, select
                       the appropriate update frequency to update automatically.
                     </p>

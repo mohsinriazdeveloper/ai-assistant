@@ -169,7 +169,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   }
 
   return (
-    <div className="h-[78vh] flex flex-col justify-between items-center">
+    <div className="tab:h-[78vh] sm:h-[70vh] h-[69vh]  flex flex-col justify-between items-center">
       {startNewChat ? (
         <div className="grow flex flex-col justify-center items-center text-center">
           <Image src={AiStar} alt="" />
@@ -180,7 +180,8 @@ const ChatAgent: FC<ChatAgentProps> = ({
             Your Ai.
           </p>
           <p className=" mx-auto mt-3 text-[#767676] leading-4">
-            This AI is connected to your unique data sources and <br />
+            This AI is connected to your unique data sources and{" "}
+            <br className="sm:block hidden" />
             interact with you according to your instructions and context.
           </p>
         </div>

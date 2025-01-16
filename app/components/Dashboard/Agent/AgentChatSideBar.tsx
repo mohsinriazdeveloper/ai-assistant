@@ -168,7 +168,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
           </div>
         )}
         <div
-          className={`mt-[18px] max-h-[300px] ${
+          className={`mt-[18px] 2xl:max-h-[300px] lg:max-h-[250px] tab:max-h-[230px] md:max-h-[200px] max-h-[180px] ${
             filteredItems?.length > 4 &&
             "overflow-hidden overflow-y-scroll recentChatScroller"
           } `}

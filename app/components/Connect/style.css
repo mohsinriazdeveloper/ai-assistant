@@ -1,0 +1,10 @@
+@media (max-width: 1438px) {
+  .connectBtn {
+    font-size: 16px;
+  }
+}
+@media (max-width: 1335px) {
+  .connectBtn {
+    font-size: 14px;
+  }
+}
