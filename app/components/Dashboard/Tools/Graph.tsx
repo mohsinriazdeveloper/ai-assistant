@@ -13,7 +13,7 @@ import {
 import { Ids } from "../../Connect/ConnectionRawData";
 import { useGetGraphDataQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 // import { graphData } from "./content";
-
+import "./style.css";
 type Data = {
   name: string;
   value: number;
@@ -179,7 +179,8 @@ const Graph: FC<GraphProps> = ({
   // Define months
 
   return (
-    <div style={{ width: "100%", height: 350 }} className="text-xs">
+    // <div style={{ width: "100%", height: 350 }} className="text-xs">
+    <div className="text-xs responsiveGraph">
       <ResponsiveContainer>
         <AreaChart
           data={data}

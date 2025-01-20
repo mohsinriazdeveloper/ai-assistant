@@ -148,7 +148,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
           </div>
 
           {/* <div className="px-5 grid grid-cols-12 "> */}
-          <div className="px-5 ">
+          <div className="md:px-5 ">
             <div className="col-span-9 py-5">
               <Graph
                 agentId={agentId}

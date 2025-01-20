@@ -80,7 +80,7 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
         <IoIosArrowBack className="text-3xl" />
         <p className="font-bold">Back</p>
       </div>
-      <div className="mt-7 border border-[#686868] w-[70%] py-5 px-4 space-y-4">
+      <div className="mt-7 border border-[#686868] tab:w-[70%] md:w-[90%] w-[100%] py-5 px-4 space-y-4">
         <p>Graph Name</p>
         <div>
           <input

@@ -1,0 +1,14 @@
+.responsiveGraph {
+  height: 350px;
+}
+
+@media (max-width: 550px) {
+  .responsiveGraph {
+    height: 300px;
+  }
+}
+@media (max-width: 430px) {
+  .responsiveGraph {
+    max-height: 250px;
+  }
+}

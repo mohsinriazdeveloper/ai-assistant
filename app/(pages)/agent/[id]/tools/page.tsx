@@ -50,7 +50,7 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "hidden" : "block"
-          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide `}
+          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide z-20`}
         >
           <SideBar
             agentId={id}

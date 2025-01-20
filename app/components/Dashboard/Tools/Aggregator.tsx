@@ -13,7 +13,7 @@ const Aggregator: FC<AggregatorProps> = ({
   setAggregatorSetup,
 }) => {
   return (
-    <div className="w-full grid grid-cols-2 gap-2 relative">
+    <div className="w-full grid md:grid-cols-2 grid-cols-1 gap-2 relative">
       <div className="col-span-1 border rounded-lg overflow-hidden">
         <div className="h-4 w-full bg-[#0C61B6]"></div>
         <div className="py-3 px-5">

@@ -68,7 +68,7 @@ const Finance: FC<FinanceProps> = ({
             <Image src={BankOfCanadaImg} alt="" className="w-20 mb-5" />
             <p className="font-black tab:text-lg mb-2">{bank.name}</p>
             <p className="text-sm font-light">{bank.description}</p>
-            <div className="xl:flex lg:flex-none flex items-center gap-1 mt-8">
+            <div className="xl:flex lg:block lg:flex-none flex items-center gap-1 mt-8">
               <div
                 onClick={() => handleConnect(bank.id, bank.is_connected)}
                 className={`cursor-pointer w-full border border-black rounded-md py-1 text-lg hover:bg-black hover:text-white duration-300 transition-colors ${

@@ -28,7 +28,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
 
   return (
     <div>
-      <div className=" w-[70%]">
+      <div className=" tab:w-[70%] md:w-[90%] w-[100%]">
         <div
           className="flex items-center cursor-pointer"
           onClick={() => setAggregatorSetup("summary")}
@@ -80,8 +80,8 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
             type="text"
             placeholder="Enter summary name"
           />
-          <div className="flex justify-between">
-            <div className=" w-[60%] relative">
+          <div className="md:flex flex-wrap justify-between gap-3">
+            <div className="w-[60%] relative">
               <div
                 onClick={() => setSourceDropDown(!sourceDropDown)}
                 className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer"
@@ -126,7 +126,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2 pr-5">
+            <div className="flex items-center gap-2 pr-5 md:mt-0 mt-2">
               <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
               <p>Display Source link(s)</p>
             </div>
