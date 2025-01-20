@@ -25,8 +25,8 @@ const Page: FC<PageProps> = ({ params }) => {
   }
   return (
     <Background>
-      <div className="py-8 px-5 bg-white rounded-[20px] h-full">
-        <div className="fixed w-full">
+      <div className="py-8 px-5 bg-white rounded-[20px] h-full overflow-hidden">
+        <div className="fixed w-full overflow-hidden">
           <NavBar content={content.navBar} />
           <Settings />
         </div>
