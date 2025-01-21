@@ -169,7 +169,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                 </div>
                 <div>
                   <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
-                    <p className="col-span-5">Context/ Clarifications*</p>
+                    <p className="col-span-5">Context/ clarifications*</p>
                     <p className="text-xs col-span-7">
                       Provide context to your AI about this data source.
                     </p>
@@ -236,7 +236,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                       the appropriate update frequency to update automatically.
                     </p>
                   </div>
-                  <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
+                  <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2 mt-1">
                     {[
                       "manually",
                       "daily",

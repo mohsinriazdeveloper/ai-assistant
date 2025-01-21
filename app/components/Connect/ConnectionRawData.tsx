@@ -221,7 +221,11 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
                             onChange={(e) => handleInputChange(e, "title")}
                           />
                         ) : (
-                          <p>{rate.title}</p>
+                          <input
+                            type="text"
+                            value={rate.title}
+                            className="w-full focus:outline-none"
+                          />
                         )}
                       </div>
                     </td>
@@ -237,7 +241,11 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
                             }
                           />
                         ) : (
-                          <p>{rate.base_currency}</p>
+                          <input
+                            type="text"
+                            value={rate.base_currency}
+                            className="w-full focus:outline-none"
+                          />
                         )}
                       </div>
                     </td>
@@ -253,7 +261,11 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
                             }
                           />
                         ) : (
-                          <p>{rate.target_currency}</p>
+                          <input
+                            type="text"
+                            value={rate.target_currency}
+                            className="w-full focus:outline-none"
+                          />
                         )}
                       </div>
                     </td>
@@ -267,7 +279,11 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
                             onChange={(e) => handleInputChange(e, "value")}
                           />
                         ) : (
-                          <p>{rate.value}</p>
+                          <input
+                            type="text"
+                            value={rate.value}
+                            className="w-full focus:outline-none"
+                          />
                         )}
                       </div>
                     </td>

@@ -311,7 +311,9 @@ const SignUp: FC<SignUpProps> = ({}) => {
                 </div>
               )}
               {showPassStrenghtList && (
-                <div className="my-2 ml-4">
+                <div
+                  className={`my-2 ml-4 ${strength === "Strong" && "hidden"}`}
+                >
                   <ul className="list-disc">
                     <li>Password must be at least 8 characters long</li>
                     <li>

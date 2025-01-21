@@ -46,17 +46,17 @@ const Page: FC<PageProps> = ({ params }) => {
   };
   return (
     <Background>
-      <div className="w-full bg-white rounded-[20px]">
+      <div className="w-full bg-black rounded-[20px]">
         <TourGuide
           start={startTour}
           setStartTour={setStartTour}
           onTourEnd={handleTourEnd}
         />
-        <div className="tab:grid grid-cols-12 w-full">
+        <div className="tab:grid grid-cols-12 w-full relative">
           <div
             className={`${
               isMobile ? "hidden" : "block"
-            } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide `}
+            } col-span-3 tab:relative absolute h-full tab:w-full sm:w-[40%] w-[50%] tab:pb-0 pb-5 bg-[#101010] overflow-y-auto scrollbar-hide `}
           >
             <SideBar
               agentId={id}

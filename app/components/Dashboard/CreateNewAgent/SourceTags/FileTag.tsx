@@ -140,7 +140,7 @@ const FileTag: FC<FileTagProps> = ({
             </div>
             <div className="">
               <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
-                <p className="col-span-5">Context/ Clarifications*</p>
+                <p className="col-span-5">Context/ clarifications*</p>
                 <p className="text-xs col-span-7">
                   Give more information and context to your AI about this data
                   source. This will help the AI to fetch this data appropriately

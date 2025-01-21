@@ -246,11 +246,13 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           id: agentId,
           data: fd,
         }).unwrap();
+        console.log(fileUploadRes);
         fileUploadRes.forEach((item: any) => {
           if (item.error_message) {
             toast.error(` ${item.error_message}`);
           }
         });
+
         const documents = filterByExtension(fileUploadRes, [
           "pdf",
           "txt",
@@ -266,7 +268,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
         if (documents.length > 0) {
           mergeFileInfo(documents);
         }
-      } catch (error) {
+      } catch (error: any) {
+        const errorMessage = error.data.files[0];
+        toast.error(errorMessage);
         console.error("Error uploading files:", error);
       }
     }

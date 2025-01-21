@@ -126,7 +126,7 @@ const SideBar: FC<SideBarProps> = ({
                   key={index}
                   className={`${
                     checkOption === option.url && "bg-[#424242]"
-                  } hover:bg-[#424242] text-white py-4 px-12 rounded-[10px] cursor-pointer duration-300 transition-colors`}
+                  } hover:bg-[#424242] tab:text-base text-sm text-white tab:py-4 py-2 tab:px-12 px-10 rounded-[10px] cursor-pointer duration-300 transition-colors`}
                   onClick={() => setCheckOption(option.url)}
                 >
                   <p>{option.title}</p>

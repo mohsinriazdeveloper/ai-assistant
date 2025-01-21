@@ -4,6 +4,9 @@ import {
   useUpdatePasswordMutation,
   useUpdateUserMutation,
 } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
+import { userLogoutSuccess } from "@/app/components/ReduxToolKit/authSlice";
+import { useAppDispatch } from "@/app/components/ReduxToolKit/hook";
+import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -28,6 +31,9 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
   const [strength, setStrength] = useState<string>("");
   const [showPassStrengthList, setShowPassStrengthList] =
     useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
+  const route = useRouter();
 
   const checkPasswordStrength = (password: string) => {
     let strength = "Weak";
@@ -100,6 +106,14 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
       if (res?.data?.status === 400) {
         toast.error("Invalid input");
       } else {
+        dispatch(
+          userLogoutSuccess({
+            refresh: "",
+            access: "",
+          })
+        );
+        localStorage.clear();
+        route.push("/");
         toast.success("Password updated successfully");
       }
     } catch (error: any) {
@@ -210,7 +224,11 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
                 </div>
               )}
               {showPassStrengthList && (
-                <div className="text-[10px] my-2 ml-4">
+                <div
+                  className={`text-[10px] my-2 ml-4 ${
+                    strength === "Strong" && "hidden"
+                  }`}
+                >
                   <ul className="list-disc">
                     <li>Password must be at least 8 characters long</li>
                     <li>
