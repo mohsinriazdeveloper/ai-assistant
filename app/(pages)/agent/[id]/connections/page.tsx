@@ -72,7 +72,7 @@ const Page: FC<PageProps> = ({ params }) => {
             {checkOption === "finance" && (
               <>
                 {isRawData ? (
-                  <div className="my-5 px-10 h-[78vh] overflow-y-scroll primaryScroller mr-2">
+                  <div className="tab:my-5 my-2 px-10 tab:h-[78vh] h-[70vh] overflow-y-scroll primaryScroller mr-2">
                     <ConnectionRawData
                       agentId={id}
                       setIsRawData={setIsRawData}
@@ -80,7 +80,7 @@ const Page: FC<PageProps> = ({ params }) => {
                     />
                   </div>
                 ) : (
-                  <div className="my-5 px-10 h-[78vh]">
+                  <div className="tab:my-5 my-2 px-10 tab:h-[78vh] h-[70vh]">
                     <Finance
                       agentId={id}
                       setIsRawData={setIsRawData}

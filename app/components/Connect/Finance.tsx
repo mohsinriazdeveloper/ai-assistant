@@ -52,10 +52,10 @@ const Finance: FC<FinanceProps> = ({
   };
 
   return (
-    <div className="w-full pt-10">
+    <div className="w-full tab:pt-10 pt-5">
       <p className="tab:text-2xl text-xl font-black">Connetions</p>
       {getDataLoading && <Loader2 />}
-      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mt-10">
+      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 tab:mt-10 mt-5">
         {apiConnectionData?.map((bank, index) => (
           <div
             key={index}

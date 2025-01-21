@@ -101,7 +101,7 @@ const Settings: FC<SettingsProps> = ({}) => {
             />
           </div>
           <div className="w-full md:col-span-10 col-span-12 overflow-y-scroll primaryScroller">
-            <div className="flex flex-col gap-10 pt-16 h-[71vh] pr-4">
+            <div className="flex flex-col gap-10 pt-16 lg:h-[71vh] md:h-[60vh] h-[55vh] pr-4">
               {checkOption === "setting" && (
                 <div>
                   <form className="mb-10">

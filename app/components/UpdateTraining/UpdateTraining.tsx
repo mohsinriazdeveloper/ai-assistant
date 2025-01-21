@@ -474,7 +474,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   };
 
   return (
-    <div className="h-[80vh] my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
+    <div className="tab:h-[80vh] h-[70vh] tab:pb-0 pb-4 my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
       <div className="mt-10 ">
         <div className="grid grid-cols-12 gap-4">
           <div className="tab:col-span-9 md:col-span-8 col-span-12">

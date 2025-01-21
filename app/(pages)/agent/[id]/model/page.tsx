@@ -37,7 +37,7 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "hidden" : "block"
-          } col-span-3 tab:relative absolute h-full tab:w-full sm:w-[40%] w-[50%] tab:pb-0 pb-10 bg-[#101010] overflow-y-auto scrollbar-hide `}
+          } col-span-3 tab:relative absolute h-full tab:w-full sm:w-[40%] w-[50%] tab:pb-0 pb-10 bg-[#101010] overflow-y-auto scrollbar-hide z-20`}
         >
           <SideBar
             agentId={id}
@@ -62,7 +62,7 @@ const Page: FC<PageProps> = ({ params }) => {
             <NavBar content={navContent.navBar} />
           </div>
 
-          <div className="my-5 px-10 h-[78vh] overflow-y-scroll primaryScroller mr-2">
+          <div className="my-5 px-10 tab:h-[78vh] h-[70vh] overflow-y-scroll primaryScroller mr-2 md:pb-0 pb-5">
             <AgentSettings agentId={id} checkOption={checkOption} />
           </div>
         </div>
