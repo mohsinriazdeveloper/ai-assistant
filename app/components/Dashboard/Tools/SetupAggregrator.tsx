@@ -1,34 +1,70 @@
-import AiStars from "@/app/assets/Images/aiStar.png";
-import Image from "next/image";
+import { SectionData } from "@/app/(pages)/agent/[id]/tools/page";
 import { Dispatch, FC, SetStateAction, useState } from "react";
+import { FaPlus } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { RiDeleteBinLine } from "react-icons/ri";
+import Loader2 from "../../Loader/Loader2";
+import { useGetAllGraphsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 
 interface SetupAggregratorProps {
-  agentId: Number;
+  agentId: number;
+  summaryName: string;
+  setSummaryName: Dispatch<SetStateAction<string>>;
+  sectionData: SectionData[];
+  setSectionData: Dispatch<SetStateAction<SectionData[]>>;
   setAggregatorSetup: Dispatch<SetStateAction<string>>;
-  setAggregatorOverlay: Dispatch<SetStateAction<boolean>>;
+  handleGenerateAggregator: () => Promise<void>;
+  createResumeLoading: boolean;
 }
 
 const SetupAggregrator: FC<SetupAggregratorProps> = ({
   agentId,
+  summaryName,
+  setSummaryName,
+  sectionData,
+  setSectionData,
   setAggregatorSetup,
-  setAggregatorOverlay,
+  handleGenerateAggregator,
+  createResumeLoading,
 }) => {
-  const [sourceDropDown, setSourceDropDown] = useState<boolean>(false);
-  const [dropDownValue, setDropDownValue] = useState<string>("");
-  const handleDropDownValue = (value: string, close: boolean) => {
-    setDropDownValue(value);
-    setSourceDropDown(false);
+  const { data: getGraphs, isLoading } = useGetAllGraphsQuery(agentId);
+  const [sourceDropDownIndex, setSourceDropDownIndex] = useState<number | null>(
+    null
+  ); // Track which section's dropdown is open
+  const [sections, setSections] = useState<number[]>([1]); // Array to track sections
+
+  const handleAddSection = () => {
+    setSections((prev) => [...prev, prev.length + 1]);
+    setSectionData((prev) => [
+      ...prev,
+      {
+        section_name: "",
+        source_id: 0,
+        display_source_links: false,
+        instructions: "",
+      },
+    ]);
   };
-  const handleSetupAggregrator = () => {
-    setAggregatorSetup("summary");
-    setAggregatorOverlay(false);
+
+  const handleDeleteSection = (index: number) => {
+    setSections((prev) => prev.filter((_, i) => i !== index));
+    setSectionData((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSectionDataChange = (
+    index: number,
+    key: keyof SectionData,
+    value: any
+  ) => {
+    setSectionData((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [key]: value } : item))
+    );
   };
 
   return (
-    <div>
-      <div className=" tab:w-[70%] md:w-[90%] w-[100%]">
+    <div className="relative ">
+      <div className="tab:w-[70%] md:w-[90%] w-[100%]">
         <div
           className="flex items-center cursor-pointer"
           onClick={() => setAggregatorSetup("summary")}
@@ -42,128 +78,127 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
             className="focus:outline-none w-[80%] rounded py-3 px-4 border border-[#c3c3c3]"
             type="text"
             placeholder="Enter summary name"
+            value={summaryName}
+            onChange={(e) => setSummaryName(e.target.value)}
           />
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-            <p>Display Source link(s)</p>
-          </div>
-          <div className="pt-3">
-            <p>Auto AI-Generate</p>
-            <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full flex justify-between items-center gap-3 flex-wrap">
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-                <p>Manually (default)</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-                <p>Daily</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-                <p>Weekly</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-                <p>Monthly</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-                <p>Quarterly</p>
-              </div>
-            </div>
-          </div>
         </div>
-        <div className="mt-4 border border-[#686868] py-5 px-4 space-y-4">
-          <p>Section Name</p>
-          <input
-            className="focus:outline-none rounded w-full py-3 px-4 border border-[#c3c3c3]"
-            type="text"
-            placeholder="Enter summary name"
-          />
-          <div className="md:flex flex-wrap justify-between gap-3">
-            <div className="w-[60%] relative">
-              <div
-                onClick={() => setSourceDropDown(!sourceDropDown)}
-                className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer"
-              >
-                <p>
-                  {dropDownValue ? (
-                    <span>{dropDownValue}</span>
-                  ) : (
-                    <span className="text-gray-500">select</span>
-                  )}
-                </p>
-                <MdKeyboardArrowDown className="text-xl" />
+
+        {/* Render multiple sections */}
+        {sections.map((section, index) => (
+          <div
+            key={section}
+            className="mt-4 border border-[#686868] py-5 px-4 space-y-4"
+          >
+            <div className="flex justify-between items-center">
+              <p>Section {index + 1} Name</p>
+              <RiDeleteBinLine
+                onClick={() => handleDeleteSection(index)}
+                className="mb-1 cursor-pointer hover:text-red-500 duration-300 transition-colors"
+              />
+            </div>
+            <input
+              className="focus:outline-none rounded w-full py-3 px-4 border border-[#c3c3c3]"
+              type="text"
+              placeholder={`Enter Section ${index + 1} name`}
+              value={sectionData[index]?.section_name || ""}
+              onChange={(e) =>
+                handleSectionDataChange(index, "section_name", e.target.value)
+              }
+            />
+            <div className="md:flex flex-wrap justify-between gap-3">
+              <div className="w-[60%] relative">
+                <div
+                  onClick={() =>
+                    setSourceDropDownIndex(
+                      sourceDropDownIndex === index ? null : index
+                    )
+                  }
+                  className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer"
+                >
+                  <p>
+                    {getGraphs?.find(
+                      (item) => item.id === sectionData[index]?.source_id
+                    )?.name || (
+                      <span className="text-gray-500">Select Source</span>
+                    )}
+                  </p>
+                  <MdKeyboardArrowDown className="text-xl" />
+                </div>
+                {sourceDropDownIndex === index && (
+                  <div className="w-full absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10">
+                    {getGraphs?.map((item) => (
+                      <p
+                        key={item.id}
+                        className="px-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => {
+                          handleSectionDataChange(index, "source_id", item.id);
+                          setSourceDropDownIndex(null);
+                        }}
+                      >
+                        {item.name}
+                      </p>
+                    ))}
+                  </div>
+                )}
               </div>
-              {sourceDropDown && (
-                <div className="w-full absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-300">
-                  <p
-                    className="px-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() =>
-                      handleDropDownValue("Connect API Source", false)
-                    }
-                  >
-                    Connect API Source
-                  </p>
-                  <p
-                    className="px-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => handleDropDownValue("option 2", false)}
-                  >
-                    option 2
-                  </p>
-                  <p
-                    className="px-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => handleDropDownValue("option 3", false)}
-                  >
-                    option 3
-                  </p>
-                  <p
-                    className="px-2 hover:bg-gray-200 cursor-pointer"
-                    onClick={() => handleDropDownValue("option 4", false)}
-                  >
-                    option 4
+              <div
+                onClick={() =>
+                  handleSectionDataChange(
+                    index,
+                    "display_source_links",
+                    !sectionData[index]?.display_source_links
+                  )
+                }
+                className="flex items-center gap-2 pr-5 md:mt-0 mt-2"
+              >
+                <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold cursor-pointer">
+                  <p className="pb-1">
+                    {sectionData[index]?.display_source_links ? "x" : ""}
                   </p>
                 </div>
-              )}
-            </div>
-            <div className="flex items-center gap-2 pr-5 md:mt-0 mt-2">
-              <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] "></div>
-              <p>Display Source link(s)</p>
-            </div>
-          </div>
-          <div>
-            <p>Instructions</p>
-            <textarea
-              rows={2}
-              className="focus:outline-none rounded w-full py-3 px-4 border border-[#c3c3c3] resize-none"
-              placeholder="Ex: Find the 5 most important highlights / facts of this data source."
-            />
-          </div>
-          <div>
-            <div className="flex justify-between items-end">
-              <p>Text</p>
-              <div className="flex justify-center items-center gap-1 py-3 px-2 bg-[#E7F3FF] cursor-pointer rounded text-sm">
-                <Image src={AiStars} alt="" className="w-6" />
-                <p>AI Generate</p>
+                <p>Display Source link(s)</p>
               </div>
             </div>
-            <textarea
-              rows={4}
-              className="focus:outline-none rounded w-full py-3 px-4 border border-[#c3c3c3] resize-none"
-            />
+            <div>
+              <p>Instructions</p>
+              <textarea
+                rows={2}
+                className="focus:outline-none rounded w-full py-3 px-4 border border-[#c3c3c3] resize-none"
+                placeholder={`Ex: Instructions for Section ${index + 1}`}
+                value={sectionData[index]?.instructions || ""}
+                onChange={(e) =>
+                  handleSectionDataChange(index, "instructions", e.target.value)
+                }
+              />
+            </div>
           </div>
+        ))}
+
+        <div className="flex items-center gap-2 pl-4 mt-4">
+          <div
+            className="w-12 h-9 bg-[#f5f5f5] rounded flex justify-center items-center text-black text-[10px] cursor-pointer"
+            onClick={handleAddSection}
+          >
+            <FaPlus />
+          </div>
+          <p>Add Sections</p>
         </div>
         <div className="flex justify-end items-end gap-3 pt-10">
           <button
-            onClick={handleSetupAggregrator}
+            onClick={handleGenerateAggregator}
             className="py-2 px-11 hover:bg-[#078fffc3] bg-[#0790FF] text-white font-medium rounded-full text-sm"
           >
             Generate
           </button>
-          <p className="text-[#AE1616]">Reset</p>
         </div>
       </div>
+      {createResumeLoading && (
+        <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-[78vh]">
+          <Loader2 />
+        </div>
+      )}
     </div>
   );
 };
+
 export default SetupAggregrator;

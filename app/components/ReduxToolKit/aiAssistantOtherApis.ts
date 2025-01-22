@@ -254,6 +254,16 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    // 26 create resume / aggregator
+    createResume: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/${id}/tools/resume/report/`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -363,6 +373,7 @@ export const {
   useGetGraphDataQuery,
   useDisConnectGraphMutation,
   useResetGraphMutation,
+  useCreateResumeMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,
