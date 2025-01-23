@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { getContent, sideBarOptions } from "../content";
-
+// connections page
 interface PageProps {
   params: { id: number };
 }

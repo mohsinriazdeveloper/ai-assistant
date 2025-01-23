@@ -42,17 +42,13 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
     id: getRawDataId,
     agentId: agentId,
   };
-  const { data: graphData, isLoading: dataLoading } = useGetGraphDataQuery(
-    ids,
-    {
-      skip: !currentRoute.includes("tools"),
-    }
-  );
 
-  const { data: getExchangeRate, isLoading: getDataLoading } =
-    useGetExchangeRateQuery(ids, {
-      skip: !currentRoute.includes("connections"),
-    });
+  // Fetch both data sets
+  const { data: graphData, isLoading: graphLoading } =
+    useGetGraphDataQuery(ids);
+  const { data: getExchangeRate, isLoading: exchangeRateLoading } =
+    useGetExchangeRateQuery(ids);
+
   const [updateExchangeData, { isLoading: updateLoading }] =
     useUpdateExchangeRateByIdMutation();
   const [resetExchangeData, { isLoading: resetLoading }] =
@@ -65,49 +61,19 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   const [loadingRowId, setLoadingRowId] = useState<number | null>(null);
 
   const [showData, setShowData] = useState<ExchangeRateType[]>([]);
+
+  // Populate data based on route
   useEffect(() => {
-    if (graphData) {
-      if (currentRoute.includes("tools")) {
-        setShowData(graphData.recent_exchange_rates);
-      }
-    } else if (getExchangeRate) {
-      if (currentRoute.includes("connections")) {
-        setShowData(getExchangeRate.recent_exchange_rates);
-      }
+    if (currentRoute.includes("tools") && graphData) {
+      setShowData(graphData.recent_exchange_rates || []);
+    } else if (currentRoute.includes("connections") && getExchangeRate) {
+      setShowData(getExchangeRate.recent_exchange_rates || []);
     } else {
       setShowData([]);
     }
-  }, [graphData, getExchangeRate]);
+  }, [graphData, getExchangeRate, currentRoute]);
 
-  const handleEditData = async (id: number) => {
-    if (editData?.title.trim() === "") {
-      toast.error("Title cannot be empty");
-      return;
-    }
-    if (editData?.base_currency.trim() === "") {
-      toast.error("Base Currency cannot be empty");
-      return;
-    }
-    if (editData?.target_currency.trim() === "") {
-      toast.error("Target Currency cannot be empty");
-      return;
-    }
-    if (editData?.value.trim() === "") {
-      toast.error("Value cannot be empty");
-      return;
-    }
-    setLoadingRowId(id);
-    try {
-      const res = updateExchangeData({ id, data: editData }).unwrap();
-      toast.success("Exchange rate updated successfully");
-    } catch (error) {
-      toast.error("Exchange rate updated failed");
-    } finally {
-      setLoadingRowId(null); // Reset the loading row
-    }
-    setEditableRow(null);
-  };
-
+  // Handle input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     field: keyof EditData
@@ -127,10 +93,14 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
     }
   };
 
+  // Handle edit button click
   const handleEditClick = (index: number) => {
     setEditableRow(index);
 
-    const rate = getExchangeRate?.recent_exchange_rates[index];
+    const rate = currentRoute.includes("tools")
+      ? graphData?.recent_exchange_rates[index]
+      : getExchangeRate?.recent_exchange_rates[index];
+
     if (rate) {
       setEditData({
         title: rate.title,
@@ -141,23 +111,55 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
     }
   };
 
-  const handleReset = async () => {
-    if (currentRoute.includes("connections")) {
-      try {
-        const res = await resetExchangeData({ id: getRawDataId, agentId });
-        toast.success(res.data.message);
-      } catch (error) {
-        toast.error("Failed to reset exchange rates");
-      }
-    } else if (currentRoute.includes("tools")) {
-      try {
-        await resetGraph({ id: getRawDataId, agentId }).unwrap();
-        toast.success("Graph Reset Successfully");
-      } catch (error) {
-        toast.error("Failed to reset graph");
-      }
+  // Handle save button click
+  const handleEditData = async (id: number) => {
+    if (
+      !editData?.title.trim() ||
+      !editData?.base_currency.trim() ||
+      !editData?.target_currency.trim() ||
+      !editData?.value.trim()
+    ) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    setLoadingRowId(id);
+
+    try {
+      await updateExchangeData({ id, data: editData }).unwrap();
+      toast.success("Exchange rate updated successfully");
+
+      // Update local state after successful edit
+      setShowData((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, ...editData, value: Number(editData.value) }
+            : item
+        )
+      );
+    } catch (error) {
+      toast.error("Failed to update exchange rate");
+    } finally {
+      setLoadingRowId(null);
+      setEditableRow(null);
     }
   };
+
+  // Handle reset functionality
+  const handleReset = async () => {
+    try {
+      if (currentRoute.includes("connections")) {
+        const res = await resetExchangeData({ id: getRawDataId, agentId });
+        toast.success(res.data.message);
+      } else if (currentRoute.includes("tools")) {
+        await resetGraph({ id: getRawDataId, agentId }).unwrap();
+        toast.success("Graph reset successfully");
+      }
+    } catch (error) {
+      toast.error("Failed to reset data");
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <div
@@ -170,7 +172,6 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
       <div className="mt-5">
         <div className="flex justify-between items-center mb-4">
           <p className="text-2xl font-bold text-gray-800">Data</p>
-
           {resetLoading || graphResetLoading ? (
             <Loader />
           ) : (
@@ -194,10 +195,10 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
                 <th className="py-2 px-2 border-b">Action</th>
               </tr>
             </thead>
-            {getDataLoading || dataLoading ? (
-              <tbody className="pt-10">
+            {graphLoading || exchangeRateLoading ? (
+              <tbody>
                 <tr>
-                  <td colSpan={5}>
+                  <td colSpan={6}>
                     <Loader2 />
                   </td>
                 </tr>
@@ -206,105 +207,89 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
               <tbody>
                 {showData.map((rate, index) => (
                   <tr
-                    key={index}
+                    key={rate.id}
                     className={`hover:bg-gray-100 text-xs border-b ${
                       editableRow === index && "bg-gray-100"
                     }`}
                   >
                     <td className="py-2 px-2">
-                      <div className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1">
-                        {editableRow === index ? (
-                          <input
-                            type="text"
-                            value={editData?.title || ""}
-                            className="w-full focus:outline-none"
-                            onChange={(e) => handleInputChange(e, "title")}
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={rate.title}
-                            className="w-full focus:outline-none"
-                          />
-                        )}
-                      </div>
+                      <input
+                        type="text"
+                        value={
+                          editableRow === index
+                            ? editData?.title || ""
+                            : rate.title
+                        }
+                        className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none"
+                        onChange={(e) =>
+                          editableRow === index && handleInputChange(e, "title")
+                        }
+                        readOnly={editableRow !== index}
+                      />
                     </td>
                     <td className="py-2 px-2">
-                      <div className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1">
-                        {editableRow === index ? (
-                          <input
-                            type="text"
-                            value={editData?.base_currency || ""}
-                            className="w-full focus:outline-none"
-                            onChange={(e) =>
-                              handleInputChange(e, "base_currency")
-                            }
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={rate.base_currency}
-                            className="w-full focus:outline-none"
-                          />
-                        )}
-                      </div>
+                      <input
+                        type="text"
+                        value={
+                          editableRow === index
+                            ? editData?.base_currency || ""
+                            : rate.base_currency
+                        }
+                        className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none"
+                        onChange={(e) =>
+                          editableRow === index &&
+                          handleInputChange(e, "base_currency")
+                        }
+                        readOnly={editableRow !== index}
+                      />
                     </td>
                     <td className="py-2 px-2">
-                      <div className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1">
-                        {editableRow === index ? (
-                          <input
-                            type="text"
-                            value={editData?.target_currency || ""}
-                            className="w-full focus:outline-none"
-                            onChange={(e) =>
-                              handleInputChange(e, "target_currency")
-                            }
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={rate.target_currency}
-                            className="w-full focus:outline-none"
-                          />
-                        )}
-                      </div>
+                      <input
+                        type="text"
+                        value={
+                          editableRow === index
+                            ? editData?.target_currency || ""
+                            : rate.target_currency
+                        }
+                        className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none"
+                        onChange={(e) =>
+                          editableRow === index &&
+                          handleInputChange(e, "target_currency")
+                        }
+                        readOnly={editableRow !== index}
+                      />
                     </td>
                     <td className="py-2 px-2">
-                      <div className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1">
-                        {editableRow === index ? (
-                          <input
-                            type="text"
-                            value={editData?.value || ""}
-                            className="w-full focus:outline-none"
-                            onChange={(e) => handleInputChange(e, "value")}
-                          />
-                        ) : (
-                          <input
-                            type="text"
-                            value={rate.value}
-                            className="w-full focus:outline-none"
-                          />
-                        )}
-                      </div>
+                      <input
+                        type="text"
+                        value={
+                          editableRow === index
+                            ? editData?.value || ""
+                            : rate.value.toString()
+                        }
+                        className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1 focus:outline-none"
+                        onChange={(e) =>
+                          editableRow === index && handleInputChange(e, "value")
+                        }
+                        readOnly={editableRow !== index}
+                      />
                     </td>
                     <td className="py-2 px-2">
-                      <div className="w-full bg-gray-50 border border-gray-300 rounded px-2 py-1">
-                        <p>
-                          {new Date(rate.date).toLocaleDateString("en-US", {
-                            month: "long",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </p>
-                      </div>
+                      <p>
+                        {new Date(rate.date).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
                     </td>
                     <td className="py-4 px-2 flex justify-center text-base">
                       {loadingRowId === rate.id ? (
                         <Loader />
                       ) : editableRow === index ? (
                         <IoMdSave
-                          onClick={() => handleEditData(rate.id)}
                           className="cursor-pointer"
+                          onClick={() => handleEditData(rate.id)}
                         />
                       ) : (
                         <RiEdit2Fill
