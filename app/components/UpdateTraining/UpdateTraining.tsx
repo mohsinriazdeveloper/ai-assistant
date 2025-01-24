@@ -271,6 +271,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       } catch (error: any) {
         const errorMessage = error.data.files[0];
         toast.error(errorMessage);
+        setUploadFlag(false);
+        setUploadedFiles([]);
+        setUploadedImgs([]);
         console.error("Error uploading files:", error);
       }
     }
