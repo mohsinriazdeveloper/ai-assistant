@@ -40,11 +40,22 @@ const Page: FC<PageProps> = ({ params }) => {
   const [checkOption, setCheckOption] = useState<string>("dashboard");
   const [isSetup, setIsSetup] = useState<string | boolean>("graph");
   const [aggregatorSetup, setAggregatorSetup] = useState<string>("summary");
-  const [aggregatorOverlay, setAggregatorOverlay] = useState<boolean>(true);
+  const [aggregatorOverlay1, setAggregatorOverlay1] = useState<boolean>(true);
+  const [aggregatorOverlay2, setAggregatorOverlay2] = useState<boolean>(true);
+
   const [getRawDataId, setGetRawDataId] = useState<number>(0);
 
-  const [summaryName, setSummaryName] = useState<string>("");
-  const [sectionData, setSectionData] = useState<SectionData[]>([
+  const [summaryName1, setSummaryName1] = useState<string>("");
+  const [sectionData1, setSectionData1] = useState<SectionData[]>([
+    {
+      section_name: "",
+      source_id: 0,
+      display_source_links: false,
+      instructions: "",
+    },
+  ]);
+  const [summaryName2, setSummaryName2] = useState<string>("");
+  const [sectionData2, setSectionData2] = useState<SectionData[]>([
     {
       section_name: "",
       source_id: 0,
@@ -53,7 +64,8 @@ const Page: FC<PageProps> = ({ params }) => {
     },
   ]);
 
-  const [resumeData, setResumeData] = useState<ResumeType[]>([]);
+  const [resumeData1, setResumeData1] = useState<ResumeType[]>([]);
+  const [resumeData2, setResumeData2] = useState<ResumeType[]>([]);
 
   const navContent = getContent(id);
 
@@ -67,17 +79,17 @@ const Page: FC<PageProps> = ({ params }) => {
     return null;
   }
 
-  const handleGenerateAggregator = async () => {
-    if (!summaryName) {
+  const handleGenerateAggregator1 = async () => {
+    if (!summaryName1) {
       toast.error("Please provide a summary name");
       return;
     }
-    if (!sectionData.length) {
+    if (!sectionData1.length) {
       toast.error("Sections are required and cannot be empty");
       return;
     }
-    for (let i = 0; i < sectionData.length; i++) {
-      const section = sectionData[i];
+    for (let i = 0; i < sectionData1.length; i++) {
+      const section = sectionData1[i];
 
       if (!section.section_name) {
         toast.error(`Section ${i + 1}: Please provide a section name`);
@@ -95,8 +107,8 @@ const Page: FC<PageProps> = ({ params }) => {
       }
     }
     const payload = {
-      summary_name: summaryName,
-      sections: sectionData.map((section) => ({
+      summary_name: summaryName1,
+      sections: sectionData1.map((section) => ({
         section_name: section.section_name,
         source_id: section.source_id,
         display_source_links: section.display_source_links,
@@ -106,9 +118,61 @@ const Page: FC<PageProps> = ({ params }) => {
 
     try {
       const resumeRes = await createResume({ id, data: payload });
-      setAggregatorOverlay(false);
+      setAggregatorOverlay1(false);
       setAggregatorSetup("summary");
-      setResumeData(resumeRes.data);
+      setResumeData1(resumeRes.data);
+      setSummaryName1("");
+      setSectionData1([]);
+      toast.success("Resume created successfully");
+    } catch (error) {
+      toast.error("Failed to create resume");
+      console.error("Error:", error);
+    }
+  };
+  const handleGenerateAggregator2 = async () => {
+    if (!summaryName2) {
+      toast.error("Please provide a summary name");
+      return;
+    }
+    if (!sectionData2.length) {
+      toast.error("Sections are required and cannot be empty");
+      return;
+    }
+    for (let i = 0; i < sectionData2.length; i++) {
+      const section = sectionData2[i];
+
+      if (!section.section_name) {
+        toast.error(`Section ${i + 1}: Please provide a section name`);
+        return;
+      }
+
+      if (!section.source_id) {
+        toast.error(`Section ${i + 1}: Please select a valid source`);
+        return;
+      }
+
+      if (!section.instructions) {
+        toast.error(`Section ${i + 1}: Please provide instructions`);
+        return;
+      }
+    }
+    const payload = {
+      summary_name: summaryName2,
+      sections: sectionData2.map((section) => ({
+        section_name: section.section_name,
+        source_id: section.source_id,
+        display_source_links: section.display_source_links,
+        instructions: section.instructions,
+      })),
+    };
+
+    try {
+      const resumeRes = await createResume({ id, data: payload });
+      setAggregatorOverlay2(false);
+      setAggregatorSetup("summary");
+      setResumeData2(resumeRes.data);
+      setSummaryName2("");
+      setSectionData2([]);
       toast.success("Resume created successfully");
     } catch (error) {
       toast.error("Failed to create resume");
@@ -176,20 +240,34 @@ const Page: FC<PageProps> = ({ params }) => {
               <>
                 {aggregatorSetup === "summary" && (
                   <Aggregator
-                    resumeData={resumeData}
-                    aggregatorOverlay={aggregatorOverlay}
+                    resumeData1={resumeData1}
+                    resumeData2={resumeData2}
+                    aggregatorOverlay1={aggregatorOverlay1}
+                    aggregatorOverlay2={aggregatorOverlay2}
                     setAggregatorSetup={setAggregatorSetup}
                   />
                 )}
-                {aggregatorSetup === "setup" && (
+                {aggregatorSetup === "setup1" && (
                   <SetupAggregrator
                     agentId={id}
-                    summaryName={summaryName}
-                    setSummaryName={setSummaryName}
-                    sectionData={sectionData}
-                    setSectionData={setSectionData}
+                    summaryName={summaryName1}
+                    setSummaryName={setSummaryName1}
+                    sectionData={sectionData1}
+                    setSectionData={setSectionData1}
                     setAggregatorSetup={setAggregatorSetup}
-                    handleGenerateAggregator={handleGenerateAggregator}
+                    handleGenerateAggregator={handleGenerateAggregator1}
+                    createResumeLoading={createResumeLoading}
+                  />
+                )}
+                {aggregatorSetup === "setup2" && (
+                  <SetupAggregrator
+                    agentId={id}
+                    summaryName={summaryName2}
+                    setSummaryName={setSummaryName2}
+                    sectionData={sectionData2}
+                    setSectionData={setSectionData2}
+                    setAggregatorSetup={setAggregatorSetup}
+                    handleGenerateAggregator={handleGenerateAggregator2}
                     createResumeLoading={createResumeLoading}
                   />
                 )}
