@@ -1,23 +1,44 @@
 import { ResumeType } from "@/app/(pages)/agent/[id]/tools/page";
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, FC, SetStateAction, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import MarkDown from "../../MarkDown/MarkDown";
 
 interface AggregatorProps {
   resumeData1: ResumeType[];
   resumeData2: ResumeType[];
+  setResumeData1: Dispatch<SetStateAction<ResumeType[]>>;
+  setResumeData2: Dispatch<SetStateAction<ResumeType[]>>;
   aggregatorOverlay1: boolean;
   aggregatorOverlay2: boolean;
+  setAggregatorOverlay1: Dispatch<SetStateAction<boolean>>;
+  setAggregatorOverlay2: Dispatch<SetStateAction<boolean>>;
   setAggregatorSetup: Dispatch<SetStateAction<string>>;
 }
 
 const Aggregator: FC<AggregatorProps> = ({
   resumeData1,
   resumeData2,
+  setResumeData1,
+  setResumeData2,
   aggregatorOverlay1,
   aggregatorOverlay2,
+  setAggregatorOverlay1,
+  setAggregatorOverlay2,
   setAggregatorSetup,
 }) => {
+  const [dropDown1, setDropDown1] = useState<boolean>(false);
+  const [dropDown2, setDropDown2] = useState<boolean>(false);
+
+  const deleteData1 = () => {
+    setDropDown1(false);
+    setResumeData1([]);
+    setAggregatorOverlay1(true);
+  };
+  const deleteData2 = () => {
+    setDropDown2(false);
+    setResumeData2([]);
+    setAggregatorOverlay2(true);
+  };
   return (
     <div className="w-full grid md:grid-cols-2 grid-cols-1 gap-3">
       <div
@@ -28,7 +49,18 @@ const Aggregator: FC<AggregatorProps> = ({
         <div className="h-4 w-full bg-[#0C61B6]"></div>
         <HiOutlineDotsHorizontal
           className={`text-2xl cursor-pointer rotate-90 ml-auto`}
+          onClick={() => setDropDown1(!dropDown1)}
         />
+        {dropDown1 && (
+          <div className="absolute w-[100px] bg-white rounded-md shadow-md p-1 right-0">
+            <p
+              onClick={deleteData1}
+              className="text-sm text-red-500 hover:bg-slate-200 cursor-pointer px-2 py-1"
+            >
+              Delete
+            </p>
+          </div>
+        )}
 
         {resumeData1.map((data, index) => (
           <div key={index}>
@@ -68,8 +100,18 @@ const Aggregator: FC<AggregatorProps> = ({
         <div className="h-4 w-full bg-[#0C61B6]"></div>
         <HiOutlineDotsHorizontal
           className={`text-2xl cursor-pointer rotate-90 ml-auto`}
+          onClick={() => setDropDown2(!dropDown2)}
         />
-
+        {dropDown2 && (
+          <div className="absolute w-[100px] bg-white rounded-md shadow-md p-1 right-0">
+            <p
+              onClick={deleteData2}
+              className="text-sm text-red-500 hover:bg-slate-200 cursor-pointer px-2 py-1"
+            >
+              Delete
+            </p>
+          </div>
+        )}
         {resumeData2.map((data, index) => (
           <div key={index}>
             <div className="py-3 px-5">

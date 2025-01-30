@@ -122,7 +122,14 @@ const Page: FC<PageProps> = ({ params }) => {
       setAggregatorSetup("summary");
       setResumeData1(resumeRes.data);
       setSummaryName1("");
-      setSectionData1([]);
+      setSectionData1([
+        {
+          section_name: "",
+          source_id: 0,
+          display_source_links: false,
+          instructions: "",
+        },
+      ]);
       toast.success("Resume created successfully");
     } catch (error) {
       toast.error("Failed to create resume");
@@ -172,7 +179,14 @@ const Page: FC<PageProps> = ({ params }) => {
       setAggregatorSetup("summary");
       setResumeData2(resumeRes.data);
       setSummaryName2("");
-      setSectionData2([]);
+      setSectionData2([
+        {
+          section_name: "",
+          source_id: 0,
+          display_source_links: false,
+          instructions: "",
+        },
+      ]);
       toast.success("Resume created successfully");
     } catch (error) {
       toast.error("Failed to create resume");
@@ -242,8 +256,12 @@ const Page: FC<PageProps> = ({ params }) => {
                   <Aggregator
                     resumeData1={resumeData1}
                     resumeData2={resumeData2}
+                    setResumeData1={setResumeData1}
+                    setResumeData2={setResumeData2}
                     aggregatorOverlay1={aggregatorOverlay1}
                     aggregatorOverlay2={aggregatorOverlay2}
+                    setAggregatorOverlay1={setAggregatorOverlay1}
+                    setAggregatorOverlay2={setAggregatorOverlay2}
                     setAggregatorSetup={setAggregatorSetup}
                   />
                 )}
