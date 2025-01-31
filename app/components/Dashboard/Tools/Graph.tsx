@@ -14,6 +14,7 @@ import { Ids } from "../../Connect/ConnectionRawData";
 import { useGetGraphDataQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
 // import { graphData } from "./content";
 import "./style.css";
+
 type Data = {
   name: string;
   value: number;
@@ -39,39 +40,33 @@ const Graph: FC<GraphProps> = ({
     id: graphId,
     agentId: agentId,
   };
+
   const { data: graphData, isLoading: dataLoading } = useGetGraphDataQuery(ids);
-
-  // check if there are multiple dates then show week tab
-  const isWeek = graphData?.recent_exchange_rates.map(
-    (item) => item.date.split("T")[0]
-  );
-  const hasDifferentDates = new Set(isWeek).size > 1;
-  setShowWeek(hasDifferentDates);
-  // check if there are multiple months then show month tab
-  const months = graphData?.recent_exchange_rates.map((item) =>
-    item.date.slice(0, 7)
-  );
-  const hasDifferentMonths = new Set(months).size > 1;
-  setShowMonth(hasDifferentMonths);
-
   const [data, setData] = useState<Data[]>([]);
 
   useEffect(() => {
-    if (!dataLoading) {
-      if (showDataBy === "spot") {
-        if (!graphData?.recent_exchange_rates?.length) return;
+    if (!dataLoading && graphData?.recent_exchange_rates) {
+      const rates = graphData.recent_exchange_rates;
 
-        // Find the latest date from the dataset
-        const latestDate = graphData.recent_exchange_rates.reduce(
-          (latest, item) => {
-            const itemDate = new Date(item.date);
-            return itemDate > latest ? itemDate : latest;
-          },
-          new Date(0)
-        ); // Initialize with a very old date
+      // Check if there are multiple dates
+      const dates = rates.map((item) => item.date.split("T")[0]);
+      const hasDifferentDates = new Set(dates).size > 1;
+      setShowWeek(hasDifferentDates);
+
+      // Check if there are multiple months
+      const months = rates.map((item) => item.date.slice(0, 7));
+      const hasDifferentMonths = new Set(months).size > 1;
+      setShowMonth(hasDifferentMonths);
+
+      if (showDataBy === "spot") {
+        // Find the latest date
+        const latestDate = rates.reduce((latest, item) => {
+          const itemDate = new Date(item.date);
+          return itemDate > latest ? itemDate : latest;
+        }, new Date(0));
 
         // Filter data for the latest date
-        const filteredData = graphData.recent_exchange_rates.filter((item) => {
+        const filteredData = rates.filter((item) => {
           const itemDate = new Date(item.date).toISOString().split("T")[0];
           const latestDateString = latestDate.toISOString().split("T")[0];
           return itemDate === latestDateString;
@@ -79,27 +74,66 @@ const Graph: FC<GraphProps> = ({
 
         // Map filtered data to match the `Data` structure
         setData(
-          filteredData.map((item) => {
-            const date = new Date(item.date);
-            const formattedDate = date.toLocaleTimeString("en-US", {
+          filteredData.map((item) => ({
+            name: new Date(item.date).toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
-            });
-
-            return {
-              name: formattedDate, // Time of the entry
-              value: item.value, // Value from the backend
-              currency: `${item.base_currency} to ${item.target_currency}`, // Base to target currency
-            };
-          })
+            }),
+            value: item.value,
+            currency: `${item.base_currency} to ${item.target_currency}`,
+          }))
         );
+      } else if (showDataBy === "week") {
+        // Find the latest date in the dataset
+        const latestDate = rates.reduce((latest, item) => {
+          const itemDate = new Date(item.date);
+          return itemDate > latest ? itemDate : latest;
+        }, new Date(0));
+
+        // Extract the latest month and year from the latest date
+        const latestMonth = latestDate.getMonth();
+        const latestYear = latestDate.getFullYear();
+
+        // Filter data for the latest month
+        const filteredData = rates.filter((item) => {
+          const itemDate = new Date(item.date);
+          return (
+            itemDate.getMonth() === latestMonth &&
+            itemDate.getFullYear() === latestYear
+          );
+        });
+
+        // Group data by date and calculate average for each day
+        const groupedData = filteredData.reduce((acc, item) => {
+          const date = new Date(item.date).toISOString().split("T")[0];
+          if (!acc[date]) {
+            acc[date] = { totalValue: 0, count: 0 };
+          }
+          acc[date].totalValue += item.value;
+          acc[date].count += 1;
+          return acc;
+        }, {} as Record<string, { totalValue: number; count: number }>);
+
+        // Convert grouped data to an array and calculate the average
+        const aggregatedData = Object.keys(groupedData).map((date) => ({
+          name: new Date(date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "2-digit",
+          }),
+          value: groupedData[date].totalValue / groupedData[date].count,
+          currency: `${rates[0].base_currency} to ${rates[0].target_currency}`,
+        }));
+
+        setData(aggregatedData);
       } else if (showDataBy === "month") {
+        // Aggregate data by month
         const monthMap = new Map<
           string,
           { totalValue: number; count: number; year: number; month: number }
         >();
 
-        graphData?.recent_exchange_rates.forEach((item) => {
+        rates.forEach((item) => {
           const date = new Date(item.date);
           const yearMonthKey = `${date.getFullYear()}-${date.getMonth()}`;
 
@@ -120,76 +154,26 @@ const Graph: FC<GraphProps> = ({
 
         // Convert aggregated data to an array and calculate the average
         const aggregatedData = Array.from(monthMap.values())
-          .sort((a, b) => a.year - b.year || a.month - b.month) // Sort by year and month
-          .map(({ totalValue, count, year, month }) => {
-            const averageValue = totalValue / count;
-            const sampleData = graphData?.recent_exchange_rates.find((item) => {
-              const date = new Date(item.date);
-              return date.getFullYear() === year && date.getMonth() === month;
-            });
-
-            return {
-              name: new Date(year, month).toLocaleString("en-US", {
-                month: "short",
-              }), // Month name
-              value: averageValue, // Average value
-              currency: sampleData
-                ? `${sampleData.base_currency} to ${sampleData.target_currency}`
-                : "N/A", // Use the sample's currency or fallback
-            };
-          });
+          .sort((a, b) => a.year - b.year || a.month - b.month)
+          .map(({ totalValue, count, year, month }) => ({
+            name: new Date(year, month).toLocaleString("en-US", {
+              month: "short",
+            }),
+            value: totalValue / count,
+            currency: `${rates[0].base_currency} to ${rates[0].target_currency}`,
+          }));
 
         setData(aggregatedData);
-      } else if (showDataBy === "week") {
-        // Get the current date and calculate the past 7 days
-        const today = new Date();
-        const past7Days = Array.from({ length: 7 }, (_, i) => {
-          const date = new Date(today);
-          date.setDate(today.getDate() - i);
-          return date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-        });
-
-        // Filter the data to include only the last 7 days
-        const filteredData = graphData?.recent_exchange_rates.filter((item) => {
-          const itemDate = new Date(item.date).toISOString().split("T")[0];
-          return past7Days.includes(itemDate);
-        });
-
-        setData(
-          filteredData?.map((item) => {
-            // Format the date into "Month, Day, Year" format
-            const date = new Date(item.date);
-            const formattedDate = date.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "2-digit",
-            });
-
-            return {
-              name: formattedDate, // Formatted date
-              value: item?.value || 0, // Value from backend
-              currency: `${item?.base_currency} to ${item?.target_currency}`, // Base to target currency
-            };
-          }) || []
-        );
       }
     }
-  }, [showDataBy, dataLoading]);
-
-  // Define months
+  }, [showDataBy, dataLoading, graphData]);
 
   return (
-    // <div style={{ width: "100%", height: 350 }} className="text-xs">
     <div className="text-xs responsiveGraph">
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={350}>
         <AreaChart
           data={data}
-          margin={{
-            top: 10,
-            right: 30,
-            left: 0,
-            bottom: 0,
-          }}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <CartesianGrid
             vertical={true}
@@ -197,7 +181,7 @@ const Graph: FC<GraphProps> = ({
             strokeDasharray="4 4"
             stroke="#e0e0e0"
           />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" interval={Math.ceil(data.length / 10)} />
           <YAxis />
           <Tooltip />
           <Area

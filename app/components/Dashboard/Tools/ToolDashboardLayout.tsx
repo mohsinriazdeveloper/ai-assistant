@@ -72,45 +72,45 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
             <p className="text-xl font-bold">{graph.name}</p>
 
             <div className="flex items-start">
-              {showWeek ||
-                (showMonth && (
-                  <div className="flex items-start">
-                    <div
-                      onClick={() => setShowDataBy("spot")}
-                      className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                        showDataBy === "spot"
-                          ? "bg-[#F5F7FB] text-[#017EFA]"
-                          : "text-[#A9ABB0]"
-                      }`}
-                    >
-                      <p>Spot</p>
-                    </div>
-                    {showWeek && (
-                      <div
-                        onClick={() => setShowDataBy("week")}
-                        className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                          showDataBy === "week"
-                            ? "bg-[#F5F7FB] text-[#017EFA]"
-                            : "text-[#A9ABB0]"
-                        }`}
-                      >
-                        <p>Week</p>
-                      </div>
-                    )}
-                    {showMonth && (
-                      <div
-                        onClick={() => setShowDataBy("month")}
-                        className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                          showDataBy === "Month"
-                            ? "bg-[#F5F7FB] text-[#017EFA]"
-                            : "text-[#A9ABB0]"
-                        }`}
-                      >
-                        <p>Month</p>
-                      </div>
-                    )}
+              {/* {showWeek ||
+                (showMonth && ( */}
+              <div className="flex items-start">
+                <div
+                  onClick={() => setShowDataBy("spot")}
+                  className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                    showDataBy === "spot"
+                      ? "bg-[#F5F7FB] text-[#017EFA]"
+                      : "text-[#A9ABB0]"
+                  }`}
+                >
+                  <p>Spot</p>
+                </div>
+                {showWeek && (
+                  <div
+                    onClick={() => setShowDataBy("week")}
+                    className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                      showDataBy === "week"
+                        ? "bg-[#F5F7FB] text-[#017EFA]"
+                        : "text-[#A9ABB0]"
+                    }`}
+                  >
+                    <p>Week</p>
                   </div>
-                ))}
+                )}
+                {showMonth && (
+                  <div
+                    onClick={() => setShowDataBy("month")}
+                    className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                      showDataBy === "Month"
+                        ? "bg-[#F5F7FB] text-[#017EFA]"
+                        : "text-[#A9ABB0]"
+                    }`}
+                  >
+                    <p>Month</p>
+                  </div>
+                )}
+              </div>
+              {/* ))} */}
 
               <div className="relative">
                 <HiOutlineDotsHorizontal
