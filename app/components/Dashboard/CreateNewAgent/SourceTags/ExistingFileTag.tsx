@@ -70,12 +70,12 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   };
 
   return (
-    <div className="w-full border border-gray-200 py-4 px-6 rounded-lg text-sm mb-4">
+    <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-4">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-10 pt-1">
           {fileName && (
             <p
-              className="text-blue-500 underline cursor-pointer"
+              className="text-blue-500 underline cursor-pointer font-semibold"
               onClick={() => handleOpenFile(fileUrl)}
             >
               {fileName?.length > 30 ? (
@@ -98,36 +98,36 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
               )}
             </Link>
           )}
-          <div className="space-y-4 mt-5">
+          <div className="space-y-4 mt-5 w-[45%]">
             {sourceName && (
               <div className="">
-                <p>Source Name</p>
-                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 text-gray-700 font-light">
+                <p className="text-sm">Name</p>
+                <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
                   <p>{sourceName}</p>
                 </div>
               </div>
             )}
             {sourceContext && (
               <div className="">
-                <p>Context/clarifications</p>
+                <p className="text-sm">Context / Clarifications</p>
 
-                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 font-light">
+                <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                   <p>{sourceContext}</p>
                 </div>
               </div>
             )}
             {sourceInstructions && (
               <div className="">
-                <p>Instructions</p>
+                <p className="text-sm">Instructions</p>
 
-                <div className="py-2 px-2 border border-[#c4c4c4] rounded mt-1 font-light">
+                <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                   <p>{sourceInstructions}</p>
                 </div>
               </div>
             )}
             {website_auto_update && (
               <div>
-                <p>Daily Auto-Updates</p>
+                <p className="text-sm">Daily Auto-Updates</p>
                 <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
                   <div className="flex items-center gap-2 cursor-pointer">
                     <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">

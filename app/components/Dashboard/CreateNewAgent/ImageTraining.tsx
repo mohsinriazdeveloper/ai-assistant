@@ -69,10 +69,10 @@ const ImageTraining: FC<ImageTrainingProps> = ({
   return (
     <div>
       <div className="flex justify-between items-center">
-        <p className="font-bold text-2xl">Train with image</p>
+        <p className="font-bold text-[40px]">Train with image</p>
         <div
           onClick={triggerFileInput}
-          className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+          className="w-[50px] h-[50px] bg-black rounded-[5px] flex justify-center items-center text-white text-lg cursor-pointer"
         >
           <FaPlus />
         </div>
@@ -81,9 +81,9 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onClick={triggerFileInput}
-        className="border border-gray-200 mt-3 p-6 rounded h-[165px] cursor-pointer flex flex-col items-center justify-center"
+        className="border border-gray-200 mt-3 p-6 rounded h-[170px] cursor-pointer flex flex-col items-center justify-center"
       >
-        <Image src={UploadIcon} alt="Upload Icon" className="max-w-4" />
+        <Image src={UploadIcon} alt="Upload Icon" className="max-w-5" />
         <input
           ref={fileInputRef}
           id="addImage"
@@ -95,11 +95,11 @@ const ImageTraining: FC<ImageTrainingProps> = ({
         />
         <label
           htmlFor="addImage"
-          className="mt-4 text-xs text-gray-600 cursor-pointer"
+          className="mt-4 text-sm font-medium text-gray-600 cursor-pointer"
         >
           Drag & drop image here, or click to select images
         </label>
-        <p className="mt-2 text-[10px] text-gray-500">
+        <p className="mt-2 text-xs font-medium text-gray-500">
           Supported Image Types: .png, .jpg, .jpeg
         </p>
         {fileCharLoading && (
@@ -108,7 +108,7 @@ const ImageTraining: FC<ImageTrainingProps> = ({
           </div>
         )}
         {errorMessage && (
-          <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
+          <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
         )}
       </div>
     </div>

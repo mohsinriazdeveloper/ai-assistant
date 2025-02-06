@@ -108,11 +108,11 @@ const FileTag: FC<FileTagProps> = ({
     window.open(url, "_blank");
   };
   return (
-    <div className="w-full border border-gray-200 py-4 px-6 rounded-lg text-sm mb-4">
+    <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-4">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-10 pt-1">
           <p
-            className="text-blue-500 mb-5 underline cursor-pointer"
+            className="text-blue-500 mb-5 underline cursor-pointer font-semibold"
             onClick={() => handleOpenFile(fileUrl)}
           >
             {fileName.length > 30 ? (
@@ -121,11 +121,11 @@ const FileTag: FC<FileTagProps> = ({
               <>{fileName}</>
             )}
           </p>
-          <div className="space-y-4">
+          <div className="space-y-4 w-[45%]">
             <div className="">
-              <p>Source Name*</p>
+              <p className="text-sm">Name*</p>
               <div
-                className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
+                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1 ${
                   validations[index]?.sourceName && "border-red-600"
                 }`}
               >
@@ -139,16 +139,16 @@ const FileTag: FC<FileTagProps> = ({
               </div>
             </div>
             <div className="">
-              <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
-                <p className="col-span-5">Context/ clarifications*</p>
-                <p className="text-xs col-span-7">
+              {/* <div className="w-full grid grid-cols-12 gap-2 justify-between items-end"> */}
+              <p className="col-span-5 text-sm">Context / Clarifications</p>
+              {/* <p className="text-xs col-span-7">
                   Give more information and context to your AI about this data
                   source. This will help the AI to fetch this data appropriately
                 </p>
-              </div>
+              </div> */}
 
               <div
-                className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
+                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1 ${
                   validations[index]?.sourceContext && "border-red-600"
                 }`}
               >
@@ -162,16 +162,16 @@ const FileTag: FC<FileTagProps> = ({
               </div>
             </div>
             <div className="">
-              <div className="w-full  grid grid-cols-12 gap-2 justify-between items-end">
-                <p className="col-span-5">Instructions*</p>
-                <p className="text-xs col-span-7">
+              {/* <div className="w-full  grid grid-cols-12 gap-2 justify-between items-end"> */}
+              <p className="col-span-5 text-sm">Instructions</p>
+              {/* <p className="text-xs col-span-7">
                   Give instructions to your AI to help him understand how to use
                   your data source.
                 </p>
-              </div>
+              </div> */}
 
               <div
-                className={`py-2 px-2 border border-[#c4c4c4] rounded mt-1 ${
+                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1 ${
                   validations[index]?.sourceInstructions && "border-red-600"
                 }`}
               >

@@ -1,6 +1,8 @@
+import Image, { StaticImageData } from "next/image";
 import { Dispatch, FC, SetStateAction } from "react";
 
 type Content = {
+  icon?: StaticImageData;
   url: string;
   title: string;
 };
@@ -27,7 +29,7 @@ const LeftBar: FC<LeftBarProps> = ({
           onClick={() => setCheckOption?.(item.url)}
         >
           <div className="flex items-end gap-2">
-            {/* <Image src={item.icon} alt="" className="max-w-5" /> */}
+            {item.icon && <Image src={item.icon} alt="" className="max-w-5" />}
             <p className="text-sm font-medium text-gray-900">{item.title}</p>
           </div>
         </div>

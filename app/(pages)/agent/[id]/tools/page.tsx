@@ -6,7 +6,7 @@ import SetupAggregrator from "@/app/components/Dashboard/Tools/SetupAggregrator"
 import SetupApi from "@/app/components/Dashboard/Tools/SetupApi";
 import ToolDashboardLayout from "@/app/components/Dashboard/Tools/ToolDashboardLayout";
 import SideBar from "@/app/components/LeftBar/SideBar";
-import NavBar from "@/app/components/NavBar/NavBar";
+import NavBar from "@/app/components/NavBar/NavBar2";
 import { useCreateResumeMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
@@ -212,9 +212,9 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "col-span-12" : "col-span-9"
-          } rounded-[20px] bg-white h-full`}
+          } rounded-lg bg-black overflow-hidden h-full`}
         >
-          <div className="flex items-center pt-5 step-2">
+          <div className="flex items-center step-2">
             {isMobile && (
               <HiOutlineDotsHorizontal
                 className={`text-2xl cursor-pointer ml-3`}
@@ -223,74 +223,76 @@ const Page: FC<PageProps> = ({ params }) => {
             )}
             <NavBar content={navContent.navBar} />
           </div>
-
-          <div
-            className={`my-5 px-10 h-[78vh] ${
-              !createResumeLoading && " overflow-y-scroll primaryScroller mr-2"
-            }`}
-          >
-            {checkOption === "dashboard" && (
-              <>
-                {isSetup === "graph" && (
-                  <ToolDashboardLayout
-                    agentId={id}
-                    setIsSetup={setIsSetup}
-                    setGetRawDataId={setGetRawDataId}
-                  />
-                )}
-                {isSetup === "setup" && (
-                  <SetupApi agentId={id} setIsSetup={setIsSetup} />
-                )}
-                {isSetup === "rawData" && (
-                  <ConnectionRawData
-                    agentId={id}
-                    setIsRawData={setIsSetup}
-                    getRawDataId={getRawDataId}
-                  />
-                )}
-              </>
-            )}
-            {checkOption === "aggregator" && (
-              <>
-                {aggregatorSetup === "summary" && (
-                  <Aggregator
-                    resumeData1={resumeData1}
-                    resumeData2={resumeData2}
-                    setResumeData1={setResumeData1}
-                    setResumeData2={setResumeData2}
-                    aggregatorOverlay1={aggregatorOverlay1}
-                    aggregatorOverlay2={aggregatorOverlay2}
-                    setAggregatorOverlay1={setAggregatorOverlay1}
-                    setAggregatorOverlay2={setAggregatorOverlay2}
-                    setAggregatorSetup={setAggregatorSetup}
-                  />
-                )}
-                {aggregatorSetup === "setup1" && (
-                  <SetupAggregrator
-                    agentId={id}
-                    summaryName={summaryName1}
-                    setSummaryName={setSummaryName1}
-                    sectionData={sectionData1}
-                    setSectionData={setSectionData1}
-                    setAggregatorSetup={setAggregatorSetup}
-                    handleGenerateAggregator={handleGenerateAggregator1}
-                    createResumeLoading={createResumeLoading}
-                  />
-                )}
-                {aggregatorSetup === "setup2" && (
-                  <SetupAggregrator
-                    agentId={id}
-                    summaryName={summaryName2}
-                    setSummaryName={setSummaryName2}
-                    sectionData={sectionData2}
-                    setSectionData={setSectionData2}
-                    setAggregatorSetup={setAggregatorSetup}
-                    handleGenerateAggregator={handleGenerateAggregator2}
-                    createResumeLoading={createResumeLoading}
-                  />
-                )}
-              </>
-            )}
+          <div className="h-full bg-white rounded-lg">
+            <div
+              className={`mb-5 px-10 h-[82vh] ${
+                !createResumeLoading &&
+                " overflow-y-scroll primaryScroller mr-2"
+              }`}
+            >
+              {checkOption === "dashboard" && (
+                <>
+                  {isSetup === "graph" && (
+                    <ToolDashboardLayout
+                      agentId={id}
+                      setIsSetup={setIsSetup}
+                      setGetRawDataId={setGetRawDataId}
+                    />
+                  )}
+                  {isSetup === "setup" && (
+                    <SetupApi agentId={id} setIsSetup={setIsSetup} />
+                  )}
+                  {isSetup === "rawData" && (
+                    <ConnectionRawData
+                      agentId={id}
+                      setIsRawData={setIsSetup}
+                      getRawDataId={getRawDataId}
+                    />
+                  )}
+                </>
+              )}
+              {checkOption === "aggregator" && (
+                <>
+                  {aggregatorSetup === "summary" && (
+                    <Aggregator
+                      resumeData1={resumeData1}
+                      resumeData2={resumeData2}
+                      setResumeData1={setResumeData1}
+                      setResumeData2={setResumeData2}
+                      aggregatorOverlay1={aggregatorOverlay1}
+                      aggregatorOverlay2={aggregatorOverlay2}
+                      setAggregatorOverlay1={setAggregatorOverlay1}
+                      setAggregatorOverlay2={setAggregatorOverlay2}
+                      setAggregatorSetup={setAggregatorSetup}
+                    />
+                  )}
+                  {aggregatorSetup === "setup1" && (
+                    <SetupAggregrator
+                      agentId={id}
+                      summaryName={summaryName1}
+                      setSummaryName={setSummaryName1}
+                      sectionData={sectionData1}
+                      setSectionData={setSectionData1}
+                      setAggregatorSetup={setAggregatorSetup}
+                      handleGenerateAggregator={handleGenerateAggregator1}
+                      createResumeLoading={createResumeLoading}
+                    />
+                  )}
+                  {aggregatorSetup === "setup2" && (
+                    <SetupAggregrator
+                      agentId={id}
+                      summaryName={summaryName2}
+                      setSummaryName={setSummaryName2}
+                      sectionData={sectionData2}
+                      setSectionData={setSectionData2}
+                      setAggregatorSetup={setAggregatorSetup}
+                      handleGenerateAggregator={handleGenerateAggregator2}
+                      createResumeLoading={createResumeLoading}
+                    />
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

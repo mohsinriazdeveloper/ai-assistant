@@ -70,24 +70,24 @@ const Agents: FC<AgentsProps> = () => {
       className={`${isOverflow ? "primaryScroller pr-3" : ""}`}
       style={{ maxHeight: "75vh", overflowY: "auto" }}
     >
-      <div className="tab:w-[795px] mx-auto">
+      <div className="tab:w-[853px] mx-auto">
         {sortedAgents.length > 0 ? (
-          <div className="mt-11">
+          <div className="mt-8">
             <div className="flex justify-between items-center">
               <p className="tab:text-3xl text-2xl font-bold">My Agents</p>
             </div>
 
-            <div className="grid sm:grid-cols-3 xxs:grid-cols-2 grid-cols-1 mt-10 xs:gap-10 gap-5 tab:w-[90%]">
+            <div className="grid sm:grid-cols-3 xxs:grid-cols-2 grid-cols-1 mt-12 xs:gap-14 gap-5">
               {sortedAgents.map((agent, index) => (
-                <div key={index} className="col-span-1 cursor-pointer">
+                <div key={index} className="col-span-1 cursor-pointer mb-4">
                   <div onClick={() => hanldeChat(agent.id)}>
                     {loadingAgent === agent.id ? (
-                      <div className="bg-no-repeat bg-cover bg-center tab:h-[210px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb] flex justify-center items-center">
+                      <div className="bg-no-repeat bg-cover bg-center tab:h-[237px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb] flex justify-center items-center">
                         <Loader2 />
                       </div>
                     ) : (
                       <div
-                        className="bg-no-repeat bg-cover bg-center tab:h-[210px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb]"
+                        className="bg-no-repeat bg-cover bg-center tab:h-[237px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb]"
                         style={{
                           backgroundImage: `url(${
                             agent.image_url || AiImg.src
@@ -96,7 +96,7 @@ const Agents: FC<AgentsProps> = () => {
                       ></div>
                     )}
                     {agent?.name && (
-                      <p className="text-lg font-medium text-center">
+                      <p className="text-xl font-medium text-center">
                         {agent.name.length > 15
                           ? `${agent.name.slice(0, 15)} ...`
                           : agent.name}

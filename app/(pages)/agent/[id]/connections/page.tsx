@@ -4,7 +4,7 @@ import Background from "@/app/components/Background/Background";
 import ConnectionRawData from "@/app/components/Connect/ConnectionRawData";
 import Finance from "@/app/components/Connect/Finance";
 import SideBar from "@/app/components/LeftBar/SideBar";
-import NavBar from "@/app/components/NavBar/NavBar";
+import NavBar from "@/app/components/NavBar/NavBar2";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
@@ -56,9 +56,9 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "col-span-12" : "col-span-9"
-          } rounded-[20px] bg-white h-full`}
+          } rounded-lg overflow-hidden bg-black h-full`}
         >
-          <div className="flex items-center pt-5">
+          <div className="flex items-center">
             {isMobile && (
               <HiOutlineDotsHorizontal
                 className={`text-2xl cursor-pointer ml-3`}
@@ -68,11 +68,11 @@ const Page: FC<PageProps> = ({ params }) => {
             <NavBar content={content.navBar} />
           </div>
 
-          <div>
+          <div className="rounded-lg bg-white h-full">
             {checkOption === "finance" && (
               <>
                 {isRawData ? (
-                  <div className="tab:my-5 my-2 px-10 tab:h-[78vh] h-[70vh] overflow-y-scroll primaryScroller mr-2">
+                  <div className="px-10 overflow-y-scroll primaryScroller mr-2">
                     <ConnectionRawData
                       agentId={id}
                       setIsRawData={setIsRawData}
@@ -80,7 +80,7 @@ const Page: FC<PageProps> = ({ params }) => {
                     />
                   </div>
                 ) : (
-                  <div className="tab:my-5 my-2 px-10 tab:h-[78vh] h-[70vh]">
+                  <div className="px-10">
                     <Finance
                       agentId={id}
                       setIsRawData={setIsRawData}

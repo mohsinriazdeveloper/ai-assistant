@@ -1,12 +1,11 @@
 "use client";
 import Background from "@/app/components/Background/Background";
 import Settings from "@/app/components/Dashboard/NewChat/Settings/Settings";
-import NavBar from "@/app/components/NavBar/NavBar";
+import NavBar1 from "@/app/components/NavBar/NavBar1";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
-import { content } from "../agents/content";
 interface PageProps {
   params: { id: number };
 }
@@ -25,9 +24,15 @@ const Page: FC<PageProps> = ({ params }) => {
   }
   return (
     <Background>
-      <div className="py-8 px-5 bg-white rounded-[20px] h-full overflow-hidden">
+      <div className="py-[51px] px-5 bg-white rounded-lg h-full overflow-hidden">
         <div className="fixed w-full overflow-hidden">
-          <NavBar content={content.navBar} />
+          <div className="w-[80%] fixed">
+            <NavBar1
+            // setCreateAgent={setCreateAgent}
+            // createAgent={createAgent}
+            />
+          </div>
+          {/* <NavBar1 content={content.navBar} /> */}
           <Settings />
         </div>
       </div>

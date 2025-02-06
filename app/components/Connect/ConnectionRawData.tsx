@@ -162,13 +162,25 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
 
   return (
     <div className="min-h-screen">
-      <div
-        className="flex items-center cursor-pointer w-fit"
-        onClick={() => setIsRawData("graph")}
-      >
-        <IoIosArrowBack className="text-3xl" />
-        <p className="font-bold">Back</p>
-      </div>
+      {currentRoute.includes("connections") ? (
+        <div
+          className="flex items-center cursor-pointer w-fit"
+          // onClick={() => setIsRawData("graph")}
+          onClick={() => setIsRawData(false)}
+        >
+          <IoIosArrowBack className="text-3xl" />
+          <p className="font-bold">Back</p>
+        </div>
+      ) : (
+        <div
+          className="flex items-center cursor-pointer w-fit"
+          // onClick={() => setIsRawData("graph")}
+          onClick={() => setIsRawData("graph")}
+        >
+          <IoIosArrowBack className="text-3xl" />
+          <p className="font-bold">Back</p>
+        </div>
+      )}
       <div className="mt-5">
         <div className="flex justify-between items-center mb-4">
           <p className="text-2xl font-bold text-gray-800">Data</p>

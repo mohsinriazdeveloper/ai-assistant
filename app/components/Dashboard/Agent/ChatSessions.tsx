@@ -94,17 +94,17 @@ const ChatSessions: FC<ChatSessionsProps> = ({
               setActiveChat(chat.id);
             }}
           >
-            <FiMessageSquare />
+            <FiMessageSquare className="text-black text-lg" />
             {isEditTitle === chat.id ? (
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="focus:outline-none bg-transparent grow mx-4 border px-2"
+                className="focus:outline-none bg-transparent grow mx-4 border px-2 text-sm"
               />
             ) : (
               <div className="flex-1 mx-4 overflow-hidden text-fade">
-                <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] text-sm font-medium">
                   {chat.title}
                 </p>
               </div>
@@ -112,7 +112,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
           </div>
           {isEditTitle === chat.id ? (
             <FaRegSave
-              className="cursor-pointer"
+              className="cursor-pointer text-xl text-black"
               onClick={() => handleChangeTitle(chat.id)}
             />
           ) : (
@@ -121,7 +121,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
                 <Loader />
               ) : (
                 <HiOutlineDotsHorizontal
-                  className="cursor-pointer relative z-10"
+                  className="cursor-pointer relative z-10 text-black text-xl"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDropdownToggle(chat.id);

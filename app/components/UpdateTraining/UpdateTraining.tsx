@@ -308,14 +308,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           );
           return true;
         }
-        if (!file.source_context) {
-          toast.error("Context is required in file");
-          return true;
-        }
-        if (!file.source_instructions) {
-          toast.error("Instructions is required in file");
-          return true;
-        }
+
         return false;
       });
 
@@ -353,14 +346,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           );
           return true;
         }
-        if (!image.source_context) {
-          toast.error("Context is required in image");
-          return true;
-        }
-        if (!image.source_instructions) {
-          toast.error("Instructions is required in image");
-          return true;
-        }
+
         return false;
       });
 
@@ -425,14 +411,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           );
           return true;
         }
-        if (!item.source_context) {
-          toast.error("Context is required in website");
-          return true;
-        }
-        if (!item.source_instructions) {
-          toast.error("Instructions is required in website");
-          return true;
-        }
         return false;
       });
 
@@ -477,7 +455,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
   };
 
   return (
-    <div className="tab:h-[80vh] h-[70vh] tab:pb-0 pb-4 my-5 px-10 overflow-hidden overflow-y-auto primaryScroller mr-2">
+    <div className="tab:pb-0 pb-4 mb-5">
       <div className="mt-10 ">
         <div className="grid grid-cols-12 gap-4">
           <div className="tab:col-span-9 md:col-span-8 col-span-12">
@@ -493,7 +471,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                         setUploadFlag={setUploadFlag}
                       />
                     </div>
-                    <p className="text-xs text-gray-500 text-center">
+                    <p className="text-sm font-medium text-gray-500 text-center">
                       If you are uploading a PDF, make sure you can
                       select/highlight the text.
                     </p>
@@ -560,7 +538,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                         setUploadFlag={setUploadFlag}
                       />
                     </div>
-                    <p className="text-xs text-gray-500 text-center">
+                    <p className="text-sm font-medium text-gray-500 text-center">
                       Make sure the image should not be blur and only contains
                       text.
                     </p>

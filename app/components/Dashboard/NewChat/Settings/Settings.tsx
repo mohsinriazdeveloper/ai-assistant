@@ -5,8 +5,10 @@ import {
   useDeleteOrgImgMutation,
   useGetOrganizationQuery,
   useUpdateOrgImgMutation,
+  useUpdateOrgNameMutation,
 } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { content } from "./content";
@@ -17,14 +19,22 @@ interface SettingsProps {}
 
 const Settings: FC<SettingsProps> = ({}) => {
   const { data: getOrg, isLoading } = useGetOrganizationQuery();
+  const [updateOrg] = useUpdateOrgNameMutation();
   const [updateOrgImg] = useUpdateOrgImgMutation();
   const [delImg] = useDeleteOrgImgMutation();
   const [checkOption, setCheckOption] = useState<string>("setting");
-  const [imgLoading, setImgLoading] = useState<boolean>(false);
   const [imgError, setImgError] = useState<string>("");
   const [preview, setPreview] = useState<string>("");
-
   const [showSideBar, setShowSideBar] = useState<boolean>(true);
+  const [orgName, setOrgName] = useState<string>("");
+
+  useEffect(() => {
+    if (getOrg?.name) {
+      setOrgName(getOrg.name);
+    } else {
+      setOrgName("");
+    }
+  }, [getOrg]);
 
   useEffect(() => {
     if (getOrg?.image) {
@@ -78,9 +88,27 @@ const Settings: FC<SettingsProps> = ({}) => {
     }
   };
 
+  const handleUpdateOrg = async () => {
+    if (!orgName.trim()) {
+      toast.error("Organization name should not be empty");
+      return;
+    }
+    if (orgName === getOrg?.name) {
+      return;
+    }
+    const payload = {
+      name: orgName,
+    };
+    try {
+      await updateOrg(payload);
+      toast.success("Organization Name updated successfully");
+    } catch (error) {
+      toast.error("Failed to update organization name");
+    }
+  };
   return (
-    <div className="dashboardSetting">
-      <div className="md:container md:mx-auto my-10">
+    <div className="dashboardSetting mt-[110px]">
+      <div className="md:container md:mx-auto mb-10">
         <div className="">
           <p className="md:text-3xl text-2xl font-bold">Settings</p>
           <HiOutlineDotsHorizontal
@@ -101,10 +129,10 @@ const Settings: FC<SettingsProps> = ({}) => {
             />
           </div>
           <div className="w-full md:col-span-10 col-span-12 overflow-y-scroll primaryScroller">
-            <div className="flex flex-col gap-10 pt-16 xl:h-[71vh]  md:h-[60vh] h-[55vh] pr-4">
+            <div className="flex flex-col gap-10 pt-16 xl:h-[65vh]  md:h-[60vh] h-[55vh] pr-4">
               {checkOption === "setting" && (
                 <div>
-                  <form className="mb-10">
+                  <div className="mb-10">
                     <div className="w-full border border-gray-200 py-7 px-6 rounded-lg flex flex-col gap-6">
                       <p className="md:text-2xl text-xl font-semibold">
                         General
@@ -117,12 +145,23 @@ const Settings: FC<SettingsProps> = ({}) => {
                       </div>
                       <div>
                         <p className="text-sm font-medium">Organization Name</p>
-                        <div className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3">
-                          {getOrg ? <p>{getOrg.name}</p> : <Loader />}
-                        </div>
+                        <input
+                          type="text"
+                          value={orgName}
+                          onChange={(e) => setOrgName(e.target.value)}
+                          className="w-full border border-gray-200 px-4 py-3 text-sm text-gray-300 font-medium rounded-md mt-3"
+                        />
+                      </div>
+                      <div className="w-full flex justify-center">
+                        <button
+                          onClick={handleUpdateOrg}
+                          className="border hover:bg-[#18181b] hover:text-white duration-300 transition-colors border-black h-12 px-8 text-sm rounded-full"
+                        >
+                          SAVE CHANGES
+                        </button>
                       </div>
                     </div>
-                  </form>
+                  </div>
                   <div className="sm:flex gap-5">
                     <div>
                       {preview ? (

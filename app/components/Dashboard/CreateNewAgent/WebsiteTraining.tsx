@@ -110,11 +110,11 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <p className="font-bold text-2xl">Websites</p>
+        <p className="font-bold text-[40px]">Websites</p>
         <div className="flex justify-end items-center gap-5">
           <div
             onClick={handleCreateNewInput}
-            className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+            className="w-[50px] h-[50px] bg-black rounded-[5px] flex justify-center items-center text-white text-lg cursor-pointer"
           >
             <FaPlus />
           </div>
@@ -135,20 +135,20 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                     className={`text-sm border rounded-md px-3 py-[6px] focus:outline-none w-full ${
                       webValidations[index]?.webUrl
                         ? "border-red-600"
-                        : "border-[#c4c4c4]"
+                        : "border-[#667085]"
                     }`}
                   />
                 </label>
                 {urlError && <p className="text-xs text-red-500">{urlError}</p>}
               </div>
-              <div className="space-y-4 mt-5">
+              <div className="space-y-4 mt-5 w-[45%]">
                 <div>
-                  <p>Source Name*</p>
+                  <p className="text-sm">Name*</p>
                   <div
                     className={`py-2 px-2 border rounded mt-1 ${
                       webValidations[index]?.sourceName
                         ? "border-red-600"
-                        : "border-[#c4c4c4]"
+                        : "border-[#667085]"
                     }`}
                   >
                     <input
@@ -168,17 +168,17 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
-                    <p className="col-span-5">Context/ clarifications*</p>
-                    <p className="text-xs col-span-7">
+                  {/* <div className="w-full grid grid-cols-12 gap-2 justify-between items-end"> */}
+                  <p className="col-span-5 text-sm">Context / clarifications</p>
+                  {/* <p className="text-xs col-span-7">
                       Provide context to your AI about this data source.
                     </p>
-                  </div>
+                  </div> */}
                   <div
                     className={`py-2 px-2 border rounded mt-1 ${
                       webValidations[index]?.sourceContext
                         ? "border-red-600"
-                        : "border-[#c4c4c4]"
+                        : "border-[#667085]"
                     }`}
                   >
                     <textarea
@@ -198,18 +198,18 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
-                    <p className="col-span-5">Instructions*</p>
-                    <p className="text-xs col-span-7">
+                  {/* <div className="w-full grid grid-cols-12 gap-2 justify-between items-end"> */}
+                  <p className="col-span-5 text-sm">Instructions</p>
+                  {/* <p className="text-xs col-span-7">
                       Provide instructions to your AI about how to use this data
                       source.
                     </p>
-                  </div>
+                  </div> */}
                   <div
                     className={`py-2 px-2 border rounded mt-1 ${
                       webValidations[index]?.sourceInstructions
                         ? "border-red-600"
-                        : "border-[#c4c4c4]"
+                        : "border-[#667085]"
                     }`}
                   >
                     <textarea
@@ -229,14 +229,14 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                   </div>
                 </div>
                 <div>
-                  <div className="w-full grid grid-cols-12 gap-2 justify-between items-end">
-                    <p className="col-span-5">Daily Auto-Updates *</p>
-                    <p className="text-xs col-span-7">
+                  {/* <div className="w-full grid grid-cols-12 gap-2 justify-between items-end"> */}
+                  <p className="col-span-5 text-sm">Daily Auto-Updates *</p>
+                  {/* <p className="text-xs col-span-7">
                       If your data source updates at regular intervals, select
                       the appropriate update frequency to update automatically.
                     </p>
-                  </div>
-                  <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2 mt-1">
+                  </div> */}
+                  <div className="border border-[#667085] rounded py-3 px-4 w-full space-y-2 mt-1">
                     {[
                       "manually",
                       "daily",

@@ -43,7 +43,7 @@ const config: Config = {
         slowPulse: "pulseExpandContract 2s ease-in-out infinite",
       },
       fontFamily: {
-        customAnta: ["Anta"],
+        customQuicksand: ["Quicksand"],
       },
     },
     screens: {

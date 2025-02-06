@@ -70,7 +70,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
               <div className="flex items-center gap-2 relative -top-5 -right-5">
                 <div className="py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] w-fit ">
                   {/* <MarkDown content={message.message} /> */}
-                  <p>{message.message}</p>
+                  <p className="text-[17px]">{message.message}</p>
                 </div>
                 {/* <LiaEditSolid className="text-[#9B9DA6] text-lg cursor-pointer" /> */}
               </div>
@@ -93,7 +93,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
               </div>
               <div className="flex items-center gap-2 relative -top-5 -right-5 ">
                 <div
-                  className={`py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] ${
+                  className={`py-4 px-5 bg-white rounded-lg shadow-md text-[#1E1F22] text-[17px] ${
                     message.message === "loading" ? "w-[50%]" : "w-[98%]"
                   }  `}
                 >

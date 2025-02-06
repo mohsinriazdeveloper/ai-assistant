@@ -130,10 +130,10 @@ const FileInput: FC<FileInputProps> = ({
   return (
     <div>
       <div className="flex justify-between items-center">
-        <p className="font-bold text-2xl">Files</p>
+        <p className="font-bold text-[40px]">Files</p>
         <div
           onClick={handleDivClick}
-          className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+          className="w-[50px] h-[50px] bg-black rounded-[5px] flex justify-center items-center text-white text-lg cursor-pointer"
         >
           <FaPlus />
         </div>
@@ -145,10 +145,10 @@ const FileInput: FC<FileInputProps> = ({
           onDragLeave={handleDragLeave}
           className={`flex mt-3 flex-col items-center justify-center border ${
             isDragging ? "border-blue-400" : "border-gray-200"
-          } px-6 rounded h-[165px] cursor-pointer`}
+          } px-6 rounded h-[170px] cursor-pointer`}
         >
           <div>
-            <Image src={UploadIcon} alt="" className="max-w-4" />
+            <Image src={UploadIcon} alt="" className="max-w-5" />
           </div>
           <input
             type="file"
@@ -161,11 +161,11 @@ const FileInput: FC<FileInputProps> = ({
           />
           <label
             htmlFor="file-upload"
-            className="mt-4 text-xs text-gray-600 cursor-pointer"
+            className="mt-4 text-sm font-medium text-gray-600 cursor-pointer"
           >
             Drag & drop files here, or click to select files
           </label>
-          <p className="mt-2 text-[10px] text-gray-500">
+          <p className="mt-2 text-xs font-medium text-gray-500">
             Supported File Types: .pdf, .docx, .txt
           </p>
           {fileCharLoading && (
@@ -174,7 +174,7 @@ const FileInput: FC<FileInputProps> = ({
             </div>
           )}
           {errorMessage && (
-            <p className="mt-2 text-xs text-red-500">{errorMessage}</p>
+            <p className="mt-2 text-sm text-red-500">{errorMessage}</p>
           )}
         </div>
       </label>

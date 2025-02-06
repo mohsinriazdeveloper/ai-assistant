@@ -2,6 +2,7 @@ import { format } from "date-fns";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { IoMdAdd } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
 import { MdContentCopy } from "react-icons/md";
 import NewChatModal from "../../Dialogues/NewChatModal";
@@ -136,21 +137,43 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   );
 
   return (
-    <div className="text-white pr-5 h-[95vh] flex flex-col justify-between relative z-50">
+    <div className="text-white pr-5 h-full flex flex-col justify-between relative z-50 pt-4">
       <div>
         <HiOutlineDotsHorizontal
           className="text-2xl mb-6 ml-auto cursor-pointer"
           onClick={() => setIsMobile(true)}
         />
-        <div className="flex flex-col gap-[10px] mb-9">
+        <div>
+          <label htmlFor="addImage">
+            <div className="w-[125px] h-[125px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+              {/* <div
+                                  className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
+                                  // style={{ backgroundImage: `url(${preview})` }}
+                                >
+                                  
+                                </div> */}
+
+              <IoMdAdd color="#e5e5e5" />
+
+              <input
+                id="addImage"
+                type="file"
+                className="hidden"
+                accept=".png, .jpeg, .jpg"
+              />
+            </div>
+          </label>
+        </div>
+        {/* <div className="w-[125px] h-[125px] border-[10px] border-[#FF0000] bg-[#D9D9D9]"></div> */}
+        <div className="flex flex-col gap-[10px] mt-[62px] mb-9">
           <div
             onClick={() => setNewChatModal(true)}
-            className="w-full px-[18px] text-sm py-4 border border-white rounded-xl flex justify-between items-center font-semibold cursor-pointer"
+            className="w-full px-[18px] text-sm h-[65px] bg-[#242723] border border-white rounded-[15px] flex justify-between items-center font-semibold cursor-pointer"
           >
             <p>Begin a New Chat</p>
             <GoPlus className="text-xl font-bold" />
           </div>
-          <div className="bg-[#424242] text-[#BBBBBB] rounded-lg flex items-center gap-[10px] py-[10px] px-6">
+          <div className="bg-[#424242] text-[#BBBBBB] rounded-[10px] flex items-center gap-[10px] px-6 h-12">
             <IoSearch />
             <input
               type="text"
@@ -162,13 +185,13 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
           </div>
         </div>
         {filteredItems.length === 0 && (
-          <div className="text-white text-xs mb-5">
+          <div className="text-white text-sm mb-5 pt-2">
             <p className="font-medium">Recent Chats</p>
             <p>No recent chats found.</p>
           </div>
         )}
         <div
-          className={`mt-[18px] 2xl:max-h-[300px] lg:max-h-[250px] tab:max-h-[230px] md:max-h-[200px] max-h-[180px] ${
+          className={`mt-[18px] 2xl:max-h-[280px] lg:max-h-[250px] tab:max-h-[230px] md:max-h-[200px] max-h-[180px] ${
             filteredItems?.length > 4 &&
             "overflow-hidden overflow-y-scroll recentChatScroller"
           } `}

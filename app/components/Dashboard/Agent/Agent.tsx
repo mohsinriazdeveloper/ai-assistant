@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useEffect, useRef, useState } from "react";
-import NavBar from "../../NavBar/NavBar";
+import NavBar from "../../NavBar/NavBar2";
 import { useAppDispatch } from "../../ReduxToolKit/hook";
 import { voiceResponce } from "../../ReduxToolKit/voiceResSlice";
 import AgentChatSideBar from "./AgentChatSideBar";

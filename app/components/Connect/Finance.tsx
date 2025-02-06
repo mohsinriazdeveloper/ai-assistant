@@ -2,8 +2,9 @@ import BankOfCanadaImg from "@/app/assets/Images/bankOfCanada.png";
 import Image from "next/image";
 import { Dispatch, FC, SetStateAction } from "react";
 import toast from "react-hot-toast";
-import { MdCheck } from "react-icons/md";
-import { RiDeleteBin6Line } from "react-icons/ri";
+// import { FaPlus } from "react-icons/fa";
+import { AiOutlinePlus } from "react-icons/ai";
+import { IoCheckmarkOutline } from "react-icons/io5";
 import Loader from "../Loader/Loader";
 import Loader2 from "../Loader/Loader2";
 import {
@@ -52,50 +53,25 @@ const Finance: FC<FinanceProps> = ({
   };
 
   return (
-    <div className="w-full tab:pt-10 pt-5">
-      <p className="tab:text-2xl text-xl font-black">Connetions</p>
+    <div className="w-full tab:pt-14 pt-5 px-9">
+      <p className="tab:text-[40px] text-xl font-black">Connections (API)</p>
       {getDataLoading && <Loader2 />}
-      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 tab:mt-10 mt-5">
+      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 tab:mt-20 mt-5">
         {apiConnectionData?.map((bank, index) => (
           <div
             key={index}
             className="col-span-1 p-6 border-2 border-gray-200 rounded-lg"
           >
-            <div
-              className="w-20 h-auto border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
-              style={{ backgroundImage: `url(${bank.image_url})` }}
-            ></div>
-            <Image src={BankOfCanadaImg} alt="" className="w-20 mb-5" />
-            <p className="font-black tab:text-lg mb-2">{bank.name}</p>
-            <p className="text-sm font-light">{bank.description}</p>
-            <div className="xl:flex lg:block lg:flex-none flex items-center gap-1 mt-8">
-              <div
-                onClick={() => handleConnect(bank.id, bank.is_connected)}
-                className={`cursor-pointer w-full border border-black rounded-md py-1 text-lg hover:bg-black hover:text-white duration-300 transition-colors ${
-                  bank.is_connected && "bg-black text-white"
-                }`}
-              >
-                {connectLoading ? (
-                  <Loader height="7" />
-                ) : (
-                  <>
-                    {bank.is_connected ? (
-                      <div className="grid grid-cols-12 items-center px-3 connectBtn">
-                        <div className="col-span-3">
-                          <div className="text-white text-sm p-1 w-fit rounded-full bg-[#08AD36]">
-                            <MdCheck />
-                          </div>
-                        </div>
-                        <p className="col-span-9">Connected</p>
-                      </div>
-                    ) : (
-                      <p className="text-center">Connect</p>
-                    )}
-                  </>
-                )}
+            <div className="flex justify-between">
+              <div>
+                <div
+                  className="w-24 h-auto border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
+                  style={{ backgroundImage: `url(${bank.image_url})` }}
+                ></div>
+                <Image src={BankOfCanadaImg} alt="" className="w-24 mb-5" />
               </div>
-              {bank.is_connected && (
-                <div className="flex items-center gap-1 xl:mt-0 lg:mt-2 mt-0">
+              <div>
+                {bank.is_connected && (
                   <button
                     onClick={() => {
                       setIsRawData(true);
@@ -105,16 +81,49 @@ const Finance: FC<FinanceProps> = ({
                   >
                     Raw data
                   </button>
-                  <div className="w-5 h-5">
-                    {disconnectLoading ? (
-                      <Loader />
+                )}
+              </div>
+            </div>
+            <p className="font-black tab:text-xl mb-2">{bank.name}</p>
+            <p className="text-[15px] font-light">{bank.description}</p>
+            <div className="xl:flex lg:block lg:flex-none flex items-center gap-1 mt-8">
+              <div
+                onClick={() => handleConnect(bank.id, bank.is_connected)}
+                className={`cursor-pointer `}
+              >
+                {connectLoading ? (
+                  <Loader height="7" />
+                ) : (
+                  <>
+                    {bank.is_connected ? (
+                      <div className="grid grid-cols-12 items-center px-3 connectBtn">
+                        <div className="col-span-3">
+                          <IoCheckmarkOutline className="text-[#08AD36] text-xl" />
+                        </div>
+                        <p className="col-span-9 font-bold">Connected</p>
+                      </div>
                     ) : (
-                      <RiDeleteBin6Line
-                        className="text-base cursor-pointer"
-                        onClick={() => handleDisconnect(bank.id)}
-                      />
+                      <div className="flex items-center gap-3">
+                        <AiOutlinePlus className="text-[#818181]" />
+                        <p className="text-center">Connect</p>
+                      </div>
                     )}
-                  </div>
+                  </>
+                )}
+              </div>
+              {bank.is_connected && (
+                <div className="ml-auto">
+                  {disconnectLoading ? (
+                    <Loader />
+                  ) : (
+                    <div
+                      className="flex items-center gap-1 cursor-pointer"
+                      onClick={() => handleDisconnect(bank.id)}
+                    >
+                      <p className="text-center text-red-500">Disconnect</p>
+                      <AiOutlinePlus className="text-[#818181] rotate-45 text-2xl" />
+                    </div>
+                  )}
                 </div>
               )}
             </div>

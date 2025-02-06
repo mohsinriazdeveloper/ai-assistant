@@ -2,7 +2,7 @@
 import AgentSettings from "@/app/components/AgentSettings/AgentSettings";
 import Background from "@/app/components/Background/Background";
 import SideBar from "@/app/components/LeftBar/SideBar";
-import NavBar from "@/app/components/NavBar/NavBar";
+import NavBar from "@/app/components/NavBar/NavBar2";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
@@ -50,9 +50,9 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "col-span-12" : "col-span-9"
-          } rounded-[20px] bg-white h-full`}
+          }  overflow-hidden bg-black h-full rounded-lg`}
         >
-          <div className="flex items-center pt-5 step-2">
+          <div className="flex items-center step-2">
             {isMobile && (
               <HiOutlineDotsHorizontal
                 className={`text-2xl cursor-pointer ml-3`}
@@ -61,9 +61,10 @@ const Page: FC<PageProps> = ({ params }) => {
             )}
             <NavBar content={navContent.navBar} />
           </div>
-
-          <div className="my-5 px-10 tab:h-[78vh] h-[70vh] overflow-y-scroll primaryScroller mr-2 md:pb-0 pb-5">
-            <AgentSettings agentId={id} checkOption={checkOption} />
+          <div className="h-full bg-white rounded-lg">
+            <div className="h-[82vh] mb-5 px-10 overflow-y-scroll primaryScroller mr-2 md:pb-0 pb-5 pt-5">
+              <AgentSettings agentId={id} checkOption={checkOption} />
+            </div>
           </div>
         </div>
       </div>

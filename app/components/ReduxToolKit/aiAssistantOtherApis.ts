@@ -264,6 +264,16 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    // 27 update organization name
+    updateOrgName: builder.mutation({
+      query: (data) => ({
+        url: `/accounts/org/my/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -374,6 +384,7 @@ export const {
   useDisConnectGraphMutation,
   useResetGraphMutation,
   useCreateResumeMutation,
+  useUpdateOrgNameMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,

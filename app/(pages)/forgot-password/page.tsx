@@ -9,7 +9,7 @@ interface PageProps {}
 const Page: FC<PageProps> = () => {
   return (
     <Background>
-      <div className="w-full h-full flex flex-col justify-center bg-white rounded-[20px]">
+      <div className="w-full h-full flex flex-col justify-center bg-white rounded-lg">
         <div className="pt-10 pl-10 z-50">
           <Link href="/" className="flex items-center cursor-pointer w-fit">
             <IoIosArrowBack className="text-3xl" />

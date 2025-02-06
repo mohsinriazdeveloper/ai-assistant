@@ -81,7 +81,7 @@ const Login: FC<LoginProps> = ({}) => {
   };
 
   return (
-    <div className="py-12 h-full flex flex-col justify-center bg-white rounded-[20px]">
+    <div className="py-12 h-full flex flex-col justify-center bg-white rounded-lg">
       <div className="max-w-[360px] mx-auto">
         <div className="flex justify-center mb-10">
           <div>

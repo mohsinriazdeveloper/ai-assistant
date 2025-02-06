@@ -3,7 +3,7 @@ import Background from "@/app/components/Background/Background";
 import AgentChatSideBar from "@/app/components/Dashboard/Agent/AgentChatSideBar";
 import ChatAgent from "@/app/components/Dashboard/Agent/ChatAgent";
 import VoiceAgent from "@/app/components/Dashboard/Agent/VoiceAgent";
-import NavBar from "@/app/components/NavBar/NavBar";
+import NavBar2 from "@/app/components/NavBar/NavBar2";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import {
   useAppDispatch,
@@ -94,7 +94,7 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "hidden" : "block"
-          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] overflow-y-auto scrollbar-hide z-50`}
+          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] max-h-full z-50`}
         >
           <AgentChatSideBar
             agentId={id}
@@ -106,11 +106,7 @@ const Page: FC<PageProps> = ({ params }) => {
             focusInputById={focusInputById}
           />
         </div>
-        <div
-          className={`${
-            isMobile ? "col-span-12" : "col-span-9"
-          } rounded-[20px] ${IsVoice ? "bg-black" : "bg-white pt-5"} `}
-        >
+        <div className={`${isMobile ? "col-span-12" : "col-span-9"}`}>
           <div className="flex items-center">
             {isMobile && (
               <HiOutlineDotsHorizontal
@@ -120,7 +116,7 @@ const Page: FC<PageProps> = ({ params }) => {
                 onClick={() => setIsMobile(false)}
               />
             )}
-            {!IsVoice && <NavBar content={content.navBar} />}
+            {!IsVoice && <NavBar2 content={content.navBar} />}
           </div>
           {IsVoice ? (
             <VoiceAgent
@@ -129,17 +125,19 @@ const Page: FC<PageProps> = ({ params }) => {
               setIsVoice={setIsVoice}
             />
           ) : (
-            <div className="px-10 py-5">
-              <ChatAgent
-                setIsVoice={setIsVoice}
-                specificChatId={specificChatId}
-                agentId={id}
-                startNewChat={startNewChat}
-                setStartNewChat={setStartNewChat}
-                setSpecificChatId={setSpecificChatId}
-                inputIdRef={inputIdRef}
-                focusInputById={focusInputById}
-              />
+            <div className="bg-[#101010] h-[91.5%]  ">
+              <div className="px-10 bg-white h-full rounded-lg">
+                <ChatAgent
+                  setIsVoice={setIsVoice}
+                  specificChatId={specificChatId}
+                  agentId={id}
+                  startNewChat={startNewChat}
+                  setStartNewChat={setStartNewChat}
+                  setSpecificChatId={setSpecificChatId}
+                  inputIdRef={inputIdRef}
+                  focusInputById={focusInputById}
+                />
+              </div>
             </div>
           )}
         </div>

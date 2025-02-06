@@ -1,7 +1,7 @@
 "use client";
 import Background from "@/app/components/Background/Background";
 import SideBar from "@/app/components/LeftBar/SideBar";
-import NavBar from "@/app/components/NavBar/NavBar";
+import NavBar2 from "@/app/components/NavBar/NavBar2";
 import { useGetUserProfileQuery } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
@@ -46,17 +46,17 @@ const Page: FC<PageProps> = ({ params }) => {
   };
   return (
     <Background>
-      <div className="w-full bg-black rounded-[20px]">
+      <div className="w-full bg-black rounded-lg h-full">
         <TourGuide
           start={startTour}
           setStartTour={setStartTour}
           onTourEnd={handleTourEnd}
         />
-        <div className="tab:grid grid-cols-12 w-full relative">
+        <div className="tab:grid grid-cols-12 w-full relative h-full">
           <div
             className={`${
               isMobile ? "hidden" : "block"
-            } col-span-3 tab:relative absolute h-full tab:w-full sm:w-[40%] w-[50%] tab:pb-0 pb-5 bg-[#101010] overflow-y-auto scrollbar-hide `}
+            } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] tab:pb-0 pb-10 bg-[#101010] overflow-y-auto scrollbar-hide `}
           >
             <SideBar
               agentId={id}
@@ -69,18 +69,22 @@ const Page: FC<PageProps> = ({ params }) => {
           <div
             className={`${
               isMobile ? "col-span-12" : "col-span-9"
-            } rounded-[20px] bg-white h-full`}
+            } rounded-lg overflow-hidden bg-black h-full`}
           >
-            <div className="flex items-center pt-5 step-2 ">
+            <div className="flex items-center step-2 ">
               {isMobile && (
                 <HiOutlineDotsHorizontal
                   className={`text-2xl cursor-pointer ml-3`}
                   onClick={() => setIsMobile(false)}
                 />
               )}
-              <NavBar content={navContent.navBar} />
+              <NavBar2 content={navContent.navBar} />
             </div>
-            <UpdateTraining agentId={id} checkOption={checkOption} />
+            <div className="rounded-lg bg-white h-full">
+              <div className=" bg-white rounded-lg h-[83vh] overflow-hidden overflow-y-auto primaryScroller px-10 mr-2">
+                <UpdateTraining agentId={id} checkOption={checkOption} />
+              </div>
+            </div>
           </div>
         </div>
       </div>

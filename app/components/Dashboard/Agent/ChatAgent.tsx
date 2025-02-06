@@ -1,4 +1,4 @@
-import AiStar from "@/app/assets/Images/aiStar.png";
+import AiStar from "@/app/assets/Images/bigAiStar.png";
 import Image from "next/image";
 import {
   Dispatch,
@@ -169,20 +169,20 @@ const ChatAgent: FC<ChatAgentProps> = ({
   }
 
   return (
-    <div className="tab:h-[78vh] sm:h-[70vh] h-[69vh]  flex flex-col justify-between items-center">
+    <div className="tab:h-[80.5vh] sm:h-[70vh] h-[69vh] flex flex-col justify-between items-center pt-3">
       {startNewChat ? (
         <div className="grow flex flex-col justify-center items-center text-center">
           <Image src={AiStar} alt="" />
-          <p className="text-black md:text-5xl sm:text-4xl text-3xl font-bold">
+          <p className="text-black lg:text-6xl md:text-5xl sm:text-4xl text-3xl font-bold mt-10">
             Your Sources.
           </p>
-          <p className="text-black md:text-5xl sm:text-4xl text-3xl font-bold">
+          <p className="text-black lg:text-6xl md:text-5xl sm:text-4xl text-3xl font-bold">
             Your Ai.
           </p>
-          <p className=" mx-auto mt-3 text-[#767676] leading-4">
-            This AI is connected to your unique data sources and{" "}
+          <p className=" mx-auto mt-16 text-[#767676] text-2xl">
+            This AI is connected to your unique data sources and interact{" "}
             <br className="sm:block hidden" />
-            interact with you according to your instructions and context.
+            with you according to your instructions and context.
           </p>
         </div>
       ) : (
@@ -192,15 +192,15 @@ const ChatAgent: FC<ChatAgentProps> = ({
         onSubmit={handleSendMessage}
         className="w-full flex gap-4 items-center p-[6px] bg-[#FBFBFB] rounded-full"
       >
-        <div className="flex justify-center items-center bg-[#F2F2F2] sm:w-12 w-7 sm:h-12 h-7 sm:min-w-12 min-w-7 sm:min-h-12 min-h-7 rounded-full cursor-not-allowed">
-          <GoPaperclip className="text-black sm:text-2xl text-lg mr-1" />
+        <div className="flex justify-center items-center bg-[#F2F2F2] sm:w-16 w-7 sm:h-16 h-7 sm:min-w-16 min-w-7 sm:min-h-16 min-h-7 rounded-full cursor-not-allowed">
+          <GoPaperclip className="text-black sm:text-3xl text-lg mr-1" />
         </div>
 
         <textarea
           ref={inputIdRef}
           rows={1}
           placeholder="type your prompt here"
-          className="sm:text-lg bg-transparent grow chatInput focus:outline-none recentChatScroller"
+          className="sm:text-xl bg-transparent grow chatInput focus:outline-none recentChatScroller"
           value={textInput}
           onChange={handleTextInputChange}
           onKeyDown={handleKeyDown}
@@ -208,20 +208,20 @@ const ChatAgent: FC<ChatAgentProps> = ({
         />
         <div className="sm:min-w-6 min-w-4">
           <FaMicrophone
-            className="text-black sm:text-2xl text-lg cursor-pointer"
+            className="text-black sm:text-3xl text-lg cursor-pointer"
             onClick={() => setIsVoice(true)}
           />
         </div>
         <button
           type="submit"
           disabled={textInput.trim() === "" || loading}
-          className={`flex justify-center items-center bg-white sm:w-12 w-7 sm:h-12 h-7 sm:min-w-12 min-w-7 sm:min-h-12 min-h-7 rounded-full border border-black ${
+          className={`flex justify-center items-center bg-white sm:w-16 w-7 sm:h-16 h-7 sm:min-w-16 min-w-7 sm:min-h-16 min-h-7 rounded-full border border-black ${
             textInput.trim() === "" || loading
               ? "cursor-not-allowed"
               : "cursor-pointer"
           }`}
         >
-          <HiArrowRight className="text-black sm:text-2xl text-lg" />
+          <HiArrowRight className="text-black sm:text-3xl text-lg" />
         </button>
       </form>
     </div>

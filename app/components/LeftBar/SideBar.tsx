@@ -3,6 +3,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { IoMdAdd } from "react-icons/io";
 import { MdContentCopy } from "react-icons/md";
 import Loader from "../Loader/Loader";
 import RangeBar from "../RangeBar/RangeBar";
@@ -106,9 +107,11 @@ const SideBar: FC<SideBarProps> = ({
     second: "2-digit",
   });
   return (
-    <div className=" text-white pr-5 h-full flex flex-col justify-between relative z-50">
-      <div className="h-full space-y-6">
-        <div>
+    <div
+      className={` text-white pr-5 h-full flex flex-col justify-between relative z-50 pt-4`}
+    >
+      <div className="h-full">
+        <div className="mb-6">
           <HiOutlineDotsHorizontal
             className={`text-2xl cursor-pointer text-white ml-auto`}
             onClick={() => setIsMobile(true)}
@@ -117,7 +120,29 @@ const SideBar: FC<SideBarProps> = ({
             <Image src={MhsLogo} alt="" className="max-w-[170px] h-auto mt-4" />
           )}
         </div>
-        <div className="">
+        <div>
+          <label htmlFor="addImage">
+            <div className="w-[125px] h-[125px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+              {/* <div
+                          className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
+                          // style={{ backgroundImage: `url(${preview})` }}
+                        >
+                          
+                        </div> */}
+
+              <IoMdAdd color="#e5e5e5" />
+
+              <input
+                id="addImage"
+                type="file"
+                className="hidden"
+                accept=".png, .jpeg, .jpg"
+              />
+            </div>
+          </label>
+        </div>
+        {/* <div className="w-[125px] h-[125px] border-[10px] border-[#FF0000] bg-[#D9D9D9]"></div> */}
+        <div className="mt-[58px]">
           <div>
             <p className="text-white font-medium mb-5">{tab.heading}</p>
             <div id="step-1" className="w-full space-y-1 mb-10">

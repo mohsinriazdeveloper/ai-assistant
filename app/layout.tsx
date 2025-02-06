@@ -23,9 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={notoSans.className}>
+    <html lang="en">
       {/* <body className={inter.className}> */}
-      <body>
+      <body className="font-customQuicksand">
         <Toaster position="top-right" reverseOrder={false} />
         <Providers>{children}</Providers>
       </body>

@@ -1,7 +1,7 @@
 "use client";
 import { FC, useState } from "react";
 import Background from "../../Background/Background";
-import NavBar from "../../NavBar/NavBar";
+import NavBar1 from "../../NavBar/NavBar1";
 import NewAgent from "../../NewAgent/NewAgent";
 import { selectCreateAgent } from "../../ReduxToolKit/createAgentSlice";
 import { useAppSelector } from "../../ReduxToolKit/hook";
@@ -23,14 +23,10 @@ const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
   console.log(createAgentStatus);
   return (
     <Background>
-      <div className="py-8 px-5 bg-white rounded-[20px] h-full">
+      <div className="py-[51px] px-5 bg-white rounded-lg h-full">
         <div className="w-full mb-20">
-          <div className="w-full fixed">
-            <NavBar
-              content={navBarContent}
-              // setCreateAgent={setCreateAgent}
-              // createAgent={createAgent}
-            />
+          <div className="w-[80%] fixed">
+            <NavBar1 />
           </div>
         </div>
         {createAgentStatus ? (
