@@ -104,7 +104,7 @@ const ChatSessions: FC<ChatSessionsProps> = ({
               />
             ) : (
               <div className="flex-1 mx-4 overflow-hidden text-fade">
-                <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] text-sm font-medium">
+                <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px] text-[15px] font-medium">
                   {chat.title}
                 </p>
               </div>

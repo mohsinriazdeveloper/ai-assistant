@@ -110,7 +110,7 @@ const Settings: FC<SettingsProps> = ({}) => {
     <div className="dashboardSetting mt-[110px]">
       <div className="md:container md:mx-auto mb-10">
         <div className="">
-          <p className="md:text-3xl text-2xl font-bold">Settings</p>
+          <p className="md:text-3xl text-2xl font-bold">Account Settings</p>
           <HiOutlineDotsHorizontal
             className={`text-2xl cursor-pointer md:hidden block`}
             onClick={() => setShowSideBar(!showSideBar)}

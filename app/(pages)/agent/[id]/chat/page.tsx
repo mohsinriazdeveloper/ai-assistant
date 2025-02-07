@@ -12,9 +12,8 @@ import {
 import { voiceResponce } from "@/app/components/ReduxToolKit/voiceResSlice";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { LuChevronRight } from "react-icons/lu";
 import { getContent } from "../content";
-
 interface PageProps {
   params: { id: number };
 }
@@ -109,10 +108,8 @@ const Page: FC<PageProps> = ({ params }) => {
         <div className={`${isMobile ? "col-span-12" : "col-span-9"}`}>
           <div className="flex items-center">
             {isMobile && (
-              <HiOutlineDotsHorizontal
-                className={`text-2xl cursor-pointer ml-3 ${
-                  IsVoice && "text-white"
-                }`}
+              <LuChevronRight
+                className={`text-3xl cursor-pointer ml-3 mb-4 text-white`}
                 onClick={() => setIsMobile(false)}
               />
             )}

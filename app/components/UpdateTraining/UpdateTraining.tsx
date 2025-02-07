@@ -519,6 +519,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           setWebChar={setWebsiteChar}
                           setFileChar={setFileChar}
                           setImgChar={setImgChar}
+                          updatedDate={item.updated_at}
                         />
                       </div>
                     ))}
@@ -586,6 +587,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           setWebChar={setWebsiteChar}
                           setFileChar={setFileChar}
                           setImgChar={setImgChar}
+                          updatedDate={item.updated_at}
                         />
                       </div>
                     ))}
@@ -595,7 +597,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
             )}
             {checkOption === "text" && (
               <div className="">
-                <p className="font-bold text-2xl ">Text</p>
+                <p className="font-bold text-[40px] ">Text</p>
                 <div className="w-full mt-5 mb-2">
                   <textarea
                     className="focus:outline-none border border-gray-200 rounded-md w-full text-sm text-gray-700 px-3 py-2"
@@ -645,6 +647,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
                           setImgChar={setImgChar}
                           website_url={item.website_url}
                           website_auto_update={item.website_auto_update}
+                          updatedDate={item.updated_at}
                         />
                       </div>
                     ))}

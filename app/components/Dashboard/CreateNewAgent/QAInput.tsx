@@ -96,7 +96,7 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList }) => {
   return (
     <div className="w-full">
       <div className="flex justify-between items-center">
-        <p className="font-bold text-2xl">Q&A</p>
+        <p className="font-bold text-[40px]">Q&A</p>
         <div className="flex justify-end items-center gap-4">
           {qaList.length > 0 && (
             <p

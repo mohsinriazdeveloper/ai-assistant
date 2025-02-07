@@ -1,4 +1,3 @@
-import dummyImg from "@/app/assets/Images/chatImgPerson.png";
 import { FC, useEffect, useRef, useState } from "react";
 import { MdContentCopy } from "react-icons/md";
 import MarkDown from "../../MarkDown/MarkDown";
@@ -54,7 +53,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
               <div className="flex gap-2 items-start">
                 <div
                   className="w-8 h-9 rounded-lg bg-no-repeat bg-center bg-cover relative z-10"
-                  style={{ backgroundImage: `url(${dummyImg.src})` }}
+                  // style={{ backgroundImage: `url(${dummyImg.src})` }}
                 ></div>
                 <div className="flex items-center gap-2 text-[#1E1F22]">
                   <p className="text-xs font-semibold ">You</p>

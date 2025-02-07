@@ -97,7 +97,7 @@ const Aggregator: FC<AggregatorProps> = ({
           !resumeData2.length && "h-[70vh]"
         }`}
       >
-        <div className="h-4 w-full bg-[#0C61B6]"></div>
+        <div className="h-4 w-full bg-[#751A1A]"></div>
         <HiOutlineDotsHorizontal
           className={`text-2xl cursor-pointer rotate-90 ml-auto`}
           onClick={() => setDropDown2(!dropDown2)}

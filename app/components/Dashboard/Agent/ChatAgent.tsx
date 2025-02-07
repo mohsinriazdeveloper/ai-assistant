@@ -179,7 +179,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
           <p className="text-black lg:text-6xl md:text-5xl sm:text-4xl text-3xl font-bold">
             Your Ai.
           </p>
-          <p className=" mx-auto mt-16 text-[#767676] text-2xl">
+          <p className=" mx-auto mt-[29px] text-[#767676] text-[25px]">
             This AI is connected to your unique data sources and interact{" "}
             <br className="sm:block hidden" />
             with you according to your instructions and context.

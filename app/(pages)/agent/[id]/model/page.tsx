@@ -7,9 +7,8 @@ import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { LuChevronRight } from "react-icons/lu";
 import { getContent, sideBarOptions } from "../content";
-
 interface PageProps {
   params: { id: number };
 }
@@ -50,12 +49,12 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "col-span-12" : "col-span-9"
-          }  overflow-hidden bg-black h-full rounded-lg`}
+          }  overflow-hidden bg-[#101010] h-full rounded-lg`}
         >
           <div className="flex items-center step-2">
             {isMobile && (
-              <HiOutlineDotsHorizontal
-                className={`text-2xl cursor-pointer ml-3`}
+              <LuChevronRight
+                className={`text-3xl cursor-pointer ml-3 mb-4 text-white`}
                 onClick={() => setIsMobile(false)}
               />
             )}

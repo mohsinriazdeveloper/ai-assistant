@@ -82,12 +82,12 @@ const Agents: FC<AgentsProps> = () => {
                 <div key={index} className="col-span-1 cursor-pointer mb-4">
                   <div onClick={() => hanldeChat(agent.id)}>
                     {loadingAgent === agent.id ? (
-                      <div className="bg-no-repeat bg-cover bg-center tab:h-[237px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb] flex justify-center items-center">
+                      <div className="bg-no-repeat bg-cover bg-center w-[245px] tab:h-[237px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb] flex justify-center items-center">
                         <Loader2 />
                       </div>
                     ) : (
                       <div
-                        className="bg-no-repeat bg-cover bg-center tab:h-[237px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb]"
+                        className="bg-no-repeat bg-cover bg-center w-[245px] tab:h-[237px] sm:h-[180px] h-[150px] sm:mb-6 mb-3 rounded-lg border border-[#bbbbbb]"
                         style={{
                           backgroundImage: `url(${
                             agent.image_url || AiImg.src

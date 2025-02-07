@@ -11,7 +11,7 @@ export const getContent = (id: number | undefined) => ({
       url: `/agent/${id}/sources`,
     },
     { id: 5, title: "Connections", url: `/agent/${id}/connections` },
-    { id: 6, title: "Model", url: `/agent/${id}/model` },
+    { id: 6, title: "Agent Settings", url: `/agent/${id}/model` },
     { id: 7, title: "Tools", url: `/agent/${id}/tools` },
   ],
 });

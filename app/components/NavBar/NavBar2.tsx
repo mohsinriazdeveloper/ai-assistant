@@ -85,10 +85,10 @@ const NavBar2: FC<NavBar2Props> = ({ content }) => {
           <div
             key={index}
             onClick={() => handleRedirect(item.url, item.id)}
-            className={` text-2xl border-b-4 pb-1 cursor-pointer ${
+            className={`border-b-4 pb-1 cursor-pointer ${
               currentRoute === item.url
-                ? "text-white border-white font-bold"
-                : "text-[#B6B6B6] border-[#101010] hover:border-[#B6B6B6]"
+                ? "text-white border-white font-bold text-2xl"
+                : "text-[#B6B6B6] border-[#101010] hover:border-[#B6B6B6] text-xl"
             }`}
           >
             {item.title}
@@ -109,7 +109,10 @@ const NavBar2: FC<NavBar2Props> = ({ content }) => {
         >
           <Image src={ProfileIcon} alt="" />
         </Link>
-        <p onClick={handleSignOut} className="cursor-pointer text-[#B6B6B6]">
+        <p
+          onClick={handleSignOut}
+          className="cursor-pointer text-[#B6B6B6] text-[15px]"
+        >
           Log Out
         </p>
       </div>

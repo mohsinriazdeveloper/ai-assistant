@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { LiaGlobeAmericasSolid } from "react-icons/lia";
 import { setAgentName } from "../ReduxToolKit/agentNameSlice";
 import { useLazyGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import { userLoginSuccess, userLogoutSuccess } from "../ReduxToolKit/authSlice";
@@ -75,34 +76,59 @@ const NavBar1: FC<NavBar1Props> = () => {
   };
   return (
     <div className="flex justify-end items-center gap-3">
-      {!createAgentStatus && (
-        <div
-          onClick={() => {
-            dispatch(
-              setCreateAgent({ createAgentStatus: true }),
-              setAgentName({
-                agentName: "",
-              })
-            );
-            route.push(
-              `${
-                currentRoute === "/dashboard/settings"
-                  ? "/dashboard/agents"
-                  : "/dashboard/agents"
-              }`
-            );
-          }}
-          className="rounded-full flex justify-center items-center w-[160px] h-[50px] bg-[#201f1f] text-[#c0d1f4] text-[13px] font-bold cursor-pointer"
+      {allAgents && (
+        <>
+          {allAgents.length !== 0 && (
+            <>
+              {currentRoute === "/dashboard/agents" && (
+                <>
+                  {!createAgentStatus ? (
+                    <div
+                      onClick={() => {
+                        dispatch(
+                          setCreateAgent({ createAgentStatus: true }),
+                          setAgentName({
+                            agentName: "",
+                          })
+                        );
+                      }}
+                      className="rounded-full flex justify-center items-center w-[160px] h-[50px] bg-[#201f1f] text-[#c0d1f4] text-[13px] font-bold cursor-pointer"
+                    >
+                      <p>+ Create New Agent</p>
+                    </div>
+                  ) : (
+                    <div
+                      onClick={() => {
+                        dispatch(
+                          setCreateAgent({ createAgentStatus: false }),
+                          setAgentName({
+                            agentName: "",
+                          })
+                        );
+                      }}
+                      className="rounded-full flex justify-center items-center gap-2 w-[160px] h-[50px] bg-[#201f1f] text-[#c0d1f4] text-[13px] font-bold cursor-pointer"
+                    >
+                      <LiaGlobeAmericasSolid className="text-2xl" />
+                      <p>My Ai Agents</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </>
+      )}
+      {currentRoute === "/dashboard/settings" && (
+        <Link
+          href="/dashboard/agents"
+          className="rounded-full flex justify-center items-center gap-2 w-[160px] h-[50px] bg-[#201f1f] text-[#c0d1f4] text-[13px] font-bold cursor-pointer"
         >
-          <p>+ Create New Agent</p>
-        </div>
+          <LiaGlobeAmericasSolid className="text-2xl" />
+          <p>My Ai Agents</p>
+        </Link>
       )}
       <Link
-        href={
-          currentRoute === "/dashboard/agents"
-            ? "/dashboard/settings"
-            : "/dashboard/agents"
-        }
+        href="/dashboard/settings"
         onClick={() =>
           dispatch(
             setCreateAgent({ createAgentStatus: false }),
@@ -116,7 +142,7 @@ const NavBar1: FC<NavBar1Props> = () => {
         <Image src={ProfileIcon} alt="" />
       </Link>
 
-      <p onClick={handleSignOut} className="cursor-pointer">
+      <p onClick={handleSignOut} className="cursor-pointer text-[15px]">
         Log Out
       </p>
     </div>

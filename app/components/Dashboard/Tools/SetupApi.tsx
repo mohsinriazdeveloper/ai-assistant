@@ -24,7 +24,12 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
     useConnectGraphMutation();
   const [sourceDropDown, setSourceDropDown] = useState<boolean>(false);
   const [dropDownValue, setDropDownValue] = useState<string>("");
-  const [graphData, setGraphData] = useState<GraphData | null>(null);
+  const [graphData, setGraphData] = useState<GraphData | null>({
+    id: null,
+    name: "",
+    auto_call: "manually",
+  });
+
   const [nameError, setNameError] = useState<string>("");
   const [autoCallError, setAutoCallError] = useState<string>("");
   const [apiError, setApiError] = useState<string>("");
@@ -80,11 +85,11 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
         <IoIosArrowBack className="text-3xl" />
         <p className="font-bold">Back</p>
       </div>
-      <div className="mt-7 border border-[#686868] tab:w-[70%] md:w-[90%] w-[100%] py-5 px-4 space-y-4">
+      <div className="mt-7 w-full py-5 px-4 space-y-4 bg-[#FAFAFA]">
         <p>Graph Name</p>
         <div>
           <input
-            className="focus:outline-none w-[80%] rounded py-3 px-4 border border-[#c3c3c3]"
+            className="focus:outline-none w-[551px] rounded py-3 px-4 bg-white border border-[#c4c4c4]"
             type="text"
             value={graphData?.name}
             onChange={(e) => {
@@ -101,10 +106,10 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
           />
           {nameError && <p className="text-xs text-red-600">{nameError}</p>}{" "}
         </div>
-        <div className=" w-[60%] relative">
+        <div className=" w-[442px] relative">
           <div
             onClick={() => setSourceDropDown(!sourceDropDown)}
-            className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer"
+            className=" bg-white border border-[#b8b8b8] rounded-full py-2 px-4 flex justify-between items-center font-medium cursor-pointer"
           >
             <p>
               {dropDownValue ? (
@@ -117,7 +122,7 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
           </div>
           {apiError && <p className="text-xs text-red-600">{apiError}</p>}
           {sourceDropDown && (
-            <div className="w-full absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700">
+            <div className="w-full absolute bg-white border border-[#b8b8b8] rounded-md p-1 mt-1 text-sm text-gray-700">
               {getGraphs?.map((item, index) => (
                 <p
                   key={index}
@@ -130,9 +135,9 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
             </div>
           )}
         </div>
-        <div className="pt-3">
+        <div className="pt-3 w-[733px]">
           <p>Auto Call</p>
-          <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full flex justify-between items-center gap-3 flex-wrap">
+          <div className=" bg-white mt-2 h-[64px] border border-[#c4c4c4] rounded py-3 px-4 w-full flex justify-between items-center gap-3 flex-wrap">
             {["manually", "daily", "weekly", "monthly", "quarterly"].map(
               (option) => (
                 <div
@@ -162,14 +167,14 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
             <p className="text-xs text-red-600">{autoCallError}</p>
           )}{" "}
         </div>
-        <div className="flex justify-end items-end gap-3 pt-7">
+        <div className="flex justify-center items-end gap-3 pt-7">
           {/* <button className="py-1 px-4 border border-[#2563DC] text-[#595959] bg-white font-medium rounded-md text-[10px] w-max">
             Raw data
           </button> */}
           <button
             onClick={handleSetupGraph}
             disabled={connectionLoading}
-            className={`py-3 px-8 hover:bg-[#078fffc3] bg-[#0790FF] text-white font-medium rounded-lg text-sm duration-300 transition-colors ${
+            className={`w-[143px] h-[39px] flex justify-center items-center shadow-lg py-3 px-8 hover:bg-[#078fffc3] bg-[#0790FF] text-white font-bold rounded-[15px] duration-300 transition-colors ${
               connectionLoading && "cursor-wait"
             }`}
           >

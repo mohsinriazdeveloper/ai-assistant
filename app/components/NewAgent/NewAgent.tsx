@@ -71,15 +71,15 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
         <Image src={AiStar} alt="" className="md:w-[69px] w-[50px]" />
         <p className="md:text-3xl text-2xl font-extrabold">Enter Agent Name</p>
       </div>
-      <div className="pl-2">
-        <p className="text-[#8692A6] sm:text-lg md:mb-6 mb-3">
+      <div className="">
+        <p className="text-[#53627a] sm:text-lg md:mb-6 mb-3">
           Start building your first AI agents with your own unique data sources.
         </p>
         <form onSubmit={handleRedirectNewAgent}>
           <p className="text-[#696F79] font-medium md:mb-3 mb-1">
             Give your AI agent a Name
           </p>
-          <div className="py-5 px-7 rounded-md border border-[#1565D8] bg-white  shadow-lg">
+          <div className="flex items-center h-[64px] px-7 rounded-md border border-[#1565D8] bg-white shadow-lg">
             <input
               type="text"
               ref={inputRef}
@@ -97,7 +97,7 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
             disabled={loading}
             className={`${
               loading && "cursor-not-allowed"
-            } h-[65px] mt-[93px] w-full hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md`}
+            } h-[64px] mt-[27px] w-full hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md`}
           >
             {loading ? <Loader /> : "Create my agent"}
           </button>

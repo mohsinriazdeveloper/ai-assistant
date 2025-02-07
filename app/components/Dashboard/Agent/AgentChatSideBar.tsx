@@ -1,9 +1,9 @@
 import { format } from "date-fns";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { IoMdAdd } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
+import { LuChevronRight } from "react-icons/lu";
 import { MdContentCopy } from "react-icons/md";
 import NewChatModal from "../../Dialogues/NewChatModal";
 import Loader from "../../Loader/Loader";
@@ -137,24 +137,12 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   );
 
   return (
-    <div className="text-white pr-5 h-full flex flex-col justify-between relative z-50 pt-4">
+    <div className="text-white pr-5 h-full flex flex-col justify-between relative z-50">
       <div>
-        <HiOutlineDotsHorizontal
-          className="text-2xl mb-6 ml-auto cursor-pointer"
-          onClick={() => setIsMobile(true)}
-        />
-        <div>
+        <div className="flex justify-between">
           <label htmlFor="addImage">
-            <div className="w-[125px] h-[125px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-              {/* <div
-                                  className="w-full h-full bg-center bg-cover bg-no-repeat flex justify-center items-center"
-                                  // style={{ backgroundImage: `url(${preview})` }}
-                                >
-                                  
-                                </div> */}
-
+            <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
               <IoMdAdd color="#e5e5e5" />
-
               <input
                 id="addImage"
                 type="file"
@@ -163,9 +151,15 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
               />
             </div>
           </label>
+          <div className=" pt-4">
+            <LuChevronRight
+              className="text-3xl mb-6 ml-auto cursor-pointer rotate-180"
+              onClick={() => setIsMobile(true)}
+            />
+          </div>
         </div>
         {/* <div className="w-[125px] h-[125px] border-[10px] border-[#FF0000] bg-[#D9D9D9]"></div> */}
-        <div className="flex flex-col gap-[10px] mt-[62px] mb-9">
+        <div className="flex flex-col gap-[10px] mt-[134px] mb-9">
           <div
             onClick={() => setNewChatModal(true)}
             className="w-full px-[18px] text-sm h-[65px] bg-[#242723] border border-white rounded-[15px] flex justify-between items-center font-semibold cursor-pointer"
@@ -191,14 +185,14 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
           </div>
         )}
         <div
-          className={`mt-[18px] 2xl:max-h-[280px] lg:max-h-[250px] tab:max-h-[230px] md:max-h-[200px] max-h-[180px] ${
-            filteredItems?.length > 4 &&
+          className={`mt-[18px] 2xl:max-h-[200px] lg:max-h-[250px] tab:max-h-[230px] md:max-h-[200px] max-h-[180px] ${
+            filteredItems?.length > 3 &&
             "overflow-hidden overflow-y-scroll recentChatScroller"
           } `}
         >
           {todayChats.length > 0 && (
             <div className="text-white text-xs">
-              <p className="font-medium mb-3">Today</p>
+              <p className="font-medium mb-3">Recent Chats</p>
               <ChatSessions
                 session={todayChats}
                 setSpecificChatId={setSpecificChatId}
@@ -225,7 +219,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
         </div>
       </div>
       <div className="h-full flex items-end">
-        <div className="border-t border-[#808080] pt-5 text-xs text-[#9A9A9A] w-full">
+        <div className="border-t border-[#808080] pt-5 text-[13px] text-[#9A9A9A] w-full">
           <div className="grid grid-cols-12 mb-3 gap-2">
             <div className="col-span-8">
               <p className="text-white font-medium">Agent ID:</p>

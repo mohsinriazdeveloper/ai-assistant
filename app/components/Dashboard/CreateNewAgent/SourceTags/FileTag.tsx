@@ -121,7 +121,7 @@ const FileTag: FC<FileTagProps> = ({
               <>{fileName}</>
             )}
           </p>
-          <div className="space-y-4 w-[45%]">
+          <div className="space-y-4 w-[343px]">
             <div className="">
               <p className="text-sm">Name*</p>
               <div
@@ -148,9 +148,7 @@ const FileTag: FC<FileTagProps> = ({
               </div> */}
 
               <div
-                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1 ${
-                  validations[index]?.sourceContext && "border-red-600"
-                }`}
+                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1`}
               >
                 <textarea
                   rows={2}
@@ -171,9 +169,7 @@ const FileTag: FC<FileTagProps> = ({
               </div> */}
 
               <div
-                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1 ${
-                  validations[index]?.sourceInstructions && "border-red-600"
-                }`}
+                className={`py-2 px-2 h-[80px] border border-[#667085] rounded-lg mt-1`}
               >
                 <textarea
                   rows={2}

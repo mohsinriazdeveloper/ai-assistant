@@ -9,9 +9,8 @@ import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { LuChevronRight } from "react-icons/lu";
 import { getContent, sideBarOptions } from "../content";
-// connections page
 interface PageProps {
   params: { id: number };
 }
@@ -56,19 +55,19 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "col-span-12" : "col-span-9"
-          } rounded-lg overflow-hidden bg-black h-full`}
+          } rounded-lg overflow-hidden bg-[#101010] h-full`}
         >
           <div className="flex items-center">
             {isMobile && (
-              <HiOutlineDotsHorizontal
-                className={`text-2xl cursor-pointer ml-3`}
+              <LuChevronRight
+                className={`text-3xl cursor-pointer ml-3 mb-4 text-white`}
                 onClick={() => setIsMobile(false)}
               />
             )}
             <NavBar content={content.navBar} />
           </div>
 
-          <div className="rounded-lg bg-white h-full">
+          <div className="rounded-lg bg-white h-full tab:pt-14">
             {checkOption === "finance" && (
               <>
                 {isRawData ? (

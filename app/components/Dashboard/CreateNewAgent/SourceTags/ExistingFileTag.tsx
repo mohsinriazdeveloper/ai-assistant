@@ -1,10 +1,10 @@
 import Loader from "@/app/components/Loader/Loader";
 import { useDeleteFileMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
+import { format } from "date-fns";
 import Link from "next/link";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { RiDeleteBinLine } from "react-icons/ri";
-
 interface ExistingFileTagProps {
   id: number;
   fileName?: string;
@@ -18,6 +18,7 @@ interface ExistingFileTagProps {
   setFileChar: Dispatch<SetStateAction<number>>;
   setImgChar: Dispatch<SetStateAction<number>>;
   setUploadFlag: Dispatch<SetStateAction<boolean>>;
+  updatedDate: string;
 }
 
 const ExistingFileTag: FC<ExistingFileTagProps> = ({
@@ -33,6 +34,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   setFileChar,
   setImgChar,
   setUploadFlag,
+  updatedDate,
 }) => {
   const [delExistingFile, { isLoading: deleteLoading }] =
     useDeleteFileMutation();
@@ -68,6 +70,11 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   const handleOpenFile = (url: string | undefined) => {
     window.open(url, "_blank");
   };
+  console.log(updatedDate);
+
+  const formatUpdatedDate = (updatedDate: string) => {
+    return format(new Date(updatedDate), "MMM.dd, yyyy"); // "Aug.20, 2024"
+  };
 
   return (
     <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-4">
@@ -98,7 +105,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
               )}
             </Link>
           )}
-          <div className="space-y-4 mt-5 w-[45%]">
+          <div className="space-y-4 mt-5 w-[343px]">
             {sourceName && (
               <div className="">
                 <p className="text-sm">Name</p>
@@ -144,10 +151,11 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
           <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg px-3 py-1">
             Success
           </button>
-
-          {/* <p className="text-end text-[10px] font-semibold">
-            Jan 2024 - Aug 2024
-          </p> */}
+          {updatedDate && (
+            <p className="mt-2 text-[10px] font-bold">
+              {formatUpdatedDate(updatedDate)}
+            </p>
+          )}
         </div>
       </div>
       <div className="flex justify-end items-end gap-3 mt-8">

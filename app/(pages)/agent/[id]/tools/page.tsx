@@ -13,7 +13,7 @@ import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { LuChevronRight } from "react-icons/lu";
 import { getContent, sideBarOptions } from "../content";
 
 export type SectionData = {
@@ -212,12 +212,12 @@ const Page: FC<PageProps> = ({ params }) => {
         <div
           className={`${
             isMobile ? "col-span-12" : "col-span-9"
-          } rounded-lg bg-black overflow-hidden h-full`}
+          } rounded-lg bg-[#101010] overflow-hidden h-full`}
         >
           <div className="flex items-center step-2">
             {isMobile && (
-              <HiOutlineDotsHorizontal
-                className={`text-2xl cursor-pointer ml-3`}
+              <LuChevronRight
+                className={`text-3xl cursor-pointer ml-3 mb-4 text-white`}
                 onClick={() => setIsMobile(false)}
               />
             )}
@@ -225,7 +225,7 @@ const Page: FC<PageProps> = ({ params }) => {
           </div>
           <div className="h-full bg-white rounded-lg">
             <div
-              className={`mb-5 px-10 h-[82vh] ${
+              className={`mb-5 px-10 h-[82vh] pt-11 ${
                 !createResumeLoading &&
                 " overflow-y-scroll primaryScroller mr-2"
               }`}

@@ -161,7 +161,7 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="h-[76vh]">
       {currentRoute.includes("connections") ? (
         <div
           className="flex items-center cursor-pointer w-fit"

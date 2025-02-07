@@ -53,14 +53,15 @@ const Finance: FC<FinanceProps> = ({
   };
 
   return (
-    <div className="w-full tab:pt-14 pt-5 px-9">
+    <div className="w-full pt-5 px-9">
       <p className="tab:text-[40px] text-xl font-black">Connections (API)</p>
       {getDataLoading && <Loader2 />}
-      <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 tab:mt-20 mt-5">
+      {/* <div className="grid lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 tab:mt-20 mt-5"> */}
+      <div className=" tab:mt-20 mt-5">
         {apiConnectionData?.map((bank, index) => (
           <div
             key={index}
-            className="col-span-1 p-6 border-2 border-gray-200 rounded-lg"
+            className="col-span-1 w-[364px] h-[331px] p-6 border-2 border-gray-200 rounded-lg"
           >
             <div className="flex justify-between">
               <div>

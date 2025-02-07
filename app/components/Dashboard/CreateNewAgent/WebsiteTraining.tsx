@@ -175,11 +175,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                     </p>
                   </div> */}
                   <div
-                    className={`py-2 px-2 border rounded mt-1 ${
-                      webValidations[index]?.sourceContext
-                        ? "border-red-600"
-                        : "border-[#667085]"
-                    }`}
+                    className={`py-2 px-2 border rounded mt-1 border-[#667085]`}
                   >
                     <textarea
                       rows={2}
@@ -206,11 +202,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                     </p>
                   </div> */}
                   <div
-                    className={`py-2 px-2 border rounded mt-1 ${
-                      webValidations[index]?.sourceInstructions
-                        ? "border-red-600"
-                        : "border-[#667085]"
-                    }`}
+                    className={`py-2 px-2 border rounded mt-1 border-[#667085] `}
                   >
                     <textarea
                       rows={2}

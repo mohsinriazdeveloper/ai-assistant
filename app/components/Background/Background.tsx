@@ -11,7 +11,9 @@ const Background: FC<BackgroundProps> = ({ children }) => {
   return (
     <div
       className={`bg-[#101010] h-screen fixed w-full ${
-        currentRoute.includes("/dashboard/") ? "p-10" : "pt-8 pb-10 px-10"
+        currentRoute.includes("/dashboard/")
+          ? "py-8 px-[26px]"
+          : "pt-8 pb-8 px-[26px]"
       }`}
     >
       <div className="w-full h-full rounded-lg overflow-hidden">{children}</div>
