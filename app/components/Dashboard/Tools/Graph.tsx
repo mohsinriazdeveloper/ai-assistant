@@ -170,7 +170,7 @@ const Graph: FC<GraphProps> = ({
 
   return (
     <div className="text-xs responsiveGraph">
-      <ResponsiveContainer width="100%" height={350}>
+      {/* <ResponsiveContainer width="100%" height={350}>
         <AreaChart
           data={data}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
@@ -190,6 +190,42 @@ const Graph: FC<GraphProps> = ({
             stroke="#8884d8"
             fillOpacity={0.3}
             fill="#8884d8"
+          />
+        </AreaChart>
+      </ResponsiveContainer> */}
+      <ResponsiveContainer width="100%" height={350}>
+        <AreaChart
+          data={data}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+        >
+          {/* Grid Styling */}
+          <CartesianGrid
+            vertical={true}
+            horizontal={false}
+            // strokeDasharray="2 0"
+            stroke="#e0e0e0"
+          />
+
+          {/* Axes */}
+          <XAxis dataKey="name" interval={Math.ceil(data.length / 10)} />
+          <YAxis />
+          <Tooltip />
+
+          {/* Gradient Definition */}
+          <defs>
+            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#b7b7b7" stopOpacity={0.8} />
+              <stop offset="100%" stopColor="#b7b7b7" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+
+          {/* Area with Stroke & Gradient Fill */}
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke="#007bff"
+            strokeWidth={2}
+            fill="url(#colorValue)"
           />
         </AreaChart>
       </ResponsiveContainer>
