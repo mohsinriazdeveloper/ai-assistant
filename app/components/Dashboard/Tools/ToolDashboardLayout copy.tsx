@@ -9,7 +9,6 @@ import {
   useResetGraphMutation,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { ApiConnection } from "../../ReduxToolKit/types/agents";
-import CPIGraph from "./CPIGraph";
 import Graph from "./Graph";
 
 interface ToolDashboardLayoutProps {
@@ -30,11 +29,10 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   const [showDataBy, setShowDataBy] = useState<string>("spot");
   const [showWeek, setShowWeek] = useState<boolean>(false);
   const [showMonth, setShowMonth] = useState<boolean>(false);
-  const [fxDropDown, setFxDropDown] = useState<boolean>(false);
-  const [cpiDropDown, setCpiDropDown] = useState<boolean>(false);
+  const [dropDown, setDropDown] = useState<boolean>(false);
 
-  // const [showFXgraph, setShowFXgraph] = useState<boolean>(false);
-  // const [showCPIgraph, setShowCPIgraph] = useState<boolean>(false);
+  const [showFXgraph, setShowFXgraph] = useState<boolean>(false);
+  const [showCPIgraph, setShowCPIgraph] = useState<boolean>(false);
 
   const [fxGraph, setFxGraph] = useState<ApiConnection | null>(null);
   const [cpiGraph, setCPIGraph] = useState<ApiConnection | null>(null);
@@ -42,44 +40,41 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   useEffect(() => {
     if (getGraphs && getGraphs?.length > 0) {
       const fx = getGraphs[0];
-      // setShowFXgraph(fx.is_connected);
+      setShowFXgraph(fx.is_connected);
       setFxGraph(fx);
 
       const cpi = getGraphs[1];
-      // setShowCPIgraph(cpi.is_connected);
+      setShowCPIgraph(cpi.is_connected);
       setCPIGraph(cpi);
     }
   }, [getGraphs]);
 
   const handleDisConnect = async (id: number) => {
     if (disconnectLoading) {
-      setFxDropDown(false);
-      setCpiDropDown(false);
+      setDropDown(false);
       return;
     }
     try {
       await disconnectGraph({ id, agentId }).unwrap();
-      setFxDropDown(false);
-      setCpiDropDown(false);
+      setDropDown(false);
       toast.success("Graph Disconnected Successfully");
     } catch (error) {
-      setFxDropDown(false);
-      setCpiDropDown(false);
+      setDropDown(false);
       toast.error("Failed to disconnect graph");
     }
   };
 
   const handleReset = async (id: number) => {
     if (resetLoading) {
-      setFxDropDown(false);
+      setDropDown(false);
       return;
     }
     try {
       await resetGraph({ id, agentId }).unwrap();
-      setFxDropDown(false);
+      setDropDown(false);
       toast.success("Graph Reset Successfully");
     } catch (error) {
-      setFxDropDown(false);
+      setDropDown(false);
       toast.error("Failed to reset graph");
     }
   };
@@ -90,12 +85,10 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   return (
     <div>
       {isLoading && <Loader2 />}
-
-      {/* FX GRAPH */}
-      {fxGraph && (
-        <div className="w-full rounded-md shadow-md relative">
+      {getGraphs?.map((graph, index) => (
+        <div key={index} className="w-full rounded-md shadow-md relative">
           <div className="flex justify-between items-center p-5 border-b">
-            <p className="text-xl font-bold">{fxGraph.name}</p>
+            <p className="text-xl font-bold">{graph.name}</p>
 
             <div className="flex items-start">
               {/* {showWeek ||
@@ -140,20 +133,20 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
 
               <div className="relative">
                 <HiOutlineDotsHorizontal
-                  onClick={() => setFxDropDown(!fxDropDown)}
+                  onClick={() => setDropDown(!dropDown)}
                   className={`text-3xl cursor-pointer rotate-90 ml-5`}
                 />
-                {fxDropDown && (
+                {dropDown && (
                   <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50">
                     <div
-                      onClick={() => handleDisConnect(fxGraph.id)}
+                      onClick={() => handleDisConnect(graph.id)}
                       className="hover:bg-gray-200 cursor-pointer py-1 px-3"
                     >
                       {disconnectLoading ? <Loader /> : "Disconnect"}
                     </div>
                     <div
                       onClick={() =>
-                        handleReset(fxGraph.agent_graph_api_connection_id)
+                        handleReset(graph.agent_graph_api_connection_id)
                       }
                       className="hover:bg-gray-200 cursor-pointer py-1 px-3"
                     >
@@ -161,7 +154,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
                     </div>
                     <div
                       onClick={() =>
-                        handleRawData(fxGraph.agent_graph_api_connection_id)
+                        handleRawData(graph.agent_graph_api_connection_id)
                       }
                       className="hover:bg-gray-200 cursor-pointer py-1 px-3"
                     >
@@ -176,24 +169,20 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
           {/* <div className="px-5 grid grid-cols-12 "> */}
           <div className="md:px-5 ">
             <div className="col-span-9 py-5">
-              {fxGraph.is_connected ? (
-                <Graph
-                  agentId={agentId}
-                  graphId={fxGraph.agent_graph_api_connection_id}
-                  showDataBy={showDataBy}
-                  setShowWeek={setShowWeek}
-                  setShowMonth={setShowMonth}
-                />
-              ) : (
-                <div className="w-full h-[350px] bg-slate-400"></div>
-              )}
+              <Graph
+                agentId={agentId}
+                graphId={graph.agent_graph_api_connection_id}
+                showDataBy={showDataBy}
+                setShowWeek={setShowWeek}
+                setShowMonth={setShowMonth}
+              />
             </div>
             {/* <div className="col-span-3">
           <GraphSideBar /> 
         </div> */}
           </div>
-          {!fxGraph.is_connected && (
-            <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
+          {!graph.is_connected && (
+            <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-[70vh]">
               <button
                 onClick={() => {
                   setIsSetup("setup");
@@ -205,65 +194,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
             </div>
           )}
         </div>
-      )}
-
-      {/* CPI GRAPH */}
-      {cpiGraph && (
-        <div className="w-full rounded-md shadow-md relative mt-4">
-          <div className="flex justify-between items-center p-5 border-b">
-            <p className="text-xl font-bold">{cpiGraph.name}</p>
-
-            <p className="text-xl font-bold">{cpiGraph.is_connected}</p>
-            <div className="flex items-start">
-              <div className="relative">
-                <HiOutlineDotsHorizontal
-                  onClick={() => setCpiDropDown(!cpiDropDown)}
-                  className={`text-3xl cursor-pointer rotate-90 ml-5`}
-                />
-                {cpiDropDown && (
-                  <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50">
-                    <div
-                      onClick={() => handleDisConnect(cpiGraph.id)}
-                      className="hover:bg-gray-200 cursor-pointer py-1 px-3"
-                    >
-                      {disconnectLoading ? <Loader /> : "Disconnect"}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* <div className="px-5 grid grid-cols-12 "> */}
-          <div className="md:px-5 ">
-            <div className="col-span-9 py-5">
-              {cpiGraph.is_connected ? (
-                <CPIGraph
-                  agentId={agentId}
-                  graphId={cpiGraph.agent_graph_api_connection_id}
-                />
-              ) : (
-                <div className="w-full h-[350px] bg-slate-400"></div>
-              )}
-            </div>
-            {/* <div className="col-span-3">
-          <GraphSideBar /> 
-        </div> */}
-          </div>
-          {!cpiGraph.is_connected && (
-            <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
-              <button
-                onClick={() => {
-                  setIsSetup("setup");
-                }}
-                className="py-2 px-6 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-full text-sm"
-              >
-                Setup
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+      ))}
     </div>
   );
 };

@@ -123,15 +123,19 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
           {apiError && <p className="text-xs text-red-600">{apiError}</p>}
           {sourceDropDown && (
             <div className="w-full absolute bg-white border border-[#b8b8b8] rounded-md p-1 mt-1 text-sm text-gray-700">
-              {getGraphs?.map((item, index) => (
-                <p
-                  key={index}
-                  className="px-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleDropDownValue(item.name, item.id, false)}
-                >
-                  {item.name}
-                </p>
-              ))}
+              {getGraphs
+                ?.filter((item) => !item.is_connected) // Filter items where is_connected is false
+                .map((item, index) => (
+                  <p
+                    key={index}
+                    className="px-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() =>
+                      handleDropDownValue(item.name, item.id, false)
+                    }
+                  >
+                    {item.name}
+                  </p>
+                ))}
             </div>
           )}
         </div>

@@ -11,6 +11,7 @@ import RangeBar from "../../RangeBar/RangeBar";
 import {
   useGetAgentByIdQuery,
   useGetAgentChatQuery,
+  useUpdateAgentMutation,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { selectChats, setChats } from "../../ReduxToolKit/chatSessionSlice";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
@@ -28,7 +29,7 @@ interface FileItem {
 }
 
 interface AgentChatSideBar {
-  agentId: number;
+  agentId: any;
   checkOption: string;
   setSpecificChatId: Dispatch<SetStateAction<number | null>>;
   setStartNewChat: Dispatch<SetStateAction<boolean | undefined>>;
@@ -49,6 +50,8 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const { data: AllChats } = useGetAgentChatQuery(agentId);
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
   const dispatch = useAppDispatch();
+  const [UpdateAgentLogo, { isLoading: agentLogoLoader }] =
+    useUpdateAgentMutation();
   const chatSessions = useAppSelector(selectChats);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [searchChat, setSearchChat] = useState<string>("");
@@ -56,6 +59,24 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const [activeChat, setActiveChat] = useState<number | null>(null);
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
+  const [agentLogo, setAgentLogo] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (agentLogo && agentId) {
+      const fd = new FormData();
+      fd.append("id", agentId);
+      fd.append("logo", agentLogo);
+      UpdateAgentLogo(fd).unwrap();
+    }
+  }, [agentLogo, agentId, UpdateAgentLogo]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAgentLogo(file);
+    }
+  };
+
   useEffect(() => {
     let char: number = 0;
     if (agent?.text) {
@@ -141,15 +162,41 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
       <div>
         <div className="flex justify-between">
           <label htmlFor="addImage">
-            <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-              <IoMdAdd color="#e5e5e5" />
-              <input
-                id="addImage"
-                type="file"
-                className="hidden"
-                accept=".png, .jpeg, .jpg"
-              />
-            </div>
+            {agent.logo_url ? (
+              <div
+                className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
+                style={{ backgroundImage: `url(${agent.logo_url})` }}
+              >
+                {agentLogoLoader ? (
+                  <Loader />
+                ) : (
+                  <input
+                    id="addImage"
+                    type="file"
+                    className="hidden"
+                    accept=".png, .jpeg, .jpg"
+                    onChange={handleFileChange}
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+                {agentLogoLoader ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <IoMdAdd color="#e5e5e5" />
+                    <input
+                      id="addImage"
+                      type="file"
+                      className="hidden"
+                      accept=".png, .jpeg, .jpg"
+                      onChange={handleFileChange}
+                    />
+                  </>
+                )}
+              </div>
+            )}
           </label>
           <div className=" pt-4">
             <LuChevronRight

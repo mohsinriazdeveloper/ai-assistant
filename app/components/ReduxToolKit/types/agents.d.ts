@@ -19,9 +19,50 @@ export type ExchangeRateType = {
   date: string;
 };
 
+// export type CPIRatesObservations = {
+//   d: string;
+//   STATIC_TOTALCPICHANGE: {
+//     v: string;
+//   };
+//   CPI_MEDIAN: {
+//     v: string;
+//   };
+//   CPI_TRIM: {
+//     v: string;
+//   };
+//   STATIC_CPIXFET: {
+//     v: string;
+//   };
+//   CPI_COMMON: {
+//     v: string;
+//   };
+//   CPIW: {
+//     v: string;
+//   };
+//   V41690973: {
+//     v: string;
+//   };
+//   V41690914: {
+//     v: string;
+//   };
+// };
+export type CPIRatesObservations = {
+  d: string;
+  STATIC_TOTALCPICHANGE?: { v?: string };
+  CPI_MEDIAN?: { v?: string };
+  CPI_TRIM?: { v?: string };
+  STATIC_CPIXFET?: { v?: string };
+  CPI_COMMON?: { v?: string };
+  CPIW?: { v?: string };
+  V41690973?: { v?: string };
+  V41690914?: { v?: string };
+};
 export type GetExchangeRate = {
   error_message: null;
   recent_exchange_rates: ExchangeRateType[];
+  recent_cpi_rates: {
+    observations: CPIRatesObservations[];
+  };
 };
 
 export type Files = {
@@ -73,6 +114,7 @@ export interface AgentState {
   visibility?: string;
   temperature?: number;
   image_url: string;
+  logo_url: string;
   boc_connected?: boolean;
   created_at?: string;
   updated_at?: string;
