@@ -5,7 +5,10 @@ import { LuChevronRight } from "react-icons/lu";
 import { MdContentCopy } from "react-icons/md";
 import Loader from "../Loader/Loader";
 import RangeBar from "../RangeBar/RangeBar";
-import { useGetAgentByIdQuery } from "../ReduxToolKit/aiAssistantOtherApis";
+import {
+  useGetAgentByIdQuery,
+  useUpdateAgentMutation,
+} from "../ReduxToolKit/aiAssistantOtherApis";
 import { QATypes } from "../UpdateTraining/trainingTypes.d";
 import "./style.css";
 
@@ -26,7 +29,7 @@ interface FileItem {
   text_content: string;
 }
 interface SideBarProps {
-  agentId: number;
+  agentId: any;
   tab: TabType;
   setIsMobile: Dispatch<SetStateAction<boolean>>;
   setCheckOption: Dispatch<SetStateAction<string>>;
@@ -41,12 +44,30 @@ const SideBar: FC<SideBarProps> = ({
   checkOption,
 }) => {
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
-
+  const [UpdateAgentLogo, { isLoading: agentLogoLoader }] =
+    useUpdateAgentMutation();
   const currentRoute = usePathname();
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
+  const [agentLogo, setAgentLogo] = useState<File | null>(null);
+
+  useEffect(() => {
+    if (agentLogo && agentId) {
+      const fd = new FormData();
+      fd.append("id", agentId);
+      fd.append("logo", agentLogo);
+      UpdateAgentLogo(fd).unwrap();
+    }
+  }, [agentLogo, agentId, UpdateAgentLogo]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAgentLogo(file);
+    }
+  };
   useEffect(() => {
     let char: number = 0;
     if (agent?.text) {
@@ -106,22 +127,48 @@ const SideBar: FC<SideBarProps> = ({
   });
   return (
     <div
-      className={` text-white pr-5 h-full flex flex-col justify-between relative z-50`}
+      className={`text-white pr-5 h-full flex flex-col justify-between relative z-50`}
     >
       <div className="h-full">
         <div className="flex justify-between">
           <label htmlFor="addImage">
-            <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
-              <IoMdAdd color="#e5e5e5" />
-              <input
-                id="addImage"
-                type="file"
-                className="hidden"
-                accept=".png, .jpeg, .jpg"
-              />
-            </div>
+            {agent.logo_url ? (
+              <div
+                className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
+                style={{ backgroundImage: `url(${agent.logo_url})` }}
+              >
+                {agentLogoLoader ? (
+                  <Loader />
+                ) : (
+                  <input
+                    id="addImage"
+                    type="file"
+                    className="hidden"
+                    accept=".png, .jpeg, .jpg"
+                    onChange={handleFileChange}
+                  />
+                )}
+              </div>
+            ) : (
+              <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+                {agentLogoLoader ? (
+                  <Loader />
+                ) : (
+                  <>
+                    <IoMdAdd color="#e5e5e5" />
+                    <input
+                      id="addImage"
+                      type="file"
+                      className="hidden"
+                      accept=".png, .jpeg, .jpg"
+                      onChange={handleFileChange}
+                    />
+                  </>
+                )}
+              </div>
+            )}
           </label>
-          <div className=" pt-3">
+          <div className=" pt-4">
             <LuChevronRight
               className="text-3xl mb-6 ml-auto cursor-pointer rotate-180"
               onClick={() => setIsMobile(true)}
