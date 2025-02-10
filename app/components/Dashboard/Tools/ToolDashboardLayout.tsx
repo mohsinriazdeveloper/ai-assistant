@@ -144,7 +144,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
                   className={`text-3xl cursor-pointer rotate-90 ml-5`}
                 />
                 {fxDropDown && (
-                  <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50">
+                  <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 w-[95px]">
                     <div
                       onClick={() => handleDisConnect(fxGraph.id)}
                       className="hover:bg-gray-200 cursor-pointer py-1 px-3"

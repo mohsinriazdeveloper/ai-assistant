@@ -63,7 +63,7 @@ export const sideBarOptions = {
         url: "dashboard",
       },
       {
-        title: "Aggregator",
+        title: "Resume",
         url: "aggregator",
       },
     ],

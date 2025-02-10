@@ -107,7 +107,7 @@ const QAInput: FC<QAInputProps> = ({ qaList, setQAList }) => {
             </p>
           )}
           <div
-            className="w-8 h-8 bg-black rounded flex justify-center items-center text-white text-xs cursor-pointer"
+            className="w-[50px] h-[50px] bg-black rounded-[5px] flex justify-center items-center text-white text-lg cursor-pointer"
             onClick={handleAddQA}
           >
             <FaPlus />

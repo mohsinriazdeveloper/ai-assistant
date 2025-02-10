@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { GoPlus } from "react-icons/go";
 import { IoMdAdd } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
@@ -60,6 +61,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
   const [agentLogo, setAgentLogo] = useState<File | null>(null);
+  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (agentLogo && agentId) {
@@ -72,8 +74,18 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file) {
+      // Check file type
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only .png, .jpeg, .jpg image files are allowed");
+        event.target.value = ""; // Reset the file input field
+        return;
+      }
+
       setAgentLogo(file);
+      setLocalImageUrl(URL.createObjectURL(file)); // Generate local preview
     }
   };
 
@@ -161,17 +173,19 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     <div className="text-white pr-5 h-full flex flex-col justify-between relative z-50">
       <div>
         <div className="flex justify-between">
-          <label htmlFor="addImage">
-            {agent.logo_url ? (
+          <label htmlFor="sideBarImage">
+            {localImageUrl || agent.logo_url ? (
               <div
                 className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
-                style={{ backgroundImage: `url(${agent.logo_url})` }}
+                style={{
+                  backgroundImage: `url(${localImageUrl || agent.logo_url})`,
+                }}
               >
                 {agentLogoLoader ? (
                   <Loader />
                 ) : (
                   <input
-                    id="addImage"
+                    id="sideBarImage"
                     type="file"
                     className="hidden"
                     accept=".png, .jpeg, .jpg"
@@ -187,7 +201,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                   <>
                     <IoMdAdd color="#e5e5e5" />
                     <input
-                      id="addImage"
+                      id="sideBarImage"
                       type="file"
                       className="hidden"
                       accept=".png, .jpeg, .jpg"
@@ -198,6 +212,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
               </div>
             )}
           </label>
+
           <div className=" pt-4">
             <LuChevronRight
               className="text-3xl mb-6 ml-auto cursor-pointer rotate-180"
@@ -206,7 +221,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
           </div>
         </div>
         {/* <div className="w-[125px] h-[125px] border-[10px] border-[#FF0000] bg-[#D9D9D9]"></div> */}
-        <div className="flex flex-col gap-[10px] mt-[134px] mb-9">
+        <div className="flex flex-col gap-[10px] mt-[136px] mb-9">
           <div
             onClick={() => setNewChatModal(true)}
             className="w-full px-[18px] text-sm h-[65px] bg-[#242723] border border-white rounded-[15px] flex justify-between items-center font-semibold cursor-pointer"
@@ -232,7 +247,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
           </div>
         )}
         <div
-          className={`mt-[18px] 2xl:max-h-[200px] lg:max-h-[250px] tab:max-h-[230px] md:max-h-[200px] max-h-[180px] ${
+          className={`mt-[18px] 2xl:max-h-[180px] lg:max-h-[180px] tab:max-h-[180px] md:max-h-[180px] max-h-[180px] ${
             filteredItems?.length > 3 &&
             "overflow-hidden overflow-y-scroll recentChatScroller"
           } `}

@@ -26,6 +26,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
   const [confirmPass, setConfirmPass] = useState<string>("");
   const [currentPassError, setCurrentPassError] = useState<string>("");
   const [newPassError, setNewPassError] = useState<string>("");
+  const [confirmPassError, setConfirmPassError] = useState<string>("");
 
   // Password strength functionality
   const [strength, setStrength] = useState<string>("");
@@ -81,16 +82,35 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
   };
 
   const handleUpdatePassword = async () => {
+    // Reset errors before validation
+    setCurrentPassError("");
+    setNewPassError("");
+
+    // 1. Check if the current password is empty
     if (currentPass.trim() === "") {
-      setCurrentPassError("Current Password cannot be empty");
+      setCurrentPassError("Current password should not be empty");
       return;
     }
 
+    // 2. Check if the new password is empty
+    if (newPass.trim() === "") {
+      setNewPassError("New password should not be empty");
+      return;
+    }
+
+    // 3. Check if the confirm password is empty
+    if (confirmPass.trim() === "") {
+      setConfirmPassError("Confirm password should not be empty");
+      return;
+    }
+
+    // 4. Check if new password and confirm password match
     if (newPass !== confirmPass) {
-      setNewPassError("Passwords do not match");
+      setNewPassError("New password and confirm password do not match");
       return;
     }
 
+    // 5. Check if the password strength is "Strong"
     if (strength !== "Strong") {
       setNewPassError("Password strength must be 'Strong'");
       return;
@@ -178,11 +198,25 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
                 CURRENT PASSWORD
               </p>
               <div className="border border-[#e4e7eb] rounded mt-2 py-3 px-4 text-sm">
-                <input
+                {/* <input
                   type="password"
                   value={currentPass}
                   onChange={(e) => {
                     setCurrentPass(e.target.value), setCurrentPassError("");
+                  }}
+                  className="focus:outline-none w-full"
+                />
+              </div>
+              {currentPassError && (
+                <p className="text-[10px] text-red-500">{currentPassError}</p>
+              )} */}
+
+                <input
+                  type="password"
+                  value={currentPass}
+                  onChange={(e) => {
+                    setCurrentPass(e.target.value);
+                    setCurrentPassError(""); // Remove error on change
                   }}
                   className="focus:outline-none w-full"
                 />
@@ -198,12 +232,26 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
                 NEW PASSWORD
               </p>
               <div className="border border-[#e4e7eb] rounded mt-2 py-3 px-4 text-sm">
-                <input
+                {/* <input
                   type="text"
                   value={newPass}
                   onChange={(e) => {
                     setNewPass(e.target.value);
                     setNewPassError("");
+                    checkPasswordStrength(e.target.value);
+                  }}
+                  className="focus:outline-none w-full"
+                />
+              </div>
+              {newPassError && (
+                <p className="text-[10px] text-red-500">{newPassError}</p>
+              )} */}
+                <input
+                  type="password"
+                  value={newPass}
+                  onChange={(e) => {
+                    setNewPass(e.target.value);
+                    setNewPassError(""); // Remove error on change
                     checkPasswordStrength(e.target.value);
                   }}
                   className="focus:outline-none w-full"
@@ -248,17 +296,27 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
                 CONFIRM PASSWORD
               </p>
               <div className="border border-[#e4e7eb] rounded mt-2 py-3 px-4 text-sm">
-                <input
+                {/* <input
                   type="text"
                   value={confirmPass}
                   onChange={(e) => {
                     setConfirmPass(e.target.value), setNewPassError("");
                   }}
                   className="focus:outline-none w-full"
+                /> */}
+                <input
+                  type="password"
+                  value={confirmPass}
+                  onChange={(e) => {
+                    setConfirmPass(e.target.value);
+                    setNewPassError("");
+                    setConfirmPassError("");
+                  }}
+                  className="focus:outline-none w-full"
                 />
               </div>
-              {newPassError && (
-                <p className="text-[10px] text-red-500">{newPassError}</p>
+              {confirmPassError && (
+                <p className="text-[10px] text-red-500">{confirmPassError}</p>
               )}
             </div>
           </div>

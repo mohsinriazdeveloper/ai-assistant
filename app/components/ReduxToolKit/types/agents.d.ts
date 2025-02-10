@@ -160,6 +160,7 @@ export type AgentChatType = {
   id: number | null;
   role: string;
   message: string;
+  sender_name?: string;
   created_at?: string;
 };
 

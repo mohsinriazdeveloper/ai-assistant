@@ -43,7 +43,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
   };
   return (
     <div
-      className="w-full pr-5 max-h-[70vh] overflow-hidden overflow-y-scroll scrollbar-hide"
+      className="w-full pr-5 max-h-[69.5vh] overflow-hidden overflow-y-scroll scrollbar-hide"
       ref={chatContainerRef}
     >
       {chat.map((message, index) => (
@@ -56,7 +56,9 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
                   // style={{ backgroundImage: `url(${dummyImg.src})` }}
                 ></div>
                 <div className="flex items-center gap-2 text-[#1E1F22]">
-                  <p className="text-xs font-semibold ">You</p>
+                  <p className="text-xs font-semibold ">
+                    {message.sender_name ? message.sender_name : "You"}
+                  </p>
                   <p className="text-[8px]">
                     {message.created_at ? (
                       formatDate(message.created_at)

@@ -105,7 +105,11 @@ const Page: FC<PageProps> = ({ params }) => {
             focusInputById={focusInputById}
           />
         </div>
-        <div className={`${isMobile ? "col-span-12" : "col-span-9"}`}>
+        <div
+          className={`${
+            isMobile ? "col-span-12" : "col-span-9"
+          } rounded-lg bg-[#101010] overflow-hidden h-full flex flex-col`}
+        >
           <div className="flex items-center">
             {isMobile && (
               <LuChevronRight
@@ -122,8 +126,8 @@ const Page: FC<PageProps> = ({ params }) => {
               setIsVoice={setIsVoice}
             />
           ) : (
-            <div className="bg-[#101010] h-[91.5%]  ">
-              <div className="px-10 bg-white h-full rounded-lg">
+            <div className="bg-[#101010] h-full rounded-lg">
+              <div className="px-10 bg-white h-full rounded-lg py-[45px] ">
                 <ChatAgent
                   setIsVoice={setIsVoice}
                   specificChatId={specificChatId}

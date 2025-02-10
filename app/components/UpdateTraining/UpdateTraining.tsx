@@ -434,7 +434,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           if (fileRes.error) {
             toast.error(
               //@ts-ignore
-              `${fileRes.error.data.error_message}, ${fileRes.error.data.website_url}`
+              `${fileRes.error.data.website_url}`
             );
           }
           isSuccess.push("success");

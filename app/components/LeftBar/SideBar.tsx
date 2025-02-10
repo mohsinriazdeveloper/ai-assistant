@@ -1,5 +1,6 @@
 import { usePathname } from "next/navigation";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { IoMdAdd } from "react-icons/io";
 import { LuChevronRight } from "react-icons/lu";
 import { MdContentCopy } from "react-icons/md";
@@ -52,20 +53,39 @@ const SideBar: FC<SideBarProps> = ({
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
   const [agentLogo, setAgentLogo] = useState<File | null>(null);
+  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (agentLogo && agentId) {
       const fd = new FormData();
       fd.append("id", agentId);
       fd.append("logo", agentLogo);
-      UpdateAgentLogo(fd).unwrap();
+      UpdateAgentLogo(fd)
+        .unwrap()
+        .then((response) => {
+          // Assuming the response contains the new image URL
+          setLocalImageUrl(response.logo_url);
+        })
+        .catch((error) => {
+          console.error("Error updating agent logo:", error);
+        });
     }
   }, [agentLogo, agentId, UpdateAgentLogo]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (file) {
+      // Check file type
+      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error("Only .png, .jpeg, .jpg image files are allowed");
+        event.target.value = ""; // Reset the file input field
+        return;
+      }
+
       setAgentLogo(file);
+      setLocalImageUrl(URL.createObjectURL(file));
     }
   };
   useEffect(() => {
@@ -125,23 +145,26 @@ const SideBar: FC<SideBarProps> = ({
     minute: "2-digit",
     second: "2-digit",
   });
+
   return (
     <div
       className={`text-white pr-5 h-full flex flex-col justify-between relative z-50`}
     >
       <div className="h-full">
         <div className="flex justify-between">
-          <label htmlFor="addImage">
-            {agent.logo_url ? (
+          <label htmlFor="sideBarImage">
+            {localImageUrl || agent.logo_url ? (
               <div
                 className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
-                style={{ backgroundImage: `url(${agent.logo_url})` }}
+                style={{
+                  backgroundImage: `url(${localImageUrl || agent.logo_url})`,
+                }}
               >
                 {agentLogoLoader ? (
                   <Loader />
                 ) : (
                   <input
-                    id="addImage"
+                    id="sideBarImage"
                     type="file"
                     className="hidden"
                     accept=".png, .jpeg, .jpg"
@@ -157,7 +180,7 @@ const SideBar: FC<SideBarProps> = ({
                   <>
                     <IoMdAdd color="#e5e5e5" />
                     <input
-                      id="addImage"
+                      id="sideBarImage"
                       type="file"
                       className="hidden"
                       accept=".png, .jpeg, .jpg"
@@ -175,8 +198,7 @@ const SideBar: FC<SideBarProps> = ({
             />
           </div>
         </div>
-        {/* <div className="w-[125px] h-[125px] border-[10px] border-[#FF0000] bg-[#D9D9D9]"></div> */}
-        <div className="mt-[134px]">
+        <div className="mt-[136px]">
           <div>
             <p className="text-white font-medium mb-5">{tab.heading}</p>
             <div id="step-1" className="w-full space-y-1 mb-10">
