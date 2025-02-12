@@ -1,7 +1,7 @@
 import { ResumeType } from "@/app/(pages)/agent/[id]/tools/page";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import MarkDown from "../../MarkDown/MarkDown";
+import MarkDown2 from "../../MarkDown/MarkDown2";
 
 interface AggregatorProps {
   resumeData1: ResumeType[];
@@ -73,7 +73,7 @@ const Aggregator: FC<AggregatorProps> = ({
               <div className="divide-y space-y-4 divide-black">
                 <div className="">
                   <div className="text-[#5C5C5C] text-xs mt-4">
-                    <MarkDown content={data.section_report} />
+                    <MarkDown2 content={data.section_report} />
                   </div>
                 </div>
               </div>
@@ -123,7 +123,7 @@ const Aggregator: FC<AggregatorProps> = ({
               <div className="divide-y space-y-4 divide-black">
                 <div className="">
                   <div className="text-[#5C5C5C] text-xs mt-4">
-                    <MarkDown content={data.section_report} />
+                    <MarkDown2 content={data.section_report} />
                   </div>
                 </div>
               </div>

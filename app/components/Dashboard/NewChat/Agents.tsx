@@ -36,8 +36,7 @@ const Agents: FC<AgentsProps> = () => {
     const checkOverflow = () => {
       if (gridRef.current) {
         const { scrollHeight, clientHeight } = gridRef.current;
-        console.log("Scroll Height:", scrollHeight);
-        console.log("Client Height:", clientHeight);
+
         setIsOverflow(scrollHeight > clientHeight);
       }
     };

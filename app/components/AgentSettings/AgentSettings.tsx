@@ -5,13 +5,12 @@ import { IoMdAdd } from "react-icons/io";
 import AgentModel from "../AgentModel/AgentModel";
 import DeleteAgent from "../DeleteAgent/DeleteAgent";
 import DeleteModal from "../Dialogues/DeleteModal";
+import ImageCropperModal from "../Dialogues/ImageCropperModal";
 import Loader from "../Loader/Loader";
 import {
   useGetAgentByIdQuery,
   useUpdateAgentMutation,
 } from "../ReduxToolKit/aiAssistantOtherApis";
-import { selectIsConnect } from "../ReduxToolKit/connectSlice";
-import { useAppSelector } from "../ReduxToolKit/hook";
 
 interface AgentSettings {
   agentId: any;
@@ -25,18 +24,24 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
   const [imgError, setImgError] = useState<string>("");
   const [imgLoading, setImgLoading] = useState<boolean>(false);
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
-
-  //@ts-ignore
-  const [agentName, setAgentName] = useState<string>("" || agent?.name);
-  const [agentID] = useState<any>(agent?.id);
+  const [agentName, setAgentName] = useState<string>("");
+  // const [agentID] = useState<any>(agent?.id);
   const [updating] = useUpdateAgentMutation();
   const [loading, setLoading] = useState<boolean>(false);
   const [agentNameError, setAgentNameError] = useState<string>("");
-  const { updateConnectStatus } = useAppSelector(selectIsConnect);
+  const [openImageCropper, setOpenImageCropper] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (agent?.name) {
+      setAgentName(agent.name);
+    } else {
+      setAgentName("");
+    }
+  }, [agent?.name]);
 
   useEffect(() => {
     if (agent?.image_url) {
-      setAddImage(agent.image_url);
+      // setAddImage(agent.image_url);
       setPreview(agent.image_url);
     }
   }, [agent?.image_url]);
@@ -53,9 +58,8 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
     }
 
     const formData = new FormData();
-    formData.append("id", agentID);
+    formData.append("id", agentId);
     formData.append("name", agentName);
-    formData.append("boc_connected", String(updateConnectStatus));
     if (addImage && typeof addImage !== "string") {
       formData.append("image", addImage);
     }
@@ -100,11 +104,13 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
       setImgError("");
       setPreview("");
 
-      setTimeout(() => {
-        setAddImage(selectedFile);
-        setPreview(URL.createObjectURL(selectedFile));
-        setImgLoading(false);
-      }, 2000);
+      // setTimeout(() => {
+      setAddImage(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+      setImgLoading(false);
+      // setTimeout(() => {
+      setOpenImageCropper(true);
+      // }, 2000);
     } else {
       setImgError("Allowed formats are .png, .jpeg, .jpg");
       setAddImage(null);
@@ -206,6 +212,12 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
         agentId={agentId}
         openDialogue={openDialogue}
         handleClose={() => setOpenDialogue(false)}
+      />
+      <ImageCropperModal
+        openDialogue={openImageCropper}
+        handleClose={() => setOpenImageCropper(false)}
+        addImage={addImage}
+        setAddImage={setAddImage}
       />
     </div>
   );

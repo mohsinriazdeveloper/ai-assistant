@@ -77,7 +77,6 @@ const Settings: FC<SettingsProps> = ({}) => {
       try {
         // Call the mutation function and unwrap the result
         const res = await delImg(id);
-        console.log("Image deleted successfully:", res);
         setPreview(""); // Clear the preview
       } catch (error) {
         console.error("Error while deleting image:", error);

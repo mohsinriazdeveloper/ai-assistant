@@ -1,11 +1,15 @@
 import { SectionData } from "@/app/(pages)/agent/[id]/tools/page";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
 import Loader2 from "../../Loader/Loader2";
-import { useGetAllGraphsQuery } from "../../ReduxToolKit/aiAssistantOtherApis";
+import {
+  useGetAgentByIdQuery,
+  useGetAllGraphsQuery,
+} from "../../ReduxToolKit/aiAssistantOtherApis";
+import { ApiConnection, Files } from "../../ReduxToolKit/types/agents";
 
 interface SetupAggregratorProps {
   agentId: number;
@@ -29,10 +33,35 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
   createResumeLoading,
 }) => {
   const { data: getGraphs, isLoading } = useGetAllGraphsQuery(agentId);
+  const { data: agent, isLoading: agentDataoading } =
+    useGetAgentByIdQuery(agentId);
   const [sourceDropDownIndex, setSourceDropDownIndex] = useState<number | null>(
     null
   ); // Track which section's dropdown is open
   const [sections, setSections] = useState<number[]>([1]); // Array to track sections
+  const [sourceList, setSourceList] = useState<Files[]>([]);
+  const [graphList, setGraphList] = useState<ApiConnection[]>([]);
+
+  useEffect(() => {
+    if (getGraphs) {
+      setGraphList(getGraphs);
+    } else {
+      setGraphList([]);
+    }
+  }, [getGraphs]);
+
+  useEffect(() => {
+    if (agent?.files) {
+      const filteredFiles = agent?.files.filter(
+        (item) => item.file_category === "image" || "file"
+      );
+      setSourceList(filteredFiles);
+    } else {
+      setSourceList([]);
+    }
+  }, [agent]);
+
+  const sourceGraph = [...graphList, ...sourceList];
 
   const handleAddSection = () => {
     setSections((prev) => [...prev, prev.length + 1]);
@@ -62,6 +91,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
     );
   };
 
+  console.log("agent: ", sourceList);
   return (
     <div className="relative ">
       <div className="tab:w-[70%] md:w-[90%] w-[100%]">
@@ -116,11 +146,24 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                   className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer"
                 >
                   <p>
-                    {getGraphs?.find(
-                      (item) => item.id === sectionData[index]?.source_id
-                    )?.name || (
-                      <span className="text-gray-500">Select Source</span>
-                    )}
+                    {(() => {
+                      const graphName = getGraphs?.find(
+                        (item) => item.id === sectionData[index]?.source_id
+                      )?.name;
+
+                      const fileName = sourceList?.find(
+                        (item) => item.id === sectionData[index]?.source_id
+                      )?.file_name;
+
+                      return graphName || fileName ? (
+                        <>
+                          {graphName && <span>{graphName}</span>}
+                          {fileName && <span>{fileName}</span>}
+                        </>
+                      ) : (
+                        <span className="text-gray-500">Select Source</span>
+                      );
+                    })()}
                   </p>
                   <MdKeyboardArrowDown className="text-xl" />
                 </div>
@@ -136,6 +179,18 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                         }}
                       >
                         {item.name}
+                      </p>
+                    ))}
+                    {sourceList?.map((item) => (
+                      <p
+                        key={item.id}
+                        className="px-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => {
+                          handleSectionDataChange(index, "source_id", item.id);
+                          setSourceDropDownIndex(null);
+                        }}
+                      >
+                        {item.file_name}
                       </p>
                     ))}
                   </div>

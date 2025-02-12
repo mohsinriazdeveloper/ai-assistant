@@ -25,8 +25,6 @@ const CPIGraph: FC<CPIGraphProps> = ({ agentId, graphId }) => {
     agentId: agentId,
   };
 
-  console.log("Agent & Graph IDs:", ids);
-
   const { data: graphData, isLoading: dataLoading } = useGetGraphDataQuery(ids);
   const [data, setData] = useState<any[]>([]);
   const [visibility, setVisibility] = useState({
@@ -37,12 +35,6 @@ const CPIGraph: FC<CPIGraphProps> = ({ agentId, graphId }) => {
   });
 
   useEffect(() => {
-    console.log("Raw graphData:", graphData);
-    console.log(
-      "Observations data:",
-      graphData?.recent_cpi_rates?.observations
-    );
-
     if (Array.isArray(graphData?.recent_cpi_rates?.observations)) {
       const transformedData = graphData.recent_cpi_rates.observations.map(
         (obs) => ({
@@ -56,7 +48,6 @@ const CPIGraph: FC<CPIGraphProps> = ({ agentId, graphId }) => {
         })
       );
 
-      console.log("Transformed Data:", transformedData);
       setData(transformedData);
     } else {
       console.error("Error: observations is not an array", graphData);

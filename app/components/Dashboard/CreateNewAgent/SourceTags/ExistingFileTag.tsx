@@ -70,7 +70,6 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   const handleOpenFile = (url: string | undefined) => {
     window.open(url, "_blank");
   };
-  console.log(updatedDate);
 
   const formatUpdatedDate = (updatedDate: string) => {
     return format(new Date(updatedDate), "MMM.dd, yyyy"); // "Aug.20, 2024"

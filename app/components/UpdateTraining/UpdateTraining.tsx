@@ -246,7 +246,6 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           id: agentId,
           data: fd,
         }).unwrap();
-        console.log(fileUploadRes);
         fileUploadRes.forEach((item: any) => {
           if (item.error_message) {
             toast.error(` ${item.error_message}`);

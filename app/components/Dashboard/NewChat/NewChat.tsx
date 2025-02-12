@@ -29,6 +29,7 @@ const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
             <NavBar1 />
           </div>
         </div>
+
         {createAgentStatus ? (
           <div className="flex items-center h-[70vh] mt-12">
             <NewAgent />
