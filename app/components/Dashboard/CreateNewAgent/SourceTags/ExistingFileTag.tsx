@@ -89,7 +89,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   };
 
   const handleFileToggle = () => {
-    if (!file_Name) {
+    if (file_Name.trim() === "") {
       setFileNameError("File name cannot be empty");
       return;
     } else {
@@ -98,11 +98,11 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   };
 
   const updateFileChange = async () => {
-    if (!file_Name) {
+    if (file_Name.trim() === "") {
       setFileNameError("File name cannot be empty");
       return;
     }
-    if (!sourceName) {
+    if (sourceName.trim() === "") {
       setSourceNameError("Source name cannot be empty");
       return;
     }
@@ -112,6 +112,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
       source_context: sourceContext,
       source_instructions: sourceInstructions,
     };
+    setToggleFileName(false);
     try {
       await updateFile({ id, data });
     } catch (error) {
@@ -183,7 +184,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
           )}
           <div className="space-y-4 mt-5 w-[343px]">
             <div className="">
-              <p className="text-sm">Name</p>
+              <p className="text-sm">Name*</p>
               <div>
                 <input
                   type="text"
