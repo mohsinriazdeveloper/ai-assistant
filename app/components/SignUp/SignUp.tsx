@@ -9,6 +9,8 @@ import { FC, useState } from "react";
 import toast from "react-hot-toast";
 import Loader from "../Loader/Loader";
 import { useUserSignUpMutation } from "../ReduxToolKit/aiAssistant";
+import { userLoginSuccess } from "../ReduxToolKit/authSlice";
+import { useAppDispatch } from "../ReduxToolKit/hook";
 
 type SignUpInputs = {
   organization_name: string;
@@ -45,7 +47,7 @@ const SignUp: FC<SignUpProps> = ({}) => {
   const [strength, setStrength] = useState("");
   const [showPassStrenghtList, setShowPassStrengthList] =
     useState<boolean>(false);
-
+  const dispatch = useAppDispatch();
   const checkPasswordStrength = (password: string) => {
     let strength = "Weak";
     if (
@@ -130,8 +132,14 @@ const SignUp: FC<SignUpProps> = ({}) => {
 
     try {
       const res = await UserSignUp(payLoad).unwrap();
+      dispatch(
+        userLoginSuccess({
+          refresh: res.refresh,
+          access: res.access,
+        })
+      );
       setLoading(false);
-      router.push("/");
+      router.push("/dashboard/agents");
       toast.success("You’ve successfully registered!");
     } catch (err: any) {
       setLoading(false);

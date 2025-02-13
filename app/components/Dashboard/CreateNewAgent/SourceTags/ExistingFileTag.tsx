@@ -1,10 +1,13 @@
 import Loader from "@/app/components/Loader/Loader";
-import { useDeleteFileMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
+import {
+  useDeleteFileMutation,
+  useUpdateFileMutation,
+} from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { format } from "date-fns";
 import Link from "next/link";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { RiDeleteBinLine } from "react-icons/ri";
+import { RiDeleteBinLine, RiEdit2Fill, RiEdit2Line } from "react-icons/ri";
 interface ExistingFileTagProps {
   id: number;
   fileName?: string;
@@ -38,11 +41,21 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
 }) => {
   const [delExistingFile, { isLoading: deleteLoading }] =
     useDeleteFileMutation();
+  const [updateFile, { isLoading: updateFileLoading }] =
+    useUpdateFileMutation();
+  const [file_Name, setFile_Name] = useState<string>("");
+  const [fileNameError, setFileNameError] = useState<string>("");
   const [sourceName, setSourceName] = useState<string>("");
+  const [sourceNameError, setSourceNameError] = useState<string>("");
   const [sourceContext, setSourceContext] = useState<string>("");
   const [sourceInstructions, setSourceInstructions] = useState<string>("");
 
+  const [toggleFileName, setToggleFileName] = useState<boolean>(false);
+
   useEffect(() => {
+    if (fileName) {
+      setFile_Name(fileName);
+    }
     if (source_Name) {
       setSourceName(source_Name);
     }
@@ -52,7 +65,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     if (source_Instructions) {
       setSourceInstructions(source_Instructions);
     }
-  }, [source_Name, source_Context, source_Instructions]);
+  }, [source_Name, source_Context, source_Instructions, fileName]);
 
   const handleDeleteFile = async () => {
     try {
@@ -75,22 +88,86 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     return format(new Date(updatedDate), "MMM.dd, yyyy"); // "Aug.20, 2024"
   };
 
+  const handleFileToggle = () => {
+    if (!file_Name) {
+      setFileNameError("File name cannot be empty");
+      return;
+    } else {
+      setToggleFileName(false);
+    }
+  };
+
+  const updateFileChange = async () => {
+    if (!file_Name) {
+      setFileNameError("File name cannot be empty");
+      return;
+    }
+    if (!sourceName) {
+      setSourceNameError("Source name cannot be empty");
+      return;
+    }
+    const data = {
+      file_name: file_Name,
+      source_name: sourceName,
+      source_context: sourceContext,
+      source_instructions: sourceInstructions,
+    };
+    try {
+      await updateFile({ id, data });
+    } catch (error) {
+      toast.error("Unable to update file details");
+    }
+  };
+
   return (
     <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-4">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-10 pt-1">
-          {fileName && (
-            <p
-              className="text-blue-500 underline cursor-pointer font-semibold"
-              onClick={() => handleOpenFile(fileUrl)}
-            >
-              {fileName?.length > 30 ? (
-                <>{fileName.slice(0, 30) + " ..."}</>
-              ) : (
-                <>{fileName}</>
+          {toggleFileName ? (
+            <div className="flex items-center gap-2 w-[40%]">
+              <div className="w-full">
+                <input
+                  type="text"
+                  placeholder="File Name"
+                  value={file_Name}
+                  onChange={(e) => {
+                    setFile_Name(e.target.value);
+                    setFileNameError("");
+                  }}
+                  className="border-b focus:outline-none w-full"
+                />
+                {fileNameError && (
+                  <p className="text-sm text-red-500">{fileNameError}</p>
+                )}
+              </div>
+              <RiEdit2Fill
+                onClick={handleFileToggle}
+                className="cursor-pointer"
+              />
+            </div>
+          ) : (
+            <>
+              {file_Name && (
+                <div className="flex items-center gap-2">
+                  <p
+                    className="text-blue-500 underline cursor-pointer font-semibold"
+                    onClick={() => handleOpenFile(fileUrl)}
+                  >
+                    {file_Name?.length > 30 ? (
+                      <>{file_Name.slice(0, 30) + " ..."}</>
+                    ) : (
+                      <>{file_Name}</>
+                    )}
+                  </p>
+                  <RiEdit2Line
+                    onClick={() => setToggleFileName(true)}
+                    className="cursor-pointer"
+                  />
+                </div>
               )}
-            </p>
+            </>
           )}
+
           {website_url && (
             <Link
               target="_blank"
@@ -105,32 +182,54 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             </Link>
           )}
           <div className="space-y-4 mt-5 w-[343px]">
-            {sourceName && (
-              <div className="">
-                <p className="text-sm">Name</p>
-                <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
-                  <p>{sourceName}</p>
-                </div>
+            <div className="">
+              <p className="text-sm">Name</p>
+              <div>
+                <input
+                  type="text"
+                  placeholder="source name"
+                  value={sourceName}
+                  onChange={(e) => {
+                    setSourceName(e.target.value);
+                    setSourceNameError("");
+                  }}
+                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light focus:outline-none"
+                />
+                {sourceNameError && (
+                  <p className="text-sm text-red-500">{sourceNameError}</p>
+                )}
               </div>
-            )}
-            {sourceContext && (
-              <div className="">
-                <p className="text-sm">Context / Clarifications</p>
+              {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
+                <p>{sourceName}</p>
+              </div> */}
+            </div>
+            <div className="">
+              <p className="text-sm">Context / Clarifications</p>
 
-                <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
-                  <p>{sourceContext}</p>
-                </div>
-              </div>
-            )}
-            {sourceInstructions && (
-              <div className="">
-                <p className="text-sm">Instructions</p>
-
-                <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
-                  <p>{sourceInstructions}</p>
-                </div>
-              </div>
-            )}
+              <textarea
+                placeholder="context"
+                rows={2}
+                value={sourceContext}
+                onChange={(e) => setSourceContext(e.target.value)}
+                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+              />
+              {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
+                <p>{sourceContext}</p>
+              </div> */}
+            </div>
+            <div className="">
+              <p className="text-sm">Instructions</p>
+              <textarea
+                placeholder="instruction"
+                rows={2}
+                value={sourceInstructions}
+                onChange={(e) => setSourceInstructions(e.target.value)}
+                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+              />
+              {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
+                <p>{sourceInstructions}</p>
+              </div> */}
+            </div>
             {website_auto_update && (
               <div>
                 <p className="text-sm">Daily Auto-Updates</p>
@@ -158,6 +257,13 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
         </div>
       </div>
       <div className="flex justify-end items-end gap-3 mt-8">
+        <button
+          disabled={updateFileLoading}
+          onClick={updateFileChange}
+          className="hover:bg-[#078fffc7] bg-[#0790FF] text-white font-medium rounded-full text-[15px] h-[38px] w-[120px] flex justify-center items-center"
+        >
+          {updateFileLoading ? <Loader /> : "Save"}
+        </button>
         {deleteLoading ? (
           <Loader />
         ) : (

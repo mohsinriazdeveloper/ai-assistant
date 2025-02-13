@@ -274,6 +274,16 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    // 28 update file
+    updateFile: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/files/update/${id}/`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -385,6 +395,7 @@ export const {
   useResetGraphMutation,
   useCreateResumeMutation,
   useUpdateOrgNameMutation,
+  useUpdateFileMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,
