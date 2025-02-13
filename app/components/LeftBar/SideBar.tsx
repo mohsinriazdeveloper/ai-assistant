@@ -240,8 +240,8 @@ const SideBar: FC<SideBarProps> = ({
       </div>
       <div className="h-auto flex items-end">
         <div className="border-t border-[#808080] pt-5 text-xs text-[#9A9A9A] w-full">
-          <div className="grid grid-cols-12 mb-3 gap-2">
-            <div className="col-span-8">
+          <div className="grid grid-cols-12 mb-3 gap-10">
+            <div className="col-span-6">
               <p className="text-white font-medium">Agent ID:</p>
               <div className="flex items-center gap-1 relative">
                 <p className="break-all">{agent.ran_id}</p>
@@ -264,8 +264,8 @@ const SideBar: FC<SideBarProps> = ({
               <p>{totalchar}</p>
             </div>
           </div>
-          <div className="grid grid-cols-12 mb-3 gap-2">
-            <div className="col-span-8">
+          <div className="grid grid-cols-12 mb-3 gap-10">
+            <div className="col-span-6">
               <p className="text-white font-medium">
                 Temperature: {agent.temperature}
               </p>
@@ -289,8 +289,8 @@ const SideBar: FC<SideBarProps> = ({
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-12 mb-3 gap-2">
-            <div className="col-span-8">
+          <div className="grid grid-cols-12 mb-3 gap-10">
+            <div className="col-span-6">
               <p className="text-white font-medium">Last Trained:</p>
               <p>
                 {formattedDate}, {formattedTime}

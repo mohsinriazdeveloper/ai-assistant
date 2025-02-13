@@ -43,7 +43,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
   };
   return (
     <div
-      className="w-full pr-5 max-h-[69.5vh] overflow-hidden overflow-y-scroll scrollbar-hide"
+      className="w-full pr-5 max-h-[67vh] overflow-hidden overflow-y-scroll scrollbar-hide"
       ref={chatContainerRef}
     >
       {chat.map((message, index) => (

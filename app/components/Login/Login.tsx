@@ -37,6 +37,7 @@ const Login: FC<LoginProps> = ({}) => {
     e.preventDefault();
     setLoading(true);
     sessionStorage.clear();
+    localStorage.clear();
     if (!loginEmail && !loginPassword) {
       setEmailError("Email is required");
       setPassError("Password is required");

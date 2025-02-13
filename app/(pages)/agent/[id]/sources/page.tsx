@@ -70,7 +70,7 @@ const Page: FC<PageProps> = ({ params }) => {
               isMobile ? "col-span-12" : "col-span-9"
             } rounded-lg overflow-hidden bg-[#101010] h-full`}
           >
-            <div className="flex items-center step-2 ">
+            <div className="flex items-center">
               {isMobile && (
                 <LuChevronRight
                   className={`text-3xl cursor-pointer ml-3 mb-4 text-white`}

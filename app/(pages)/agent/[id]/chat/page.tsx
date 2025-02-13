@@ -127,7 +127,7 @@ const Page: FC<PageProps> = ({ params }) => {
             />
           ) : (
             <div className="bg-[#101010] h-full rounded-lg">
-              <div className="px-10 bg-white h-full rounded-lg py-[45px] ">
+              <div className="px-10 bg-white h-full rounded-lg pb-[45px] pt-[60px]">
                 <ChatAgent
                   setIsVoice={setIsVoice}
                   specificChatId={specificChatId}

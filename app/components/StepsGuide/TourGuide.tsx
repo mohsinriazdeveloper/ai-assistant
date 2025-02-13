@@ -131,6 +131,7 @@ const TourGuide: FC<TourGuideProps> = ({ start, setStartTour, onTourEnd }) => {
       } catch (error) {
         console.error(error);
       }
+      window.location.reload();
     }
   };
   return (

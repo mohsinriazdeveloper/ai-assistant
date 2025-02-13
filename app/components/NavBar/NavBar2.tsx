@@ -80,7 +80,7 @@ const NavBar2: FC<NavBar2Props> = ({ content }) => {
   };
   return (
     <div className="w-full bg-[#101010] pb-6 flex justify-between items-center px-11">
-      <div className="flex items-center gap-10">
+      <div id="step-3" className="flex items-center gap-10">
         {content.map((item, index) => (
           <div
             key={index}
