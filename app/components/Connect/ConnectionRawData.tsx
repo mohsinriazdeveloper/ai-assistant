@@ -65,9 +65,19 @@ const ConnectionRawData: FC<ConnectionRawDataProps> = ({
   // Populate data based on route
   useEffect(() => {
     if (currentRoute.includes("tools") && graphData) {
-      setShowData(graphData.recent_exchange_rates || []);
+      // setShowData(graphData.recent_exchange_rates || []);
+      setShowData(
+        [...(graphData.recent_exchange_rates || [])].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        )
+      );
     } else if (currentRoute.includes("connections") && getExchangeRate) {
-      setShowData(getExchangeRate.recent_exchange_rates || []);
+      // setShowData(getExchangeRate.recent_exchange_rates || []);
+      setShowData(
+        [...(getExchangeRate.recent_exchange_rates || [])].sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        )
+      );
     } else {
       setShowData([]);
     }
