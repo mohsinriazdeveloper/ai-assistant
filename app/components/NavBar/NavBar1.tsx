@@ -60,12 +60,14 @@ const NavBar1: FC<NavBar1Props> = () => {
 
   const handleSignOut = () => {
     // setTimeout(() => {
+
     dispatch(
       userLogoutSuccess({
         refresh: "",
         access: "",
       })
     );
+    dispatch(setCreateAgent({ createAgentStatus: false }));
     localStorage.clear();
     route.push("/");
     // }, 1000);

@@ -19,10 +19,16 @@ import ConnectCod from "./connectSlice";
 import CreateAgent from "./createAgentSlice";
 import NewChat from "./forChatSlice";
 import voiceResReducer from "./voiceResSlice";
+// const persistConfig = {
+//   key: "root",
+//   version: 1,
+//   storage,
+// };
 const persistConfig = {
   key: "root",
   version: 1,
   storage,
+  blacklist: ["createAgent"], // Prevents createAgent from being persisted
 };
 const rootReducer = combineReducers({
   auth: authReducer,
