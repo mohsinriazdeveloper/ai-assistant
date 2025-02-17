@@ -106,7 +106,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({}) => {
 
     // 4. Check if new password and confirm password match
     if (newPass !== confirmPass) {
-      setNewPassError("New password and confirm password do not match");
+      setConfirmPassError("New password and confirm password do not match");
       return;
     }
 

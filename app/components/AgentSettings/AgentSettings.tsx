@@ -172,7 +172,11 @@ const AgentSettings: FC<AgentSettings> = ({ agentId, checkOption }) => {
                 <p className="text-sm font-medium text-gray-300 mb-1">
                   Agent ID
                 </p>
-                <p className="text-sm font-medium ">{agent?.ran_id}</p>
+                <div className="w-full border border-gray-200 px-4 py-3 rounded-md">
+                  <p className="text-sm font-medium text-gray-300">
+                    {agent?.ran_id}
+                  </p>
+                </div>
               </div>
               <form onSubmit={handleUpdate} className="pt-1">
                 <div>
