@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { MdLockOutline } from "react-icons/md";
 import Loader from "../Loader/Loader";
 import { useCreateAgentMutation } from "../ReduxToolKit/aiAssistantOtherApis";
+import { useAppDispatch } from "../ReduxToolKit/hook";
 
 interface NewAgentProps {}
 
@@ -15,7 +16,7 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
   const [agentName, setagentName] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-
+  const dispatch = useAppDispatch();
   const route = useRouter();
   useEffect(() => {
     if (inputRef.current) {
@@ -41,6 +42,7 @@ const NewAgent: FC<NewAgentProps> = ({}) => {
         const res = await creatingAgent({ name: agentName }).unwrap();
         inputRef.current?.blur();
         toast.success("Agent successfully created");
+        localStorage.setItem("myCustomChatId", "0");
         route.push(`/agent/${res.id}/sources`);
         setLoading(false);
       } catch (error: any) {

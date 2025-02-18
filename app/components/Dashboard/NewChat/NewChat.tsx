@@ -20,7 +20,6 @@ const NewChat: FC<NewChatProps> = ({ navBarContent }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const { createAgentStatus } = useAppSelector(selectCreateAgent);
 
-  console.log(createAgentStatus);
   return (
     <Background>
       <div className="py-[51px] px-5 bg-white rounded-lg h-full">

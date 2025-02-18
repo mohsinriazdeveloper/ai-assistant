@@ -91,7 +91,6 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
     );
   };
 
-  console.log("agent: ", sourceList);
   return (
     <div className="relative ">
       <div className="tab:w-[70%] md:w-[90%] w-[100%]">

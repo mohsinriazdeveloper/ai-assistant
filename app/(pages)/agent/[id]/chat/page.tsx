@@ -22,7 +22,6 @@ const Page: FC<PageProps> = ({ params }) => {
   const { id } = params;
   const router = useRouter();
   const { access } = useAppSelector(selectAuth);
-
   const [checkOption, setCheckOption] = useState<string>("chatagent");
   const [IsVoice, setIsVoice] = useState<boolean>(false);
   const [specificChatId, setSpecificChatId] = useState<number | null>(null);
@@ -31,7 +30,6 @@ const Page: FC<PageProps> = ({ params }) => {
   const inputIdRef = useRef<HTMLTextAreaElement>(null);
   const dispatch = useAppDispatch();
   const content = getContent(id);
-
   // Redirect if no access
   useEffect(() => {
     if (!access) {
