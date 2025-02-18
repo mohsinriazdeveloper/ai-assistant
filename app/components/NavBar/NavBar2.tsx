@@ -8,7 +8,10 @@ import toast from "react-hot-toast";
 import { LiaGlobeAmericasSolid } from "react-icons/lia";
 import { useLazyGetAllAgentsQuery } from "../ReduxToolKit/aiAssistantOtherApis";
 import { userLoginSuccess, userLogoutSuccess } from "../ReduxToolKit/authSlice";
-import { selectCreateAgent } from "../ReduxToolKit/createAgentSlice";
+import {
+  selectCreateAgent,
+  setCreateAgent,
+} from "../ReduxToolKit/createAgentSlice";
 import { useAppDispatch, useAppSelector } from "../ReduxToolKit/hook";
 type Content = {
   id: number;
@@ -69,6 +72,7 @@ const NavBar2: FC<NavBar2Props> = ({ content }) => {
         access: "",
       })
     );
+    dispatch(setCreateAgent({ createAgentStatus: false }));
     localStorage.clear();
     route.push("/");
     // }, 1000);
@@ -76,6 +80,10 @@ const NavBar2: FC<NavBar2Props> = ({ content }) => {
   };
   const handleRedirect = (url: string, id: number) => {
     setLoading(id);
+    route.push(url);
+  };
+  const handleRedirectDashboard = (url: string) => {
+    dispatch(setCreateAgent({ createAgentStatus: false }));
     route.push(url);
   };
   return (
@@ -96,13 +104,13 @@ const NavBar2: FC<NavBar2Props> = ({ content }) => {
         ))}
       </div>
       <div className="flex justify-end items-center gap-3">
-        <Link
-          href="/dashboard/agents"
+        <div
+          onClick={() => handleRedirectDashboard("/dashboard/agents")}
           className="rounded-full flex justify-center items-center gap-2 w-[160px] h-[50px] bg-[#201f1f] text-[#c0d1f4] text-[13px] font-bold cursor-pointer"
         >
           <LiaGlobeAmericasSolid className="text-2xl" />
           <p>My Ai Agents</p>
-        </Link>
+        </div>
         <Link
           href="/dashboard/settings"
           className="w-[50px] h-[50px] bg-[#201f1f] rounded-full flex justify-center items-center cursor-pointer"

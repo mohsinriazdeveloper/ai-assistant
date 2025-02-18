@@ -71,7 +71,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     try {
       const res = await delExistingFile(id);
       setUploadFlag(false);
-      toast.success(`${fileName} file deleted successfully`);
+      toast.success(`File deleted successfully`);
       setWebChar(0);
       setFileChar(0);
       setImgChar(0);
@@ -186,16 +186,26 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             <div className="">
               <p className="text-sm">Name*</p>
               <div>
-                <input
-                  type="text"
-                  placeholder="source name"
-                  value={sourceName}
-                  onChange={(e) => {
-                    setSourceName(e.target.value);
-                    setSourceNameError("");
-                  }}
-                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light focus:outline-none"
-                />
+                {website_url ? (
+                  <>
+                    {sourceName && (
+                      <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
+                        <p>{sourceName}</p>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <input
+                    type="text"
+                    placeholder="source name"
+                    value={sourceName}
+                    onChange={(e) => {
+                      setSourceName(e.target.value);
+                      setSourceNameError("");
+                    }}
+                    className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light focus:outline-none"
+                  />
+                )}
                 {sourceNameError && (
                   <p className="text-sm text-red-500">{sourceNameError}</p>
                 )}
@@ -206,27 +216,46 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             </div>
             <div className="">
               <p className="text-sm">Context / Clarifications</p>
-
-              <textarea
-                placeholder="context"
-                rows={2}
-                value={sourceContext}
-                onChange={(e) => setSourceContext(e.target.value)}
-                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
-              />
+              {website_url ? (
+                <>
+                  {sourceContext && (
+                    <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
+                      <p>{sourceContext}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <textarea
+                  placeholder="context"
+                  rows={2}
+                  value={sourceContext}
+                  onChange={(e) => setSourceContext(e.target.value)}
+                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+                />
+              )}
               {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                 <p>{sourceContext}</p>
               </div> */}
             </div>
             <div className="">
               <p className="text-sm">Instructions</p>
-              <textarea
-                placeholder="instruction"
-                rows={2}
-                value={sourceInstructions}
-                onChange={(e) => setSourceInstructions(e.target.value)}
-                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
-              />
+              {website_url ? (
+                <>
+                  {sourceInstructions && (
+                    <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
+                      <p>{sourceInstructions}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <textarea
+                  placeholder="instruction"
+                  rows={2}
+                  value={sourceInstructions}
+                  onChange={(e) => setSourceInstructions(e.target.value)}
+                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+                />
+              )}
               {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                 <p>{sourceInstructions}</p>
               </div> */}
@@ -258,13 +287,15 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
         </div>
       </div>
       <div className="flex justify-end items-end gap-3 mt-8">
-        <button
-          disabled={updateFileLoading}
-          onClick={updateFileChange}
-          className="hover:bg-[#078fffc7] bg-[#0790FF] text-white font-medium rounded-full text-[15px] h-[38px] w-[120px] flex justify-center items-center"
-        >
-          {updateFileLoading ? <Loader /> : "Save"}
-        </button>
+        {!website_url && (
+          <button
+            disabled={updateFileLoading}
+            onClick={updateFileChange}
+            className="hover:bg-[#078fffc7] bg-[#0790FF] text-white font-medium rounded-full text-[15px] h-[38px] w-[120px] flex justify-center items-center"
+          >
+            {updateFileLoading ? <Loader /> : "Save"}
+          </button>
+        )}
         {deleteLoading ? (
           <Loader />
         ) : (
