@@ -67,7 +67,7 @@ const TourGuide: FC<TourGuideProps> = ({ start, setStartTour, onTourEnd }) => {
           </p>
         </div>
       ),
-      placement: "top",
+      placement: "bottom",
       styles: {
         options: {
           width: "235px",
