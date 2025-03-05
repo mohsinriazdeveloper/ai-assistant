@@ -56,6 +56,9 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     if (fileName) {
       setFile_Name(fileName);
     }
+    if (website_url) {
+      setFile_Name(website_url);
+    }
     if (source_Name) {
       setSourceName(source_Name);
     }
@@ -149,7 +152,11 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
           ) : (
             <>
               {file_Name && (
-                <div className="flex items-center gap-2">
+                <div
+                  className={`flex items-center gap-2 ${
+                    website_url && "hidden"
+                  }`}
+                >
                   <p
                     className="text-blue-500 underline cursor-pointer font-semibold"
                     onClick={() => handleOpenFile(fileUrl)}
@@ -168,7 +175,6 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
               )}
             </>
           )}
-
           {website_url && (
             <Link
               target="_blank"
@@ -186,26 +192,16 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             <div className="">
               <p className="text-sm">Name*</p>
               <div>
-                {website_url ? (
-                  <>
-                    {sourceName && (
-                      <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
-                        <p>{sourceName}</p>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <input
-                    type="text"
-                    placeholder="source name"
-                    value={sourceName}
-                    onChange={(e) => {
-                      setSourceName(e.target.value);
-                      setSourceNameError("");
-                    }}
-                    className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light focus:outline-none"
-                  />
-                )}
+                <input
+                  type="text"
+                  placeholder="source name"
+                  value={sourceName}
+                  onChange={(e) => {
+                    setSourceName(e.target.value);
+                    setSourceNameError("");
+                  }}
+                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light focus:outline-none"
+                />
                 {sourceNameError && (
                   <p className="text-sm text-red-500">{sourceNameError}</p>
                 )}
@@ -216,46 +212,26 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             </div>
             <div className="">
               <p className="text-sm">Context / Clarifications</p>
-              {website_url ? (
-                <>
-                  {sourceContext && (
-                    <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
-                      <p>{sourceContext}</p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <textarea
-                  placeholder="context"
-                  rows={2}
-                  value={sourceContext}
-                  onChange={(e) => setSourceContext(e.target.value)}
-                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
-                />
-              )}
+              <textarea
+                placeholder="context"
+                rows={2}
+                value={sourceContext}
+                onChange={(e) => setSourceContext(e.target.value)}
+                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+              />
               {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                 <p>{sourceContext}</p>
               </div> */}
             </div>
             <div className="">
               <p className="text-sm">Instructions</p>
-              {website_url ? (
-                <>
-                  {sourceInstructions && (
-                    <div className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light">
-                      <p>{sourceInstructions}</p>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <textarea
-                  placeholder="instruction"
-                  rows={2}
-                  value={sourceInstructions}
-                  onChange={(e) => setSourceInstructions(e.target.value)}
-                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
-                />
-              )}
+              <textarea
+                placeholder="instruction"
+                rows={2}
+                value={sourceInstructions}
+                onChange={(e) => setSourceInstructions(e.target.value)}
+                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+              />
               {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                 <p>{sourceInstructions}</p>
               </div> */}
@@ -287,15 +263,13 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
         </div>
       </div>
       <div className="flex justify-end items-end gap-3 mt-8">
-        {!website_url && (
-          <button
-            disabled={updateFileLoading}
-            onClick={updateFileChange}
-            className="hover:bg-[#078fffc7] bg-[#0790FF] text-white font-medium rounded-full text-[15px] h-[38px] w-[120px] flex justify-center items-center"
-          >
-            {updateFileLoading ? <Loader /> : "Save"}
-          </button>
-        )}
+        <button
+          disabled={updateFileLoading}
+          onClick={updateFileChange}
+          className="hover:bg-[#078fffc7] bg-[#0790FF] text-white font-medium rounded-full text-[15px] h-[38px] w-[120px] flex justify-center items-center"
+        >
+          {updateFileLoading ? <Loader /> : "Save"}
+        </button>
         {deleteLoading ? (
           <Loader />
         ) : (

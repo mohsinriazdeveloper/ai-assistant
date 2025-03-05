@@ -51,11 +51,11 @@ const Page: FC<PageProps> = ({ params }) => {
           setStartTour={setStartTour}
           onTourEnd={handleTourEnd}
         />
-        <div className="tab:grid grid-cols-12 w-full relative h-full">
+        <div className="flex w-full relative h-full">
           <div
             className={`${
               isMobile ? "hidden" : "block"
-            } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] tab:pb-0 pb-10 bg-[#101010] overflow-y-auto scrollbar-hide `}
+            } w-[22.7%] tab:relative absolute tab:pb-0 pb-10 bg-[#101010] overflow-y-auto scrollbar-hide `}
           >
             <SideBar
               agentId={id}
@@ -67,7 +67,7 @@ const Page: FC<PageProps> = ({ params }) => {
           </div>
           <div
             className={`${
-              isMobile ? "col-span-12" : "col-span-9"
+              isMobile ? "w-full" : "w-[77.3%]"
             } rounded-lg overflow-hidden bg-[#101010] h-full`}
           >
             <div className="flex items-center">

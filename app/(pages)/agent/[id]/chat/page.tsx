@@ -87,11 +87,11 @@ const Page: FC<PageProps> = ({ params }) => {
 
   return (
     <Background>
-      <div className="tab:grid grid-cols-12 w-full h-full">
+      <div className="flex w-full h-full">
         <div
           className={`${
             isMobile ? "hidden" : "block"
-          } col-span-3 tab:relative absolute tab:w-full sm:w-[40%] w-[50%] bg-[#101010] max-h-full z-50`}
+          } w-[22.7%] tab:relative absolute bg-[#101010] max-h-full z-50`}
         >
           <AgentChatSideBar
             agentId={id}
@@ -105,7 +105,7 @@ const Page: FC<PageProps> = ({ params }) => {
         </div>
         <div
           className={`${
-            isMobile ? "col-span-12" : "col-span-9"
+            isMobile ? "w-full" : "w-[77.3%]"
           } rounded-lg bg-[#101010] overflow-hidden h-full flex flex-col`}
         >
           <div className="flex items-center">

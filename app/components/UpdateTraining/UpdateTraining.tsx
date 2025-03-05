@@ -455,7 +455,7 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
 
   return (
     <div className="tab:pb-0 pb-4 mb-5">
-      <div className="pt-10 ">
+      <div className="pt-10">
         <div className="grid grid-cols-12 gap-4">
           <div className="tab:col-span-9 md:col-span-8 col-span-12">
             {checkOption === "files" && (
