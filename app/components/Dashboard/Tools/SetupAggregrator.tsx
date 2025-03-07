@@ -52,10 +52,11 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
 
   useEffect(() => {
     if (agent?.files) {
-      const filteredFiles = agent?.files.filter(
-        (item) => item.file_category === "image" || "file"
-      );
-      setSourceList(filteredFiles);
+      // const filteredFiles = agent?.files.filter(
+      //   (item) => item.file_category === "image" || "file"
+      // );
+      // setSourceList(filteredFiles);
+      setSourceList(agent.files);
     } else {
       setSourceList([]);
     }
@@ -90,7 +91,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       prev.map((item, i) => (i === index ? { ...item, [key]: value } : item))
     );
   };
-
+  console.log(sourceList);
   return (
     <div className="relative ">
       <div className="tab:w-[70%] md:w-[90%] w-[100%]">
@@ -189,7 +190,8 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                           setSourceDropDownIndex(null);
                         }}
                       >
-                        {item.file_name}
+                        {item.file_name && item.file_name}
+                        {item.website_url && item.website_url}
                       </p>
                     ))}
                   </div>

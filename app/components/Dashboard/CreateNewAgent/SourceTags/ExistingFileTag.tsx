@@ -49,6 +49,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   const [sourceNameError, setSourceNameError] = useState<string>("");
   const [sourceContext, setSourceContext] = useState<string>("");
   const [sourceInstructions, setSourceInstructions] = useState<string>("");
+  const [webAutoUpdate, setWebAutoUpdate] = useState<string>("");
 
   const [toggleFileName, setToggleFileName] = useState<boolean>(false);
 
@@ -68,7 +69,16 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
     if (source_Instructions) {
       setSourceInstructions(source_Instructions);
     }
-  }, [source_Name, source_Context, source_Instructions, fileName]);
+    if (website_auto_update) {
+      setWebAutoUpdate(website_auto_update);
+    }
+  }, [
+    source_Name,
+    source_Context,
+    source_Instructions,
+    fileName,
+    website_auto_update,
+  ]);
 
   const handleDeleteFile = async () => {
     try {
@@ -114,6 +124,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
       source_name: sourceName,
       source_context: sourceContext,
       source_instructions: sourceInstructions,
+      website_auto_update: webAutoUpdate,
     };
     setToggleFileName(false);
     try {
@@ -236,16 +247,26 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
                 <p>{sourceInstructions}</p>
               </div> */}
             </div>
-            {website_auto_update && (
+            {webAutoUpdate && (
               <div>
                 <p className="text-sm">Daily Auto-Updates</p>
                 <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
-                  <div className="flex items-center gap-2 cursor-pointer">
-                    <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">
-                      <p className="pb-1">x</p>
-                    </div>
-                    <p className="capitalize">{website_auto_update}</p>
-                  </div>
+                  {["manually", "daily", "weekly", "monthly", "quarterly"].map(
+                    (option) => (
+                      <div
+                        key={option}
+                        className="flex items-center gap-2 cursor-pointer"
+                        onClick={() => setWebAutoUpdate(option)}
+                      >
+                        <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">
+                          <p className="pb-1">
+                            {webAutoUpdate === option ? "x" : ""}
+                          </p>
+                        </div>
+                        <p className="capitalize">{option}</p>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             )}

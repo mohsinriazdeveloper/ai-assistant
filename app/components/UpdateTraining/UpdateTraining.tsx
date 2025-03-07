@@ -431,10 +431,18 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           setWebsiteChar(0);
           setImgChar(0);
           if (fileRes.error) {
-            toast.error(
-              //@ts-ignore
-              `${fileRes.error.data.website_url}`
-            );
+            // @ts-ignore
+            // console.log(fileRes.error.data.error_message);
+            // toast.error(
+            //   //@ts-ignore
+            //   `${fileRes.error.data.website_url}`
+            // );
+            // @ts-ignore
+            isError.push({
+              error: "",
+              // @ts-ignore
+              msg: `${fileRes.error.data.error_message}`,
+            });
           }
           isSuccess.push("success");
         } catch (error) {
