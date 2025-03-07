@@ -168,7 +168,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                   <MdKeyboardArrowDown className="text-xl" />
                 </div>
                 {sourceDropDownIndex === index && (
-                  <div className="w-full absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10">
+                  <div className="w-full overflow-x-hidden absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10">
                     {getGraphs?.map((item) => (
                       <p
                         key={item.id}
