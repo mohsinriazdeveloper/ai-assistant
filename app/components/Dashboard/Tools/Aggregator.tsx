@@ -1,6 +1,7 @@
 import { ResumeType } from "@/app/(pages)/agent/[id]/tools/page";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
+import { RxCross1 } from "react-icons/rx";
 import MarkDown2 from "../../MarkDown/MarkDown2";
 
 interface AggregatorProps {
@@ -40,34 +41,44 @@ const Aggregator: FC<AggregatorProps> = ({
     setAggregatorOverlay2(true);
   };
   return (
-    <div className="w-full grid md:grid-cols-2 grid-cols-1 gap-3">
+    // <div className="w-full grid md:grid-cols-2 grid-cols-1 gap-3">
+    <div className="w-full">
       <div
-        className={`col-span-1 border rounded-lg overflow-hidden relative ${
+        className={`col-span-1 border rounded-lg relative pt-11 pb-7 pl-12 pr-7 ${
           !resumeData1.length && "h-[70vh]"
         }`}
       >
-        <div className="h-4 w-full bg-[#0C61B6]"></div>
-        <HiOutlineDotsHorizontal
-          className={`text-2xl cursor-pointer rotate-90 ml-auto`}
-          onClick={() => setDropDown1(!dropDown1)}
-        />
-        {dropDown1 && (
-          <div className="absolute w-[100px] bg-white rounded-md shadow-md p-1 right-0">
-            <p
-              onClick={deleteData1}
-              className="text-sm text-red-500 hover:bg-slate-200 cursor-pointer px-2 py-1"
-            >
-              Delete
-            </p>
-          </div>
-        )}
+        {/* <div className="h-4 w-full bg-[#0C61B6]"></div> */}
 
         {resumeData1.map((data, index) => (
           <div key={index}>
             <div className="py-3 px-5">
               <div className="flex justify-between items-center gap-2 mb-4">
                 <div className="grow">
-                  <p className="font-bold text-sm">{data.section_name}</p>
+                  <p className="font-bold text-3xl">{data.section_name}</p>
+                </div>
+                <div>
+                  <HiOutlineDotsHorizontal
+                    className={`text-3xl cursor-pointer rotate-90 ml-auto`}
+                    onClick={() => setDropDown1(!dropDown1)}
+                  />
+                  {dropDown1 && (
+                    <div className="absolute w-[261px] h-[269px] bg-white rounded-md shadow-md pt-7 px-5 pb-5 top-8 right-6 border">
+                      <RxCross1
+                        className={`text-2xl cursor-pointer rotate-90 ml-auto text-[#717680] mb-16`}
+                        onClick={() => setDropDown1(!dropDown1)}
+                      />
+                      <div className="w-full h-[68px] flex justify-center items-center bg-[#F9F9F9] rounded-[5px] mb-4 cursor-pointer">
+                        <p className="text-sm font-semibold">Edit Prompt</p>
+                      </div>
+                      <div
+                        onClick={deleteData1}
+                        className="w-full h-[38px] flex justify-center items-center bg-[#FFE8E8] rounded-[5px] cursor-pointer"
+                      >
+                        <p className="text-sm font-semibold">Remove</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="divide-y space-y-4 divide-black">
@@ -92,7 +103,7 @@ const Aggregator: FC<AggregatorProps> = ({
           </div>
         )}
       </div>
-      <div
+      {/* <div
         className={`col-span-1 border rounded-lg overflow-hidden relative ${
           !resumeData2.length && "h-[70vh]"
         }`}
@@ -141,7 +152,7 @@ const Aggregator: FC<AggregatorProps> = ({
             </button>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

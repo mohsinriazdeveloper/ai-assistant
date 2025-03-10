@@ -278,7 +278,7 @@ const Page: FC<PageProps> = ({ params }) => {
                       createResumeLoading={createResumeLoading}
                     />
                   )}
-                  {aggregatorSetup === "setup2" && (
+                  {/* {aggregatorSetup === "setup2" && (
                     <SetupAggregrator
                       agentId={id}
                       summaryName={summaryName2}
@@ -289,7 +289,7 @@ const Page: FC<PageProps> = ({ params }) => {
                       handleGenerateAggregator={handleGenerateAggregator2}
                       createResumeLoading={createResumeLoading}
                     />
-                  )}
+                  )} */}
                 </>
               )}
             </div>

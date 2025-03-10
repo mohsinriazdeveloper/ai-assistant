@@ -171,7 +171,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
   return (
     <div className="h-full flex flex-col justify-between items-center pb-[30px]">
       {startNewChat ? (
-        <div className="grow flex flex-col justify-center items-center text-center">
+        <div className="grow flex flex-col justify-center items-center text-center  min-h-[67vh] max-h-[67vh]">
           <Image src={AiStar} alt="" />
           <p className="text-black lg:text-6xl md:text-5xl sm:text-4xl text-3xl font-bold mt-10">
             Your Sources.
