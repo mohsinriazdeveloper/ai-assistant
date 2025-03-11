@@ -1,5 +1,6 @@
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
+import { HiOutlineCircleStack } from "react-icons/hi2";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import Loader from "../../Loader/Loader";
@@ -89,7 +90,7 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
         <p>Graph Name</p>
         <div>
           <input
-            className="focus:outline-none w-[551px] rounded py-3 px-4 bg-white border border-[#c4c4c4]"
+            className="focus:outline-none w-[551px] rounded py-3 px-4 bg-white border border-[#f3f3f3]"
             type="text"
             value={graphData?.name}
             onChange={(e) => {
@@ -111,13 +112,17 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
             onClick={() => setSourceDropDown(!sourceDropDown)}
             className=" bg-white border border-[#b8b8b8] rounded-full py-2 px-4 flex justify-between items-center font-medium cursor-pointer"
           >
-            <p>
-              {dropDownValue ? (
-                <span>{dropDownValue}</span>
-              ) : (
-                <span className="text-gray-500">select</span>
-              )}
-            </p>
+            <div className="flex items-center gap-2">
+              <HiOutlineCircleStack />
+
+              <p>
+                {dropDownValue ? (
+                  <span>{dropDownValue}</span>
+                ) : (
+                  <span className="text-gray-500">select</span>
+                )}
+              </p>
+            </div>
             <MdKeyboardArrowDown className="text-xl" />
           </div>
           {apiError && <p className="text-xs text-red-600">{apiError}</p>}
@@ -141,7 +146,7 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
         </div>
         <div className="pt-3 w-[733px]">
           <p>Auto Call</p>
-          <div className=" bg-white mt-2 h-[64px] border border-[#c4c4c4] rounded py-3 px-4 w-full flex justify-between items-center gap-3 flex-wrap">
+          <div className=" bg-white mt-2 h-[64px] border border-[#f3f3f3] rounded py-3 px-4 w-full flex justify-between items-center gap-3 flex-wrap">
             {["manually", "daily", "weekly", "monthly", "quarterly"].map(
               (option) => (
                 <div
@@ -157,7 +162,7 @@ const SetupApi: FC<SetupApiProps> = ({ agentId, setIsSetup }) => {
                     setAutoCallError("");
                   }}
                 >
-                  <div className="w-5 h-5 rounded-[7px] border-2 border-[#A8A2A2] flex justify-center items-center text-sm font-bold">
+                  <div className="w-5 h-5 rounded-[7px] border-[1.5px] border-[#ADA7A7] flex justify-center items-center text-sm font-bold">
                     <p className="pb-1">
                       {graphData?.auto_call === option ? "x" : ""}
                     </p>

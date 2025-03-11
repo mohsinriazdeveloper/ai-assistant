@@ -69,7 +69,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
                 </div>
               </div>
               <div className="flex items-center gap-2 relative -top-5 -right-5">
-                <div className="py-4 px-5 bg-white rounded-lg shadow-md text-sm text-[#1E1F22] w-fit ">
+                <div className="py-4 px-5 bg-[#f6f6f6] rounded-2xl text-sm text-[#1E1F22] w-fit ">
                   {/* <MarkDown content={message.message} /> */}
                   <p className="text-[17px]">{message.message}</p>
                 </div>
@@ -94,7 +94,7 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
               </div>
               <div className="flex items-center gap-2 relative -top-5 -right-5 ">
                 <div
-                  className={`py-4 px-5 bg-white rounded-lg shadow-md text-[#1E1F22] text-[17px] ${
+                  className={`py-4 px-5 bg-white rounded-lg text-[#1E1F22] text-[17px] ${
                     message.message === "loading" ? "w-[50%]" : "w-[98%]"
                   }  `}
                 >
