@@ -19,33 +19,6 @@ export type ExchangeRateType = {
   date: string;
 };
 
-// export type CPIRatesObservations = {
-//   d: string;
-//   STATIC_TOTALCPICHANGE: {
-//     v: string;
-//   };
-//   CPI_MEDIAN: {
-//     v: string;
-//   };
-//   CPI_TRIM: {
-//     v: string;
-//   };
-//   STATIC_CPIXFET: {
-//     v: string;
-//   };
-//   CPI_COMMON: {
-//     v: string;
-//   };
-//   CPIW: {
-//     v: string;
-//   };
-//   V41690973: {
-//     v: string;
-//   };
-//   V41690914: {
-//     v: string;
-//   };
-// };
 export type CPIRatesObservations = {
   d: string;
   STATIC_TOTALCPICHANGE?: { v?: string };
@@ -179,4 +152,16 @@ export type UserProfile = {
   role: string;
   organization: number;
   is_first_interaction_with_agent: boolean;
+};
+
+export type Report = {
+  summary_name: string;
+  auto_update: string;
+  sections: [
+    {
+      section_name: string;
+      section_report: string;
+      sources: [""];
+    }
+  ];
 };

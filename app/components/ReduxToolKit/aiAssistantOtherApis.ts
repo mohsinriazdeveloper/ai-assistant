@@ -8,6 +8,7 @@ import {
   ApiConnection,
   GetExchangeRate,
   Organization,
+  Report,
   StateAgent,
   UserProfile,
 } from "./types/agents.d";
@@ -284,6 +285,12 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
 
+    //29 get resume / aggregator / report
+    getResume: builder.query<Report, number>({
+      query: (id) => `/accounts/agents/${id}/tools/resume/report/`,
+      providesTags: ["AllPosts"],
+    }),
+
     //agent voice
     agentVoice: builder.mutation({
       query: (credentials) => ({
@@ -396,6 +403,7 @@ export const {
   useCreateResumeMutation,
   useUpdateOrgNameMutation,
   useUpdateFileMutation,
+  useGetResumeQuery,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,

@@ -11,12 +11,15 @@ import Loader2 from "../../Loader/Loader2";
 import {
   useGetAgentByIdQuery,
   useGetAllGraphsQuery,
+  useGetSourceApiConnectionsQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
-import { ApiConnection, Files } from "../../ReduxToolKit/types/agents";
+import { Files } from "../../ReduxToolKit/types/agents";
 
 interface SetupAggregratorProps {
   agentId: number;
   summaryName: string;
+  autoUpdate: string;
+  setAutoUpdate: Dispatch<SetStateAction<string>>;
   setSummaryName: Dispatch<SetStateAction<string>>;
   sectionData: SectionData[];
   setSectionData: Dispatch<SetStateAction<SectionData[]>>;
@@ -28,6 +31,8 @@ interface SetupAggregratorProps {
 const SetupAggregrator: FC<SetupAggregratorProps> = ({
   agentId,
   summaryName,
+  autoUpdate,
+  setAutoUpdate,
   setSummaryName,
   sectionData,
   setSectionData,
@@ -36,6 +41,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
   createResumeLoading,
 }) => {
   const { data: getGraphs, isLoading } = useGetAllGraphsQuery(agentId);
+  const { data: apiConnectionData } = useGetSourceApiConnectionsQuery(agentId);
   const { data: agent, isLoading: agentDataoading } =
     useGetAgentByIdQuery(agentId);
   const [sourceDropDownIndex, setSourceDropDownIndex] = useState<number | null>(
@@ -43,29 +49,14 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
   ); // Track which section's dropdown is open
   const [sections, setSections] = useState<number[]>([1]); // Array to track sections
   const [sourceList, setSourceList] = useState<Files[]>([]);
-  const [graphList, setGraphList] = useState<ApiConnection[]>([]);
-
-  useEffect(() => {
-    if (getGraphs) {
-      setGraphList(getGraphs);
-    } else {
-      setGraphList([]);
-    }
-  }, [getGraphs]);
 
   useEffect(() => {
     if (agent?.files) {
-      // const filteredFiles = agent?.files.filter(
-      //   (item) => item.file_category === "image" || "file"
-      // );
-      // setSourceList(filteredFiles);
       setSourceList(agent.files);
     } else {
       setSourceList([]);
     }
   }, [agent]);
-
-  const sourceGraph = [...graphList, ...sourceList];
 
   const handleAddSection = () => {
     setSections((prev) => [...prev, prev.length + 1]);
@@ -73,7 +64,11 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       ...prev,
       {
         section_name: "",
-        source_id: 0,
+        source: {
+          file_id: null,
+          agent_source_api_connection_id: null,
+          agent_graph_api_connection_id: null,
+        },
         display_source_links: false,
         instructions: "",
       },
@@ -94,7 +89,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       prev.map((item, i) => (i === index ? { ...item, [key]: value } : item))
     );
   };
-  console.log(sourceList);
+
   return (
     <div className="relative ">
       <div className="w-full">
@@ -122,29 +117,16 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                   <div
                     key={option}
                     className="flex items-center gap-2 cursor-pointer"
-                    // onClick={() => {
-                    //   setGraphData((prev) => {
-                    //     if (prev) {
-                    //       return { ...prev, auto_call: option };
-                    //     }
-                    //     return { id: null, name: "", auto_call: option };
-                    //   });
-                    //   setAutoCallError("");
-                    // }}
+                    onClick={() => setAutoUpdate(option)}
                   >
                     <div className="w-5 h-5 rounded-[7px] border-[1.5px] border-[#ADA7A7] flex justify-center items-center text-sm font-bold">
-                      <p className="pb-1">
-                        {/* {graphData?.auto_call === option ? "x" : ""} */}
-                      </p>
+                      <p className="pb-1">{autoUpdate === option ? "x" : ""}</p>
                     </div>
                     <p className="capitalize">{option}</p>
                   </div>
                 )
               )}
             </div>
-            {/* {autoCallError && (
-            <p className="text-xs text-red-600">{autoCallError}</p>
-          )}{" "} */}
           </div>
         </div>
 
@@ -181,48 +163,90 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                     <HiOutlineCircleStack />
 
                     <p>
-                      {(() => {
-                        const graphName = getGraphs?.find(
-                          (item) => item.id === sectionData[index]?.source_id
-                        )?.name;
-
-                        const fileName = sourceList?.find(
-                          (item) => item.id === sectionData[index]?.source_id
-                        )?.file_name;
-
-                        return graphName || fileName ? (
-                          <>
-                            {graphName && <span>{graphName}</span>}
-                            {fileName && <span>{fileName}</span>}
-                          </>
-                        ) : (
-                          <span className="text-gray-500">Select Source</span>
-                        );
-                      })()}
+                      {sectionData[index].source.agent_graph_api_connection_id
+                        ? getGraphs?.find(
+                            (item) =>
+                              item.agent_graph_api_connection_id ===
+                              sectionData[index].source
+                                .agent_graph_api_connection_id
+                          )?.name
+                        : sectionData[index].source
+                            .agent_source_api_connection_id
+                        ? apiConnectionData?.find(
+                            (item) =>
+                              item.agent_source_api_connection_id ===
+                              sectionData[index].source
+                                .agent_source_api_connection_id
+                          )?.name
+                        : sectionData[index].source.file_id
+                        ? sourceList.find(
+                            (item) =>
+                              item.id === sectionData[index].source.file_id
+                          )?.file_name ||
+                          sourceList.find(
+                            (item) =>
+                              item.id === sectionData[index].source.file_id
+                          )?.website_url
+                        : "Select Source"}
                     </p>
                   </div>
                   <MdKeyboardArrowDown className="text-xl" />
                 </div>
                 {sourceDropDownIndex === index && (
                   <div className="w-full overflow-x-hidden absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10">
-                    {getGraphs?.map((item) => (
-                      <p
-                        key={item.id}
-                        className="px-2 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => {
-                          handleSectionDataChange(index, "source_id", item.id);
-                          setSourceDropDownIndex(null);
-                        }}
-                      >
-                        {item.name}
-                      </p>
-                    ))}
+                    {getGraphs?.slice(1).map(
+                      (item, graphIndex) =>
+                        item.is_connected && (
+                          <p
+                            key={graphIndex}
+                            className="px-2 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => {
+                              handleSectionDataChange(index, "source", {
+                                ...sectionData[index].source,
+                                file_id: null,
+                                agent_source_api_connection_id: null,
+                                agent_graph_api_connection_id:
+                                  item.agent_graph_api_connection_id,
+                              });
+                              setSourceDropDownIndex(null);
+                            }}
+                          >
+                            {item.name}
+                          </p>
+                        )
+                    )}
+                    {apiConnectionData?.map(
+                      (item, apiIndex) =>
+                        item.is_connected && (
+                          <p
+                            key={apiIndex}
+                            className="px-2 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => {
+                              handleSectionDataChange(index, "source", {
+                                ...sectionData[index].source,
+                                file_id: null,
+                                agent_source_api_connection_id:
+                                  item.agent_source_api_connection_id,
+                                agent_graph_api_connection_id: null,
+                              });
+                              setSourceDropDownIndex(null);
+                            }}
+                          >
+                            {item.name}
+                          </p>
+                        )
+                    )}
                     {sourceList?.map((item) => (
                       <p
                         key={item.id}
                         className="px-2 hover:bg-gray-200 cursor-pointer"
                         onClick={() => {
-                          handleSectionDataChange(index, "source_id", item.id);
+                          handleSectionDataChange(index, "source", {
+                            ...sectionData[index].source,
+                            file_id: item.id,
+                            agent_source_api_connection_id: null,
+                            agent_graph_api_connection_id: null,
+                          });
                           setSourceDropDownIndex(null);
                         }}
                       >
