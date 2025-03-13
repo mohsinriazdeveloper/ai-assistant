@@ -17,6 +17,7 @@ import { Files } from "../../ReduxToolKit/types/agents";
 
 interface SetupAggregratorProps {
   agentId: number;
+  updateFlag: boolean;
   summaryName: string;
   autoUpdate: string;
   setAutoUpdate: Dispatch<SetStateAction<string>>;
@@ -26,10 +27,12 @@ interface SetupAggregratorProps {
   setAggregatorSetup: Dispatch<SetStateAction<string>>;
   handleGenerateAggregator: () => Promise<void>;
   createResumeLoading: boolean;
+  updateResumeLoading: boolean;
 }
 
 const SetupAggregrator: FC<SetupAggregratorProps> = ({
   agentId,
+  updateFlag,
   summaryName,
   autoUpdate,
   setAutoUpdate,
@@ -39,6 +42,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
   setAggregatorSetup,
   handleGenerateAggregator,
   createResumeLoading,
+  updateResumeLoading,
 }) => {
   const { data: getGraphs, isLoading } = useGetAllGraphsQuery(agentId);
   const { data: apiConnectionData } = useGetSourceApiConnectionsQuery(agentId);
@@ -57,7 +61,11 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       setSourceList([]);
     }
   }, [agent]);
-
+  useEffect(() => {
+    if (sectionData.length > 0) {
+      setSections(Array.from({ length: sectionData.length }, (_, i) => i + 1));
+    }
+  }, [sectionData]);
   const handleAddSection = () => {
     setSections((prev) => [...prev, prev.length + 1]);
     setSectionData((prev) => [
@@ -305,15 +313,16 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
             className="w-[214px] h-[39px] flex justify-center items-center gap-2 font-bold hover:bg-[#3c3c3f] bg-[#000000] text-white rounded-[15px]"
           >
             <Image src={BtnIcon} alt="" />
-            <p>Generate</p>
+            <p>{updateFlag ? "Update" : "Generate"}</p>
           </button>
         </div>
       </div>
-      {createResumeLoading && (
-        <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-[78vh]">
-          <Loader2 />
-        </div>
-      )}
+      {createResumeLoading ||
+        (updateResumeLoading && (
+          <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-[78vh]">
+            <Loader2 />
+          </div>
+        ))}
     </div>
   );
 };

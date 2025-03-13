@@ -8,7 +8,7 @@ import {
   ApiConnection,
   GetExchangeRate,
   Organization,
-  Report,
+  ReportType,
   StateAgent,
   UserProfile,
 } from "./types/agents.d";
@@ -286,9 +286,28 @@ export const userApi = createApi({
     }),
 
     //29 get resume / aggregator / report
-    getResume: builder.query<Report, number>({
+    getResume: builder.query<ReportType, number>({
       query: (id) => `/accounts/agents/${id}/tools/resume/report/`,
       providesTags: ["AllPosts"],
+    }),
+
+    //30 delete resume / aggregator / report
+    deleteResume: builder.mutation({
+      query: (id) => ({
+        url: `/accounts/agents/${id}/tools/resume/report/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["AllPosts"],
+    }),
+
+    //31 update existing resume / aggregator / report
+    updateReport: builder.mutation({
+      query: ({ id, data }: { id: number; data: any }) => ({
+        url: `/accounts/agents/${id}/tools/resume/report/`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["AllPosts"],
     }),
 
     //agent voice
@@ -404,6 +423,8 @@ export const {
   useUpdateOrgNameMutation,
   useUpdateFileMutation,
   useGetResumeQuery,
+  useDeleteResumeMutation,
+  useUpdateReportMutation,
 
   useGetAllAgentsQuery,
   useDeleteAgentMutation,

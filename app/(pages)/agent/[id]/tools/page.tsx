@@ -7,9 +7,14 @@ import SetupApi from "@/app/components/Dashboard/Tools/SetupApi";
 import ToolDashboardLayout from "@/app/components/Dashboard/Tools/ToolDashboardLayout";
 import SideBar from "@/app/components/LeftBar/SideBar";
 import NavBar from "@/app/components/NavBar/NavBar2";
-import { useCreateResumeMutation } from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
+import {
+  useCreateResumeMutation,
+  useGetResumeQuery,
+  useUpdateReportMutation,
+} from "@/app/components/ReduxToolKit/aiAssistantOtherApis";
 import { selectAuth } from "@/app/components/ReduxToolKit/authSlice";
 import { useAppSelector } from "@/app/components/ReduxToolKit/hook";
+import { ReportType } from "@/app/components/ReduxToolKit/types/agents";
 import { useRouter } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -40,6 +45,10 @@ const Page: FC<PageProps> = ({ params }) => {
   const { id } = params;
   const [createResume, { isLoading: createResumeLoading }] =
     useCreateResumeMutation();
+  const [updateResume, { isLoading: updateResumeLoading }] =
+    useUpdateReportMutation();
+  const { data: getReportData } = useGetResumeQuery(id);
+  const [wholeReport, setWholeReport] = useState<ReportType | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("dashboard");
   const [isSetup, setIsSetup] = useState<string | boolean>("graph");
@@ -59,9 +68,9 @@ const Page: FC<PageProps> = ({ params }) => {
       instructions: "",
     },
   ]);
-  // const [resumeData1, setResumeData1] = useState<ResumeType[]>([]);
   const [autoUpdate1, setAutoUpdate1] = useState<string>("manually");
 
+  const [updateFlag, setUpdateFlag] = useState<boolean>(false);
   const navContent = getContent(id);
 
   useEffect(() => {
@@ -69,6 +78,32 @@ const Page: FC<PageProps> = ({ params }) => {
       router.push("/");
     }
   }, [access, router]);
+
+  useEffect(() => {
+    if (getReportData) {
+      setAggregatorOverlay1(false);
+      setWholeReport(getReportData);
+      setUpdateFlag(true);
+    } else {
+      setAggregatorOverlay1(true);
+      setWholeReport(null);
+      setUpdateFlag(false);
+    }
+  }, [getReportData]);
+
+  useEffect(() => {
+    if (aggregatorSetup === "setup1" && wholeReport) {
+      if (wholeReport.request_payload.summary_name) {
+        setSummaryName1(wholeReport.request_payload.summary_name);
+      }
+      if (wholeReport.request_payload.auto_update) {
+        setAutoUpdate1(wholeReport.request_payload.auto_update);
+      }
+      if (wholeReport.request_payload.sections) {
+        setSectionData1(wholeReport.request_payload.sections);
+      }
+    }
+  }, [wholeReport, aggregatorSetup]);
 
   if (!access) {
     return null;
@@ -129,23 +164,45 @@ const Page: FC<PageProps> = ({ params }) => {
 
     console.log(payload);
     try {
-      await createResume({ id, data: payload });
-      setAggregatorOverlay1(false);
-      setAggregatorSetup("summary");
-      setSummaryName1("");
-      setSectionData1([
-        {
-          section_name: "",
-          source: {
-            file_id: null,
-            agent_graph_api_connection_id: null,
-            agent_source_api_connection_id: null,
+      if (updateFlag) {
+        await updateResume({ id, data: payload });
+
+        setAggregatorOverlay1(false);
+        setAggregatorSetup("summary");
+        setSummaryName1("");
+        setSectionData1([
+          {
+            section_name: "",
+            source: {
+              file_id: null,
+              agent_graph_api_connection_id: null,
+              agent_source_api_connection_id: null,
+            },
+            display_source_links: false,
+            instructions: "",
           },
-          display_source_links: false,
-          instructions: "",
-        },
-      ]);
-      toast.success("Resume created successfully");
+        ]);
+        toast.success("Resume updated successfully");
+      } else {
+        await createResume({ id, data: payload });
+
+        setAggregatorOverlay1(false);
+        setAggregatorSetup("summary");
+        setSummaryName1("");
+        setSectionData1([
+          {
+            section_name: "",
+            source: {
+              file_id: null,
+              agent_graph_api_connection_id: null,
+              agent_source_api_connection_id: null,
+            },
+            display_source_links: false,
+            instructions: "",
+          },
+        ]);
+        toast.success("Resume created successfully");
+      }
     } catch (error) {
       toast.error("Failed to create resume");
       console.error("Error:", error);
@@ -214,6 +271,8 @@ const Page: FC<PageProps> = ({ params }) => {
                   {aggregatorSetup === "summary" && (
                     <Aggregator
                       agentId={id}
+                      wholeReport={wholeReport}
+                      setWholeReport={setWholeReport}
                       aggregatorOverlay1={aggregatorOverlay1}
                       setAggregatorOverlay1={setAggregatorOverlay1}
                       setAggregatorSetup={setAggregatorSetup}
@@ -222,6 +281,7 @@ const Page: FC<PageProps> = ({ params }) => {
                   {aggregatorSetup === "setup1" && (
                     <SetupAggregrator
                       agentId={id}
+                      updateFlag={updateFlag}
                       summaryName={summaryName1}
                       autoUpdate={autoUpdate1}
                       setAutoUpdate={setAutoUpdate1}
@@ -231,6 +291,7 @@ const Page: FC<PageProps> = ({ params }) => {
                       setAggregatorSetup={setAggregatorSetup}
                       handleGenerateAggregator={handleGenerateAggregator1}
                       createResumeLoading={createResumeLoading}
+                      updateResumeLoading={updateResumeLoading}
                     />
                   )}
                 </>

@@ -154,7 +154,7 @@ export type UserProfile = {
   is_first_interaction_with_agent: boolean;
 };
 
-export type Report = {
+export type ReportType = {
   summary_name: string;
   auto_update: string;
   sections: [
@@ -164,4 +164,20 @@ export type Report = {
       sources: [""];
     }
   ];
+  request_payload: {
+    sections: [
+      {
+        source: {
+          file_id: number | null;
+          agent_graph_api_connection_id: number | null;
+          agent_source_api_connection_id: number | null;
+        };
+        instructions: string;
+        section_name: string;
+        display_source_links: boolean;
+      }
+    ];
+    auto_update: string;
+    summary_name: string;
+  };
 };
