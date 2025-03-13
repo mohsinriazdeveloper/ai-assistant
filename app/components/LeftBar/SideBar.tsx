@@ -155,7 +155,7 @@ const SideBar: FC<SideBarProps> = ({
           <label htmlFor="sideBarImage">
             {localImageUrl || agent.logo_url ? (
               <div
-                className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
+                className="w-[100px] h-[100px] rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
                 style={{
                   backgroundImage: `url(${localImageUrl || agent.logo_url})`,
                 }}

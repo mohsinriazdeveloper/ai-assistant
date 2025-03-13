@@ -52,7 +52,9 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   const [webAutoUpdate, setWebAutoUpdate] = useState<string>("");
 
   const [toggleFileName, setToggleFileName] = useState<boolean>(false);
-
+  const isImage = [".png", ".jpg", ".jpeg"].some((ext) =>
+    file_Name.toLowerCase().endsWith(ext)
+  );
   useEffect(() => {
     if (fileName) {
       setFile_Name(fileName);
@@ -135,71 +137,80 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   };
 
   return (
-    <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-4">
+    <div className="w-full bg-[#FAFAFA] py-4 px-6 rounded-lg mb-4">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-10 pt-1">
-          {toggleFileName ? (
-            <div className="flex items-center gap-2 w-[40%]">
-              <div className="w-full">
-                <input
-                  type="text"
-                  placeholder="File Name"
-                  value={file_Name}
-                  onChange={(e) => {
-                    setFile_Name(e.target.value);
-                    setFileNameError("");
-                  }}
-                  className="border-b focus:outline-none w-full"
-                />
-                {fileNameError && (
-                  <p className="text-sm text-red-500">{fileNameError}</p>
-                )}
-              </div>
-              <RiEdit2Fill
-                onClick={handleFileToggle}
-                className="cursor-pointer"
-              />
-            </div>
-          ) : (
-            <>
-              {file_Name && (
-                <div
-                  className={`flex items-center gap-2 ${
-                    website_url && "hidden"
-                  }`}
-                >
-                  <p
-                    className="text-blue-500 underline cursor-pointer font-semibold"
-                    onClick={() => handleOpenFile(fileUrl)}
-                  >
-                    {file_Name?.length > 30 ? (
-                      <>{file_Name.slice(0, 30) + " ..."}</>
-                    ) : (
-                      <>{file_Name}</>
-                    )}
-                  </p>
-                  <RiEdit2Line
-                    onClick={() => setToggleFileName(true)}
-                    className="cursor-pointer"
+          <div
+            className={`${
+              isImage && "flex items-center gap-2 p-2 bg-white w-fit"
+            }`}
+          >
+            {isImage && (
+              <img src={fileUrl} alt="Dynamic Image" className="w-10" />
+            )}
+            {toggleFileName ? (
+              <div className="flex items-center gap-2 w-[40%]">
+                <div className="w-full">
+                  <input
+                    type="text"
+                    placeholder="File Name"
+                    value={file_Name}
+                    onChange={(e) => {
+                      setFile_Name(e.target.value);
+                      setFileNameError("");
+                    }}
+                    className="border-b focus:outline-none w-full"
                   />
+                  {fileNameError && (
+                    <p className="text-sm text-red-500">{fileNameError}</p>
+                  )}
                 </div>
-              )}
-            </>
-          )}
-          {website_url && (
-            <Link
-              target="_blank"
-              href={website_url}
-              className="text-blue-500 underline cursor-pointer"
-            >
-              {website_url?.length > 30 ? (
-                <>{website_url.slice(0, 30) + " ..."}</>
-              ) : (
-                <>{website_url}</>
-              )}
-            </Link>
-          )}
-          <div className="space-y-4 mt-5 w-[343px]">
+                <RiEdit2Fill
+                  onClick={handleFileToggle}
+                  className="cursor-pointer"
+                />
+              </div>
+            ) : (
+              <>
+                {file_Name && (
+                  <div
+                    className={`flex items-center gap-2 ${
+                      website_url && "hidden"
+                    }`}
+                  >
+                    <p
+                      className="text-blue-500 underline cursor-pointer font-semibold"
+                      onClick={() => handleOpenFile(fileUrl)}
+                    >
+                      {file_Name?.length > 30 ? (
+                        <>{file_Name.slice(0, 30) + " ..."}</>
+                      ) : (
+                        <>{file_Name}</>
+                      )}
+                    </p>
+                    <RiEdit2Line
+                      onClick={() => setToggleFileName(true)}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                )}
+              </>
+            )}
+            {website_url && (
+              <Link
+                target="_blank"
+                href={website_url}
+                className="text-blue-500 underline cursor-pointer"
+              >
+                {website_url?.length > 30 ? (
+                  <>{website_url.slice(0, 30) + " ..."}</>
+                ) : (
+                  <>{website_url}</>
+                )}
+              </Link>
+            )}
+          </div>
+          <div className="space-y-4 mt-5 w-[97%]">
             <div className="">
               <p className="text-sm">Name*</p>
               <div>
@@ -211,7 +222,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
                     setSourceName(e.target.value);
                     setSourceNameError("");
                   }}
-                  className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light focus:outline-none"
+                  className="py-2 px-2 w-full bg-white rounded mt-1 text-gray-700 font-light focus:outline-none"
                 />
                 {sourceNameError && (
                   <p className="text-sm text-red-500">{sourceNameError}</p>
@@ -228,7 +239,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
                 rows={2}
                 value={sourceContext}
                 onChange={(e) => setSourceContext(e.target.value)}
-                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+                className="py-2 px-2 bg-white w-full rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
               />
               {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                 <p>{sourceContext}</p>
@@ -241,7 +252,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
                 rows={2}
                 value={sourceInstructions}
                 onChange={(e) => setSourceInstructions(e.target.value)}
-                className="py-2 px-2 border border-[#667085] rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
+                className="py-2 px-2 bg-white w-full rounded mt-1 text-gray-700 font-light resize-none focus:outline-none"
               />
               {/* <div className="py-2 px-2 border border-[#667085] rounded mt-1 font-light">
                 <p>{sourceInstructions}</p>
@@ -250,7 +261,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             {webAutoUpdate && (
               <div>
                 <p className="text-sm">Daily Auto-Updates</p>
-                <div className="border border-[#c3c3c3] rounded py-3 px-4 w-full space-y-2">
+                <div className="bg-white rounded py-3 px-4 w-full space-y-2">
                   {["manually", "daily", "weekly", "monthly", "quarterly"].map(
                     (option) => (
                       <div

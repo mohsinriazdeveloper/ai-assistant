@@ -1,4 +1,6 @@
 "use client";
+import AiStars from "@/app/assets/Images/btnStars.png";
+import Image from "next/image";
 import { FC } from "react";
 import Loader from "../Loader/Loader";
 
@@ -48,7 +50,7 @@ const RightBar: FC<RightBarProps> = ({
       <div className="mt-2">
         <button
           id="step-2"
-          className={`py-2 px-3 hover:bg-[#3C3C3F] text-white border border-transparent font-medium rounded-md w-full  ${
+          className={`py-2 px-3 hover:bg-[#3C3C3F] text-white border border-transparent font-medium rounded-md w-full flex justify-center items-center ${
             filesLoader || imagesLoader || textQaLoader
               ? "bg-[#3C3C3F] cursor-wait"
               : "bg-[#18181b] cursor-pointer"
@@ -59,7 +61,10 @@ const RightBar: FC<RightBarProps> = ({
           {filesLoader || imagesLoader || textQaLoader ? (
             <Loader />
           ) : (
-            "Retrain Agent"
+            <span className="flex justify-center items-center gap-5">
+              <Image src={AiStars} alt="" />
+              <>Retrain Agent</>
+            </span>
           )}
         </button>
       </div>

@@ -61,14 +61,10 @@ const Finance: FC<FinanceProps> = ({
         {apiConnectionData?.map((bank, index) => (
           <div
             key={index}
-            className="col-span-1 w-[364px] h-[331px] p-6 border-2 border-gray-200 rounded-lg"
+            className="col-span-1 w-[364px] h-[331px] p-7 bg-[#FAFAFA] rounded-lg"
           >
             <div className="flex justify-between">
               <div>
-                <div
-                  className="w-24 h-auto border border-[#bfbfbf] rounded-lg bg-cover bg-no-repeat bg-center"
-                  style={{ backgroundImage: `url(${bank.image_url})` }}
-                ></div>
                 <Image src={BankOfCanadaImg} alt="" className="w-24 mb-5" />
               </div>
               <div>
@@ -87,7 +83,7 @@ const Finance: FC<FinanceProps> = ({
             </div>
             <p className="font-black tab:text-xl mb-2">{bank.name}</p>
             <p className="text-[15px] font-light">{bank.description}</p>
-            <div className="xl:flex lg:block lg:flex-none flex items-center gap-1 mt-8">
+            <div className="xl:flex lg:block lg:flex-none flex items-center gap-1 mt-7">
               <div
                 onClick={() => handleConnect(bank.id, bank.is_connected)}
                 className={`cursor-pointer `}
@@ -97,11 +93,13 @@ const Finance: FC<FinanceProps> = ({
                 ) : (
                   <>
                     {bank.is_connected ? (
-                      <div className="grid grid-cols-12 items-center px-3 connectBtn">
+                      <div className="grid grid-cols-12 items-center px-4 py-3 connectBtn bg-white rounded-full">
                         <div className="col-span-3">
                           <IoCheckmarkOutline className="text-[#08AD36] text-xl" />
                         </div>
-                        <p className="col-span-9 font-bold">Connected</p>
+                        <p className="col-span-9 text-[#08AD36] font-bold">
+                          Connected
+                        </p>
                       </div>
                     ) : (
                       <div className="flex items-center gap-3">

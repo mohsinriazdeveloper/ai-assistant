@@ -72,12 +72,12 @@ export const sideBarOptions = {
     heading: "Settings",
     tabs: [
       {
-        title: "General",
-        url: "general",
-      },
-      {
         title: "Model",
         url: "model",
+      },
+      {
+        title: "General",
+        url: "general",
       },
     ],
   },

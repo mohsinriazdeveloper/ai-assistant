@@ -18,7 +18,7 @@ const Page: FC<PageProps> = ({ params }) => {
   const { access } = useAppSelector(selectAuth);
   const { id } = params;
   const [isMobile, setIsMobile] = useState<boolean>(false);
-  const [checkOption, setCheckOption] = useState<string>("general");
+  const [checkOption, setCheckOption] = useState<string>("model");
   const navContent = getContent(id);
 
   useEffect(() => {

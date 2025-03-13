@@ -45,7 +45,9 @@ const FileTag: FC<FileTagProps> = ({
   const [sourceInstructions, setSourceInstructions] = useState<string>(
     fileWithTags[index]?.source_instructions || ""
   );
-
+  const isImage = [".png", ".jpg", ".jpeg"].some((ext) =>
+    fileName.toLowerCase().endsWith(ext)
+  );
   useEffect(() => {
     setFileWithTags((prev) => {
       const updatedFiles = [...prev];
@@ -108,24 +110,35 @@ const FileTag: FC<FileTagProps> = ({
     window.open(url, "_blank");
   };
   return (
-    <div className="w-full border border-gray-200 py-4 px-6 rounded-lg mb-4">
+    <div className="w-full bg-[#FAFAFA] py-4 px-6 rounded-lg mb-4">
       <div className="grid grid-cols-12 gap-3">
         <div className="col-span-10 pt-1">
-          <p
-            className="text-blue-500 mb-5 underline cursor-pointer font-semibold"
-            onClick={() => handleOpenFile(fileUrl)}
+          <div
+            className={`${
+              isImage && "flex items-center gap-2 p-2 bg-white w-fit"
+            } mb-5`}
           >
-            {fileName.length > 30 ? (
-              <>{fileName.slice(0, 30) + " ..."}</>
-            ) : (
-              <>{fileName}</>
+            {isImage && (
+              <div>
+                <img src={fileUrl} alt="Dynamic Image" className="w-10" />
+              </div>
             )}
-          </p>
-          <div className="space-y-4 w-[343px]">
+            <p
+              className="text-blue-500 underline cursor-pointer font-semibold"
+              onClick={() => handleOpenFile(fileUrl)}
+            >
+              {fileName.length > 30 ? (
+                <>{fileName.slice(0, 30) + " ..."}</>
+              ) : (
+                <>{fileName}</>
+              )}
+            </p>
+          </div>
+          <div className="space-y-4 w-[97%]">
             <div className="">
               <p className="text-sm">Name*</p>
               <div
-                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1 ${
+                className={`py-2 px-2 bg-white rounded-lg mt-1 ${
                   validations[index]?.sourceName && "border-red-600"
                 }`}
               >
@@ -139,17 +152,8 @@ const FileTag: FC<FileTagProps> = ({
               </div>
             </div>
             <div className="">
-              {/* <div className="w-full grid grid-cols-12 gap-2 justify-between items-end"> */}
               <p className="col-span-5 text-sm">Context / Clarifications</p>
-              {/* <p className="text-xs col-span-7">
-                  Give more information and context to your AI about this data
-                  source. This will help the AI to fetch this data appropriately
-                </p>
-              </div> */}
-
-              <div
-                className={`py-2 px-2 border border-[#667085] rounded-lg mt-1`}
-              >
+              <div className={`py-2 px-2 bg-white rounded-lg mt-1`}>
                 <textarea
                   rows={2}
                   placeholder="Enter Context"
@@ -160,17 +164,8 @@ const FileTag: FC<FileTagProps> = ({
               </div>
             </div>
             <div className="">
-              {/* <div className="w-full  grid grid-cols-12 gap-2 justify-between items-end"> */}
               <p className="col-span-5 text-sm">Instructions</p>
-              {/* <p className="text-xs col-span-7">
-                  Give instructions to your AI to help him understand how to use
-                  your data source.
-                </p>
-              </div> */}
-
-              <div
-                className={`py-2 px-2 h-[80px] border border-[#667085] rounded-lg mt-1`}
-              >
+              <div className={`py-2 px-2 h-[80px] bg-white rounded-lg mt-1`}>
                 <textarea
                   rows={2}
                   placeholder="Enter Instructions"
