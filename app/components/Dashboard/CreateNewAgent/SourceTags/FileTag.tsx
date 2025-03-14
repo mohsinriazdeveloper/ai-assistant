@@ -181,11 +181,11 @@ const FileTag: FC<FileTagProps> = ({
         </div>
         <div className="col-span-2">
           {fileError ? (
-            <button className="border border-[#FECACA] bg-[#FEE2E2] text-[#B91C1C] rounded-lg px-3 py-1">
+            <button className="border border-[#FECACA] bg-[#FEE2E2] text-[#B91C1C] rounded-lg w-[91px] h-[38px] flex justify-center items-center">
               Failed
             </button>
           ) : (
-            <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg px-3 py-1">
+            <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg w-[91px] h-[38px] flex justify-center items-center">
               Success
             </button>
           )}

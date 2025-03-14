@@ -451,13 +451,10 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
       }
     }
 
-    if (isSuccess.length > 0) {
-      toast.success("Agent trained successfully");
-    }
     if (isError.length > 0) {
-      toast.error(
-        `Failed to train agent: ${isError.map((err) => err.msg).join(", ")}`
-      );
+      toast.error(`Failed to train agent`);
+    } else {
+      toast.success("Agent trained successfully");
     }
   };
 

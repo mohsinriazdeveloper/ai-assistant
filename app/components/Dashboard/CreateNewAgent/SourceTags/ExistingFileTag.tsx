@@ -261,7 +261,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
             {webAutoUpdate && (
               <div>
                 <p className="text-sm">Daily Auto-Updates</p>
-                <div className="bg-white rounded py-3 px-4 w-full space-y-2">
+                <div className="bg-white rounded py-4 px-4 mt-1 w-full space-y-2">
                   {["manually", "daily", "weekly", "monthly", "quarterly"].map(
                     (option) => (
                       <div
@@ -284,7 +284,7 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
           </div>
         </div>
         <div className="col-span-2">
-          <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg px-3 py-1">
+          <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg w-[91px] h-[38px] flex justify-center items-center">
             Success
           </button>
           {updatedDate && (

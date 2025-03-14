@@ -44,7 +44,7 @@ const Aggregator: FC<AggregatorProps> = ({
   return (
     <div className="w-full">
       <div
-        className={`col-span-1 border rounded-lg relative pt-11 pb-7 pl-12 pr-7 min-h-[70vh]
+        className={`col-span-1 border border-[#A8A8A8] rounded-lg relative pt-11 pb-7 pl-12 pr-7 min-h-[70vh]
         }`}
       >
         {wholeReport && (
@@ -112,7 +112,7 @@ const Aggregator: FC<AggregatorProps> = ({
         )}
 
         {aggregatorOverlay1 && (
-          <div className="absolute inset-0 bg-[#3C3C3F] bg-opacity-80 flex items-center justify-center z-10 h-full">
+          <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
             <button
               onClick={() => setAggregatorSetup("setup1")}
               className="py-2 px-6 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-full text-sm"

@@ -122,30 +122,35 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
       </div>
 
       {webWithTags.map((item, index) => (
-        <div key={index} className="border rounded-lg p-4 text-sm mb-5">
+        <div
+          key={index}
+          className="bg-[#FAFAFA] py-4 px-6 rounded-lg text-sm mb-5"
+        >
           <div className="grid grid-cols-12 gap-3">
             <div className="col-span-10 gap-3">
-              <div>
-                <label>
-                  <input
-                    type="text"
-                    placeholder="https://www.example.com/"
-                    value={item.website_url}
-                    onChange={(e) => handleUrlChange(index, e.target.value)}
-                    className={`text-sm border rounded-md px-3 py-[6px] focus:outline-none w-full ${
-                      webValidations[index]?.webUrl
-                        ? "border-red-600"
-                        : "border-[#667085]"
-                    }`}
-                  />
-                </label>
-                {urlError && <p className="text-xs text-red-500">{urlError}</p>}
-              </div>
-              <div className="space-y-4 mt-5 w-[45%]">
+              <div className="space-y-4 w-[97%]">
+                <div>
+                  <label>
+                    <input
+                      type="text"
+                      placeholder="https://www.example.com/"
+                      value={item.website_url}
+                      onChange={(e) => handleUrlChange(index, e.target.value)}
+                      className={`text-sm bg-white rounded-lg px-3 py-[6px] focus:outline-none w-full ${
+                        webValidations[index]?.webUrl
+                          ? "border-red-600"
+                          : "border-[#667085]"
+                      }`}
+                    />
+                  </label>
+                  {urlError && (
+                    <p className="text-xs text-red-500">{urlError}</p>
+                  )}
+                </div>
                 <div>
                   <p className="text-sm">Name*</p>
                   <div
-                    className={`py-2 px-2 border rounded mt-1 ${
+                    className={`py-2 px-2 bg-white rounded-lg mt-1 ${
                       webValidations[index]?.sourceName
                         ? "border-red-600"
                         : "border-[#667085]"
@@ -174,9 +179,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                       Provide context to your AI about this data source.
                     </p>
                   </div> */}
-                  <div
-                    className={`py-2 px-2 border rounded mt-1 border-[#667085]`}
-                  >
+                  <div className={`py-2 px-2 bg-white rounded-lg mt-1`}>
                     <textarea
                       rows={2}
                       placeholder="Enter Context"
@@ -201,9 +204,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                       source.
                     </p>
                   </div> */}
-                  <div
-                    className={`py-2 px-2 border rounded mt-1 border-[#667085] `}
-                  >
+                  <div className={`py-2 px-2 bg-white rounded-lg mt-1`}>
                     <textarea
                       rows={2}
                       placeholder="Enter Instructions"
@@ -228,7 +229,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
                       the appropriate update frequency to update automatically.
                     </p>
                   </div> */}
-                  <div className="border border-[#667085] rounded py-3 px-4 w-full space-y-2 mt-1">
+                  <div className="bg-white rounded-lg py-4 px-4 w-full space-y-2 mt-1">
                     {[
                       "manually",
                       "daily",
@@ -255,7 +256,7 @@ const WebsiteTraining: FC<WebsiteTrainingProps> = ({
             </div>
             <div className="col-span-2">
               <div>
-                <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg px-3 py-1">
+                <button className="border border-[#BDE8D3] bg-[#eaf8f1] text-[#27A468] rounded-lg w-[91px] h-[38px] flex justify-center items-center">
                   Success
                 </button>
               </div>
