@@ -101,7 +101,7 @@ const Aggregator: FC<AggregatorProps> = ({
                 <div key={index} className="divide-y space-y-4 divide-black">
                   <div className="">
                     <p className="font-bold text-xl">{item?.section_name}</p>
-                    <div className="text-[#5C5C5C] text-xl mt-4">
+                    <div className="text-xl mt-4">
                       <MarkDown2 content={item.section_report} />
                     </div>
                   </div>
