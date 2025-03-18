@@ -439,9 +439,9 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
             // );
             // @ts-ignore
             isError.push({
-              error: "",
+              error: "web errro",
               // @ts-ignore
-              msg: `${fileRes.error.data.error_message}`,
+              msg: `${fileRes.error.data.website_url?.[0]}`,
             });
           }
           isSuccess.push("success");
@@ -452,7 +452,12 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
     }
 
     if (isError.length > 0) {
-      toast.error(`Failed to train agent`);
+      if (isError.length < 2) {
+        toast.error(isError[0].msg);
+        console.log(isError);
+      } else {
+        toast.error(`Failed to train agent`);
+      }
     } else {
       toast.success("Agent trained successfully");
     }
