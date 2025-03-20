@@ -67,16 +67,27 @@ const Aggregator: FC<AggregatorProps> = ({
                       const colonIndex = source.indexOf(":"); // Find the first colon
                       const firstPart = source.slice(0, colonIndex); // Text before the first colon
                       const secondPart = source.slice(colonIndex + 1); // Text after the first colon (URL)
+                      function isValidUrl(): boolean {
+                        try {
+                          new URL(secondPart);
+                          return true;
+                        } catch (error) {
+                          return false;
+                        }
+                      }
                       return (
-                        <div key={index}>
-                          <Link
-                            href={secondPart}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[#084B8D] text-xl"
-                          >
-                            {firstPart}
-                          </Link>
+                        <div key={index} className="text-[#084B8D] text-xl">
+                          {isValidUrl() ? (
+                            <Link
+                              href={secondPart}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {firstPart}
+                            </Link>
+                          ) : (
+                            <p>{firstPart}</p>
+                          )}
                         </div>
                       );
                     })}
