@@ -59,7 +59,7 @@ export const sideBarOptions = {
     heading: "Dashboard",
     tabs: [
       {
-        title: "Dashboard (API)",
+        title: "Charts",
         url: "dashboard",
       },
       {
