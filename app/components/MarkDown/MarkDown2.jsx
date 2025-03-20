@@ -1,5 +1,5 @@
 import "katex/dist/katex.min.css";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import { CopyBlock, dracula } from "react-code-blocks";
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
@@ -8,6 +8,12 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
 const MarkDown2 = ({ content }) => {
+  const [formattedContent, setFormattedContent] = useState("");
+  useEffect(() => {
+    if (content && content.includes("\n\n")) {
+      setFormattedContent(content.replace(/\n\n/g, "\n\n&nbsp;\n\n"));
+    }
+  }, [content]);
   return (
     <div>
       <ReactMarkdown
@@ -269,7 +275,7 @@ const MarkDown2 = ({ content }) => {
           },
         }}
       >
-        {content}
+        {formattedContent}
       </ReactMarkdown>
     </div>
   );

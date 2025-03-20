@@ -165,7 +165,7 @@ const Page: FC<PageProps> = ({ params }) => {
     console.log(payload);
     try {
       if (updateFlag) {
-        await updateResume({ id, data: payload });
+        const updateReport = await updateResume({ id, data: payload });
 
         setAggregatorOverlay1(false);
         setAggregatorSetup("summary");
@@ -184,8 +184,9 @@ const Page: FC<PageProps> = ({ params }) => {
         ]);
         toast.success("Resume updated successfully");
       } else {
-        await createResume({ id, data: payload });
-
+        const createReport = await createResume({ id, data: payload });
+        console.log("report log error1: ", createReport.error);
+        console.log("report error1: ", createReport.error);
         setAggregatorOverlay1(false);
         setAggregatorSetup("summary");
         setSummaryName1("");
@@ -276,6 +277,7 @@ const Page: FC<PageProps> = ({ params }) => {
                       aggregatorOverlay1={aggregatorOverlay1}
                       setAggregatorOverlay1={setAggregatorOverlay1}
                       setAggregatorSetup={setAggregatorSetup}
+                      setUpdateFlag={setUpdateFlag}
                     />
                   )}
                   {aggregatorSetup === "setup1" && (

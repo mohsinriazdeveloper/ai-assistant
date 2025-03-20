@@ -1,4 +1,5 @@
 import MarkDown2 from "@/app/components/MarkDown/MarkDown2";
+import Link from "next/link";
 import { Dispatch, FC, SetStateAction, useState } from "react";
 import toast from "react-hot-toast";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
@@ -13,6 +14,7 @@ interface AggregatorProps {
   aggregatorOverlay1: boolean | undefined;
   setAggregatorOverlay1: Dispatch<SetStateAction<boolean | undefined>>;
   setAggregatorSetup: Dispatch<SetStateAction<string>>;
+  setUpdateFlag: Dispatch<SetStateAction<boolean>>;
 }
 
 const Aggregator: FC<AggregatorProps> = ({
@@ -22,6 +24,7 @@ const Aggregator: FC<AggregatorProps> = ({
   aggregatorOverlay1,
   setAggregatorOverlay1,
   setAggregatorSetup,
+  setUpdateFlag,
 }) => {
   const [deleteReport, { isLoading: deleteLoader }] = useDeleteResumeMutation();
 
@@ -35,6 +38,7 @@ const Aggregator: FC<AggregatorProps> = ({
       await deleteReport(id);
       setWholeReport(null);
       setDropDown1(false);
+      setUpdateFlag(false);
       setAggregatorOverlay1(true);
       toast.success("Report deleted successfully");
     } catch (error) {
@@ -59,11 +63,23 @@ const Aggregator: FC<AggregatorProps> = ({
                     {wholeReport?.summary_name}
                   </p>
                   <div className="flex items-center gap-3 flex-wrap">
-                    {wholeReport?.sections[0].sources.map((source, index) => (
-                      <p key={index} className="text-[#084B8D] text-xl">
-                        {source}
-                      </p>
-                    ))}
+                    {wholeReport?.sections[0].sources.map((source, index) => {
+                      const colonIndex = source.indexOf(":"); // Find the first colon
+                      const firstPart = source.slice(0, colonIndex); // Text before the first colon
+                      const secondPart = source.slice(colonIndex + 1); // Text after the first colon (URL)
+                      return (
+                        <div key={index}>
+                          <Link
+                            href={secondPart}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[#084B8D] text-xl"
+                          >
+                            {firstPart}
+                          </Link>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
                 <div>
@@ -100,8 +116,10 @@ const Aggregator: FC<AggregatorProps> = ({
               {wholeReport?.sections.map((item, index) => (
                 <div key={index} className="divide-y space-y-4 divide-black">
                   <div className="">
-                    <p className="font-bold text-xl">{item?.section_name}</p>
-                    <div className="text-xl mt-4">
+                    <p className="font-bold text-[22px]">
+                      {item?.section_name}
+                    </p>
+                    <div className="mt-4">
                       <MarkDown2 content={item.section_report} />
                     </div>
                   </div>

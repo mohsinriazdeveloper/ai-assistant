@@ -317,12 +317,17 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
           </button>
         </div>
       </div>
-      {createResumeLoading ||
-        (updateResumeLoading && (
-          <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-[78vh]">
-            <Loader2 />
-          </div>
-        ))}
+
+      {createResumeLoading && (
+        <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
+          <Loader2 />
+        </div>
+      )}
+      {updateResumeLoading && (
+        <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
+          <Loader2 />
+        </div>
+      )}
     </div>
   );
 };
