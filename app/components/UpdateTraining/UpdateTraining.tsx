@@ -432,17 +432,26 @@ const UpdateTraining: FC<UpdateTrainingProps> = ({ agentId, checkOption }) => {
           setImgChar(0);
           if (fileRes.error) {
             // @ts-ignore
-            // console.log(fileRes.error.data.error_message);
+            console.log(fileRes.error.data.error_message);
             // toast.error(
             //   //@ts-ignore
             //   `${fileRes.error.data.website_url}`
             // );
-            // @ts-ignore
-            isError.push({
-              error: "web errro",
+            //@ts-ignore
+            if (fileRes.error.data.error_message) {
+              isError.push({
+                error: "web error",
+                // @ts-ignore
+                msg: `${fileRes.error.data.error_message}`,
+              });
+            } else {
               // @ts-ignore
-              msg: `${fileRes.error.data.website_url?.[0]}`,
-            });
+              isError.push({
+                error: "web error",
+                // @ts-ignore
+                msg: `${fileRes.error.data.website_url?.[0]}`,
+              });
+            }
           }
           isSuccess.push("success");
         } catch (error) {
