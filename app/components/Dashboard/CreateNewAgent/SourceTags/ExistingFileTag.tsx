@@ -96,7 +96,20 @@ const ExistingFileTag: FC<ExistingFileTagProps> = ({
   };
 
   const handleOpenFile = (url: string | undefined) => {
-    window.open(url, "_blank");
+    if (!url) return;
+
+    const isDocx = url.endsWith(".docx");
+
+    if (isDocx) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = ""; // This forces the browser to download
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else {
+      window.open(url, "_blank");
+    }
   };
 
   const formatUpdatedDate = (updatedDate: string) => {
