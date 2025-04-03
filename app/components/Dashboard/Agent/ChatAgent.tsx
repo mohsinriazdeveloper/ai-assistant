@@ -89,6 +89,65 @@ const ChatAgent: FC<ChatAgentProps> = ({
     }
   };
 
+  // const handleSendMessage = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (textInput !== "" && !loading) {
+  //     setStartNewChat(false);
+  //     setLoading(true);
+
+  //     if (textInput.trim() === "") {
+  //       return;
+  //     }
+
+  //     const userMessage: AgentChatType = {
+  //       id: specificChatId || null,
+  //       role: "user",
+  //       message: textInput.trim(),
+  //     };
+
+  //     setChat((prevChat) => [...prevChat, userMessage]);
+
+  //     if (specificChatId !== null) {
+  //       localStorage.removeItem(`chat_${specificChatId}`);
+  //     }
+
+  //     setTextInput("");
+  //     setChat((prevChat) => [
+  //       ...prevChat,
+  //       { id: null, role: "agent", message: "loading" },
+  //     ]);
+
+  //     try {
+  //       const response = await agentChat({
+  //         agent_id: agentId,
+  //         text_input: textInput.trim(),
+  //         chat_session_id: specificChatId,
+  //       }).unwrap();
+  //       focusInputById();
+  //       setSpecificChatId(response.chat_session_id);
+  //       localStorage.setItem(
+  //         "specificChatId",
+  //         response.chat_session_id.toString()
+  //       );
+
+  //       setChat((prevChat) => {
+  //         const updatedChat = [...prevChat];
+  //         updatedChat[updatedChat.length - 1] = {
+  //           id: specificChatId || null,
+  //           role: "agent",
+  //           message: response.response,
+  //         };
+  //         return updatedChat;
+  //       });
+  //     } catch (error: any) {
+  //       setChat((prevChat) => prevChat.slice(0, -1));
+  //       toast.error("Failed to send message. Please try again.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  // };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
@@ -105,13 +164,21 @@ const ChatAgent: FC<ChatAgentProps> = ({
         message: textInput.trim(),
       };
 
-      setChat((prevChat) => [...prevChat, userMessage]);
+      // Clear any previous "loading" messages
+      setChat((prevChat) => {
+        const filteredChat = prevChat.filter(
+          (msg) => msg.message !== "loading"
+        );
+        return [...filteredChat, userMessage];
+      });
 
       if (specificChatId !== null) {
         localStorage.removeItem(`chat_${specificChatId}`);
       }
 
       setTextInput("");
+
+      // Add loading message
       setChat((prevChat) => [
         ...prevChat,
         { id: null, role: "agent", message: "loading" },
@@ -123,6 +190,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
           text_input: textInput.trim(),
           chat_session_id: specificChatId,
         }).unwrap();
+
         focusInputById();
         setSpecificChatId(response.chat_session_id);
         localStorage.setItem(
@@ -130,17 +198,24 @@ const ChatAgent: FC<ChatAgentProps> = ({
           response.chat_session_id.toString()
         );
 
+        // Replace the loading message with the actual response
         setChat((prevChat) => {
-          const updatedChat = [...prevChat];
-          updatedChat[updatedChat.length - 1] = {
-            id: specificChatId || null,
-            role: "agent",
-            message: response.response,
-          };
-          return updatedChat;
+          const updatedChat = prevChat.filter(
+            (msg) => msg.message !== "loading"
+          );
+          return [
+            ...updatedChat,
+            {
+              id: response.chat_session_id,
+              role: "agent",
+              message: response.response,
+            },
+          ];
         });
       } catch (error: any) {
-        setChat((prevChat) => prevChat.slice(0, -1));
+        setChat((prevChat) =>
+          prevChat.filter((msg) => msg.message !== "loading")
+        );
         toast.error("Failed to send message. Please try again.");
       } finally {
         setLoading(false);
