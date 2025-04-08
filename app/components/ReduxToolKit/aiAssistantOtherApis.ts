@@ -320,14 +320,13 @@ export const userApi = createApi({
       invalidatesTags: ["AllPosts"],
     }),
     //chat with agent
-    agentChat: builder.mutation({
-      query: (credentials) => ({
-        url: "/voice/process_text/",
-        method: "POST",
-        body: credentials,
-      }),
-      invalidatesTags: ["AllPosts"],
-    }),
+    // agentChat: builder.query<ChatType, any>({
+    //   query: (agentChatPayLoad) => ({
+    //     url: `/voice/process_text/?agent_id=${agentChatPayLoad.agent_id}&text_input=${agentChatPayLoad.text_input}&user_id=${agentChatPayLoad.user_id}&chat_session_id=${agentChatPayLoad.chat_session_id}/`,
+    //     method: "GET",
+    //   }),
+    //   providesTags: ["AllPosts"],
+    // }),
     // get whole agent chat
     getAgentChat: builder.query<AgentAllChatType[], number>({
       query: (id) => `/accounts/chats/${id}/`,
@@ -429,7 +428,8 @@ export const {
   useGetAllAgentsQuery,
   useDeleteAgentMutation,
   useAgentVoiceMutation,
-  useAgentChatMutation,
+  // useAgentChatQuery,
+  // useAgentChatMutation,
   useGetAgentChatQuery,
   useDeleteFileMutation,
   useDeleteChatMutation,

@@ -6,6 +6,7 @@ import {
   RefObject,
   SetStateAction,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import toast from "react-hot-toast";
@@ -14,12 +15,21 @@ import { GoPaperclip } from "react-icons/go";
 import { HiArrowRight } from "react-icons/hi";
 import Loader from "../../Loader/Loader";
 import {
-  useAgentChatMutation,
+  useGetAgentChatQuery,
+  // useAgentChatQuery,
+  useGetOrganizationQuery,
   useGetSpecificChatQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { AgentChatType } from "../../ReduxToolKit/types/agents";
 import ChatBox from "./ChatBox";
 import "./style.css";
+
+export type ChatType = {
+  agent_id: number;
+  text_input: string;
+  user_id: number | null;
+  chat_session_id: number | null;
+};
 
 interface ChatAgentProps {
   setIsVoice: Dispatch<SetStateAction<boolean>>;
@@ -44,13 +54,25 @@ const ChatAgent: FC<ChatAgentProps> = ({
 }) => {
   const {
     data: getChat,
+    refetch: refetchSpecificChat,
     isLoading,
     error,
   } = useGetSpecificChatQuery(specificChatId);
-  const [agentChat] = useAgentChatMutation();
+  const { data: getOrg } = useGetOrganizationQuery();
+  const { refetch: AllChatsSession } = useGetAgentChatQuery(agentId);
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [textInput, setTextInput] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [userId, setUserId] = useState<number | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
+
+  useEffect(() => {
+    if (getOrg) {
+      setUserId(getOrg.id);
+    } else {
+      setUserId(null);
+    }
+  }, [getOrg]);
 
   useEffect(() => {
     if (startNewChat) {
@@ -79,7 +101,13 @@ const ChatAgent: FC<ChatAgentProps> = ({
       setTextInput("");
     }
   }, [specificChatId]);
-
+  useEffect(() => {
+    return () => {
+      if (eventSourceRef.current) {
+        eventSourceRef.current.close();
+      }
+    };
+  }, []);
   const handleTextInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newText = e.target.value;
     setTextInput(newText);
@@ -95,130 +123,284 @@ const ChatAgent: FC<ChatAgentProps> = ({
   //     setStartNewChat(false);
   //     setLoading(true);
 
-  //     if (textInput.trim() === "") {
-  //       return;
-  //     }
-
+  //     // Create user message
   //     const userMessage: AgentChatType = {
+  //       user_id: userId,
   //       id: specificChatId || null,
   //       role: "user",
   //       message: textInput.trim(),
+  //       created_at: new Date().toISOString(),
   //     };
 
-  //     setChat((prevChat) => [...prevChat, userMessage]);
-
-  //     if (specificChatId !== null) {
+  //     // Clear input and storage
+  //     if (specificChatId !== null || specificChatId === null) {
   //       localStorage.removeItem(`chat_${specificChatId}`);
   //     }
-
   //     setTextInput("");
-  //     setChat((prevChat) => [
-  //       ...prevChat,
-  //       { id: null, role: "agent", message: "loading" },
-  //     ]);
+
+  //     // Create a new chat array with both messages (user and empty agent)
+  //     const newChatArray = [
+  //       ...chat,
+  //       userMessage,
+  //       {
+  //         user_id: userId,
+  //         id: null,
+  //         role: "agent",
+  //         message: "", // Start with empty message
+  //         created_at: new Date().toISOString(),
+  //       },
+  //     ];
+
+  //     // Update the chat state with both messages at once
+  //     setChat(newChatArray);
+
+  //     let chatSessionId = specificChatId;
 
   //     try {
-  //       const response = await agentChat({
-  //         agent_id: agentId,
-  //         text_input: textInput.trim(),
-  //         chat_session_id: specificChatId,
-  //       }).unwrap();
-  //       focusInputById();
-  //       setSpecificChatId(response.chat_session_id);
-  //       localStorage.setItem(
-  //         "specificChatId",
-  //         response.chat_session_id.toString()
-  //       );
+  //       const fetchUrl = `${
+  //         process.env.NEXT_PUBLIC_API_URL
+  //       }/voice/process_text/?agent_id=${agentId}&text_input=${encodeURIComponent(
+  //         textInput.trim()
+  //       )}&user_id=${userId}&${
+  //         specificChatId
+  //           ? `chat_session_id=${specificChatId}`
+  //           : `chat_session_id=null`
+  //       }`;
 
-  //       setChat((prevChat) => {
-  //         const updatedChat = [...prevChat];
-  //         updatedChat[updatedChat.length - 1] = {
-  //           id: specificChatId || null,
-  //           role: "agent",
-  //           message: response.response,
-  //         };
-  //         return updatedChat;
+  //       // Close any existing connection
+  //       if (eventSourceRef.current) {
+  //         eventSourceRef.current.close();
+  //       }
+
+  //       // Create new EventSource connection
+  //       eventSourceRef.current = new EventSource(fetchUrl);
+
+  //       eventSourceRef.current.onmessage = (event) => {
+  //         if (event.data === "[DONE]") {
+  //           eventSourceRef.current?.close();
+  //           setLoading(false);
+  //           return;
+  //         }
+
+  //         try {
+  //           const data = JSON.parse(event.data);
+  //           console.log("data: ", data);
+  //           // Handle chat session ID
+  //           if (data.chat_session_id) {
+  //             chatSessionId = data.chat_session_id;
+  //             setSpecificChatId(chatSessionId);
+  //             localStorage.setItem("specificChatId", chatSessionId);
+  //             console.log("specificChatId: ", chatSessionId);
+  //           }
+
+  //           // Handle message chunks
+  //           if (data.message) {
+  //             setChat((prevChat) => {
+  //               const newChat = [...prevChat];
+  //               // Always target the last message if it's an agent message
+  //               const lastIndex = newChat.length - 1;
+
+  //               if (lastIndex >= 0 && newChat[lastIndex].role === "agent") {
+  //                 // Update existing agent message
+  //                 newChat[lastIndex] = {
+  //                   ...newChat[lastIndex],
+  //                   message: newChat[lastIndex].message + data.message,
+  //                   id: chatSessionId || null,
+  //                 };
+  //               }
+  //               return newChat;
+  //             });
+  //           }
+
+  //           // Handle completion
+  //           else if (data.done) {
+  //             eventSourceRef.current?.close();
+  //             setLoading(false);
+  //           }
+
+  //           // Handle errors
+  //           else if (data.error) {
+  //             toast.error(data.error);
+  //             eventSourceRef.current?.close();
+  //             setLoading(false);
+  //           }
+  //         } catch (err) {
+  //           console.error("Error parsing event data:", err);
+  //           setLoading(false);
+  //         }
+  //       };
+
+  //       // Handle errors
+  //       eventSourceRef.current.onerror = () => {
+  //         console.error("EventSource error");
+  //         eventSourceRef.current?.close();
+  //         setLoading(false);
+  //       };
+
+  //       // Wait for completion
+  //       await new Promise<void>((resolve) => {
+  //         eventSourceRef.current?.addEventListener("end", () => {
+  //           resolve();
+  //         });
   //       });
   //     } catch (error: any) {
+  //       console.error("Error:", error);
   //       setChat((prevChat) => prevChat.slice(0, -1));
   //       toast.error("Failed to send message. Please try again.");
   //     } finally {
+  //       eventSourceRef.current?.close();
   //       setLoading(false);
   //     }
   //   }
   // };
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
       setStartNewChat(false);
       setLoading(true);
 
-      if (textInput.trim() === "") {
-        return;
-      }
-
+      // Create user message
       const userMessage: AgentChatType = {
+        user_id: userId,
         id: specificChatId || null,
         role: "user",
         message: textInput.trim(),
+        created_at: new Date().toISOString(),
       };
 
-      // Clear any previous "loading" messages
-      setChat((prevChat) => {
-        const filteredChat = prevChat.filter(
-          (msg) => msg.message !== "loading"
-        );
-        return [...filteredChat, userMessage];
-      });
-
+      // Clear input and storage
       if (specificChatId !== null) {
         localStorage.removeItem(`chat_${specificChatId}`);
       }
-
       setTextInput("");
 
-      // Add loading message
-      setChat((prevChat) => [
-        ...prevChat,
-        { id: null, role: "agent", message: "loading" },
-      ]);
+      // Create a new chat array with both messages (user and empty agent)
+      const newChatArray = [
+        ...chat,
+        userMessage,
+        {
+          user_id: userId,
+          id: null,
+          role: "agent",
+          message: "", // Start with empty message
+          created_at: new Date().toISOString(),
+        },
+      ];
+
+      // Update the chat state with both messages at once
+      setChat(newChatArray);
+
+      // Create a promise that resolves when the stream is done
+      const streamCompletion = new Promise<void>((resolve, reject) => {
+        try {
+          const fetchUrl = `${
+            process.env.NEXT_PUBLIC_API_URL
+          }/voice/process_text/?agent_id=${agentId}&text_input=${encodeURIComponent(
+            textInput.trim()
+          )}&user_id=${userId}&${
+            specificChatId
+              ? `chat_session_id=${specificChatId}`
+              : `chat_session_id=null`
+          }`;
+
+          // Close any existing connection
+          if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+          }
+
+          // Create new EventSource connection
+          eventSourceRef.current = new EventSource(fetchUrl);
+
+          eventSourceRef.current.onmessage = (event) => {
+            if (event.data === "[DONE]") {
+              resolve();
+
+              return;
+            }
+
+            try {
+              const data = JSON.parse(event.data);
+              let newChatSessionId: any;
+              // Handle chat session ID immediately when received
+              if (data.chat_session_id) {
+                newChatSessionId = data.chat_session_id;
+                setSpecificChatId(newChatSessionId);
+                localStorage.setItem(
+                  "specificChatId",
+                  newChatSessionId.toString()
+                );
+                localStorage.setItem(
+                  "myCustomChatId",
+                  newChatSessionId.toString()
+                );
+                console.log("specificChatId: ", newChatSessionId);
+              }
+
+              // Handle message chunks
+              if (data.message) {
+                setChat((prevChat) => {
+                  const newChat = [...prevChat];
+                  const lastAgentMessageIndex = newChat.findLastIndex(
+                    (msg) => msg.role === "agent"
+                  );
+                  if (lastAgentMessageIndex !== -1) {
+                    newChat[lastAgentMessageIndex] = {
+                      ...newChat[lastAgentMessageIndex],
+                      message:
+                        newChat[lastAgentMessageIndex].message + data.message,
+                      id: newChatSessionId,
+                    };
+                  }
+                  // If no agent message exists (new chat), append a new one
+                  else {
+                    newChat.push({
+                      user_id: userId,
+                      id: newChatSessionId,
+                      role: "agent",
+                      message: data.message,
+                      created_at: new Date().toISOString(),
+                    });
+                  }
+                  return newChat;
+                });
+              }
+
+              // Handle completion
+              if (data.done) {
+                resolve();
+              }
+
+              // Handle errors
+              if (data.error) {
+                toast.error(data.error);
+                reject(new Error(data.error));
+              }
+            } catch (err) {
+              console.error("Error parsing event data:", err);
+              reject(err);
+            }
+          };
+
+          eventSourceRef.current.onerror = (error) => {
+            console.error("EventSource error:", error);
+            reject(new Error("EventSource failed"));
+          };
+        } catch (err) {
+          reject(err);
+        }
+      });
 
       try {
-        const response = await agentChat({
-          agent_id: agentId,
-          text_input: textInput.trim(),
-          chat_session_id: specificChatId,
-        }).unwrap();
-
-        focusInputById();
-        setSpecificChatId(response.chat_session_id);
-        localStorage.setItem(
-          "specificChatId",
-          response.chat_session_id.toString()
-        );
-
-        // Replace the loading message with the actual response
-        setChat((prevChat) => {
-          const updatedChat = prevChat.filter(
-            (msg) => msg.message !== "loading"
-          );
-          return [
-            ...updatedChat,
-            {
-              id: response.chat_session_id,
-              role: "agent",
-              message: response.response,
-            },
-          ];
-        });
+        await streamCompletion;
       } catch (error: any) {
-        setChat((prevChat) =>
-          prevChat.filter((msg) => msg.message !== "loading")
-        );
+        console.error("Error:", error);
+        setChat((prevChat) => prevChat.slice(0, -1));
         toast.error("Failed to send message. Please try again.");
       } finally {
+        eventSourceRef.current?.close();
         setLoading(false);
+        AllChatsSession();
+        refetchSpecificChat();
       }
     }
   };

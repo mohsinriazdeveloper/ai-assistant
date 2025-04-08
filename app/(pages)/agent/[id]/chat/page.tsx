@@ -30,6 +30,7 @@ const Page: FC<PageProps> = ({ params }) => {
   const inputIdRef = useRef<HTMLTextAreaElement>(null);
   const dispatch = useAppDispatch();
   const content = getContent(id);
+  const [updateChatFlag, setUpdateChatFlag] = useState<boolean>(false);
   // Redirect if no access
   useEffect(() => {
     if (!access) {
@@ -71,11 +72,12 @@ const Page: FC<PageProps> = ({ params }) => {
   // Handle case where chat ID is reset to 0
   useEffect(() => {
     const savedChatId = localStorage.getItem("myCustomChatId");
+    console.log("savedChatId: ", savedChatId);
     if (savedChatId === "0") {
       setStartNewChat(true);
       setSpecificChatId(null);
     }
-  }, []);
+  }, [localStorage]);
 
   if (!access) {
     return null;

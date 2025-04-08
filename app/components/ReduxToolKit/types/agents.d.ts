@@ -130,6 +130,7 @@ export const agentAllChatType: AgentAllChatType = {
 };
 
 export type AgentChatType = {
+  user_id: number | null;
   id: number | null;
   role: string;
   message: string;
