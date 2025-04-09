@@ -16,9 +16,8 @@ import { HiArrowRight } from "react-icons/hi";
 import Loader from "../../Loader/Loader";
 import {
   useGetAgentChatQuery,
-  // useAgentChatQuery,
-  useGetOrganizationQuery,
   useGetSpecificChatQuery,
+  useGetUserProfileQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { AgentChatType } from "../../ReduxToolKit/types/agents";
 import ChatBox from "./ChatBox";
@@ -58,7 +57,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
     isLoading,
     error,
   } = useGetSpecificChatQuery(specificChatId);
-  const { data: getOrg } = useGetOrganizationQuery();
+  const { data: userData } = useGetUserProfileQuery();
   const { refetch: AllChatsSession } = useGetAgentChatQuery(agentId);
   const [chat, setChat] = useState<AgentChatType[]>([]);
   const [textInput, setTextInput] = useState<string>("");
@@ -67,12 +66,12 @@ const ChatAgent: FC<ChatAgentProps> = ({
   const eventSourceRef = useRef<EventSource | null>(null);
 
   useEffect(() => {
-    if (getOrg) {
-      setUserId(getOrg.id);
+    if (userData) {
+      setUserId(userData.id);
     } else {
       setUserId(null);
     }
-  }, [getOrg]);
+  }, [userData]);
 
   useEffect(() => {
     if (startNewChat) {

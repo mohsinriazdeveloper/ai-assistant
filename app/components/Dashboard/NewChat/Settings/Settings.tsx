@@ -27,7 +27,7 @@ const Settings: FC<SettingsProps> = ({}) => {
   const [preview, setPreview] = useState<string>("");
   const [showSideBar, setShowSideBar] = useState<boolean>(true);
   const [orgName, setOrgName] = useState<string>("");
-
+  console.log(getOrg?.id);
   useEffect(() => {
     if (getOrg?.name) {
       setOrgName(getOrg.name);
