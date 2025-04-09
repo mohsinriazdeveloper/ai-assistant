@@ -95,10 +95,12 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
               <div className="flex items-center gap-2 relative -top-5 -right-5 ">
                 <div
                   className={`py-4 px-5 bg-white rounded-lg text-[#1E1F22] text-[17px] ${
-                    message.message === "loading" ? "w-[50%]" : "w-[98%]"
+                    !message.message || message.message === ""
+                      ? "w-[50%]"
+                      : "w-[98%]"
                   }  `}
                 >
-                  {message.message === "loading" ? (
+                  {!message.message || message.message === "" ? (
                     <div className="space-y-3 animate-pulse">
                       <div className="grid grid-cols-3 gap-4">
                         <div className="h-2 bg-slate-700 rounded col-span-2"></div>
@@ -162,7 +164,10 @@ const ChatBox: FC<ChatBoxProps> = ({ chat, loading }) => {
                           onClick={() =>
                             handleCopyResponse(message.message, message.id)
                           }
-                          className={`flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px] cursor-pointer ${
+                          className={`${
+                            (!message.message || message.message === "") &&
+                            "hidden"
+                          } flex items-center gap-[5px] py-[2px] px-2 border border-[#8B8A8A] rounded-md text-[10px] cursor-pointer ${
                             isCopied === message.id && "bg-black text-white"
                           }`}
                         >

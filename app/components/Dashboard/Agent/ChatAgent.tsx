@@ -108,7 +108,13 @@ const ChatAgent: FC<ChatAgentProps> = ({
       }
     };
   }, []);
+  const handleTextareaInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    const textarea = e.currentTarget;
+    textarea.style.height = "auto";
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`;
+  };
   const handleTextInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handleTextareaInput(e);
     const newText = e.target.value;
     setTextInput(newText);
 
@@ -117,142 +123,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
     }
   };
 
-  // const handleSendMessage = async (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   if (textInput !== "" && !loading) {
-  //     setStartNewChat(false);
-  //     setLoading(true);
-
-  //     // Create user message
-  //     const userMessage: AgentChatType = {
-  //       user_id: userId,
-  //       id: specificChatId || null,
-  //       role: "user",
-  //       message: textInput.trim(),
-  //       created_at: new Date().toISOString(),
-  //     };
-
-  //     // Clear input and storage
-  //     if (specificChatId !== null || specificChatId === null) {
-  //       localStorage.removeItem(`chat_${specificChatId}`);
-  //     }
-  //     setTextInput("");
-
-  //     // Create a new chat array with both messages (user and empty agent)
-  //     const newChatArray = [
-  //       ...chat,
-  //       userMessage,
-  //       {
-  //         user_id: userId,
-  //         id: null,
-  //         role: "agent",
-  //         message: "", // Start with empty message
-  //         created_at: new Date().toISOString(),
-  //       },
-  //     ];
-
-  //     // Update the chat state with both messages at once
-  //     setChat(newChatArray);
-
-  //     let chatSessionId = specificChatId;
-
-  //     try {
-  //       const fetchUrl = `${
-  //         process.env.NEXT_PUBLIC_API_URL
-  //       }/voice/process_text/?agent_id=${agentId}&text_input=${encodeURIComponent(
-  //         textInput.trim()
-  //       )}&user_id=${userId}&${
-  //         specificChatId
-  //           ? `chat_session_id=${specificChatId}`
-  //           : `chat_session_id=null`
-  //       }`;
-
-  //       // Close any existing connection
-  //       if (eventSourceRef.current) {
-  //         eventSourceRef.current.close();
-  //       }
-
-  //       // Create new EventSource connection
-  //       eventSourceRef.current = new EventSource(fetchUrl);
-
-  //       eventSourceRef.current.onmessage = (event) => {
-  //         if (event.data === "[DONE]") {
-  //           eventSourceRef.current?.close();
-  //           setLoading(false);
-  //           return;
-  //         }
-
-  //         try {
-  //           const data = JSON.parse(event.data);
-  //           console.log("data: ", data);
-  //           // Handle chat session ID
-  //           if (data.chat_session_id) {
-  //             chatSessionId = data.chat_session_id;
-  //             setSpecificChatId(chatSessionId);
-  //             localStorage.setItem("specificChatId", chatSessionId);
-  //             console.log("specificChatId: ", chatSessionId);
-  //           }
-
-  //           // Handle message chunks
-  //           if (data.message) {
-  //             setChat((prevChat) => {
-  //               const newChat = [...prevChat];
-  //               // Always target the last message if it's an agent message
-  //               const lastIndex = newChat.length - 1;
-
-  //               if (lastIndex >= 0 && newChat[lastIndex].role === "agent") {
-  //                 // Update existing agent message
-  //                 newChat[lastIndex] = {
-  //                   ...newChat[lastIndex],
-  //                   message: newChat[lastIndex].message + data.message,
-  //                   id: chatSessionId || null,
-  //                 };
-  //               }
-  //               return newChat;
-  //             });
-  //           }
-
-  //           // Handle completion
-  //           else if (data.done) {
-  //             eventSourceRef.current?.close();
-  //             setLoading(false);
-  //           }
-
-  //           // Handle errors
-  //           else if (data.error) {
-  //             toast.error(data.error);
-  //             eventSourceRef.current?.close();
-  //             setLoading(false);
-  //           }
-  //         } catch (err) {
-  //           console.error("Error parsing event data:", err);
-  //           setLoading(false);
-  //         }
-  //       };
-
-  //       // Handle errors
-  //       eventSourceRef.current.onerror = () => {
-  //         console.error("EventSource error");
-  //         eventSourceRef.current?.close();
-  //         setLoading(false);
-  //       };
-
-  //       // Wait for completion
-  //       await new Promise<void>((resolve) => {
-  //         eventSourceRef.current?.addEventListener("end", () => {
-  //           resolve();
-  //         });
-  //       });
-  //     } catch (error: any) {
-  //       console.error("Error:", error);
-  //       setChat((prevChat) => prevChat.slice(0, -1));
-  //       toast.error("Failed to send message. Please try again.");
-  //     } finally {
-  //       eventSourceRef.current?.close();
-  //       setLoading(false);
-  //     }
-  //   }
-  // };
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (textInput !== "" && !loading) {
@@ -273,7 +143,9 @@ const ChatAgent: FC<ChatAgentProps> = ({
         localStorage.removeItem(`chat_${specificChatId}`);
       }
       setTextInput("");
-
+      if (inputIdRef.current) {
+        inputIdRef.current.style.height = "auto";
+      }
       // Create a new chat array with both messages (user and empty agent)
       const newChatArray = [
         ...chat,
@@ -314,13 +186,13 @@ const ChatAgent: FC<ChatAgentProps> = ({
           eventSourceRef.current.onmessage = (event) => {
             if (event.data === "[DONE]") {
               resolve();
-
               return;
             }
 
             try {
               const data = JSON.parse(event.data);
               let newChatSessionId: any;
+
               // Handle chat session ID immediately when received
               if (data.chat_session_id) {
                 newChatSessionId = data.chat_session_id;
@@ -333,34 +205,36 @@ const ChatAgent: FC<ChatAgentProps> = ({
                   "myCustomChatId",
                   newChatSessionId.toString()
                 );
-                console.log("specificChatId: ", newChatSessionId);
               }
 
-              // Handle message chunks
-              if (data.message) {
+              // Handle message chunks - only update if we have a message
+              if (data.message !== undefined) {
+                // Changed from if (data.message)
                 setChat((prevChat) => {
                   const newChat = [...prevChat];
                   const lastAgentMessageIndex = newChat.findLastIndex(
                     (msg) => msg.role === "agent"
                   );
+
                   if (lastAgentMessageIndex !== -1) {
                     newChat[lastAgentMessageIndex] = {
                       ...newChat[lastAgentMessageIndex],
                       message:
-                        newChat[lastAgentMessageIndex].message + data.message,
+                        (newChat[lastAgentMessageIndex].message || "") +
+                        (data.message || ""),
                       id: newChatSessionId,
                     };
-                  }
-                  // If no agent message exists (new chat), append a new one
-                  else {
+                  } else {
+                    // This case shouldn't happen since we add the empty agent message at start
                     newChat.push({
                       user_id: userId,
                       id: newChatSessionId,
                       role: "agent",
-                      message: data.message,
+                      message: data.message || "",
                       created_at: new Date().toISOString(),
                     });
                   }
+
                   return newChat;
                 });
               }
@@ -409,12 +283,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
       e.preventDefault();
       handleSendMessage(e);
     }
-  };
-
-  const handleTextareaInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
-    const textarea = e.currentTarget;
-    textarea.style.height = "auto";
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 76.8)}px`;
   };
 
   if (isLoading) {
