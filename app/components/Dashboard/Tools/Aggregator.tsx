@@ -30,8 +30,6 @@ const Aggregator: FC<AggregatorProps> = ({
 
   const [dropDown1, setDropDown1] = useState<boolean>(false);
 
-  const updateReport = {};
-
   const deleteData1 = async () => {
     const id = agentId;
     try {

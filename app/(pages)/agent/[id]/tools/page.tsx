@@ -47,7 +47,7 @@ const Page: FC<PageProps> = ({ params }) => {
     useCreateResumeMutation();
   const [updateResume, { isLoading: updateResumeLoading }] =
     useUpdateReportMutation();
-  const { data: getReportData } = useGetResumeQuery(id);
+  const { data: getReportData, error: reportError } = useGetResumeQuery(id);
   const [wholeReport, setWholeReport] = useState<ReportType | null>(null);
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [checkOption, setCheckOption] = useState<string>("dashboard");
@@ -80,16 +80,16 @@ const Page: FC<PageProps> = ({ params }) => {
   }, [access, router]);
 
   useEffect(() => {
-    if (getReportData) {
-      setAggregatorOverlay1(false);
-      setWholeReport(getReportData);
-      setUpdateFlag(true);
-    } else {
+    if (reportError) {
       setAggregatorOverlay1(true);
       setWholeReport(null);
       setUpdateFlag(false);
+    } else if (getReportData) {
+      setAggregatorOverlay1(false);
+      setWholeReport(getReportData);
+      setUpdateFlag(true);
     }
-  }, [getReportData]);
+  }, [getReportData, reportError]);
 
   useEffect(() => {
     if (aggregatorSetup === "setup1" && wholeReport) {
@@ -209,6 +209,7 @@ const Page: FC<PageProps> = ({ params }) => {
       console.error("Error:", error);
     }
   };
+
   return (
     <Background>
       <div className="flex w-full h-full">
