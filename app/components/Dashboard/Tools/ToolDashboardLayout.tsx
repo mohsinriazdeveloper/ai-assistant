@@ -113,7 +113,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
         <div className="flex justify-between items-center px-4 relative">
           <h2 className="text-xl font-bold mb-4">BCPI</h2>
 
-          <HiOutlineDotsHorizontal
+          {/* <HiOutlineDotsHorizontal
             onClick={() => setBcpiGraphDropDown(!BcpiGraphDropDown)}
             className={`text-3xl cursor-pointer rotate-90 ml-5`}
           />
@@ -129,7 +129,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
                 Disconnect
               </div>
             </div>
-          )}
+          )} */}
         </div>
         <div className="pt-4">
           <BCPIGraph />
@@ -143,7 +143,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
         <div className="flex justify-between items-center px-4 relative">
           <h2 className="text-xl font-bold mb-4">US Interest Rate Trend</h2>
 
-          <HiOutlineDotsHorizontal
+          {/* <HiOutlineDotsHorizontal
             onClick={() => setInterestGraphDropDown(!interestGraphDropDown)}
             className={`text-3xl cursor-pointer rotate-90 ml-5`}
           />
@@ -159,7 +159,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
                 Disconnect
               </div>
             </div>
-          )}
+          )} */}
         </div>
         <div className="pt-4">
           <InterestGraph />
