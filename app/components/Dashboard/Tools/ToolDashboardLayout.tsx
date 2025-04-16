@@ -93,7 +93,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   return (
     <div>
       {isLoading && <Loader2 />}
-      <div className="flex justify-end gap-4 w-full">
+      {/* <div className="flex justify-end gap-4 w-full">
         <button
           onClick={() => setUsInterestGraph(true)}
           className="py-2 px-5 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-md text-sm"
@@ -106,65 +106,66 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
         >
           Show BCPI
         </button>
+      </div> */}
+
+      {/* {BcpiGraph && ( */}
+      <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
+        <div className="flex justify-between items-center px-4 relative">
+          <h2 className="text-xl font-bold mb-4">BCPI</h2>
+
+          <HiOutlineDotsHorizontal
+            onClick={() => setBcpiGraphDropDown(!BcpiGraphDropDown)}
+            className={`text-3xl cursor-pointer rotate-90 ml-5`}
+          />
+          {BcpiGraphDropDown && (
+            <div
+              onClick={() => {
+                setBcpiGraph(false);
+                setBcpiGraphDropDown(false);
+              }}
+              className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 right-0 top-10"
+            >
+              <div className="hover:bg-gray-200 cursor-pointer py-1 px-3">
+                Disconnect
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="pt-4">
+          <BCPIGraph />
+        </div>
       </div>
-      {BcpiGraph && (
-        <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
-          <div className="flex justify-between items-center px-4 relative">
-            <h2 className="text-xl font-bold mb-4">BCPI</h2>
+      {/* )} */}
 
-            <HiOutlineDotsHorizontal
-              onClick={() => setBcpiGraphDropDown(!BcpiGraphDropDown)}
-              className={`text-3xl cursor-pointer rotate-90 ml-5`}
-            />
-            {BcpiGraphDropDown && (
-              <div
-                onClick={() => {
-                  setBcpiGraph(false);
-                  setBcpiGraphDropDown(false);
-                }}
-                className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 right-0 top-10"
-              >
-                <div className="hover:bg-gray-200 cursor-pointer py-1 px-3">
-                  Disconnect
-                </div>
+      {/* {UsInterestGraph && ( */}
+      {/* Us Interest rate static graph */}
+      <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
+        <div className="flex justify-between items-center px-4 relative">
+          <h2 className="text-xl font-bold mb-4">US Interest Rate Trend</h2>
+
+          <HiOutlineDotsHorizontal
+            onClick={() => setInterestGraphDropDown(!interestGraphDropDown)}
+            className={`text-3xl cursor-pointer rotate-90 ml-5`}
+          />
+          {interestGraphDropDown && (
+            <div
+              onClick={() => {
+                setUsInterestGraph(false);
+                setInterestGraphDropDown(false);
+              }}
+              className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 right-0 top-10"
+            >
+              <div className="hover:bg-gray-200 cursor-pointer py-1 px-3">
+                Disconnect
               </div>
-            )}
-          </div>
-          <div className="pt-4">
-            <BCPIGraph />
-          </div>
+            </div>
+          )}
         </div>
-      )}
-
-      {UsInterestGraph && (
-        //  Us Interest rate static graph
-        <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
-          <div className="flex justify-between items-center px-4 relative">
-            <h2 className="text-xl font-bold mb-4">US Interest Rate Trend</h2>
-
-            <HiOutlineDotsHorizontal
-              onClick={() => setInterestGraphDropDown(!interestGraphDropDown)}
-              className={`text-3xl cursor-pointer rotate-90 ml-5`}
-            />
-            {interestGraphDropDown && (
-              <div
-                onClick={() => {
-                  setUsInterestGraph(false);
-                  setInterestGraphDropDown(false);
-                }}
-                className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 right-0 top-10"
-              >
-                <div className="hover:bg-gray-200 cursor-pointer py-1 px-3">
-                  Disconnect
-                </div>
-              </div>
-            )}
-          </div>
-          <div className="pt-4">
-            <InterestGraph />
-          </div>
+        <div className="pt-4">
+          <InterestGraph />
         </div>
-      )}
+      </div>
+      {/* )} */}
       {/* FX GRAPH */}
       {fxGraph && (
         <div className="w-full rounded-md shadow-md relative">
