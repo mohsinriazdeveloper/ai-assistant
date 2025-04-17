@@ -1,6 +1,9 @@
 .responsiveGraph {
   height: 350px;
 }
+.recharts-legend-wrapper {
+  bottom: -15px !important;
+}
 
 @media (max-width: 550px) {
   .responsiveGraph {

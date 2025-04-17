@@ -1,5 +1,7 @@
 import { FC } from "react";
 import {
+  CartesianGrid,
+  Legend,
   Line,
   LineChart,
   ResponsiveContainer,
@@ -7,13 +9,35 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { interestData as data } from "./GraphData";
+import { caInterestRate, usInterestRate } from "./GraphData";
+import "./style.css";
+
 interface InterestGraphProps {}
 
-// Sort data chronologically
-const sortedData = [...data].sort(
-  (a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime()
-);
+// Function to prepare merged data based on Date
+const prepareMergedData = () => {
+  const dateSet = new Set<string>();
+
+  usInterestRate.forEach((item) => dateSet.add(item.Date));
+  caInterestRate.forEach((item) => dateSet.add(item.Date));
+
+  const dates = Array.from(dateSet).sort(
+    (a, b) => new Date(a).getTime() - new Date(b).getTime()
+  );
+
+  return dates.map((date) => {
+    const usItem = usInterestRate.find((item) => item.Date === date);
+    const caItem = caInterestRate.find((item) => item.Date === date);
+
+    return {
+      Date: date,
+      usValue: usItem?.value ?? null,
+      caValue: caItem?.value ?? null,
+    };
+  });
+};
+
+const mergedData = prepareMergedData();
 
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
@@ -27,9 +51,10 @@ const InterestGraph: FC<InterestGraphProps> = () => {
     <div className="w-full">
       <ResponsiveContainer width="100%" height={350}>
         <LineChart
-          data={sortedData}
+          data={mergedData}
           margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
         >
+          <CartesianGrid strokeDasharray="3 0" stroke="#ccc" vertical={false} />
           <XAxis
             dataKey="Date"
             tickFormatter={formatDate}
@@ -39,28 +64,43 @@ const InterestGraph: FC<InterestGraphProps> = () => {
             textAnchor="end"
           />
           <YAxis
-            tickFormatter={(tick) => `${tick}%`}
-            domain={[7, 8.5]} // Adjusted domain for better visualization
+            tickFormatter={(tick) => tick}
+            domain={["auto", "auto"]}
             tick={{ fontSize: 12 }}
           />
           <Tooltip
-            formatter={(value: number) => [`${value}%`, "Interest Rate"]}
+            formatter={(value: number, name: string) => {
+              if (name === "usValue") {
+                return [value, "US Interest Rate"];
+              } else if (name === "caValue") {
+                return [value, "CA Interest Rate"];
+              }
+              return [value, name];
+            }}
             labelFormatter={(label) => formatDate(label as string)}
           />
+          <Legend verticalAlign="bottom" height={36} />
           <Line
             type="monotone"
-            dataKey="value"
-            stroke="#0088FE"
+            dataKey="usValue"
+            stroke="#4472C4"
             strokeWidth={2}
-            dot={{ r: 3 }}
-            activeDot={{ r: 6 }}
-            name="Interest Rate"
+            dot={false} // <<< No dots
+            connectNulls={true}
+            name="US Interest Rate"
+          />
+
+          <Line
+            type="monotone"
+            dataKey="caValue"
+            stroke="#FF0000"
+            strokeWidth={2}
+            dot={false} // <<< No dots
+            connectNulls={true}
+            name="US Interest Rate"
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="text-center text-sm text-gray-500 mt-2">
-        Interest Rates (Oct 2024 - Apr 2025)
-      </div>
     </div>
   );
 };
