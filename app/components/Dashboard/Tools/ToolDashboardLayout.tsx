@@ -11,6 +11,7 @@ import {
 import { ApiConnection } from "../../ReduxToolKit/types/agents";
 import BCPIGraph from "./BCPIGraph";
 import CPIGraph from "./CPIGraph";
+import ExchangeRateGraph from "./CurrencyGraph";
 import Graph from "./Graph";
 import InterestGraph from "./InterestGraph";
 
@@ -93,6 +94,30 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   return (
     <div>
       {isLoading && <Loader2 />}
+
+      {/* EXCHANGE CURRENCY RATE OF US WITH RESPECT TO CA */}
+      <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
+        <div className="flex justify-between items-center px-4 relative">
+          <p className="text-xl font-bold mb-4">Exchange rate of US currency</p>
+        </div>
+        <div className="pt-4">
+          <ExchangeRateGraph selectedCurrencies={["FXMUSDCAD"]} />
+        </div>
+      </div>
+
+      {/* EXCHANGE CURRENCY RATE OF OTHER CURRENCIES WITH RESPECT TO CA */}
+      <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
+        <div className="flex justify-between items-center px-4 relative">
+          <p className="text-xl font-bold mb-4">
+            Exchange rate of other currencies
+          </p>
+        </div>
+        <div className="pt-4">
+          <ExchangeRateGraph
+            selectedCurrencies={["FXMEURCAD", "FXMCNYCAD", "FXMGBPCAD"]}
+          />
+        </div>
+      </div>
 
       {/* BCPI GRAPH */}
       <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">

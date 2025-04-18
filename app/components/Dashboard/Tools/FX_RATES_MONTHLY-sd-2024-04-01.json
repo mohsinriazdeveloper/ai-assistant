@@ -1,0 +1,1086 @@
+{
+    "groupDetail": {
+        "label": "Monthly exchange rates",
+        "description": "Monthly average exchange rates - published by 16:30 ET on the last business day of each month. All Bank of Canada exchange rates are indicative rates only.",
+        "link": null
+    },
+    "terms": {
+        "url": "https://www.bankofcanada.ca/terms/"
+    },
+    "seriesDetail": {
+        "FXMAUDCAD": {
+            "label": "AUD/CAD",
+            "description": "Australian dollar to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMBRLCAD": {
+            "label": "BRL/CAD",
+            "description": "Brazilian real to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMCNYCAD": {
+            "label": "CNY/CAD",
+            "description": "Chinese renminbi to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMEURCAD": {
+            "label": "EUR/CAD",
+            "description": "European euro to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMHKDCAD": {
+            "label": "HKD/CAD",
+            "description": "Hong Kong dollar to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMINRCAD": {
+            "label": "INR/CAD",
+            "description": "Indian rupee to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMIDRCAD": {
+            "label": "IDR/CAD",
+            "description": "Indonesian rupiah to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMJPYCAD": {
+            "label": "JPY/CAD",
+            "description": "Japanese yen to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMMYRCAD": {
+            "label": "MYR/CAD",
+            "description": "Malaysian ringgit to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMMXNCAD": {
+            "label": "MXN/CAD",
+            "description": "Mexican peso to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMNZDCAD": {
+            "label": "NZD/CAD",
+            "description": "New Zealand dollar to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMNOKCAD": {
+            "label": "NOK/CAD",
+            "description": "Norwegian krone to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMPENCAD": {
+            "label": "PEN/CAD",
+            "description": "Peruvian new sol to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMRUBCAD": {
+            "label": "RUB/CAD",
+            "description": "Russian ruble to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMSARCAD": {
+            "label": "SAR/CAD",
+            "description": "Saudi riyal to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMSGDCAD": {
+            "label": "SGD/CAD",
+            "description": "Singapore dollar to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMZARCAD": {
+            "label": "ZAR/CAD",
+            "description": "South African rand to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMKRWCAD": {
+            "label": "KRW/CAD",
+            "description": "South Korean won to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMSEKCAD": {
+            "label": "SEK/CAD",
+            "description": "Swedish krona to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMCHFCAD": {
+            "label": "CHF/CAD",
+            "description": "Swiss franc to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMTWDCAD": {
+            "label": "TWD/CAD",
+            "description": "Taiwanese dollar to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMTHBCAD": {
+            "label": "THB/CAD",
+            "description": "Thai baht to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMTRYCAD": {
+            "label": "TRY/CAD",
+            "description": "Turkish lira to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMGBPCAD": {
+            "label": "GBP/CAD",
+            "description": "UK pound sterling to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMUSDCAD": {
+            "label": "USD/CAD",
+            "description": "US dollar to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        },
+        "FXMVNDCAD": {
+            "label": "VND/CAD",
+            "description": "Vietnamese dong to Canadian dollar monthly exchange rate",
+            "dimension": {
+                "key": "d",
+                "name": "Date"
+            }
+        }
+    },
+    "observations": [
+        {
+            "d": "2024-04-01",
+            "FXMAUDCAD": {
+                "v": "0.8897"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2668"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1889"
+            },
+            "FXMEURCAD": {
+                "v": "1.4664"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1746"
+            },
+            "FXMINRCAD": {
+                "v": "0.01639"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000085"
+            },
+            "FXMJPYCAD": {
+                "v": "0.008890"
+            },
+            "FXMMXNCAD": {
+                "v": "0.08140"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8144"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1254"
+            },
+            "FXMPENCAD": {
+                "v": "0.3681"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01470"
+            },
+            "FXMSARCAD": {
+                "v": "0.3645"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0077"
+            },
+            "FXMZARCAD": {
+                "v": "0.07243"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000998"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1264"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5029"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04226"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04230"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7117"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3674"
+            }
+        },
+        {
+            "d": "2024-05-01",
+            "FXMAUDCAD": {
+                "v": "0.9055"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2659"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1890"
+            },
+            "FXMEURCAD": {
+                "v": "1.4777"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1750"
+            },
+            "FXMINRCAD": {
+                "v": "0.01640"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000085"
+            },
+            "FXMJPYCAD": {
+                "v": "0.008770"
+            },
+            "FXMMXNCAD": {
+                "v": "0.08131"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8291"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1273"
+            },
+            "FXMPENCAD": {
+                "v": "0.3662"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01503"
+            },
+            "FXMSARCAD": {
+                "v": "0.3645"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0117"
+            },
+            "FXMZARCAD": {
+                "v": "0.07421"
+            },
+            "FXMKRWCAD": {
+                "v": "0.001002"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1272"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5038"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04229"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04240"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7272"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3670"
+            }
+        },
+        {
+            "d": "2024-06-01",
+            "FXMSEKCAD": {
+                "v": "0.1307"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5343"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04232"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04210"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7427"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3707"
+            },
+            "FXMAUDCAD": {
+                "v": "0.9105"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2544"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1890"
+            },
+            "FXMEURCAD": {
+                "v": "1.4752"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1755"
+            },
+            "FXMINRCAD": {
+                "v": "0.01642"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000084"
+            },
+            "FXMJPYCAD": {
+                "v": "0.008680"
+            },
+            "FXMMXNCAD": {
+                "v": "0.07524"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8413"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1292"
+            },
+            "FXMPENCAD": {
+                "v": "0.3622"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01560"
+            },
+            "FXMSARCAD": {
+                "v": "0.3654"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0139"
+            },
+            "FXMZARCAD": {
+                "v": "0.07449"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000993"
+            }
+        },
+        {
+            "d": "2024-07-01",
+            "FXMAUDCAD": {
+                "v": "0.9150"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2475"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1888"
+            },
+            "FXMEURCAD": {
+                "v": "1.4876"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1756"
+            },
+            "FXMINRCAD": {
+                "v": "0.01640"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000084"
+            },
+            "FXMJPYCAD": {
+                "v": "0.008710"
+            },
+            "FXMMXNCAD": {
+                "v": "0.07578"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8267"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1269"
+            },
+            "FXMPENCAD": {
+                "v": "0.3649"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01568"
+            },
+            "FXMSARCAD": {
+                "v": "0.3655"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0190"
+            },
+            "FXMZARCAD": {
+                "v": "0.07513"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000992"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1289"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5381"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04200"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04170"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7650"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3712"
+            }
+        },
+        {
+            "d": "2024-08-01",
+            "FXMAUDCAD": {
+                "v": "0.9095"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2463"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1909"
+            },
+            "FXMEURCAD": {
+                "v": "1.5045"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1751"
+            },
+            "FXMINRCAD": {
+                "v": "0.01627"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000087"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009330"
+            },
+            "FXMMXNCAD": {
+                "v": "0.07135"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8316"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1278"
+            },
+            "FXMPENCAD": {
+                "v": "0.3650"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01526"
+            },
+            "FXMSARCAD": {
+                "v": "0.3638"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0381"
+            },
+            "FXMZARCAD": {
+                "v": "0.07577"
+            },
+            "FXMKRWCAD": {
+                "v": "0.001011"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1314"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5907"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04236"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04050"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7677"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3652"
+            }
+        },
+        {
+            "d": "2024-09-01",
+            "FXMPENCAD": {
+                "v": "0.3591"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01485"
+            },
+            "FXMSARCAD": {
+                "v": "0.3610"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0450"
+            },
+            "FXMZARCAD": {
+                "v": "0.07692"
+            },
+            "FXMKRWCAD": {
+                "v": "0.001017"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1324"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5987"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04235"
+            },
+            "FXMTRYCAD": {
+                "v": "0.03980"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7897"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3546"
+            },
+            "FXMAUDCAD": {
+                "v": "0.9162"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2445"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1913"
+            },
+            "FXMEURCAD": {
+                "v": "1.5041"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1738"
+            },
+            "FXMINRCAD": {
+                "v": "0.01616"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000088"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009480"
+            },
+            "FXMMXNCAD": {
+                "v": "0.06914"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8423"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1275"
+            }
+        },
+        {
+            "d": "2024-10-01",
+            "FXMAUDCAD": {
+                "v": "0.9217"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2445"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1940"
+            },
+            "FXMEURCAD": {
+                "v": "1.4986"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1770"
+            },
+            "FXMINRCAD": {
+                "v": "0.01637"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000088"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009180"
+            },
+            "FXMMXNCAD": {
+                "v": "0.06975"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8359"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1270"
+            },
+            "FXMPENCAD": {
+                "v": "0.3669"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01427"
+            },
+            "FXMSARCAD": {
+                "v": "0.3663"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0493"
+            },
+            "FXMZARCAD": {
+                "v": "0.07821"
+            },
+            "FXMKRWCAD": {
+                "v": "0.001010"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1313"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5972"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04284"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04020"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7944"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3755"
+            }
+        },
+        {
+            "d": "2024-11-01",
+            "FXMAUDCAD": {
+                "v": "0.9124"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2408"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1939"
+            },
+            "FXMEURCAD": {
+                "v": "1.4846"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1796"
+            },
+            "FXMINRCAD": {
+                "v": "0.01657"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000088"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009100"
+            },
+            "FXMMXNCAD": {
+                "v": "0.06874"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8258"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1265"
+            },
+            "FXMPENCAD": {
+                "v": "0.3698"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01381"
+            },
+            "FXMSARCAD": {
+                "v": "0.3721"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0453"
+            },
+            "FXMZARCAD": {
+                "v": "0.07792"
+            },
+            "FXMKRWCAD": {
+                "v": "0.001002"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1282"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5869"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04317"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04060"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7803"
+            },
+            "FXMUSDCAD": {
+                "v": "1.3975"
+            }
+        },
+        {
+            "d": "2024-12-01",
+            "FXMAUDCAD": {
+                "v": "0.9025"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2336"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1956"
+            },
+            "FXMEURCAD": {
+                "v": "1.4916"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1832"
+            },
+            "FXMINRCAD": {
+                "v": "0.01676"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000089"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009270"
+            },
+            "FXMMXNCAD": {
+                "v": "0.07027"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8191"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1270"
+            },
+            "FXMPENCAD": {
+                "v": "0.3813"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01370"
+            },
+            "FXMSARCAD": {
+                "v": "0.3790"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0547"
+            },
+            "FXMZARCAD": {
+                "v": "0.07831"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000990"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1297"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5978"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04372"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04070"
+            },
+            "FXMGBPCAD": {
+                "v": "1.8018"
+            },
+            "FXMUSDCAD": {
+                "v": "1.4240"
+            }
+        },
+        {
+            "d": "2025-01-01",
+            "FXMAUDCAD": {
+                "v": "0.8965"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2392"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1972"
+            },
+            "FXMEURCAD": {
+                "v": "1.4903"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1848"
+            },
+            "FXMINRCAD": {
+                "v": "0.01668"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000089"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009200"
+            },
+            "FXMMXNCAD": {
+                "v": "0.07003"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8104"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1269"
+            },
+            "FXMPENCAD": {
+                "v": "0.3841"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01410"
+            },
+            "FXMSARCAD": {
+                "v": "0.3834"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0575"
+            },
+            "FXMZARCAD": {
+                "v": "0.07691"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000991"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1298"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5822"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04379"
+            },
+            "FXMTRYCAD": {
+                "v": "0.04050"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7768"
+            },
+            "FXMUSDCAD": {
+                "v": "1.4390"
+            }
+        },
+        {
+            "d": "2025-02-01",
+            "FXMAUDCAD": {
+                "v": "0.9008"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2480"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1966"
+            },
+            "FXMEURCAD": {
+                "v": "1.4891"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1838"
+            },
+            "FXMINRCAD": {
+                "v": "0.01643"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000087"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009430"
+            },
+            "FXMMXNCAD": {
+                "v": "0.06984"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8120"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1277"
+            },
+            "FXMPENCAD": {
+                "v": "0.3868"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01550"
+            },
+            "FXMSARCAD": {
+                "v": "0.3813"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0620"
+            },
+            "FXMZARCAD": {
+                "v": "0.07738"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000990"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1325"
+            },
+            "FXMCHFCAD": {
+                "v": "1.5828"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04359"
+            },
+            "FXMTRYCAD": {
+                "v": "0.03950"
+            },
+            "FXMGBPCAD": {
+                "v": "1.7931"
+            },
+            "FXMUSDCAD": {
+                "v": "1.4301"
+            }
+        },
+        {
+            "d": "2025-03-01",
+            "FXMAUDCAD": {
+                "v": "0.9045"
+            },
+            "FXMBRLCAD": {
+                "v": "0.2493"
+            },
+            "FXMCNYCAD": {
+                "v": "0.1981"
+            },
+            "FXMEURCAD": {
+                "v": "1.5526"
+            },
+            "FXMHKDCAD": {
+                "v": "0.1847"
+            },
+            "FXMINRCAD": {
+                "v": "0.01660"
+            },
+            "FXMIDRCAD": {
+                "v": "0.000087"
+            },
+            "FXMJPYCAD": {
+                "v": "0.009630"
+            },
+            "FXMMXNCAD": {
+                "v": "0.07097"
+            },
+            "FXMNZDCAD": {
+                "v": "0.8221"
+            },
+            "FXMNOKCAD": {
+                "v": "0.1345"
+            },
+            "FXMPENCAD": {
+                "v": "0.3932"
+            },
+            "FXMRUBCAD": {
+                "v": "0.01673"
+            },
+            "FXMSARCAD": {
+                "v": "0.3828"
+            },
+            "FXMSGDCAD": {
+                "v": "1.0749"
+            },
+            "FXMZARCAD": {
+                "v": "0.07859"
+            },
+            "FXMKRWCAD": {
+                "v": "0.000985"
+            },
+            "FXMSEKCAD": {
+                "v": "0.1417"
+            },
+            "FXMCHFCAD": {
+                "v": "1.6254"
+            },
+            "FXMTWDCAD": {
+                "v": "0.04353"
+            },
+            "FXMTRYCAD": {
+                "v": "0.03870"
+            },
+            "FXMGBPCAD": {
+                "v": "1.8544"
+            },
+            "FXMUSDCAD": {
+                "v": "1.4359"
+            }
+        }
+    ]
+}
