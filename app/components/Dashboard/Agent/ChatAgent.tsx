@@ -86,11 +86,11 @@ const ChatAgent: FC<ChatAgentProps> = ({
   }, [isLoading]);
 
   useEffect(() => {
-    if (getChat) {
+    if (getChat && !loading) {
       setChat(getChat);
       focusInputById();
     }
-  }, [getChat]);
+  }, [getChat, loading]);
 
   useEffect(() => {
     if (specificChatId !== null) {
@@ -174,12 +174,10 @@ const ChatAgent: FC<ChatAgentProps> = ({
               : `chat_session_id=null`
           }`;
 
-          // Close any existing connection
           if (eventSourceRef.current) {
             eventSourceRef.current.close();
           }
 
-          // Create new EventSource connection
           eventSourceRef.current = new EventSource(fetchUrl);
 
           eventSourceRef.current.onmessage = (event) => {
@@ -192,7 +190,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
               const data = JSON.parse(event.data);
               let newChatSessionId: any;
 
-              // Handle chat session ID immediately when received
               if (data.chat_session_id) {
                 newChatSessionId = data.chat_session_id;
                 setSpecificChatId(newChatSessionId);
@@ -208,56 +205,24 @@ const ChatAgent: FC<ChatAgentProps> = ({
 
               // Handle message chunks - only update if we have a message
               if (data.message !== undefined) {
-                // Changed from if (data.message)
-                // setChat((prevChat) => {
-                //   const newChat = [...prevChat];
-                //   const lastAgentMessageIndex = newChat.findLastIndex(
-                //     (msg) => msg.role === "agent"
-                //   );
-
-                //   if (lastAgentMessageIndex !== -1) {
-                //     newChat[lastAgentMessageIndex] = {
-                //       ...newChat[lastAgentMessageIndex],
-                //       message:
-                //         (newChat[lastAgentMessageIndex].message || "") +
-                //         (data.message || ""),
-                //       id: newChatSessionId,
-                //     };
-                //   } else {
-                //     // This case shouldn't happen since we add the empty agent message at start
-                //     newChat.push({
-                //       user_id: userId,
-                //       id: newChatSessionId,
-                //       role: "agent",
-                //       message: data.message || "",
-                //       created_at: new Date().toISOString(),
-                //     });
-                //   }
-
-                //   return newChat;
-                // });
                 setChat((prevChat) => {
                   let newChat = [...prevChat];
 
                   let lastAgentMessageIndex = newChat.findLastIndex(
                     (msg) => msg.role === "agent"
                   );
-                  console.log(lastAgentMessageIndex);
-
-                  // If no agent message exists, create one first
                   if (lastAgentMessageIndex === -1) {
                     newChat.push({
                       user_id: userId,
                       id: newChatSessionId,
                       role: "agent",
-                      message: "", // start empty
+                      message: "",
                       created_at: new Date().toISOString(),
                     });
 
-                    lastAgentMessageIndex = newChat.length - 1; // Update the index manually
+                    lastAgentMessageIndex = newChat.length - 1;
                   }
 
-                  // Now safely update the agent message
                   newChat[lastAgentMessageIndex] = {
                     ...newChat[lastAgentMessageIndex],
                     message:
@@ -269,7 +234,7 @@ const ChatAgent: FC<ChatAgentProps> = ({
                   return newChat;
                 });
               }
-
+              refetchSpecificChat();
               // Handle completion
               if (data.done) {
                 resolve();
@@ -305,7 +270,6 @@ const ChatAgent: FC<ChatAgentProps> = ({
         eventSourceRef.current?.close();
         setLoading(false);
         AllChatsSession();
-        refetchSpecificChat();
       }
     }
   };
