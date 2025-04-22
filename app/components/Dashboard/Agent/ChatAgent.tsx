@@ -209,30 +209,62 @@ const ChatAgent: FC<ChatAgentProps> = ({
               // Handle message chunks - only update if we have a message
               if (data.message !== undefined) {
                 // Changed from if (data.message)
+                // setChat((prevChat) => {
+                //   const newChat = [...prevChat];
+                //   const lastAgentMessageIndex = newChat.findLastIndex(
+                //     (msg) => msg.role === "agent"
+                //   );
+
+                //   if (lastAgentMessageIndex !== -1) {
+                //     newChat[lastAgentMessageIndex] = {
+                //       ...newChat[lastAgentMessageIndex],
+                //       message:
+                //         (newChat[lastAgentMessageIndex].message || "") +
+                //         (data.message || ""),
+                //       id: newChatSessionId,
+                //     };
+                //   } else {
+                //     // This case shouldn't happen since we add the empty agent message at start
+                //     newChat.push({
+                //       user_id: userId,
+                //       id: newChatSessionId,
+                //       role: "agent",
+                //       message: data.message || "",
+                //       created_at: new Date().toISOString(),
+                //     });
+                //   }
+
+                //   return newChat;
+                // });
                 setChat((prevChat) => {
-                  const newChat = [...prevChat];
-                  const lastAgentMessageIndex = newChat.findLastIndex(
+                  let newChat = [...prevChat];
+
+                  let lastAgentMessageIndex = newChat.findLastIndex(
                     (msg) => msg.role === "agent"
                   );
+                  console.log(lastAgentMessageIndex);
 
-                  if (lastAgentMessageIndex !== -1) {
-                    newChat[lastAgentMessageIndex] = {
-                      ...newChat[lastAgentMessageIndex],
-                      message:
-                        (newChat[lastAgentMessageIndex].message || "") +
-                        (data.message || ""),
-                      id: newChatSessionId,
-                    };
-                  } else {
-                    // This case shouldn't happen since we add the empty agent message at start
+                  // If no agent message exists, create one first
+                  if (lastAgentMessageIndex === -1) {
                     newChat.push({
                       user_id: userId,
                       id: newChatSessionId,
                       role: "agent",
-                      message: data.message || "",
+                      message: "", // start empty
                       created_at: new Date().toISOString(),
                     });
+
+                    lastAgentMessageIndex = newChat.length - 1; // Update the index manually
                   }
+
+                  // Now safely update the agent message
+                  newChat[lastAgentMessageIndex] = {
+                    ...newChat[lastAgentMessageIndex],
+                    message:
+                      (newChat[lastAgentMessageIndex].message || "") +
+                      (data.message || ""),
+                    id: newChatSessionId,
+                  };
 
                   return newChat;
                 });

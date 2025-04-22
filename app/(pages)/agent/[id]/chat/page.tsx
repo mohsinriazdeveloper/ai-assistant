@@ -72,7 +72,6 @@ const Page: FC<PageProps> = ({ params }) => {
   // Handle case where chat ID is reset to 0
   useEffect(() => {
     const savedChatId = localStorage.getItem("myCustomChatId");
-    console.log("savedChatId: ", savedChatId);
     if (savedChatId === "0") {
       setStartNewChat(true);
       setSpecificChatId(null);
