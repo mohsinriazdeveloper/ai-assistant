@@ -8,8 +8,8 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
 const MarkDown = ({ content }) => {
-  const removeSlash = content.replace(/\\\\/g, "\\");
-  const formattedContent = removeSlash.replace(/\n\n/g, "\n\n&nbsp;\n\n");
+  // const removeSlash = content.replace(/\\\\/g, "\\");
+  const formattedContent = content.replace(/\n\n/g, "\n\n&nbsp;\n\n");
 
   return (
     <div>
