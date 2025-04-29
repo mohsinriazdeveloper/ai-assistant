@@ -65,20 +65,22 @@ const AgentModel: FC<AgentModelProps> = ({ agentId }) => {
       toast.error("Failed to Updated");
     }
   };
-  //@ts-ignore
-  const formattedDate = new Date(agent.updated_at).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 
-  //@ts-ignore
-  const formattedTime = new Date(agent.updated_at).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  });
+  const formattedDate = agent?.updated_at
+    ? new Date(agent.updated_at).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "N/A";
 
+  const formattedTime = agent?.updated_at
+    ? new Date(agent.updated_at).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+    : "N/A";
   return (
     <div className="mb-5">
       <div className="w-full border border-gray-200 rounded-lg py-7 px-6 flex flex-col gap-5">

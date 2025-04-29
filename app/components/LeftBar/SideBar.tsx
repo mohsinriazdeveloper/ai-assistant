@@ -1,3 +1,4 @@
+"use client";
 import { usePathname } from "next/navigation";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
