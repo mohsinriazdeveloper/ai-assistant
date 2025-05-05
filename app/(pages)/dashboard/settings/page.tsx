@@ -27,12 +27,8 @@ const Page: FC<PageProps> = ({ params }) => {
       <div className="py-[51px] px-5 bg-white rounded-lg h-full overflow-hidden">
         <div className="fixed w-full overflow-hidden">
           <div className="w-[80%] fixed">
-            <NavBar1
-            // setCreateAgent={setCreateAgent}
-            // createAgent={createAgent}
-            />
+            <NavBar1 />
           </div>
-          {/* <NavBar1 content={content.navBar} /> */}
           <Settings />
         </div>
       </div>

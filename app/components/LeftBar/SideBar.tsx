@@ -1,7 +1,6 @@
 "use client";
-import { usePathname } from "next/navigation";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { IoMdAdd } from "react-icons/io";
 import { LuChevronRight } from "react-icons/lu";
 import { MdContentCopy } from "react-icons/md";
@@ -9,7 +8,7 @@ import Loader from "../Loader/Loader";
 import RangeBar from "../RangeBar/RangeBar";
 import {
   useGetAgentByIdQuery,
-  useUpdateAgentMutation,
+  useGetOrganizationQuery,
 } from "../ReduxToolKit/aiAssistantOtherApis";
 import { QATypes } from "../UpdateTraining/trainingTypes.d";
 import "./style.css";
@@ -46,49 +45,60 @@ const SideBar: FC<SideBarProps> = ({
   checkOption,
 }) => {
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
-  const [UpdateAgentLogo, { isLoading: agentLogoLoader }] =
-    useUpdateAgentMutation();
-  const currentRoute = usePathname();
+  const { data: getOrg } = useGetOrganizationQuery();
+
+  // const [UpdateAgentLogo, { isLoading: agentLogoLoader }] =
+  //   useUpdateAgentMutation();
+  // const currentRoute = usePathname();
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
-  const [agentLogo, setAgentLogo] = useState<File | null>(null);
-  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string>("");
+
+  // const [agentLogo, setAgentLogo] = useState<File | null>(null);
+  // const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   if (agentLogo && agentId) {
+  //     const fd = new FormData();
+  //     fd.append("id", agentId);
+  //     fd.append("logo", agentLogo);
+  //     UpdateAgentLogo(fd)
+  //       .unwrap()
+  //       .then((response) => {
+  //         // Assuming the response contains the new image URL
+  //         setLocalImageUrl(response.logo_url);
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error updating agent logo:", error);
+  //       });
+  //   }
+  // }, [agentLogo, agentId, UpdateAgentLogo]);
+
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+
+  //   if (file) {
+  //     // Check file type
+  //     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+  //     if (!allowedTypes.includes(file.type)) {
+  //       toast.error("Only .png, .jpeg, .jpg image files are allowed");
+  //       event.target.value = ""; // Reset the file input field
+  //       return;
+  //     }
+
+  //     setAgentLogo(file);
+  //     setLocalImageUrl(URL.createObjectURL(file));
+  //   }
+  // };
 
   useEffect(() => {
-    if (agentLogo && agentId) {
-      const fd = new FormData();
-      fd.append("id", agentId);
-      fd.append("logo", agentLogo);
-      UpdateAgentLogo(fd)
-        .unwrap()
-        .then((response) => {
-          // Assuming the response contains the new image URL
-          setLocalImageUrl(response.logo_url);
-        })
-        .catch((error) => {
-          console.error("Error updating agent logo:", error);
-        });
+    if (getOrg?.image) {
+      setPreview(getOrg.image);
     }
-  }, [agentLogo, agentId, UpdateAgentLogo]);
+  }, [getOrg?.image]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      // Check file type
-      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Only .png, .jpeg, .jpg image files are allowed");
-        event.target.value = ""; // Reset the file input field
-        return;
-      }
-
-      setAgentLogo(file);
-      setLocalImageUrl(URL.createObjectURL(file));
-    }
-  };
   useEffect(() => {
     let char: number = 0;
     if (agent?.text) {
@@ -153,7 +163,7 @@ const SideBar: FC<SideBarProps> = ({
     >
       <div className="h-full">
         <div className="flex justify-between">
-          <label htmlFor="sideBarImage">
+          {/* <label htmlFor="sideBarImage">
             {localImageUrl || agent.logo_url ? (
               <div
                 className="w-[100px] h-[100px] rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
@@ -191,7 +201,17 @@ const SideBar: FC<SideBarProps> = ({
                 )}
               </div>
             )}
-          </label>
+          </label> */}
+          {preview ? (
+            <div
+              className="w-[100px] h-[100px] rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
+              style={{ backgroundImage: `url(${preview})` }}
+            ></div>
+          ) : (
+            <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+              <IoMdAdd color="#e5e5e5" />
+            </div>
+          )}
           <div className=" pt-4">
             <LuChevronRight
               className="text-3xl mb-6 ml-auto cursor-pointer rotate-180"

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 import { GoPlus } from "react-icons/go";
 import { IoMdAdd } from "react-icons/io";
 import { IoSearch } from "react-icons/io5";
@@ -12,7 +12,7 @@ import RangeBar from "../../RangeBar/RangeBar";
 import {
   useGetAgentByIdQuery,
   useGetAgentChatQuery,
-  useUpdateAgentMutation,
+  useGetOrganizationQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { selectChats, setChats } from "../../ReduxToolKit/chatSessionSlice";
 import { useAppDispatch, useAppSelector } from "../../ReduxToolKit/hook";
@@ -20,14 +20,14 @@ import { QATypes } from "../../UpdateTraining/trainingTypes.d";
 import ChatSessions from "./ChatSessions";
 import "./style.css";
 
-interface QaItem {
-  question: string;
-  answer: string;
-}
-interface FileItem {
-  file_url: string;
-  text_content: string;
-}
+// interface QaItem {
+//   question: string;
+//   answer: string;
+// }
+// interface FileItem {
+//   file_url: string;
+//   text_content: string;
+// }
 
 interface AgentChatSideBar {
   agentId: any;
@@ -51,8 +51,10 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const { data: AllChats } = useGetAgentChatQuery(agentId);
   const { data: agent, isLoading } = useGetAgentByIdQuery(agentId);
   const dispatch = useAppDispatch();
-  const [UpdateAgentLogo, { isLoading: agentLogoLoader }] =
-    useUpdateAgentMutation();
+  const { data: getOrg } = useGetOrganizationQuery();
+
+  // const [UpdateAgentLogo, { isLoading: agentLogoLoader }] =
+  //   useUpdateAgentMutation();
   const chatSessions = useAppSelector(selectChats);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [searchChat, setSearchChat] = useState<string>("");
@@ -60,34 +62,41 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
   const [activeChat, setActiveChat] = useState<number | null>(null);
   const [totalchar, setTotalchar] = useState<number>(0);
   const [qaData, setQaData] = useState<QATypes[]>([]);
-  const [agentLogo, setAgentLogo] = useState<File | null>(null);
-  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string>("");
+  // const [agentLogo, setAgentLogo] = useState<File | null>(null);
+  // const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
+
+  // useEffect(() => {
+  //   if (agentLogo && agentId) {
+  //     const fd = new FormData();
+  //     fd.append("id", agentId);
+  //     fd.append("logo", agentLogo);
+  //     UpdateAgentLogo(fd).unwrap();
+  //   }
+  // }, [agentLogo, agentId, UpdateAgentLogo]);
+
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = event.target.files?.[0];
+
+  //   if (file) {
+  //     // Check file type
+  //     const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+  //     if (!allowedTypes.includes(file.type)) {
+  //       toast.error("Only .png, .jpeg, .jpg image files are allowed");
+  //       event.target.value = ""; // Reset the file input field
+  //       return;
+  //     }
+
+  //     setAgentLogo(file);
+  //     setLocalImageUrl(URL.createObjectURL(file)); // Generate local preview
+  //   }
+  // };
 
   useEffect(() => {
-    if (agentLogo && agentId) {
-      const fd = new FormData();
-      fd.append("id", agentId);
-      fd.append("logo", agentLogo);
-      UpdateAgentLogo(fd).unwrap();
+    if (getOrg?.image) {
+      setPreview(getOrg.image);
     }
-  }, [agentLogo, agentId, UpdateAgentLogo]);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (file) {
-      // Check file type
-      const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
-      if (!allowedTypes.includes(file.type)) {
-        toast.error("Only .png, .jpeg, .jpg image files are allowed");
-        event.target.value = ""; // Reset the file input field
-        return;
-      }
-
-      setAgentLogo(file);
-      setLocalImageUrl(URL.createObjectURL(file)); // Generate local preview
-    }
-  };
+  }, [getOrg?.image]);
 
   useEffect(() => {
     let char: number = 0;
@@ -173,7 +182,22 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
     <div className="text-white pr-5 h-full flex flex-col justify-between relative z-50">
       <div>
         <div className="flex justify-between">
-          <label htmlFor="sideBarImage">
+          {/* className="w-[100px] h-[100px] rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
+                style={{
+                  backgroundImage: `url(${localImageUrl || agent.logo_url})`,
+                }}
+                 */}
+          {preview ? (
+            <div
+              className="w-[100px] h-[100px] rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
+              style={{ backgroundImage: `url(${preview})` }}
+            ></div>
+          ) : (
+            <div className="w-[100px] h-[100px] border border-gray-200 rounded-md flex justify-center items-center cursor-pointer overflow-hidden">
+              <IoMdAdd color="#e5e5e5" />
+            </div>
+          )}
+          {/* <label htmlFor="sideBarImage">
             {localImageUrl || agent.logo_url ? (
               <div
                 className="w-[100px] h-[100px] rounded-md flex justify-center items-center cursor-pointer overflow-hidden bg-contain bg-no-repeat bg-center"
@@ -211,7 +235,7 @@ const AgentChatSideBar: FC<AgentChatSideBar> = ({
                 )}
               </div>
             )}
-          </label>
+          </label> */}
 
           <div className=" pt-4">
             <LuChevronRight
