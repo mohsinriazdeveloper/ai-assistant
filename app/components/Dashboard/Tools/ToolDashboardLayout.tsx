@@ -101,7 +101,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
           <p className="text-xl font-bold mb-4">Exchange rate of US currency</p>
         </div>
         <div className="pt-4">
-          <ExchangeRateGraph selectedCurrencies={["FXMUSDCAD"]} />
+          <ExchangeRateGraph selectedCurrencies={["FXUSDCAD"]} />
         </div>
       </div>
 
@@ -114,7 +114,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
         </div>
         <div className="pt-4">
           <ExchangeRateGraph
-            selectedCurrencies={["FXMEURCAD", "FXMCNYCAD", "FXMGBPCAD"]}
+            selectedCurrencies={["FXEURCAD", "FXCNYCAD", "FXGBPCAD"]}
           />
         </div>
       </div>

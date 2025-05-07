@@ -41,10 +41,10 @@ const BCPIGraph: FC = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Function to calculate date 2 years ago from today
-  const getTwoYearsAgoDate = (): Date => {
+  // Function to calculate date 6 months ago from today
+  const getSixMonthsAgoDate = (): Date => {
     const date = new Date();
-    date.setFullYear(date.getFullYear() - 2);
+    date.setMonth(date.getMonth() - 7);
     return date;
   };
 
@@ -54,7 +54,7 @@ const BCPIGraph: FC = () => {
         setLoading(true);
         const currentDate = new Date();
         const endDate = formatDateForAPI(currentDate);
-        const startDate = formatDateForAPI(getTwoYearsAgoDate());
+        const startDate = formatDateForAPI(getSixMonthsAgoDate());
 
         const response = await fetch(
           `https://www.bankofcanada.ca/valet/observations/group/BCPI_MONTHLY/json?start_date=${startDate}&end_date=${endDate}`
@@ -123,7 +123,7 @@ const BCPIGraph: FC = () => {
             dataKey="date"
             tickFormatter={formatDate}
             tick={{ fontSize: 12 }}
-            tickCount={6}
+            tickCount={data.length} // Show all months (6 or fewer)
             angle={-45}
             textAnchor="end"
           />

@@ -12,12 +12,12 @@ import {
 import "./style.css";
 
 interface ExchangeRateGraphProps {
-  selectedCurrencies?: string[]; // Array of currency codes like ["FXMUSDCAD", "FXMEURCAD"]
+  selectedCurrencies?: string[]; // e.g., ["FXMUSDCAD", "FXMEURCAD"]
 }
 
 interface ExchangeRateData {
   d: string; // Date
-  [key: string]: any; // Dynamic keys for different currencies
+  [key: string]: any; // Dynamic currency values
 }
 
 interface TransformedData {
@@ -36,36 +36,37 @@ const transformData = (
 ): TransformedData[] => {
   return rawData.map((item) => {
     const transformedItem: TransformedData = { Date: item.d };
-
     selectedCurrencies.forEach((currency) => {
       transformedItem[currency] = item[currency]
         ? parseFloat(item[currency].v)
         : null;
     });
-
     return transformedItem;
   });
 };
 
-const getCurrencyLabel = (currencyCode: string, seriesDetail: any): string => {
+const getCurrencyLabel = (
+  currencyCode: string,
+  seriesDetail: ApiResponse["seriesDetail"]
+): string => {
   return seriesDetail[currencyCode]?.label || currencyCode;
 };
 
+// Updated formatDate to return Month-Date
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
-  return `${date.toLocaleString("default", {
-    month: "short",
-  })} ${date.getFullYear()}`;
+  const month = date.toLocaleString("default", { month: "short" });
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${month}-${day}`;
 };
 
 const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
-  selectedCurrencies = ["FXMUSDCAD", "FXMEURCAD"],
+  selectedCurrencies = ["FXUSDCAD", "FXEURCAD"],
 }) => {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to format date as YYYY-MM-DD for API requests
   const formatDateForAPI = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -73,10 +74,9 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     return `${year}-${month}-${day}`;
   };
 
-  // Function to calculate date 2 years ago from today
-  const getTwoYearsAgoDate = (): Date => {
+  const getSixMonthsAgoDate = (): Date => {
     const date = new Date();
-    date.setFullYear(date.getFullYear() - 2);
+    date.setMonth(date.getMonth() - 1);
     return date;
   };
 
@@ -84,25 +84,24 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     const fetchData = async () => {
       try {
         setLoading(true);
-        const currentDate = new Date();
-        const endDate = formatDateForAPI(currentDate);
-        const startDate = formatDateForAPI(getTwoYearsAgoDate());
+        const endDate = formatDateForAPI(new Date());
+        const startDate = formatDateForAPI(getSixMonthsAgoDate());
 
         const response = await fetch(
-          `https://www.bankofcanada.ca/valet/observations/group/FX_RATES_MONTHLY/json?start_date=${startDate}&end_date=${endDate}`
+          `https://www.bankofcanada.ca/valet/observations/group/FX_RATES_DAILY/json?start_date=${startDate}&end_date=${endDate}`
         );
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const jsonData = await response.json();
+        const jsonData: ApiResponse = await response.json();
         setData(jsonData);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "An unknown error occurred"
         );
-        console.error("Error fetching data:", err);
+        console.error("Error fetching exchange rate data:", err);
       } finally {
         setLoading(false);
       }
@@ -111,7 +110,6 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     fetchData();
   }, []);
 
-  // Colors for the lines
   const lineColors = [
     "#4472C4",
     "#FF0000",
@@ -121,19 +119,11 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     "#7030A0",
   ];
 
-  if (loading) {
+  if (loading)
     return <div className="loading-message">Loading exchange rate data...</div>;
-  }
+  if (error) return <div className="error-message">Error: {error}</div>;
+  if (!data) return <div className="no-data-message">No data available</div>;
 
-  if (error) {
-    return <div className="error-message">Error: {error}</div>;
-  }
-
-  if (!data) {
-    return <div className="no-data-message">No data available</div>;
-  }
-
-  // Transform the data for the chart
   const chartData = transformData(data.observations, selectedCurrencies);
 
   return (
@@ -159,8 +149,8 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
           />
           <Tooltip
             formatter={(value: number, name: string) => {
-              const currencyLabel = getCurrencyLabel(name, data.seriesDetail);
-              return [value.toFixed(4), currencyLabel];
+              const label = getCurrencyLabel(name, data.seriesDetail);
+              return [value.toFixed(4), label];
             }}
             labelFormatter={(label) => formatDate(label as string)}
           />
@@ -169,7 +159,6 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
             height={36}
             formatter={(value) => getCurrencyLabel(value, data.seriesDetail)}
           />
-
           {selectedCurrencies.map((currency, index) => (
             <Line
               key={currency}
