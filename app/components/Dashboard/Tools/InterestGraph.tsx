@@ -16,19 +16,18 @@ interface RateData {
   value: number;
 }
 
-interface MonthlyData {
-  monthYear: string;
+interface DailyData {
   date: string;
   usValue: number | null;
   caValue: number | null;
 }
 
 const InterestGraph: FC = () => {
-  const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
+  const [dailyData, setDailyData] = useState<DailyData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to format date as YYYY-MM-DD for API requests
+  // Format date as YYYY-MM-DD for API requests
   const formatDateForAPI = (date: Date): string => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -36,19 +35,23 @@ const InterestGraph: FC = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Function to calculate date 2 years ago from today
-  const getTwoYearsAgoDate = (): Date => {
+  // Calculate date 2 years ago from today
+  // const getTwoYearsAgoDate = (): Date => {
+  //   const date = new Date();
+  //   date.setFullYear(date.getFullYear() - 2);
+  //   return date;
+  // };
+  const getOneMonthAgoDate = (): Date => {
     const date = new Date();
-    date.setFullYear(date.getFullYear() - 2);
+    date.setMonth(date.getMonth() - 1);
     return date;
   };
-
-  // Function to parse CSV text into our data format
+  // Parse CSV text into RateData[]
   const parseCSV = (csvText: string): RateData[] => {
     const lines = csvText.split("\n");
     const data: RateData[] = [];
 
-    // Find the line where the actual data starts (after the summary)
+    // Find line where actual data starts
     let dataStartIndex = 0;
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].startsWith("Date,")) {
@@ -57,7 +60,6 @@ const InterestGraph: FC = () => {
       }
     }
 
-    // Process each data line
     for (let i = dataStartIndex; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
@@ -78,59 +80,39 @@ const InterestGraph: FC = () => {
     );
   };
 
-  // Function to aggregate data by month-year and merge US/CA data
-  const aggregateAndMergeData = (
+  // Merge US and CA daily data by exact date
+  const mergeDailyData = (
     usData: RateData[],
     caData: RateData[]
-  ): MonthlyData[] => {
-    const monthlyMap: Record<string, MonthlyData> = {};
+  ): DailyData[] => {
+    const dailyMap: Record<string, DailyData> = {};
 
-    // Process US data
-    usData.forEach((item) => {
-      const date = new Date(item.date);
-      const month = date.getMonth();
-      const year = date.getFullYear();
-      const monthYear = `${year}-${String(month + 1).padStart(2, "0")}`;
-
-      if (!monthlyMap[monthYear]) {
-        monthlyMap[monthYear] = {
-          monthYear,
-          date: item.date,
-          usValue: item.value,
-          caValue: null,
-        };
-      } else {
-        // For US data, we'll take the last value of the month
-        monthlyMap[monthYear].usValue = item.value;
-      }
+    usData.forEach(({ date, value }) => {
+      dailyMap[date] = {
+        date,
+        usValue: value,
+        caValue: null,
+      };
     });
 
-    // Process CA data
-    caData.forEach((item) => {
-      const date = new Date(item.date);
-      const month = date.getMonth();
-      const year = date.getFullYear();
-      const monthYear = `${year}-${String(month + 1).padStart(2, "0")}`;
-
-      if (!monthlyMap[monthYear]) {
-        monthlyMap[monthYear] = {
-          monthYear,
-          date: item.date,
+    caData.forEach(({ date, value }) => {
+      if (!dailyMap[date]) {
+        dailyMap[date] = {
+          date,
           usValue: null,
-          caValue: item.value,
+          caValue: value,
         };
       } else {
-        // For CA data, we'll take the last value of the month
-        monthlyMap[monthYear].caValue = item.value;
+        dailyMap[date].caValue = value;
       }
     });
 
-    // Convert to array and sort chronologically
-    return Object.values(monthlyMap).sort(
+    return Object.values(dailyMap).sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
   };
 
+  // Fetch and process data
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -138,48 +120,53 @@ const InterestGraph: FC = () => {
 
       const currentDate = new Date();
       const endDate = formatDateForAPI(currentDate);
-      const startDate = formatDateForAPI(getTwoYearsAgoDate());
+      // const startDate = formatDateForAPI(getTwoYearsAgoDate());
+      const startDate = formatDateForAPI(getOneMonthAgoDate());
 
-      // Fetch US interest rate data
-      const usResponse = await fetch(
-        `https://www.bankofcanada.ca/stats/results/csv?rangeType=dates&lP=lookup_us_interest.php&sR=${startDate}&dF=${startDate}&dT=${endDate}`,
-        {
-          headers: {
-            Accept: "text/csv",
-            "Cache-Control": "no-cache",
-          },
-        }
-      );
+      let usData: RateData[] = [];
+      let caData: RateData[] = [];
 
-      if (!usResponse.ok) {
-        throw new Error(`Failed to fetch US data: ${usResponse.status}`);
+      // Fetch US data proxy
+      try {
+        const usResponse = await fetch(
+          `/api/proxy-us?startDate=${startDate}&endDate=${endDate}`,
+          { headers: { Accept: "text/csv" } }
+        );
+        if (!usResponse.ok)
+          throw new Error(`Failed to fetch US data: ${usResponse.status}`);
+        const usCsvText = await usResponse.text();
+        usData = parseCSV(usCsvText);
+      } catch (err) {
+        console.error("US fetch error:", err);
+        setError((prev) =>
+          prev ? prev + "; US data fetch failed" : "US data fetch failed"
+        );
       }
 
-      // Fetch Canadian interest rate data
-      const caResponse = await fetch(
-        `https://www.bankofcanada.ca/stats/results/csv?rangeType=dates&ByDate_frequency=daily&lP=lookup_canadian_interest.php&sR=${startDate}&dF=${startDate}&dT=${endDate}`,
-        {
-          headers: {
-            Accept: "text/csv",
-            "Cache-Control": "no-cache",
-          },
-        }
-      );
-
-      if (!caResponse.ok) {
-        throw new Error(`Failed to fetch CA data: ${caResponse.status}`);
+      // Fetch CA data proxy
+      try {
+        const caResponse = await fetch(
+          `/api/proxy-ca?startDate=${startDate}&endDate=${endDate}`,
+          { headers: { Accept: "text/csv" } }
+        );
+        if (!caResponse.ok)
+          throw new Error(`Failed to fetch CA data: ${caResponse.status}`);
+        const caCsvText = await caResponse.text();
+        caData = parseCSV(caCsvText);
+      } catch (err) {
+        console.error("CA fetch error:", err);
+        setError((prev) =>
+          prev ? prev + "; CA data fetch failed" : "CA data fetch failed"
+        );
       }
 
-      const usCsvText = await usResponse.text();
-      const caCsvText = await caResponse.text();
+      if (usData.length === 0 && caData.length === 0) {
+        throw new Error("No data available from either source");
+      }
 
-      const usData = parseCSV(usCsvText);
-      const caData = parseCSV(caCsvText);
+      const mergedData = mergeDailyData(usData, caData);
+      setDailyData(mergedData);
 
-      const mergedMonthlyData = aggregateAndMergeData(usData, caData);
-      setMonthlyData(mergedMonthlyData);
-
-      // Cache the data
       localStorage.setItem(
         "cachedInterestData",
         JSON.stringify({
@@ -189,25 +176,8 @@ const InterestGraph: FC = () => {
         })
       );
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError(
-        err instanceof Error
-          ? `Failed to load data: ${err.message}`
-          : "An unknown error occurred"
-      );
-
-      // Try to load from cache if available
-      const cachedData = localStorage.getItem("cachedInterestData");
-      if (cachedData) {
-        try {
-          const { usData, caData } = JSON.parse(cachedData);
-          const mergedMonthlyData = aggregateAndMergeData(usData, caData);
-          setMonthlyData(mergedMonthlyData);
-          setError("Using cached data - connection issue detected");
-        } catch (parseError) {
-          console.error("Failed to parse cached data", parseError);
-        }
-      }
+      console.error("Overall fetch error:", err);
+      setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setLoading(false);
     }
@@ -217,11 +187,13 @@ const InterestGraph: FC = () => {
     fetchData();
   }, []);
 
-  const formatDate = (dateStr: string) => {
+  // Format date as DD-MM-YYYY for XAxis ticks
+  const formatDateDDMMYYYY = (dateStr: string) => {
     const date = new Date(dateStr);
-    return `${date.toLocaleString("default", {
-      month: "short",
-    })} ${date.getFullYear()}`;
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const yyyy = date.getFullYear();
+    return `${dd}-${mm}-${yyyy}`;
   };
 
   if (loading) {
@@ -247,7 +219,7 @@ const InterestGraph: FC = () => {
     );
   }
 
-  if (monthlyData.length === 0) {
+  if (dailyData.length === 0) {
     return (
       <div className="no-data-container">
         <div>No interest rate data available</div>
@@ -261,8 +233,8 @@ const InterestGraph: FC = () => {
     );
   }
 
-  // Calculate min and max values for YAxis domain with some padding
-  const allValues = monthlyData
+  // Calculate Y axis domain with padding
+  const allValues = dailyData
     .flatMap((item) => [item.usValue, item.caValue])
     .filter((val) => val !== null) as number[];
   const minValue = Math.min(...allValues);
@@ -273,21 +245,15 @@ const InterestGraph: FC = () => {
     <div className="w-full">
       <ResponsiveContainer width="100%" height={350}>
         <LineChart
-          data={monthlyData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
+          data={dailyData}
+          margin={{ top: 5, right: 30, left: 20, bottom: 80 }}
         >
           <CartesianGrid strokeDasharray="3 0" stroke="#ccc" vertical={false} />
           <XAxis
-            dataKey="monthYear"
-            tickFormatter={(monthYear) => {
-              const [year, month] = monthYear.split("-");
-              const date = new Date();
-              date.setFullYear(parseInt(year));
-              date.setMonth(parseInt(month) - 1);
-              return formatDate(date.toISOString());
-            }}
-            tick={{ fontSize: 12 }}
-            tickCount={monthlyData.length > 12 ? 12 : monthlyData.length}
+            dataKey="date"
+            tickFormatter={formatDateDDMMYYYY}
+            tick={{ fontSize: 10 }}
+            tickCount={dailyData.length > 12 ? 12 : dailyData.length}
             angle={-45}
             textAnchor="end"
           />
@@ -301,7 +267,7 @@ const InterestGraph: FC = () => {
               const rateName = name === "usValue" ? "US Rate" : "CA Rate";
               return [`${value?.toFixed(2) || "N/A"}%`, rateName];
             }}
-            labelFormatter={(label) => formatDate(label as string)}
+            labelFormatter={(label) => formatDateDDMMYYYY(label as string)}
           />
           <Legend verticalAlign="bottom" height={36} />
           <Line

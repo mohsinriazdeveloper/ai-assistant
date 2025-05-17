@@ -66,13 +66,11 @@ export type InstructionsType = {
   instructions: string;
   is_active: boolean;
 };
-
 export interface StateAgent {
   id: number;
   name: string;
   image_url: null | string;
 }
-
 export interface AgentState {
   id: number;
   organization?: Organization | null;
