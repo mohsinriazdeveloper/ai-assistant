@@ -7,6 +7,7 @@ import { HiOutlineCircleStack } from "react-icons/hi2";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { IoClose } from "react-icons/io5"; // Add this import for close icon
 import Loader2 from "../../Loader/Loader2";
 import {
   useGetAgentByIdQuery,
@@ -14,6 +15,18 @@ import {
   useGetSourceApiConnectionsQuery,
 } from "../../ReduxToolKit/aiAssistantOtherApis";
 import { Files } from "../../ReduxToolKit/types/agents";
+
+// Add interface for selected sources
+interface SelectedSource {
+  id: string;
+  name: string;
+  type: "graph" | "api" | "file";
+  data: {
+    file_ids?: number | null;
+    agent_source_api_connection_id?: number | null;
+    agent_graph_api_connection_id?: number | null;
+  };
+}
 
 interface SetupAggregratorProps {
   agentId: number;
@@ -50,9 +63,14 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
     useGetAgentByIdQuery(agentId);
   const [sourceDropDownIndex, setSourceDropDownIndex] = useState<number | null>(
     null
-  ); // Track which section's dropdown is open
-  const [sections, setSections] = useState<number[]>([1]); // Array to track sections
+  );
+  const [sections, setSections] = useState<number[]>([1]);
   const [sourceList, setSourceList] = useState<Files[]>([]);
+
+  // Add state for selected sources for each section
+  const [selectedSources, setSelectedSources] = useState<SelectedSource[][]>(
+    []
+  );
 
   useEffect(() => {
     if (agent?.files) {
@@ -61,11 +79,14 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       setSourceList([]);
     }
   }, [agent]);
+
   useEffect(() => {
-    if (sectionData.length > 0) {
+    if (sectionData.length > selectedSources.length) {
       setSections(Array.from({ length: sectionData.length }, (_, i) => i + 1));
+      setSelectedSources((prev) => [...prev, []]);
     }
   }, [sectionData]);
+
   const handleAddSection = () => {
     setSections((prev) => [...prev, prev.length + 1]);
     setSectionData((prev) => [
@@ -73,7 +94,7 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       {
         section_name: "",
         source: {
-          file_id: null,
+          file_ids: [],
           agent_source_api_connection_id: null,
           agent_graph_api_connection_id: null,
         },
@@ -81,11 +102,14 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
         instructions: "",
       },
     ]);
+    // Add empty array for new section's selected sources
+    setSelectedSources((prev) => [...prev, []]);
   };
 
   const handleDeleteSection = (index: number) => {
     setSections((prev) => prev.filter((_, i) => i !== index));
     setSectionData((prev) => prev.filter((_, i) => i !== index));
+    setSelectedSources((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSectionDataChange = (
@@ -97,6 +121,112 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       prev.map((item, i) => (i === index ? { ...item, [key]: value } : item))
     );
   };
+
+  // Function to add selected source
+  const handleSourceSelect = (sectionIndex: number, source: SelectedSource) => {
+    setSelectedSources((prev) =>
+      prev.map((sources, i) =>
+        i === sectionIndex ? [...sources, source] : sources
+      )
+    );
+
+    // Update sectionData accordingly
+    const prevSource = sectionData[sectionIndex].source;
+    if (source.type === "file") {
+      handleSectionDataChange(sectionIndex, "source", {
+        ...prevSource,
+        file_ids: [...(prevSource.file_ids || []), source.data.file_ids].filter(
+          (id, idx, arr) => typeof id === "number" && arr.indexOf(id) === idx
+        ), // unique
+      });
+    } else if (source.type === "api") {
+      handleSectionDataChange(sectionIndex, "source", {
+        ...prevSource,
+        agent_source_api_connection_id:
+          source.data.agent_source_api_connection_id,
+      });
+    } else if (source.type === "graph") {
+      handleSectionDataChange(sectionIndex, "source", {
+        ...prevSource,
+        agent_graph_api_connection_id:
+          source.data.agent_graph_api_connection_id,
+      });
+    }
+  };
+
+  // Function to remove selected source
+  const handleSourceRemove = (sectionIndex: number, sourceId: string) => {
+    setSelectedSources((prev) =>
+      prev.map((sources, i) =>
+        i === sectionIndex ? sources.filter((s) => s.id !== sourceId) : sources
+      )
+    );
+
+    const prevSource = sectionData[sectionIndex].source;
+    const removedSource = selectedSources[sectionIndex].find(
+      (s) => s.id === sourceId
+    );
+    if (!removedSource) return;
+
+    if (removedSource.type === "file") {
+      handleSectionDataChange(sectionIndex, "source", {
+        ...prevSource,
+        file_ids: (prevSource.file_ids || []).filter(
+          (id) => id !== removedSource.data.file_ids
+        ),
+      });
+    } else if (removedSource.type === "api") {
+      handleSectionDataChange(sectionIndex, "source", {
+        ...prevSource,
+        agent_source_api_connection_id: null,
+      });
+    } else if (removedSource.type === "graph") {
+      handleSectionDataChange(sectionIndex, "source", {
+        ...prevSource,
+        agent_graph_api_connection_id: null,
+      });
+    }
+  };
+
+  // Function to check if source is already selected
+  const isSourceSelected = (sectionIndex: number, sourceId: string) => {
+    return (
+      selectedSources[sectionIndex]?.some((s) => s.id === sourceId) || false
+    );
+  };
+
+  // Function to truncate text
+  const truncateText = (text: string, maxLength: number = 30) => {
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
+  };
+
+  const updateFileIdsInSectionData = (sectionIdx: number) => {
+    handleSectionDataChange(sectionIdx, "source", {
+      ...sectionData[sectionIdx].source,
+      file_ids: selectedSources[sectionIdx]
+        .filter((s) => s.type === "file")
+        .map((s) => s.data.file_ids)
+        .filter((id) => typeof id === "number"),
+    });
+  };
+
+  useEffect(() => {
+    selectedSources.forEach((sources, idx) => {
+      const hasFile = sources.some((s) => s.type === "file");
+      if (hasFile) {
+        handleSectionDataChange(idx, "source", {
+          ...sectionData[idx].source,
+          file_ids: sources
+            .filter((s) => s.type === "file")
+            .map((s) => s.data.file_ids)
+            .filter((id) => typeof id === "number"),
+        });
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSources]);
 
   return (
     <div className="relative ">
@@ -165,58 +295,63 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                       sourceDropDownIndex === index ? null : index
                     )
                   }
-                  className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer overflow-hidden"
+                  className="border border-[#c3c3c3] rounded-full py-3 px-4 flex justify-between items-center font-medium cursor-pointer overflow-hidden min-h-[48px]"
                 >
-                  <div className="flex items-center gap-2">
-                    <HiOutlineCircleStack />
+                  <div className="flex items-center gap-2 flex-1">
+                    <HiOutlineCircleStack className="flex-shrink-0" />
 
-                    <p>
-                      {sectionData[index].source.agent_graph_api_connection_id
-                        ? getGraphs?.find(
-                            (item) =>
-                              item.agent_graph_api_connection_id ===
-                              sectionData[index].source
-                                .agent_graph_api_connection_id
-                          )?.name
-                        : sectionData[index].source
-                            .agent_source_api_connection_id
-                        ? apiConnectionData?.find(
-                            (item) =>
-                              item.agent_source_api_connection_id ===
-                              sectionData[index].source
-                                .agent_source_api_connection_id
-                          )?.name
-                        : sectionData[index].source.file_id
-                        ? sourceList.find(
-                            (item) =>
-                              item.id === sectionData[index].source.file_id
-                          )?.file_name ||
-                          sourceList.find(
-                            (item) =>
-                              item.id === sectionData[index].source.file_id
-                          )?.website_url
-                        : "Select Source"}
-                    </p>
+                    {selectedSources[index]?.length > 0 ? (
+                      <div className="flex flex-wrap gap-1 flex-1">
+                        {selectedSources[index].map((source) => (
+                          <div
+                            key={source.id}
+                            className="bg-gray-100 rounded-full px-2 py-1 text-xs flex items-center gap-1 max-w-[150px]"
+                          >
+                            <span className="truncate">
+                              {truncateText(source.name)}
+                            </span>
+                            <IoClose
+                              className="cursor-pointer hover:text-red-500 flex-shrink-0"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleSourceRemove(index, source.id);
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-500">Select Sources</p>
+                    )}
                   </div>
-                  <MdKeyboardArrowDown className="text-xl" />
+                  <MdKeyboardArrowDown className="text-xl flex-shrink-0" />
                 </div>
+
                 {sourceDropDownIndex === index && (
-                  <div className="w-full overflow-x-hidden absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10">
+                  <div className="w-full overflow-x-hidden absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10 max-h-48 overflow-y-auto">
                     {getGraphs?.slice(1).map(
                       (item, graphIndex) =>
-                        item.is_connected && (
+                        item.is_connected &&
+                        !isSourceSelected(
+                          index,
+                          `graph-${item.agent_graph_api_connection_id}`
+                        ) && (
                           <p
                             key={graphIndex}
-                            className="px-2 hover:bg-gray-200 cursor-pointer"
+                            className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
                             onClick={() => {
-                              handleSectionDataChange(index, "source", {
-                                ...sectionData[index].source,
-                                file_id: null,
-                                agent_source_api_connection_id: null,
-                                agent_graph_api_connection_id:
-                                  item.agent_graph_api_connection_id,
-                              });
-                              setSourceDropDownIndex(null);
+                              const newSource: SelectedSource = {
+                                id: `graph-${item.agent_graph_api_connection_id}`,
+                                name: item.name,
+                                type: "graph",
+                                data: {
+                                  file_ids: null,
+                                  agent_source_api_connection_id: null,
+                                  agent_graph_api_connection_id:
+                                    item.agent_graph_api_connection_id,
+                                },
+                              };
+                              handleSourceSelect(index, newSource);
                             }}
                           >
                             {item.name}
@@ -225,43 +360,60 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                     )}
                     {apiConnectionData?.map(
                       (item, apiIndex) =>
-                        item.is_connected && (
+                        item.is_connected &&
+                        !isSourceSelected(
+                          index,
+                          `api-${item.agent_source_api_connection_id}`
+                        ) && (
                           <p
                             key={apiIndex}
-                            className="px-2 hover:bg-gray-200 cursor-pointer"
+                            className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
                             onClick={() => {
-                              handleSectionDataChange(index, "source", {
-                                ...sectionData[index].source,
-                                file_id: null,
-                                agent_source_api_connection_id:
-                                  item.agent_source_api_connection_id,
-                                agent_graph_api_connection_id: null,
-                              });
-                              setSourceDropDownIndex(null);
+                              const newSource: SelectedSource = {
+                                id: `api-${item.agent_source_api_connection_id}`,
+                                name: item.name,
+                                type: "api",
+                                data: {
+                                  file_ids: null,
+                                  agent_source_api_connection_id:
+                                    item.agent_source_api_connection_id,
+                                  agent_graph_api_connection_id: null,
+                                },
+                              };
+                              handleSourceSelect(index, newSource);
                             }}
                           >
                             {item.name}
                           </p>
                         )
                     )}
-                    {sourceList?.map((item) => (
-                      <p
-                        key={item.id}
-                        className="px-2 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => {
-                          handleSectionDataChange(index, "source", {
-                            ...sectionData[index].source,
-                            file_id: item.id,
-                            agent_source_api_connection_id: null,
-                            agent_graph_api_connection_id: null,
-                          });
-                          setSourceDropDownIndex(null);
-                        }}
-                      >
-                        {item.file_name && item.file_name}
-                        {item.website_url && item.website_url}
-                      </p>
-                    ))}
+                    {sourceList?.map(
+                      (item) =>
+                        !isSourceSelected(index, `file-${item.id}`) && (
+                          <p
+                            key={item.id}
+                            className="px-2 py-1 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => {
+                              const fileName =
+                                item.file_name || item.website_url || "Unknown";
+                              const newSource: SelectedSource = {
+                                id: `file-${item.id}`,
+                                name: fileName,
+                                type: "file",
+                                data: {
+                                  file_ids: item.id,
+                                  agent_source_api_connection_id: null,
+                                  agent_graph_api_connection_id: null,
+                                },
+                              };
+                              handleSourceSelect(index, newSource);
+                            }}
+                          >
+                            {item.file_name && item.file_name}
+                            {item.website_url && item.website_url}
+                          </p>
+                        )
+                    )}
                   </div>
                 )}
               </div>

@@ -24,7 +24,7 @@ import { getContent, sideBarOptions } from "../content";
 export type SectionData = {
   section_name: string;
   source: {
-    file_id: number | null;
+    file_ids: number[];
     agent_source_api_connection_id: number | null;
     agent_graph_api_connection_id: number | null;
   };
@@ -60,7 +60,7 @@ const Page: FC<PageProps> = ({ params }) => {
     {
       section_name: "",
       source: {
-        file_id: null,
+        file_ids: [],
         agent_source_api_connection_id: null,
         agent_graph_api_connection_id: null,
       },
@@ -100,7 +100,18 @@ const Page: FC<PageProps> = ({ params }) => {
         setAutoUpdate1(wholeReport.request_payload.auto_update);
       }
       if (wholeReport.request_payload.sections) {
-        setSectionData1(wholeReport.request_payload.sections);
+        setSectionData1(
+          wholeReport.request_payload.sections.map((section) => ({
+            ...section,
+            source: {
+              file_ids: section.source.file_id ? [section.source.file_id] : [],
+              agent_source_api_connection_id:
+                section.source.agent_source_api_connection_id,
+              agent_graph_api_connection_id:
+                section.source.agent_graph_api_connection_id,
+            },
+          }))
+        );
       }
     }
   }, [wholeReport, aggregatorSetup]);
@@ -129,19 +140,34 @@ const Page: FC<PageProps> = ({ params }) => {
       }
 
       const {
-        file_id,
+        file_ids,
         agent_graph_api_connection_id,
         agent_source_api_connection_id,
       } = section.source;
 
       const idCount = [
-        file_id,
+        ...(Array.isArray(file_ids) ? file_ids : []),
         agent_graph_api_connection_id,
         agent_source_api_connection_id,
-      ].filter((id) => id !== null && id !== undefined).length;
+      ].filter(
+        (id) =>
+          id !== null &&
+          id !== undefined &&
+          (!Array.isArray(id) || id.length > 0)
+      ).length;
 
-      if (idCount !== 1) {
-        toast.error(`Section ${i + 1}: Please select source`);
+      if (
+        (!file_ids || (Array.isArray(file_ids) && file_ids.length === 0)) &&
+        (agent_graph_api_connection_id === null ||
+          agent_graph_api_connection_id === undefined) &&
+        (agent_source_api_connection_id === null ||
+          agent_source_api_connection_id === undefined)
+      ) {
+        toast.error(
+          `Section ${
+            i + 1
+          }: Please select source (agent_graph_api_connection_id, agent_source_api_connection_id, or file_ids)`
+        );
         return;
       }
 
@@ -174,7 +200,7 @@ const Page: FC<PageProps> = ({ params }) => {
           {
             section_name: "",
             source: {
-              file_id: null,
+              file_ids: [],
               agent_graph_api_connection_id: null,
               agent_source_api_connection_id: null,
             },
@@ -194,7 +220,7 @@ const Page: FC<PageProps> = ({ params }) => {
           {
             section_name: "",
             source: {
-              file_id: null,
+              file_ids: [],
               agent_graph_api_connection_id: null,
               agent_source_api_connection_id: null,
             },
@@ -209,7 +235,7 @@ const Page: FC<PageProps> = ({ params }) => {
       console.error("Error:", error);
     }
   };
-
+  console.log("sectionData1: ", sectionData1);
   return (
     <Background>
       <div className="flex w-full h-full">

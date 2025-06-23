@@ -115,6 +115,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
         <div className="pt-4">
           <ExchangeRateGraph
             selectedCurrencies={["FXEURCAD", "FXCNYCAD", "FXGBPCAD"]}
+            duration={3}
           />
         </div>
       </div>
@@ -140,120 +141,113 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
       </div>
 
       {/* FX GRAPH */}
-      {fxGraph && (
-        <div className="w-full rounded-md shadow-md relative">
-          <div className="flex justify-between items-center p-5 border-b">
-            <p className="text-xl font-bold">{fxGraph.name}</p>
-
-            <div className="flex items-start">
-              {/* {showWeek ||
-                (showMonth && ( */}
+      {/*       
+      <>
+        {fxGraph && (
+          <div className="w-full rounded-md shadow-md relative">
+            <div className="flex justify-between items-center p-5 border-b">
+              <p className="text-xl font-bold">{fxGraph.name}</p>
               <div className="flex items-start">
-                <div
-                  onClick={() => setShowDataBy("spot")}
-                  className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                    showDataBy === "spot"
-                      ? "bg-[#F5F7FB] text-[#017EFA]"
-                      : "text-[#A9ABB0]"
-                  }`}
-                >
-                  <p>Spot</p>
+                <div className="flex items-start">
+                  <div
+                    onClick={() => setShowDataBy("spot")}
+                    className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                      showDataBy === "spot"
+                        ? "bg-[#F5F7FB] text-[#017EFA]"
+                        : "text-[#A9ABB0]"
+                    }`}
+                  >
+                    <p>Spot</p>
+                  </div>
+                  {showWeek && (
+                    <div
+                      onClick={() => setShowDataBy("week")}
+                      className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                        showDataBy === "week"
+                          ? "bg-[#F5F7FB] text-[#017EFA]"
+                          : "text-[#A9ABB0]"
+                      }`}
+                    >
+                      <p>Week</p>
+                    </div>
+                  )}
+                  {showMonth && (
+                    <div
+                      onClick={() => setShowDataBy("month")}
+                      className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
+                        showDataBy === "Month"
+                          ? "bg-[#F5F7FB] text-[#017EFA]"
+                          : "text-[#A9ABB0]"
+                      }`}
+                    >
+                      <p>Month</p>
+                    </div>
+                  )}
                 </div>
-                {showWeek && (
-                  <div
-                    onClick={() => setShowDataBy("week")}
-                    className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                      showDataBy === "week"
-                        ? "bg-[#F5F7FB] text-[#017EFA]"
-                        : "text-[#A9ABB0]"
-                    }`}
-                  >
-                    <p>Week</p>
-                  </div>
-                )}
-                {showMonth && (
-                  <div
-                    onClick={() => setShowDataBy("month")}
-                    className={`hover:bg-[#F5F7FB] hover:text-[#017EFA] py-2 px-4 rounded duration-300 transition-colors cursor-pointer ${
-                      showDataBy === "Month"
-                        ? "bg-[#F5F7FB] text-[#017EFA]"
-                        : "text-[#A9ABB0]"
-                    }`}
-                  >
-                    <p>Month</p>
-                  </div>
-                )}
+                <div className="relative">
+                  <HiOutlineDotsHorizontal
+                    onClick={() => setFxDropDown(!fxDropDown)}
+                    className={`text-3xl cursor-pointer rotate-90 ml-5`}
+                  />
+                  {fxDropDown && (
+                    <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 w-[95px]">
+                      <div
+                        onClick={() => handleDisConnect(fxGraph.id)}
+                        className="hover:bg-gray-200 cursor-pointer py-1 px-3"
+                      >
+                        {disconnectLoading ? <Loader /> : "Disconnect"}
+                      </div>
+                      <div
+                        onClick={() =>
+                          handleReset(fxGraph.agent_graph_api_connection_id)
+                        }
+                        className="hover:bg-gray-200 cursor-pointer py-1 px-3"
+                      >
+                        {resetLoading ? <Loader /> : "Reset"}
+                      </div>
+                      <div
+                        onClick={() =>
+                          handleRawData(fxGraph.agent_graph_api_connection_id)
+                        }
+                        className="hover:bg-gray-200 cursor-pointer py-1 px-3"
+                      >
+                        Raw Data
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-              {/* ))} */}
-
-              <div className="relative">
-                <HiOutlineDotsHorizontal
-                  onClick={() => setFxDropDown(!fxDropDown)}
-                  className={`text-3xl cursor-pointer rotate-90 ml-5`}
-                />
-                {fxDropDown && (
-                  <div className="absolute border rounded-md bg-white p-1 text-xs mt-1 z-50 w-[95px]">
-                    <div
-                      onClick={() => handleDisConnect(fxGraph.id)}
-                      className="hover:bg-gray-200 cursor-pointer py-1 px-3"
-                    >
-                      {disconnectLoading ? <Loader /> : "Disconnect"}
-                    </div>
-                    <div
-                      onClick={() =>
-                        handleReset(fxGraph.agent_graph_api_connection_id)
-                      }
-                      className="hover:bg-gray-200 cursor-pointer py-1 px-3"
-                    >
-                      {resetLoading ? <Loader /> : "Reset"}
-                    </div>
-                    <div
-                      onClick={() =>
-                        handleRawData(fxGraph.agent_graph_api_connection_id)
-                      }
-                      className="hover:bg-gray-200 cursor-pointer py-1 px-3"
-                    >
-                      Raw Data
-                    </div>
-                  </div>
+            </div>
+            <div className="md:px-5 ">
+              <div className="col-span-9 py-5">
+                {fxGraph.is_connected ? (
+                  <Graph
+                    agentId={agentId}
+                    graphId={fxGraph.agent_graph_api_connection_id}
+                    showDataBy={showDataBy}
+                    setShowWeek={setShowWeek}
+                    setShowMonth={setShowMonth}
+                  />
+                ) : (
+                  <div className="w-full h-[350px] bg-slate-400"></div>
                 )}
               </div>
             </div>
+            {!fxGraph.is_connected && (
+              <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
+                <button
+                  onClick={() => {
+                    setIsSetup("setup");
+                  }}
+                  className="py-2 px-6 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-full text-sm"
+                >
+                  Setup
+                </button>
+              </div>
+            )}
           </div>
-
-          {/* <div className="px-5 grid grid-cols-12 "> */}
-          <div className="md:px-5 ">
-            <div className="col-span-9 py-5">
-              {fxGraph.is_connected ? (
-                <Graph
-                  agentId={agentId}
-                  graphId={fxGraph.agent_graph_api_connection_id}
-                  showDataBy={showDataBy}
-                  setShowWeek={setShowWeek}
-                  setShowMonth={setShowMonth}
-                />
-              ) : (
-                <div className="w-full h-[350px] bg-slate-400"></div>
-              )}
-            </div>
-            {/* <div className="col-span-3">
-          <GraphSideBar /> 
-        </div> */}
-          </div>
-          {!fxGraph.is_connected && (
-            <div className="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center z-10 h-full">
-              <button
-                onClick={() => {
-                  setIsSetup("setup");
-                }}
-                className="py-2 px-6 hover:bg-[#3C3C3F] bg-[#18181b] text-white font-medium rounded-full text-sm"
-              >
-                Setup
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </> */}
 
       {/* CPI GRAPH */}
       {cpiGraph && (

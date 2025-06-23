@@ -13,6 +13,7 @@ import "./style.css";
 
 interface ExchangeRateGraphProps {
   selectedCurrencies?: string[]; // e.g., ["FXMUSDCAD", "FXMEURCAD"]
+  duration?: number; // Number of months to fetch data for
 }
 
 interface ExchangeRateData {
@@ -62,6 +63,7 @@ const formatDate = (dateStr: string) => {
 
 const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
   selectedCurrencies = ["FXUSDCAD", "FXEURCAD"],
+  duration = 1, // Default to 1 month if not specified
 }) => {
   const [data, setData] = useState<ApiResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,9 +76,9 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     return `${year}-${month}-${day}`;
   };
 
-  const getSixMonthsAgoDate = (): Date => {
+  const getStartDate = (): Date => {
     const date = new Date();
-    date.setMonth(date.getMonth() - 1);
+    date.setMonth(date.getMonth() - duration);
     return date;
   };
 
@@ -85,7 +87,7 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
       try {
         setLoading(true);
         const endDate = formatDateForAPI(new Date());
-        const startDate = formatDateForAPI(getSixMonthsAgoDate());
+        const startDate = formatDateForAPI(getStartDate());
 
         const response = await fetch(
           `https://www.bankofcanada.ca/valet/observations/group/FX_RATES_DAILY/json?start_date=${startDate}&end_date=${endDate}`
@@ -108,7 +110,7 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     };
 
     fetchData();
-  }, []);
+  }, [duration]); // Add duration to dependency array to refetch when it changes
 
   const lineColors = [
     "#4472C4",
