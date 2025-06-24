@@ -163,11 +163,7 @@ const Page: FC<PageProps> = ({ params }) => {
         (agent_source_api_connection_id === null ||
           agent_source_api_connection_id === undefined)
       ) {
-        toast.error(
-          `Section ${
-            i + 1
-          }: Please select source (agent_graph_api_connection_id, agent_source_api_connection_id, or file_ids)`
-        );
+        toast.error(`Section ${i + 1}: Please select source`);
         return;
       }
 

@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import "./style.css";
+import Loader2 from "../../Loader/Loader2";
 
 interface ExchangeRateGraphProps {
   selectedCurrencies?: string[]; // e.g., ["FXMUSDCAD", "FXMEURCAD"]
@@ -121,8 +122,7 @@ const ExchangeRateGraph: FC<ExchangeRateGraphProps> = ({
     "#7030A0",
   ];
 
-  if (loading)
-    return <div className="loading-message">Loading exchange rate data...</div>;
+  if (loading) return <Loader2 />;
   if (error) return <div className="error-message">Error: {error}</div>;
   if (!data) return <div className="no-data-message">No data available</div>;
 

@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import "./style.css";
+import Loader2 from "../../Loader/Loader2";
 
 interface RateData {
   date: string;
@@ -197,12 +198,7 @@ const InterestGraph: FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <div>Loading interest rate data...</div>
-      </div>
-    );
+    return <Loader2 />;
   }
 
   if (error) {

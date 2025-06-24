@@ -1,13 +1,20 @@
 import { SectionData } from "@/app/(pages)/agent/[id]/tools/page";
 import BtnIcon from "@/app/assets/Images/btnStars.png";
 import Image from "next/image";
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import { FaPlus } from "react-icons/fa";
 import { HiOutlineCircleStack } from "react-icons/hi2";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { RiDeleteBinLine } from "react-icons/ri";
-import { IoClose } from "react-icons/io5"; // Add this import for close icon
+import { IoClose } from "react-icons/io5";
 import Loader2 from "../../Loader/Loader2";
 import {
   useGetAgentByIdQuery,
@@ -72,6 +79,11 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
     []
   );
 
+  // Add a flag to track if data has been initialized
+  const [isDataInitialized, setIsDataInitialized] = useState<boolean>(false);
+
+  const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   useEffect(() => {
     if (agent?.files) {
       setSourceList(agent.files);
@@ -80,12 +92,116 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
     }
   }, [agent]);
 
+  // Initialize selectedSources and sections when sectionData changes
   useEffect(() => {
-    if (sectionData.length > selectedSources.length) {
+    if (
+      sectionData.length > 0 &&
+      !isDataInitialized &&
+      getGraphs &&
+      apiConnectionData &&
+      sourceList.length > 0
+    ) {
+      console.log("Initializing data with sectionData:", sectionData);
+
+      // Set sections based on sectionData length
+      setSections(Array.from({ length: sectionData.length }, (_, i) => i + 1));
+
+      // Initialize selectedSources with existing data
+      const initialSelectedSources: SelectedSource[][] = sectionData.map(
+        (section) => {
+          const sources: SelectedSource[] = [];
+
+          // Add file sources
+          if (section.source.file_ids && section.source.file_ids.length > 0) {
+            section.source.file_ids.forEach((fileId) => {
+              const file = sourceList.find((f) => f.id === fileId);
+              if (file) {
+                sources.push({
+                  id: `file-${fileId}`,
+                  name: file.file_name || file.website_url || "Unknown",
+                  type: "file",
+                  data: {
+                    file_ids: fileId,
+                    agent_source_api_connection_id: null,
+                    agent_graph_api_connection_id: null,
+                  },
+                });
+              }
+            });
+          }
+
+          // Add graph source
+          if (section.source.agent_graph_api_connection_id) {
+            const graph = getGraphs?.find(
+              (g) =>
+                g.agent_graph_api_connection_id ===
+                section.source.agent_graph_api_connection_id
+            );
+            if (graph) {
+              sources.push({
+                id: `graph-${section.source.agent_graph_api_connection_id}`,
+                name: graph.name,
+                type: "graph",
+                data: {
+                  file_ids: null,
+                  agent_source_api_connection_id: null,
+                  agent_graph_api_connection_id:
+                    section.source.agent_graph_api_connection_id,
+                },
+              });
+            }
+          }
+
+          // Add API source
+          if (section.source.agent_source_api_connection_id) {
+            const api = apiConnectionData?.find(
+              (a) =>
+                a.agent_source_api_connection_id ===
+                section.source.agent_source_api_connection_id
+            );
+            if (api) {
+              sources.push({
+                id: `api-${section.source.agent_source_api_connection_id}`,
+                name: api.name,
+                type: "api",
+                data: {
+                  file_ids: null,
+                  agent_source_api_connection_id:
+                    section.source.agent_source_api_connection_id,
+                  agent_graph_api_connection_id: null,
+                },
+              });
+            }
+          }
+
+          return sources;
+        }
+      );
+
+      setSelectedSources(initialSelectedSources);
+      setIsDataInitialized(true);
+      console.log("Initialized selectedSources:", initialSelectedSources);
+    }
+  }, [
+    sectionData,
+    getGraphs,
+    apiConnectionData,
+    sourceList,
+    isDataInitialized,
+  ]);
+
+  // Reset initialization flag when sectionData changes externally (new data loaded)
+  useEffect(() => {
+    setIsDataInitialized(false);
+  }, [sectionData]);
+
+  // Handle adding new sections
+  useEffect(() => {
+    if (sectionData.length > selectedSources.length && isDataInitialized) {
       setSections(Array.from({ length: sectionData.length }, (_, i) => i + 1));
       setSelectedSources((prev) => [...prev, []]);
     }
-  }, [sectionData]);
+  }, [sectionData, selectedSources.length, isDataInitialized]);
 
   const handleAddSection = () => {
     setSections((prev) => [...prev, prev.length + 1]);
@@ -202,31 +318,40 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
       : text;
   };
 
-  const updateFileIdsInSectionData = (sectionIdx: number) => {
-    handleSectionDataChange(sectionIdx, "source", {
-      ...sectionData[sectionIdx].source,
-      file_ids: selectedSources[sectionIdx]
-        .filter((s) => s.type === "file")
-        .map((s) => s.data.file_ids)
-        .filter((id) => typeof id === "number"),
-    });
-  };
+  // Remove the old useEffect that was causing issues
+  // useEffect(() => {
+  //   selectedSources.forEach((sources, idx) => {
+  //     const hasFile = sources.some((s) => s.type === "file");
+  //     if (hasFile) {
+  //       handleSectionDataChange(idx, "source", {
+  //         ...sectionData[idx].source,
+  //         file_ids: sources
+  //           .filter((s) => s.type === "file")
+  //           .map((s) => s.data.file_ids)
+  //           .filter((id) => typeof id === "number"),
+  //       });
+  //     }
+  //   });
+  // }, [selectedSources]);
 
   useEffect(() => {
-    selectedSources.forEach((sources, idx) => {
-      const hasFile = sources.some((s) => s.type === "file");
-      if (hasFile) {
-        handleSectionDataChange(idx, "source", {
-          ...sectionData[idx].source,
-          file_ids: sources
-            .filter((s) => s.type === "file")
-            .map((s) => s.data.file_ids)
-            .filter((id) => typeof id === "number"),
-        });
+    if (sourceDropDownIndex === null) return;
+
+    function handleClickOutside(event: MouseEvent) {
+      const idx = sourceDropDownIndex ?? undefined;
+      if (typeof idx === "number") {
+        const ref = dropdownRefs.current[idx];
+        if (ref && !ref.contains(event.target as Node)) {
+          setSourceDropDownIndex(null);
+        }
       }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedSources]);
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [sourceDropDownIndex]);
 
   return (
     <div className="relative ">
@@ -273,10 +398,12 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
           <div key={section} className="bg-[#FAFAFA] mt-4 py-5 px-4 space-y-4">
             <div className="flex justify-between items-center">
               <p>Section {index + 1} Name</p>
-              <RiDeleteBinLine
-                onClick={() => handleDeleteSection(index)}
-                className="mb-1 cursor-pointer hover:text-red-500 duration-300 transition-colors"
-              />
+              {sections.length > 1 && (
+                <RiDeleteBinLine
+                  onClick={() => handleDeleteSection(index)}
+                  className="mb-1 cursor-pointer hover:text-red-500 duration-300 transition-colors"
+                />
+              )}
             </div>
             <input
               className="focus:outline-none rounded py-3 px-4 border border-[#f3f3f3] w-[701px]"
@@ -328,7 +455,12 @@ const SetupAggregrator: FC<SetupAggregratorProps> = ({
                 </div>
 
                 {sourceDropDownIndex === index && (
-                  <div className="w-full overflow-x-hidden absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10 max-h-48 overflow-y-auto">
+                  <div
+                    ref={(el) => {
+                      dropdownRefs.current[index] = el;
+                    }}
+                    className="w-full overflow-x-hidden absolute bg-white rounded-md border border-[#c3c3c3] p-1 mt-1 text-sm text-gray-700 z-10"
+                  >
                     {getGraphs?.slice(1).map(
                       (item, graphIndex) =>
                         item.is_connected &&

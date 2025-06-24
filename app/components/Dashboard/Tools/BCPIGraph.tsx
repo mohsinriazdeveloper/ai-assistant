@@ -8,6 +8,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import Loader2 from "../../Loader/Loader2";
 
 interface BCPIDataPoint {
   date: string;
@@ -94,7 +95,7 @@ const BCPIGraph: FC = () => {
   };
 
   if (loading) {
-    return <div className="loading-message">Loading BCPI data...</div>;
+    return <Loader2 />;
   }
 
   if (error) {

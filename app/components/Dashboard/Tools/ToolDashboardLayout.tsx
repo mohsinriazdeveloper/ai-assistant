@@ -93,7 +93,7 @@ const ToolDashboardLayout: FC<ToolDashboardLayoutProps> = ({
   };
   return (
     <div>
-      {isLoading && <Loader2 />}
+      {/* {isLoading && <Loader2 />} */}
 
       {/* EXCHANGE CURRENCY RATE OF US WITH RESPECT TO CA */}
       <div className="w-full rounded-md shadow-md my-4 py-4 divide-y">
