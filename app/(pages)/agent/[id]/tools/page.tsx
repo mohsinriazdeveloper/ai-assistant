@@ -104,7 +104,7 @@ const Page: FC<PageProps> = ({ params }) => {
           wholeReport.request_payload.sections.map((section) => ({
             ...section,
             source: {
-              file_ids: section.source.file_id ? [section.source.file_id] : [],
+              file_ids: section.source.file_ids ? section.source.file_ids : [],
               agent_source_api_connection_id:
                 section.source.agent_source_api_connection_id,
               agent_graph_api_connection_id:
@@ -231,7 +231,6 @@ const Page: FC<PageProps> = ({ params }) => {
       console.error("Error:", error);
     }
   };
-  console.log("sectionData1: ", sectionData1);
   return (
     <Background>
       <div className="flex w-full h-full">

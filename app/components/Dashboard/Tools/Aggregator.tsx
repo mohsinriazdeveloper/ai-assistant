@@ -1,12 +1,33 @@
 import MarkDown2 from "@/app/components/MarkDown/MarkDown2";
 import Link from "next/link";
-import { Dispatch, FC, SetStateAction, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { RxCross1 } from "react-icons/rx";
 import Loader from "../../Loader/Loader";
-import { useDeleteResumeMutation } from "../../ReduxToolKit/aiAssistantOtherApis";
+import {
+  useDeleteResumeMutation,
+  useUpdateReportMutation,
+} from "../../ReduxToolKit/aiAssistantOtherApis";
 import { ReportType } from "../../ReduxToolKit/types/agents";
+import Loader2 from "../../Loader/Loader2";
+
+type RequestPayload = {
+  summary_name: string;
+  auto_update: string;
+  sections: [
+    {
+      display_source_links: boolean;
+      instructions: string;
+      section_name: string;
+      source: {
+        agent_graph_api_connection_id: number | null;
+        agent_source_api_connection_id: number | null;
+        file_ids: number[] | null;
+      };
+    }
+  ];
+};
 interface AggregatorProps {
   agentId: number;
   wholeReport: ReportType | null;
@@ -26,9 +47,17 @@ const Aggregator: FC<AggregatorProps> = ({
   setAggregatorSetup,
   setUpdateFlag,
 }) => {
+  const [updateResume, { isLoading: updateResumeLoading }] =
+    useUpdateReportMutation();
   const [deleteReport, { isLoading: deleteLoader }] = useDeleteResumeMutation();
-
   const [dropDown1, setDropDown1] = useState<boolean>(false);
+  const [regeneratePrompt, setRegeneratePrompt] = useState<RequestPayload>();
+
+  useEffect(() => {
+    if (wholeReport?.request_payload) {
+      setRegeneratePrompt(wholeReport.request_payload);
+    }
+  }, [wholeReport]);
 
   const deleteData1 = async () => {
     const id = agentId;
@@ -43,6 +72,18 @@ const Aggregator: FC<AggregatorProps> = ({
       toast.error("Failed to delete report");
     }
   };
+  const handleRegenerate = async () => {
+    try {
+      const updateReport = await updateResume({
+        id: agentId,
+        data: regeneratePrompt,
+      });
+      toast.success("Resume updated successfully");
+    } catch (error) {
+      toast.error("Try Again Later");
+    }
+  };
+  console.log("wholeReport: ", wholeReport?.request_payload);
   return (
     <div className="w-full">
       <div
@@ -91,35 +132,50 @@ const Aggregator: FC<AggregatorProps> = ({
                     })}
                   </div>
                 </div>
-                <div>
-                  <HiOutlineDotsHorizontal
-                    className={`text-3xl cursor-pointer rotate-90 ml-auto`}
-                    onClick={() => setDropDown1(!dropDown1)}
-                  />
-                  {dropDown1 && (
-                    <div className="absolute w-[261px] h-[269px] bg-white rounded-md shadow-md pt-7 px-5 pb-5 top-8 right-6 border">
-                      <RxCross1
-                        className={`text-2xl cursor-pointer rotate-90 ml-auto text-[#717680] mb-16`}
-                        onClick={() => setDropDown1(!dropDown1)}
-                      />
-                      <div
-                        onClick={() => setAggregatorSetup("setup1")}
-                        className="w-full h-[68px] flex justify-center items-center bg-[#F9F9F9] rounded-[5px] mb-4 cursor-pointer"
-                      >
-                        <p className="text-sm font-semibold">Edit Prompt</p>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <button
+                      disabled={updateResumeLoading}
+                      onClick={handleRegenerate}
+                      className={`${
+                        updateResumeLoading
+                          ? "cursor-progress bg-black"
+                          : "cursor-pointer bg-[#3C3C3F] hover:bg-gray-200 hover:text-black text-white font-medium text-sm "
+                      } py-2 px-5  border border-[#3C3C3F] rounded-md transition-colors duration-500`}
+                    >
+                      {updateResumeLoading ? <Loader /> : "Re-Generate"}
+                    </button>
+                  </div>
+                  <div>
+                    <HiOutlineDotsHorizontal
+                      className={`text-3xl cursor-pointer rotate-90 ml-auto`}
+                      onClick={() => setDropDown1(!dropDown1)}
+                    />
+                    {dropDown1 && (
+                      <div className="absolute w-[261px] h-[269px] bg-white rounded-md shadow-md pt-7 px-5 pb-5 top-8 right-6 border">
+                        <RxCross1
+                          className={`text-2xl cursor-pointer rotate-90 ml-auto text-[#717680] mb-16`}
+                          onClick={() => setDropDown1(!dropDown1)}
+                        />
+                        <div
+                          onClick={() => setAggregatorSetup("setup1")}
+                          className="w-full h-[68px] flex justify-center items-center bg-[#F9F9F9] rounded-[5px] mb-4 cursor-pointer"
+                        >
+                          <p className="text-sm font-semibold">Edit Prompt</p>
+                        </div>
+                        <div
+                          onClick={deleteData1}
+                          className="w-full h-[38px] flex justify-center items-center bg-[#FFE8E8] rounded-[5px] cursor-pointer"
+                        >
+                          {deleteLoader ? (
+                            <Loader />
+                          ) : (
+                            <p className="text-sm font-semibold">Remove</p>
+                          )}
+                        </div>
                       </div>
-                      <div
-                        onClick={deleteData1}
-                        className="w-full h-[38px] flex justify-center items-center bg-[#FFE8E8] rounded-[5px] cursor-pointer"
-                      >
-                        {deleteLoader ? (
-                          <Loader />
-                        ) : (
-                          <p className="text-sm font-semibold">Remove</p>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
               {wholeReport?.sections.map((item, index) => (

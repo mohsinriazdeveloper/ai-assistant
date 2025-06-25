@@ -167,7 +167,7 @@ export type ReportType = {
     sections: [
       {
         source: {
-          file_id: number | null;
+          file_ids: number[];
           agent_graph_api_connection_id: number | null;
           agent_source_api_connection_id: number | null;
         };
